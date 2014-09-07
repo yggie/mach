@@ -37,13 +37,14 @@ build: prepare
 	$(ECHO)$(COMPILER) --crate-type=lib $(BUILD_OPTIONS) $(MITHRIL_ROOT) -o $(MITHRIL_OUTPUT)
 
 build-tests: prepare
+	$(ECHO)$(COMPILER_DOCS) --test $(MITHRIL_ROOT) -L $(BINARY_DIR)/
 	$(ECHO)$(COMPILER) --test $(TEST_OPTIONS) $(MITHRIL_ROOT) -o $(BINARY_DIR)/mithril_tests
 	$(ECHO)./bin/mithril_tests
+	$(ECHO)rm ./bin/mithril_tests
 
 docs:
 	$(ECHO)$(COMPILER_DOCS) $(MITHRIL_ROOT)
 	$(ECHO)open doc/mithril/index.html
-	$(ECHO)$(COMPILER_DOCS) --test $(MITHRIL_ROOT) -L $(BINARY_DIR)/
 
 clean:
 	$(ECHO)rm -rf doc/
