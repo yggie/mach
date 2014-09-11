@@ -5,7 +5,6 @@ MITHRIL_ROOT    := src/mithril.rs
 BUILD_OPTIONS   := -g
 
 BINARY_DIR      := bin
-MITHRIL_OUTPUT  := $(BINARY_DIR)/libmithril.rlib
 
 ifdef VERBOSE
 	ECHO :=
@@ -34,7 +33,7 @@ prepare:
 	$(ECHO)mkdir -p bin
 
 build: prepare
-	$(ECHO)$(COMPILER) --crate-type=lib $(BUILD_OPTIONS) $(MITHRIL_ROOT) -o $(MITHRIL_OUTPUT)
+	$(ECHO)$(COMPILER) --crate-type=lib $(BUILD_OPTIONS) $(MITHRIL_ROOT) --out-dir $(BINARY_DIR)
 
 build-tests: prepare
 	$(ECHO)$(COMPILER_DOCS) --test $(MITHRIL_ROOT) -L $(BINARY_DIR)/

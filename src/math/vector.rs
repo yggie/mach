@@ -2,14 +2,15 @@
 #[path="../../tests/math/vector_test.rs"]
 mod tests;
 
-/// A representation of a 3-dimensional vector.
+/// A representation of a 3-dimensional column vector.
 pub struct Vector {
     elements: [f32, ..3]
 }
 
 /// Static methods for the Vector struct.
 impl Vector {
-    /// A simple constructor which builds a vector given the three elements.
+
+    /// A simple constructor which builds a column vector given three elements.
     ///
     /// ```rust
     /// # use mithril::math::Vector;
@@ -30,6 +31,7 @@ impl Vector {
     ///
     /// assert!(Vector::dot(&a, &b) == 4.0)
     /// ```
+    #[inline(always)]
     pub fn dot(a: &Vector, b: &Vector) -> f32 {
         a[0]*b[0] + a[1]*b[1] + a[2]*b[2]
     }
@@ -45,6 +47,7 @@ impl Vector {
     ///
     /// assert!((c[0], c[1], c[2]) == (3.0, 0.0, -3.0))
     /// ```
+    #[inline]
     pub fn cross(a: &Vector, b: &Vector) -> Vector {
         Vector{ elements: [ a[1]*b[2] - a[2]*b[1], a[2]*b[0] - a[0]*b[2], a[0]*b[1] - a[1]*b[0] ] }
     }
@@ -58,6 +61,7 @@ impl Vector {
     ///
     /// assert!((n[0], n[1], n[2]) == (0.48, 0.80, 0.36))
     /// ```
+    #[inline]
     pub fn normalize(v: &Vector) -> Vector {
         let l = v.length();
         Vector{ elements: [ v[0]/l, v[1]/l, v[2]/l ] }
@@ -71,6 +75,7 @@ impl Vector {
     ///
     /// assert!(v.length_sq() == 14.0)
     /// ```
+    #[inline(always)]
     pub fn length_sq(&self) -> f32 {
         self[0]*self[0] + self[1]*self[1] + self[2]*self[2]
     }
@@ -83,6 +88,7 @@ impl Vector {
     ///
     /// assert!(v.length() == 7.0)
     /// ```
+    #[inline(always)]
     pub fn length(&self) -> f32 {
         self.length_sq().sqrt()
     }
@@ -98,6 +104,7 @@ impl Index<uint, f32> for Vector {
     ///
     /// assert!((v[0], v[1], v[2]) == (1.0, 2.0, 3.0))
     /// ```
+    #[inline(always)]
     fn index<'a>(&'a self, index: &uint) -> &'a f32 {
         &self.elements[*index]
     }
@@ -114,6 +121,7 @@ impl IndexMut<uint, f32> for Vector {
     ///
     /// assert!((v[0], v[1], v[2]) == (3.0, 2.0, 3.0))
     /// ```
+    #[inline(always)]
     fn index_mut<'a>(&'a mut self, index: &uint) -> &'a mut f32 {
         &mut self.elements[*index]
     }
@@ -130,6 +138,7 @@ impl Neg<Vector> for Vector {
     ///
     /// assert!((b[0], b[1], b[2]) == (-1.0, -3.0, -9.0))
     /// ```
+    #[inline]
     fn neg(&self) -> Vector {
         Vector{ elements: [ -self[0], -self[1], -self[2] ] }
     }
@@ -148,6 +157,7 @@ impl Add<Vector, Vector> for Vector {
     ///
     /// assert!((c[0], c[1], c[2]) == (3.0, 4.0, 0.0))
     /// ```
+    #[inline]
     fn add(&self, other: &Vector) -> Vector {
         Vector{ elements: [self[0] + other[0], self[1] + other[1], self[2] + other[2] ] }
     }
@@ -166,6 +176,7 @@ impl Sub<Vector, Vector> for Vector {
     ///
     /// assert!((c[0], c[1], c[2]) == (0.0, -2.0, 7.0))
     /// ```
+    #[inline]
     fn sub(&self, other: &Vector) -> Vector {
         Vector{ elements: [ self[0] - other[0], self[1] - other[1], self[2] - other[2] ] }
     }
