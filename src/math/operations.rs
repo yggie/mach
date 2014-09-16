@@ -1,6 +1,28 @@
 use math::Vector;
 use math::Matrix;
 
+/// Computes the outer product between two Vectors.
+///
+/// ```rust
+/// # use mithril::math::{ Vector, outer };
+/// let a = Vector::new(1.0, 2.0, 3.0);
+/// let b = Vector::new(4.0, 5.0, 6.0);
+///
+/// let m = outer(&a, &b);
+///
+/// assert!((m[0], m[1], m[2]) == ( 4.0,  5.0,  6.0))
+/// assert!((m[3], m[4], m[5]) == ( 8.0, 10.0, 12.0))
+/// assert!((m[6], m[7], m[8]) == (12.0, 15.0, 18.0))
+/// ```
+pub fn outer(a: &Vector, b: &Vector) -> Matrix {
+    let elems: [f32, ..9] = [
+        a[0]*b[0], a[0]*b[1], a[0]*b[2],
+        a[1]*b[0], a[1]*b[1], a[1]*b[2],
+        a[2]*b[0], a[2]*b[1], a[2]*b[2],
+        ];
+    Matrix::new(&elems)
+}
+
 impl Mul<Vector, Vector> for Matrix {
     /// Computes the resulting vector from the multiplication between a matrix
     /// and a vector.

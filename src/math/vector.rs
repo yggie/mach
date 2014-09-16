@@ -18,6 +18,7 @@ impl Vector {
     ///
     /// assert!((v[0], v[1], v[2]) == (1.0, 2.0, 3.0))
     /// ```
+    #[inline(always)]
     pub fn new(x: f32, y: f32, z: f32) -> Vector {
         Vector{ elements: [x, y, z] }
     }
@@ -63,34 +64,34 @@ impl Vector {
     /// ```
     #[inline]
     pub fn normalize(v: &Vector) -> Vector {
-        let l = v.length();
+        let l = Vector::length(v);
         Vector{ elements: [ v[0]/l, v[1]/l, v[2]/l ] }
     }
 
-    /// Computes the squared length of the Vector.
+    /// Computes the squared length of a Vector.
     ///
     /// ```rust
     /// # use mithril::math::Vector;
     /// let v = Vector::new(1.0, -2.0, 3.0);
     ///
-    /// assert!(v.length_sq() == 14.0)
+    /// assert!(Vector::length_sq(&v) == 14.0)
     /// ```
     #[inline(always)]
-    pub fn length_sq(&self) -> f32 {
-        self[0]*self[0] + self[1]*self[1] + self[2]*self[2]
+    pub fn length_sq(v: &Vector) -> f32 {
+        v[0]*v[0] + v[1]*v[1] + v[2]*v[2]
     }
 
-    /// Computes the length of the Vector.
+    /// Computes the length of a Vector.
     ///
     /// ```rust
     /// # use mithril::math::Vector;
     /// let v = Vector::new(2.0, 3.0, 6.0);
     ///
-    /// assert!(v.length() == 7.0)
+    /// assert!(Vector::length(&v) == 7.0)
     /// ```
     #[inline(always)]
-    pub fn length(&self) -> f32 {
-        self.length_sq().sqrt()
+    pub fn length(v: &Vector) -> f32 {
+        Vector::length_sq(v).sqrt()
     }
 }
 

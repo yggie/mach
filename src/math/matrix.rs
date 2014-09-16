@@ -5,17 +5,18 @@ pub struct Matrix {
 
 impl Matrix {
 
-    /// Constructs a new matrix given 9 elements in column major order.
+    /// Constructs a new matrix given 9 elements in row major order.
     ///
     /// ```rust
     /// # use mithril::math::Matrix;
     /// let elems: [f32, ..9] = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0];
     /// let m = Matrix::new(&elems);
     ///
-    /// assert!((m[0], m[3], m[6]) == (1.0, 4.0, 7.0))
-    /// assert!((m[1], m[4], m[7]) == (2.0, 5.0, 8.0))
-    /// assert!((m[2], m[5], m[8]) == (3.0, 6.0, 9.0))
+    /// assert!((m[0], m[1], m[2]) == (1.0, 2.0, 3.0))
+    /// assert!((m[3], m[4], m[5]) == (4.0, 5.0, 6.0))
+    /// assert!((m[6], m[7], m[8]) == (7.0, 8.0, 9.0))
     /// ```
+    #[inline(always)]
     pub fn new(elements: &[f32, ..9]) -> Matrix {
         Matrix{ elements: *elements }
     }
@@ -26,15 +27,33 @@ impl Matrix {
     /// # use mithril::math::Matrix;
     /// let m = Matrix::diag(1.0, 2.0, 3.0);
     ///
-    /// assert!((m[0], m[3], m[6]) == (1.0, 0.0, 0.0))
-    /// assert!((m[1], m[4], m[7]) == (0.0, 2.0, 0.0))
-    /// assert!((m[2], m[5], m[8]) == (0.0, 0.0, 3.0))
+    /// assert!((m[0], m[1], m[2]) == (1.0, 0.0, 0.0))
+    /// assert!((m[3], m[4], m[5]) == (0.0, 2.0, 0.0))
+    /// assert!((m[6], m[7], m[8]) == (0.0, 0.0, 3.0))
     /// ```
     pub fn diag(x: f32, y: f32, z: f32) -> Matrix {
         Matrix{ elements: [
               x, 0.0, 0.0,
             0.0,   y, 0.0,
             0.0, 0.0,   z
+        ] }
+    }
+
+    /// Constructs a skew matrix based on the input vector.
+    ///
+    /// ```rust
+    /// # use mithril::math::Matrix;
+    /// let m = Matrix::skew(1.0, 2.0, 3.0);
+    ///
+    /// assert!((m[0], m[1], m[2]) == ( 0.0, -3.0,  2.0))
+    /// assert!((m[3], m[4], m[5]) == ( 3.0,  0.0, -1.0))
+    /// assert!((m[6], m[7], m[8]) == (-2.0,  1.0,  0.0))
+    /// ```
+    pub fn skew(x: f32, y: f32, z: f32) -> Matrix {
+        Matrix{ elements: [
+            0.0,  -z,   y,
+              z, 0.0,  -x,
+             -y,   x, 0.0
         ] }
     }
 
@@ -66,21 +85,21 @@ impl Matrix {
     ///
     /// let m = Matrix::mult(&a, &b);
     ///
-    /// assert!((m[0], m[3], m[6]) == (18.0, 54.0, 90.0))
-    /// assert!((m[1], m[4], m[7]) == (24.0, 69.0, 114.0))
-    /// assert!((m[2], m[5], m[8]) == (30.0, 84.0, 138.0))
+    /// assert!((m[0], m[1], m[2]) == ( 42.0,  36.0,  30.0))
+    /// assert!((m[3], m[4], m[5]) == ( 96.0,  81.0,  66.0))
+    /// assert!((m[6], m[7], m[8]) == (150.0, 126.0, 102.0))
     /// ```
     pub fn mult(a: &Matrix, b: &Matrix) -> Matrix {
         let elems: [f32, ..9] = [
-            a[0]*b[0] + a[3]*b[1] + a[6]*b[2],
-            a[1]*b[0] + a[4]*b[1] + a[7]*b[2],
-            a[2]*b[0] + a[5]*b[1] + a[8]*b[2],
-            a[0]*b[3] + a[3]*b[4] + a[6]*b[5],
-            a[1]*b[3] + a[4]*b[4] + a[7]*b[5],
-            a[2]*b[3] + a[5]*b[4] + a[8]*b[5],
-            a[0]*b[6] + a[3]*b[7] + a[6]*b[8],
-            a[1]*b[6] + a[4]*b[7] + a[7]*b[8],
-            a[2]*b[6] + a[5]*b[7] + a[8]*b[8],
+            a[0]*b[0] + a[1]*b[3] + a[2]*b[6],
+            a[0]*b[1] + a[1]*b[4] + a[2]*b[7],
+            a[0]*b[2] + a[1]*b[5] + a[2]*b[8],
+            a[3]*b[0] + a[4]*b[3] + a[5]*b[6],
+            a[3]*b[1] + a[4]*b[4] + a[5]*b[7],
+            a[3]*b[2] + a[4]*b[5] + a[5]*b[8],
+            a[6]*b[0] + a[7]*b[3] + a[8]*b[6],
+            a[6]*b[1] + a[7]*b[4] + a[8]*b[7],
+            a[6]*b[2] + a[7]*b[5] + a[8]*b[8],
         ];
         Matrix{ elements: elems }
     }
@@ -95,9 +114,9 @@ impl Index<uint, f32> for Matrix {
     /// let elems: [f32, ..9] = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0];
     /// let m = Matrix::new(&elems);
     ///
-    /// assert!((m[0], m[3], m[6]) == (1.0, 4.0, 7.0))
-    /// assert!((m[1], m[4], m[7]) == (2.0, 5.0, 8.0))
-    /// assert!((m[2], m[5], m[8]) == (3.0, 6.0, 9.0))
+    /// assert!((m[0], m[1], m[2]) == (1.0, 2.0, 3.0))
+    /// assert!((m[3], m[4], m[5]) == (4.0, 5.0, 6.0))
+    /// assert!((m[6], m[7], m[8]) == (7.0, 8.0, 9.0))
     /// ```
     #[inline(always)]
     fn index<'a>(&'a self, index: &uint) -> &'a f32 {
@@ -119,9 +138,9 @@ impl IndexMut<uint, f32> for Matrix {
     /// m[4] = 12.0;
     /// m[8] = 13.0;
     ///
-    /// assert!((m[0], m[3], m[6]) == (11.0, 4.0, 7.0))
-    /// assert!((m[1], m[4], m[7]) == (2.0, 12.0, 8.0))
-    /// assert!((m[2], m[5], m[8]) == (3.0, 6.0, 13.0))
+    /// assert!((m[0], m[1], m[2]) == (11.0, 2.0, 3.0))
+    /// assert!((m[3], m[4], m[5]) == (4.0, 12.0, 6.0))
+    /// assert!((m[6], m[7], m[8]) == (7.0, 8.0, 13.0))
     /// ```
     #[inline(always)]
     fn index_mut<'a>(&'a mut self, index: &uint) -> &'a mut f32 {
@@ -138,9 +157,9 @@ impl Neg<Matrix> for Matrix {
     /// let elems: [f32, ..9] = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0];
     /// let m = -Matrix::new(&elems);
     ///
-    /// assert!((m[0], m[3], m[6]) == (-1.0, -4.0, -7.0))
-    /// assert!((m[1], m[4], m[7]) == (-2.0, -5.0, -8.0))
-    /// assert!((m[2], m[5], m[8]) == (-3.0, -6.0, -9.0))
+    /// assert!((m[0], m[1], m[2]) == (-1.0, -2.0, -3.0))
+    /// assert!((m[3], m[4], m[5]) == (-4.0, -5.0, -6.0))
+    /// assert!((m[6], m[7], m[8]) == (-7.0, -8.0, -9.0))
     /// ```
     fn neg(&self) -> Matrix {
         let elems: [f32, ..9] = [
@@ -164,9 +183,9 @@ impl Add<Matrix, Matrix> for Matrix {
     ///
     /// let m = a + b;
     ///
-    /// assert!((m[0], m[3], m[6]) == (4.0, 4.0, 7.0))
-    /// assert!((m[1], m[4], m[7]) == (2.0, 7.0, 8.0))
-    /// assert!((m[2], m[5], m[8]) == (3.0, 6.0, 10.0))
+    /// assert!((m[0], m[1], m[2]) == (4.0, 2.0, 3.0))
+    /// assert!((m[3], m[4], m[5]) == (4.0, 7.0, 6.0))
+    /// assert!((m[6], m[7], m[8]) == (7.0, 8.0, 10.0))
     /// ```
     fn add(&self, other: &Matrix) -> Matrix {
         let elems: [f32, ..9] = [
@@ -190,9 +209,9 @@ impl Sub<Matrix, Matrix> for Matrix {
     ///
     /// let m = a - b;
     ///
-    /// assert!((m[0], m[3], m[6]) == (0.0, 4.0, 7.0))
-    /// assert!((m[1], m[4], m[7]) == (2.0, 3.0, 8.0))
-    /// assert!((m[2], m[5], m[8]) == (3.0, 6.0, 6.0))
+    /// assert!((m[0], m[1], m[2]) == (0.0, 2.0, 3.0))
+    /// assert!((m[3], m[4], m[5]) == (4.0, 3.0, 6.0))
+    /// assert!((m[6], m[7], m[8]) == (7.0, 8.0, 6.0))
     /// ```
     fn sub(&self, other: &Matrix) -> Matrix {
         let elems: [f32, ..9] = [
@@ -203,7 +222,7 @@ impl Sub<Matrix, Matrix> for Matrix {
         Matrix{ elements: elems }
     }
 }
-//
+
 // /// Implement the multiplication operator between Matrices.
 // impl Mul<Matrix, Matrix> for Matrix {
 //     /// Calculates the result of applying matrix multiplication between two
@@ -218,21 +237,21 @@ impl Sub<Matrix, Matrix> for Matrix {
 //     ///
 //     /// let m = a * b;
 //     ///
-//     /// assert!((m[0], m[3], m[6]) == (18.0, 54.0, 90.0))
-//     /// assert!((m[1], m[4], m[7]) == (24.0, 69.0, 114.0))
-//     /// assert!((m[2], m[5], m[8]) == (30.0, 84.0, 138.0))
+//     /// assert!((m[0], m[1], m[2]) == ( 42.0,  36.0,  30.0))
+//     /// assert!((m[3], m[4], m[5]) == ( 96.0,  81.0,  66.0))
+//     /// assert!((m[6], m[7], m[8]) == (150.0, 126.0, 102.0))
 //     /// ```
 //     fn mul(&self, other: &Matrix) -> Matrix {
 //         let elems: [f32, ..9] = [
-//             self[0]*other[0] + self[3]*other[1] + self[6]*other[2],
-//             self[1]*other[0] + self[4]*other[1] + self[7]*other[2],
-//             self[2]*other[0] + self[5]*other[1] + self[8]*other[2],
-//             self[0]*other[3] + self[3]*other[4] + self[6]*other[5],
-//             self[1]*other[3] + self[4]*other[4] + self[7]*other[5],
-//             self[2]*other[3] + self[5]*other[4] + self[8]*other[5],
-//             self[0]*other[6] + self[3]*other[7] + self[6]*other[8],
-//             self[1]*other[6] + self[4]*other[7] + self[7]*other[8],
-//             self[2]*other[6] + self[5]*other[7] + self[8]*other[8],
+//             self[0]*other[0] + self[1]*other[3] + self[2]*other[6],
+//             self[0]*other[1] + self[1]*other[4] + self[2]*other[7],
+//             self[0]*other[2] + self[1]*other[5] + self[2]*other[8],
+//             self[3]*other[0] + self[4]*other[3] + self[5]*other[6],
+//             self[3]*other[1] + self[4]*other[4] + self[5]*other[7],
+//             self[3]*other[2] + self[4]*other[5] + self[5]*other[8],
+//             self[6]*other[0] + self[7]*other[3] + self[8]*other[6],
+//             self[6]*other[1] + self[7]*other[4] + self[8]*other[7],
+//             self[6]*other[2] + self[7]*other[5] + self[8]*other[8],
 //         ];
 //         Matrix{ elements: elems }
 //     }
