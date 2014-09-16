@@ -52,6 +52,38 @@ impl Matrix {
     pub fn get(&self, row: uint, col: uint) -> f32 {
         self.elements[3*col + row]
     }
+
+
+    /// Calculates the result of applying matrix multiplication between two
+    /// matrices. (TEMPORARY UNTIL ASSOCIATED TYPES ARE SUPPORTED IN RUST)
+    ///
+    /// ```rust
+    /// # use mithril::math::Matrix;
+    /// let elems_a: [f32, ..9] = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0];
+    /// let a = Matrix::new(&elems_a);
+    /// let elems_b: [f32, ..9] = [3.0, 2.0, 1.0, 6.0, 5.0, 4.0, 9.0, 8.0, 7.0];
+    /// let b = Matrix::new(&elems_b);
+    ///
+    /// let m = Matrix::mult(&a, &b);
+    ///
+    /// assert!((m[0], m[3], m[6]) == (18.0, 54.0, 90.0))
+    /// assert!((m[1], m[4], m[7]) == (24.0, 69.0, 114.0))
+    /// assert!((m[2], m[5], m[8]) == (30.0, 84.0, 138.0))
+    /// ```
+    pub fn mult(a: &Matrix, b: &Matrix) -> Matrix {
+        let elems: [f32, ..9] = [
+            a[0]*b[0] + a[3]*b[1] + a[6]*b[2],
+            a[1]*b[0] + a[4]*b[1] + a[7]*b[2],
+            a[2]*b[0] + a[5]*b[1] + a[8]*b[2],
+            a[0]*b[3] + a[3]*b[4] + a[6]*b[5],
+            a[1]*b[3] + a[4]*b[4] + a[7]*b[5],
+            a[2]*b[3] + a[5]*b[4] + a[8]*b[5],
+            a[0]*b[6] + a[3]*b[7] + a[6]*b[8],
+            a[1]*b[6] + a[4]*b[7] + a[7]*b[8],
+            a[2]*b[6] + a[5]*b[7] + a[8]*b[8],
+        ];
+        Matrix{ elements: elems }
+    }
 }
 
 /// Implement the index operator.
