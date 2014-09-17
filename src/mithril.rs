@@ -10,11 +10,9 @@ pub mod math {
     pub use self::vector::Vector;
     pub use self::matrix::Matrix;
     pub use self::transform::Transform;
-    pub use self::operations::outer;
 
     mod vector;
     mod matrix;
-    mod operations;
     mod transform;
 }
 

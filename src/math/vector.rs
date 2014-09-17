@@ -1,3 +1,5 @@
+use math::Matrix;
+
 #[cfg(test)]
 #[path="../../tests/math/vector_test.rs"]
 mod tests;
@@ -23,6 +25,20 @@ impl Vector {
         Vector{ elements: [x, y, z] }
     }
 
+    /// A multiplies a Vector by a scalar.
+    ///
+    /// ```rust
+    /// # use mithril::math::Vector;
+    /// let a = Vector::new(1.0, 2.0, 3.0);
+    /// let v = a.scale(2.5);
+    ///
+    /// assert!((v[0], v[1], v[2]) == (2.5, 5.0, 7.5))
+    /// ```
+    #[inline(always)]
+    pub fn scale(&self, s: f32) -> Vector {
+        Vector::new(self[0]*s, self[1]*s, self[2]*s)
+    }
+
     /// Computes the dot product between two vectors.
     ///
     /// ```rust
@@ -30,11 +46,11 @@ impl Vector {
     /// let a = Vector::new(1.0, 2.0, 3.0);
     /// let b = Vector::new(2.0, -2.0, 2.0);
     ///
-    /// assert!(Vector::dot(&a, &b) == 4.0)
+    /// assert!(a.dot(&b) == 4.0)
     /// ```
     #[inline(always)]
-    pub fn dot(a: &Vector, b: &Vector) -> f32 {
-        a[0]*b[0] + a[1]*b[1] + a[2]*b[2]
+    pub fn dot(&self, other: &Vector) -> f32 {
+        self[0]*other[0] + self[1]*other[1] + self[2]*other[2]
     }
 
     /// Computes the cross product between two vectors.
@@ -44,13 +60,17 @@ impl Vector {
     /// let a = Vector::new(1.0, 2.0, 1.0);
     /// let b = Vector::new(2.0, 1.0, 2.0);
     ///
-    /// let c = Vector::cross(&a, &b);
+    /// let c = a.cross(&b);
     ///
     /// assert!((c[0], c[1], c[2]) == (3.0, 0.0, -3.0))
     /// ```
     #[inline]
-    pub fn cross(a: &Vector, b: &Vector) -> Vector {
-        Vector{ elements: [ a[1]*b[2] - a[2]*b[1], a[2]*b[0] - a[0]*b[2], a[0]*b[1] - a[1]*b[0] ] }
+    pub fn cross(&self, other: &Vector) -> Vector {
+        Vector::new(
+            self[1]*other[2] - self[2]*other[1],
+            self[2]*other[0] - self[0]*other[2],
+            self[0]*other[1] - self[1]*other[0],
+        )
     }
 
     /// Computes the direction vector of a Vector.
@@ -58,14 +78,14 @@ impl Vector {
     /// ```rust
     /// # use mithril::math::Vector;
     /// let v = Vector::new(12.0, 20.0, 9.0);
-    /// let n = Vector::normalize(&v);
+    /// let n = v.normalize();
     ///
     /// assert!((n[0], n[1], n[2]) == (0.48, 0.80, 0.36))
     /// ```
     #[inline]
-    pub fn normalize(v: &Vector) -> Vector {
-        let l = Vector::length(v);
-        Vector{ elements: [ v[0]/l, v[1]/l, v[2]/l ] }
+    pub fn normalize(&self) -> Vector {
+        let l = self.length();
+        Vector::new(self[0]/l, self[1]/l, self[2]/l)
     }
 
     /// Computes the squared length of a Vector.
@@ -74,11 +94,11 @@ impl Vector {
     /// # use mithril::math::Vector;
     /// let v = Vector::new(1.0, -2.0, 3.0);
     ///
-    /// assert!(Vector::length_sq(&v) == 14.0)
+    /// assert!(v.length_sq() == 14.0)
     /// ```
     #[inline(always)]
-    pub fn length_sq(v: &Vector) -> f32 {
-        v[0]*v[0] + v[1]*v[1] + v[2]*v[2]
+    pub fn length_sq(&self) -> f32 {
+        self[0]*self[0] + self[1]*self[1] + self[2]*self[2]
     }
 
     /// Computes the length of a Vector.
@@ -87,11 +107,33 @@ impl Vector {
     /// # use mithril::math::Vector;
     /// let v = Vector::new(2.0, 3.0, 6.0);
     ///
-    /// assert!(Vector::length(&v) == 7.0)
+    /// assert!(v.length() == 7.0)
     /// ```
     #[inline(always)]
-    pub fn length(v: &Vector) -> f32 {
-        Vector::length_sq(v).sqrt()
+    pub fn length(&self) -> f32 {
+        self.length_sq().sqrt()
+    }
+
+    /// Computes the outer product between two Vectors.
+    ///
+    /// ```rust
+    /// # use mithril::math::Vector;
+    /// let a = Vector::new(1.0, 2.0, 3.0);
+    /// let b = Vector::new(4.0, 5.0, 6.0);
+    ///
+    /// let m = a.outer(&b);
+    ///
+    /// assert!((m[0], m[1], m[2]) == ( 4.0,  5.0,  6.0))
+    /// assert!((m[3], m[4], m[5]) == ( 8.0, 10.0, 12.0))
+    /// assert!((m[6], m[7], m[8]) == (12.0, 15.0, 18.0))
+    /// ```
+    pub fn outer(&self, other: &Vector) -> Matrix {
+        let elems: [f32, ..9] = [
+            self[0]*other[0], self[0]*other[1], self[0]*other[2],
+            self[1]*other[0], self[1]*other[1], self[1]*other[2],
+            self[2]*other[0], self[2]*other[1], self[2]*other[2],
+        ];
+        Matrix::new(&elems)
     }
 }
 

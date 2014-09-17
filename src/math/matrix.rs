@@ -1,3 +1,5 @@
+use math::Vector;
+
 /// A representation of a 3-by-3 matrix
 pub struct Matrix {
     elements: [f32, ..9]
@@ -31,6 +33,7 @@ impl Matrix {
     /// assert!((m[3], m[4], m[5]) == (0.0, 2.0, 0.0))
     /// assert!((m[6], m[7], m[8]) == (0.0, 0.0, 3.0))
     /// ```
+    #[inline(always)]
     pub fn diag(x: f32, y: f32, z: f32) -> Matrix {
         Matrix{ elements: [
               x, 0.0, 0.0,
@@ -49,12 +52,37 @@ impl Matrix {
     /// assert!((m[3], m[4], m[5]) == ( 3.0,  0.0, -1.0))
     /// assert!((m[6], m[7], m[8]) == (-2.0,  1.0,  0.0))
     /// ```
+    #[inline(always)]
     pub fn skew(x: f32, y: f32, z: f32) -> Matrix {
         Matrix{ elements: [
             0.0,  -z,   y,
               z, 0.0,  -x,
              -y,   x, 0.0
         ] }
+    }
+
+    /// Computes the orientation matrix given the axis of rotation and angle
+    /// of rotation measured in radians.
+    ///
+    /// ```rust
+    /// # use mithril::math::{ Vector, Matrix };
+    /// let a = Vector::new(0.0, 0.0, 1.0);
+    /// let radians = 3.0f32;
+    /// let c = radians.cos();
+    /// let s = radians.sin();
+    /// let r = Matrix::rotation(radians, &a);
+    ///
+    /// assert!((r[0], r[1], r[2]) == (  c,  -s, 0.0))
+    /// assert!((r[3], r[4], r[5]) == (  s,   c, 0.0))
+    /// assert!((r[6], r[7], r[8]) == (0.0, 0.0, 1.0))
+    /// ```
+    pub fn rotation(radians: f32, axis: &Vector) -> Matrix {
+        let c = radians.cos();
+        let s = radians.sin();
+        let a = axis.normalize();
+        let c1 = 1.0 - c;
+        let aa = Vector::new(a[0]*c1, a[1]*c1, a[2]*c1);
+        Matrix::diag(c, c, c) + a.outer(&aa) + Matrix::skew(a[0]*s, a[1]*s, a[2]*s)
     }
 
     /// Takes an element from the matrix
@@ -256,3 +284,27 @@ impl Sub<Matrix, Matrix> for Matrix {
 //         Matrix{ elements: elems }
 //     }
 // }
+
+impl Mul<Vector, Vector> for Matrix {
+    /// Computes the resulting vector from the multiplication between a matrix
+    /// and a vector.
+    ///
+    /// ```rust
+    /// # use mithril::math::Vector;
+    /// # use mithril::math::Matrix;
+    /// let elems: [f32, ..9] = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0];
+    /// let m = Matrix::new(&elems);
+    /// let v = Vector::new(1.0, 2.0, 3.0);
+    ///
+    /// let a = m * v;
+    ///
+    /// assert!((a[0], a[1], a[2]) == (30.0, 36.0, 42.0))
+    /// ```
+    fn mul(&self, vect: &Vector) -> Vector {
+        Vector::new(
+            self[0]*vect[0] + self[3]*vect[1] + self[6]*vect[2],
+            self[1]*vect[0] + self[4]*vect[1] + self[7]*vect[2],
+            self[2]*vect[0] + self[5]*vect[1] + self[8]*vect[2],
+        )
+    }
+}
