@@ -14,13 +14,27 @@ impl Matrix {
     /// let elems: [f32, ..9] = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0];
     /// let m = Matrix::new(&elems);
     ///
-    /// assert!((m[0], m[1], m[2]) == (1.0, 2.0, 3.0))
-    /// assert!((m[3], m[4], m[5]) == (4.0, 5.0, 6.0))
-    /// assert!((m[6], m[7], m[8]) == (7.0, 8.0, 9.0))
+    /// assert_eq!((m[0], m[1], m[2]), (1.0, 2.0, 3.0))
+    /// assert_eq!((m[3], m[4], m[5]), (4.0, 5.0, 6.0))
+    /// assert_eq!((m[6], m[7], m[8]), (7.0, 8.0, 9.0))
     /// ```
     #[inline(always)]
     pub fn new(elements: &[f32, ..9]) -> Matrix {
         Matrix{ elements: *elements }
+    }
+
+    /// Constructs an identity matrix.
+    ///
+    /// ```rust
+    /// # use mithril::math::Matrix;
+    /// let m = Matrix::identity();
+    ///
+    /// assert_eq!((m[0], m[1], m[2]), (1.0, 0.0, 0.0))
+    /// assert_eq!((m[3], m[4], m[5]), (0.0, 1.0, 0.0))
+    /// assert_eq!((m[6], m[7], m[8]), (0.0, 0.0, 1.0))
+    /// ```
+    pub fn identity() -> Matrix {
+        Matrix::diag(1.0, 1.0, 1.0)
     }
 
     /// Constructs a new matrix given 3 elements in the matrix diagonal.
@@ -29,9 +43,9 @@ impl Matrix {
     /// # use mithril::math::Matrix;
     /// let m = Matrix::diag(1.0, 2.0, 3.0);
     ///
-    /// assert!((m[0], m[1], m[2]) == (1.0, 0.0, 0.0))
-    /// assert!((m[3], m[4], m[5]) == (0.0, 2.0, 0.0))
-    /// assert!((m[6], m[7], m[8]) == (0.0, 0.0, 3.0))
+    /// assert_eq!((m[0], m[1], m[2]), (1.0, 0.0, 0.0))
+    /// assert_eq!((m[3], m[4], m[5]), (0.0, 2.0, 0.0))
+    /// assert_eq!((m[6], m[7], m[8]), (0.0, 0.0, 3.0))
     /// ```
     #[inline(always)]
     pub fn diag(x: f32, y: f32, z: f32) -> Matrix {
@@ -48,9 +62,9 @@ impl Matrix {
     /// # use mithril::math::Matrix;
     /// let m = Matrix::skew(1.0, 2.0, 3.0);
     ///
-    /// assert!((m[0], m[1], m[2]) == ( 0.0, -3.0,  2.0))
-    /// assert!((m[3], m[4], m[5]) == ( 3.0,  0.0, -1.0))
-    /// assert!((m[6], m[7], m[8]) == (-2.0,  1.0,  0.0))
+    /// assert_eq!((m[0], m[1], m[2]), ( 0.0, -3.0,  2.0))
+    /// assert_eq!((m[3], m[4], m[5]), ( 3.0,  0.0, -1.0))
+    /// assert_eq!((m[6], m[7], m[8]), (-2.0,  1.0,  0.0))
     /// ```
     #[inline(always)]
     pub fn skew(x: f32, y: f32, z: f32) -> Matrix {
@@ -72,9 +86,9 @@ impl Matrix {
     /// let s = radians.sin();
     /// let r = Matrix::rotation(radians, &a);
     ///
-    /// assert!((r[0], r[1], r[2]) == (  c,  -s, 0.0))
-    /// assert!((r[3], r[4], r[5]) == (  s,   c, 0.0))
-    /// assert!((r[6], r[7], r[8]) == (0.0, 0.0, 1.0))
+    /// assert_eq!((r[0], r[1], r[2]), (  c,  -s, 0.0))
+    /// assert_eq!((r[3], r[4], r[5]), (  s,   c, 0.0))
+    /// assert_eq!((r[6], r[7], r[8]), (0.0, 0.0, 1.0))
     /// ```
     pub fn rotation(radians: f32, axis: &Vector) -> Matrix {
         let c = radians.cos();
@@ -91,9 +105,9 @@ impl Matrix {
     /// # use mithril::math::Matrix;
     /// let m = Matrix::diag(4.0, 5.0, 2.0);
     ///
-    /// assert!((m.get(0, 0), m.get(0, 1), m.get(0, 2)) == (4.0, 0.0, 0.0))
-    /// assert!((m.get(1, 0), m.get(1, 1), m.get(1, 2)) == (0.0, 5.0, 0.0))
-    /// assert!((m.get(2, 0), m.get(2, 1), m.get(2, 2)) == (0.0, 0.0, 2.0))
+    /// assert_eq!((m.get(0, 0), m.get(0, 1), m.get(0, 2)), (4.0, 0.0, 0.0))
+    /// assert_eq!((m.get(1, 0), m.get(1, 1), m.get(1, 2)), (0.0, 5.0, 0.0))
+    /// assert_eq!((m.get(2, 0), m.get(2, 1), m.get(2, 2)), (0.0, 0.0, 2.0))
     /// ```
     #[inline(always)]
     pub fn get(&self, row: uint, col: uint) -> f32 {
@@ -113,9 +127,9 @@ impl Matrix {
     ///
     /// let m = Matrix::mult(&a, &b);
     ///
-    /// assert!((m[0], m[1], m[2]) == ( 42.0,  36.0,  30.0))
-    /// assert!((m[3], m[4], m[5]) == ( 96.0,  81.0,  66.0))
-    /// assert!((m[6], m[7], m[8]) == (150.0, 126.0, 102.0))
+    /// assert_eq!((m[0], m[1], m[2]), ( 42.0,  36.0,  30.0))
+    /// assert_eq!((m[3], m[4], m[5]), ( 96.0,  81.0,  66.0))
+    /// assert_eq!((m[6], m[7], m[8]), (150.0, 126.0, 102.0))
     /// ```
     pub fn mult(a: &Matrix, b: &Matrix) -> Matrix {
         let elems: [f32, ..9] = [
@@ -142,9 +156,9 @@ impl Index<uint, f32> for Matrix {
     /// let elems: [f32, ..9] = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0];
     /// let m = Matrix::new(&elems);
     ///
-    /// assert!((m[0], m[1], m[2]) == (1.0, 2.0, 3.0))
-    /// assert!((m[3], m[4], m[5]) == (4.0, 5.0, 6.0))
-    /// assert!((m[6], m[7], m[8]) == (7.0, 8.0, 9.0))
+    /// assert_eq!((m[0], m[1], m[2]), (1.0, 2.0, 3.0))
+    /// assert_eq!((m[3], m[4], m[5]), (4.0, 5.0, 6.0))
+    /// assert_eq!((m[6], m[7], m[8]), (7.0, 8.0, 9.0))
     /// ```
     #[inline(always)]
     fn index<'a>(&'a self, index: &uint) -> &'a f32 {
@@ -166,9 +180,9 @@ impl IndexMut<uint, f32> for Matrix {
     /// m[4] = 12.0;
     /// m[8] = 13.0;
     ///
-    /// assert!((m[0], m[1], m[2]) == (11.0, 2.0, 3.0))
-    /// assert!((m[3], m[4], m[5]) == (4.0, 12.0, 6.0))
-    /// assert!((m[6], m[7], m[8]) == (7.0, 8.0, 13.0))
+    /// assert_eq!((m[0], m[1], m[2]), (11.0, 2.0, 3.0))
+    /// assert_eq!((m[3], m[4], m[5]), (4.0, 12.0, 6.0))
+    /// assert_eq!((m[6], m[7], m[8]), (7.0, 8.0, 13.0))
     /// ```
     #[inline(always)]
     fn index_mut<'a>(&'a mut self, index: &uint) -> &'a mut f32 {
@@ -185,9 +199,9 @@ impl Neg<Matrix> for Matrix {
     /// let elems: [f32, ..9] = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0];
     /// let m = -Matrix::new(&elems);
     ///
-    /// assert!((m[0], m[1], m[2]) == (-1.0, -2.0, -3.0))
-    /// assert!((m[3], m[4], m[5]) == (-4.0, -5.0, -6.0))
-    /// assert!((m[6], m[7], m[8]) == (-7.0, -8.0, -9.0))
+    /// assert_eq!((m[0], m[1], m[2]), (-1.0, -2.0, -3.0))
+    /// assert_eq!((m[3], m[4], m[5]), (-4.0, -5.0, -6.0))
+    /// assert_eq!((m[6], m[7], m[8]), (-7.0, -8.0, -9.0))
     /// ```
     fn neg(&self) -> Matrix {
         let elems: [f32, ..9] = [
@@ -211,9 +225,9 @@ impl Add<Matrix, Matrix> for Matrix {
     ///
     /// let m = a + b;
     ///
-    /// assert!((m[0], m[1], m[2]) == (4.0, 2.0, 3.0))
-    /// assert!((m[3], m[4], m[5]) == (4.0, 7.0, 6.0))
-    /// assert!((m[6], m[7], m[8]) == (7.0, 8.0, 10.0))
+    /// assert_eq!((m[0], m[1], m[2]), (4.0, 2.0, 3.0))
+    /// assert_eq!((m[3], m[4], m[5]), (4.0, 7.0, 6.0))
+    /// assert_eq!((m[6], m[7], m[8]), (7.0, 8.0, 10.0))
     /// ```
     fn add(&self, other: &Matrix) -> Matrix {
         let elems: [f32, ..9] = [
@@ -237,9 +251,9 @@ impl Sub<Matrix, Matrix> for Matrix {
     ///
     /// let m = a - b;
     ///
-    /// assert!((m[0], m[1], m[2]) == (0.0, 2.0, 3.0))
-    /// assert!((m[3], m[4], m[5]) == (4.0, 3.0, 6.0))
-    /// assert!((m[6], m[7], m[8]) == (7.0, 8.0, 6.0))
+    /// assert_eq!((m[0], m[1], m[2]), (0.0, 2.0, 3.0))
+    /// assert_eq!((m[3], m[4], m[5]), (4.0, 3.0, 6.0))
+    /// assert_eq!((m[6], m[7], m[8]), (7.0, 8.0, 6.0))
     /// ```
     fn sub(&self, other: &Matrix) -> Matrix {
         let elems: [f32, ..9] = [
@@ -265,9 +279,9 @@ impl Sub<Matrix, Matrix> for Matrix {
 //     ///
 //     /// let m = a * b;
 //     ///
-//     /// assert!((m[0], m[1], m[2]) == ( 42.0,  36.0,  30.0))
-//     /// assert!((m[3], m[4], m[5]) == ( 96.0,  81.0,  66.0))
-//     /// assert!((m[6], m[7], m[8]) == (150.0, 126.0, 102.0))
+//     /// assert_eq!((m[0], m[1], m[2]), ( 42.0,  36.0,  30.0))
+//     /// assert_eq!((m[3], m[4], m[5]), ( 96.0,  81.0,  66.0))
+//     /// assert_eq!((m[6], m[7], m[8]), (150.0, 126.0, 102.0))
 //     /// ```
 //     fn mul(&self, other: &Matrix) -> Matrix {
 //         let elems: [f32, ..9] = [
@@ -298,7 +312,7 @@ impl Mul<Vector, Vector> for Matrix {
     ///
     /// let a = m * v;
     ///
-    /// assert!((a[0], a[1], a[2]) == (30.0, 36.0, 42.0))
+    /// assert_eq!((a[0], a[1], a[2]), (30.0, 36.0, 42.0))
     /// ```
     fn mul(&self, vect: &Vector) -> Vector {
         Vector::new(

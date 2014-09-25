@@ -1,9 +1,5 @@
 use math::Matrix;
 
-#[cfg(test)]
-#[path="../../tests/math/vector_test.rs"]
-mod tests;
-
 /// A representation of a 3-dimensional column vector.
 pub struct Vector {
     elements: [f32, ..3]
@@ -18,11 +14,23 @@ impl Vector {
     /// # use mithril::math::Vector;
     /// let v = Vector::new(1.0, 2.0, 3.0);
     ///
-    /// assert!((v[0], v[1], v[2]) == (1.0, 2.0, 3.0))
+    /// assert_eq!((v[0], v[1], v[2]), (1.0, 2.0, 3.0))
     /// ```
     #[inline(always)]
     pub fn new(x: f32, y: f32, z: f32) -> Vector {
         Vector{ elements: [x, y, z] }
+    }
+
+    /// Constructs a zero vector.
+    ///
+    /// ```rust
+    /// # use mithril::math::Vector;
+    /// let v = Vector::zero();
+    ///
+    /// assert_eq!((v[0], v[1], v[2]), (0.0, 0.0, 0.0))
+    /// ```
+    pub fn zero() -> Vector {
+        Vector::new(0.0, 0.0, 0.0)
     }
 
     /// A multiplies a Vector by a scalar.
@@ -32,7 +40,7 @@ impl Vector {
     /// let a = Vector::new(1.0, 2.0, 3.0);
     /// let v = a.scale(2.5);
     ///
-    /// assert!((v[0], v[1], v[2]) == (2.5, 5.0, 7.5))
+    /// assert_eq!((v[0], v[1], v[2]), (2.5, 5.0, 7.5))
     /// ```
     #[inline(always)]
     pub fn scale(&self, s: f32) -> Vector {
@@ -46,7 +54,7 @@ impl Vector {
     /// let a = Vector::new(1.0, 2.0, 3.0);
     /// let b = Vector::new(2.0, -2.0, 2.0);
     ///
-    /// assert!(a.dot(&b) == 4.0)
+    /// assert_eq!(a.dot(&b), 4.0)
     /// ```
     #[inline(always)]
     pub fn dot(&self, other: &Vector) -> f32 {
@@ -62,7 +70,7 @@ impl Vector {
     ///
     /// let c = a.cross(&b);
     ///
-    /// assert!((c[0], c[1], c[2]) == (3.0, 0.0, -3.0))
+    /// assert_eq!((c[0], c[1], c[2]), (3.0, 0.0, -3.0))
     /// ```
     #[inline]
     pub fn cross(&self, other: &Vector) -> Vector {
@@ -80,7 +88,7 @@ impl Vector {
     /// let v = Vector::new(12.0, 20.0, 9.0);
     /// let n = v.normalize();
     ///
-    /// assert!((n[0], n[1], n[2]) == (0.48, 0.80, 0.36))
+    /// assert_eq!((n[0], n[1], n[2]), (0.48, 0.80, 0.36))
     /// ```
     #[inline]
     pub fn normalize(&self) -> Vector {
@@ -94,7 +102,7 @@ impl Vector {
     /// # use mithril::math::Vector;
     /// let v = Vector::new(1.0, -2.0, 3.0);
     ///
-    /// assert!(v.length_sq() == 14.0)
+    /// assert_eq!(v.length_sq(), 14.0)
     /// ```
     #[inline(always)]
     pub fn length_sq(&self) -> f32 {
@@ -107,7 +115,7 @@ impl Vector {
     /// # use mithril::math::Vector;
     /// let v = Vector::new(2.0, 3.0, 6.0);
     ///
-    /// assert!(v.length() == 7.0)
+    /// assert_eq!(v.length(), 7.0)
     /// ```
     #[inline(always)]
     pub fn length(&self) -> f32 {
@@ -123,9 +131,9 @@ impl Vector {
     ///
     /// let m = a.outer(&b);
     ///
-    /// assert!((m[0], m[1], m[2]) == ( 4.0,  5.0,  6.0))
-    /// assert!((m[3], m[4], m[5]) == ( 8.0, 10.0, 12.0))
-    /// assert!((m[6], m[7], m[8]) == (12.0, 15.0, 18.0))
+    /// assert_eq!((m[0], m[1], m[2]), ( 4.0,  5.0,  6.0))
+    /// assert_eq!((m[3], m[4], m[5]), ( 8.0, 10.0, 12.0))
+    /// assert_eq!((m[6], m[7], m[8]), (12.0, 15.0, 18.0))
     /// ```
     pub fn outer(&self, other: &Vector) -> Matrix {
         let elems: [f32, ..9] = [
@@ -145,7 +153,7 @@ impl Index<uint, f32> for Vector {
     /// # use mithril::math::Vector;
     /// let v = Vector::new(1.0, 2.0, 3.0);
     ///
-    /// assert!((v[0], v[1], v[2]) == (1.0, 2.0, 3.0))
+    /// assert_eq!((v[0], v[1], v[2]), (1.0, 2.0, 3.0))
     /// ```
     #[inline(always)]
     fn index<'a>(&'a self, index: &uint) -> &'a f32 {
@@ -162,7 +170,7 @@ impl IndexMut<uint, f32> for Vector {
     /// let mut v = Vector::new(1.0, 2.0, 3.0);
     /// v[0] = 3.0;
     ///
-    /// assert!((v[0], v[1], v[2]) == (3.0, 2.0, 3.0))
+    /// assert_eq!((v[0], v[1], v[2]), (3.0, 2.0, 3.0))
     /// ```
     #[inline(always)]
     fn index_mut<'a>(&'a mut self, index: &uint) -> &'a mut f32 {
@@ -179,7 +187,7 @@ impl Neg<Vector> for Vector {
     /// let a = Vector::new(1.0, 3.0, 9.0);
     /// let b = -a;
     ///
-    /// assert!((b[0], b[1], b[2]) == (-1.0, -3.0, -9.0))
+    /// assert_eq!((b[0], b[1], b[2]), (-1.0, -3.0, -9.0))
     /// ```
     #[inline]
     fn neg(&self) -> Vector {
@@ -198,7 +206,7 @@ impl Add<Vector, Vector> for Vector {
     ///
     /// let c = a + b;
     ///
-    /// assert!((c[0], c[1], c[2]) == (3.0, 4.0, 0.0))
+    /// assert_eq!((c[0], c[1], c[2]), (3.0, 4.0, 0.0))
     /// ```
     #[inline]
     fn add(&self, other: &Vector) -> Vector {
@@ -217,7 +225,7 @@ impl Sub<Vector, Vector> for Vector {
     ///
     /// let c = a - b;
     ///
-    /// assert!((c[0], c[1], c[2]) == (0.0, -2.0, 7.0))
+    /// assert_eq!((c[0], c[1], c[2]), (0.0, -2.0, 7.0))
     /// ```
     #[inline]
     fn sub(&self, other: &Vector) -> Vector {
