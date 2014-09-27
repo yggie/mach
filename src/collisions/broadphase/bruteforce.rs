@@ -3,6 +3,10 @@ use collisions::BroadPhase;
 
 use std::rc::Rc;
 
+#[cfg(test)]
+#[path="../../../tests/collisions/broadphase/bruteforce_test.rs"]
+mod tests;
+
 /// Represents a brute force approach for partitioning space. The entire
 /// world is considered a single partition.
 pub struct BruteForce {
@@ -13,13 +17,6 @@ pub struct BruteForce {
 impl BruteForce {
 
     /// Instantiates a new BruteForce strategy for spatial partitioning.
-    ///
-    /// # Example
-    ///
-    /// ```rust
-    /// # use mithril::collisions::BruteForce;
-    /// let bp = BruteForce::new();
-    /// ```
     pub fn new() -> BruteForce {
         let mut p = Vec::new();
         p.push(Vec::new());
@@ -43,17 +40,5 @@ impl BroadPhase for BruteForce {
     /// Returns all the spatial partitions in the structure.
     fn partitions(&self) -> &Vec<Vec<Rc<Body>>> {
         &self.partitions
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use collisions::BruteForce;
-    use collisions::tests::helpers::assert_behaves_like_broadphase;
-
-    #[test]
-    fn it_behaves_like_broadphase() {
-        let mut b = BruteForce::new();
-        assert_behaves_like_broadphase(&mut b);
     }
 }

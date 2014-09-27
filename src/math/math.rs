@@ -11,15 +11,12 @@ mod vector;
 mod matrix;
 mod transform;
 
+#[cfg(test)]
+#[path="../../tests/math/math_test.rs"]
+mod tests;
+
 /// Determines if the difference between two floating point numbers are within
 /// reasonable tolerance. The tolerance is set to `1e-6`.
-///
-/// # Example
-///
-/// ```rust
-/// # use mithril::math::approx_eq;
-/// assert!(approx_eq(1.000001, 1.0000015))
-/// ```
 pub fn approx_eq(a: f32, b: f32) -> bool {
     (a - b).abs() < 1e-6
 }

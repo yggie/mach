@@ -3,6 +3,10 @@ use shapes::Shape;
 
 use std::fmt;
 
+#[cfg(test)]
+#[path="../../../tests/shapes/primitives/cube_test.rs"]
+mod tests;
+
 /// A representation of a cube in 3 dimensions.
 #[deriving(Clone)]
 pub struct Cube {
@@ -17,15 +21,6 @@ pub struct Cube {
 impl Cube {
 
     /// Constructs a new Cube given the width, height and depth dimensions.
-    ///
-    /// # Example
-    ///
-    /// ```rust
-    /// # use mithril::shapes::Cube;
-    /// let c = Cube::new(5.0, 3.0, 7.5);
-    ///
-    /// assert_eq!((c.width, c.height, c.depth), (5.0, 3.0, 7.5))
-    /// ```
     pub fn new(width: f32, height: f32, depth: f32) -> Cube {
         Cube{ width: width, height: height, depth: depth }
     }
@@ -45,16 +40,6 @@ impl PartialEq for Cube {
 
     /// Implements the `==` operator for the Cube class. Compares the dimensions
     /// of the cube to be within reasonable tolerance.
-    ///
-    /// # Example
-    ///
-    /// ```rust
-    /// # use mithril::shapes::Cube;
-    /// let a = Cube::new(1.0, 2.0, 3.0);
-    /// let b = Cube::new(1.0, 2.0, 3.0);
-    ///
-    /// assert_eq!(a, b)
-    /// ```
     fn eq(&self, other: &Cube) -> bool {
         approx_eq(self.width, other.width) &&
             approx_eq(self.height, other.height) &&
@@ -65,16 +50,6 @@ impl PartialEq for Cube {
 impl Shape for Cube {
 
     /// Calculates the volume of the Cube.
-    ///
-    /// # Example
-    ///
-    /// ```rust
-    /// # use mithril::shapes::Shape;
-    /// # use mithril::shapes::Cube;
-    /// let c = Cube::new(2.0, 3.0, 4.0);
-    ///
-    /// assert_eq!(c.volume(), 24.0)
-    /// ```
     fn volume(&self) -> f32 {
         self.width * self.height * self.depth
     }
