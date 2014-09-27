@@ -23,3 +23,8 @@ pub mod properties;
 #[warn(missing_doc)]
 #[path="bodies/bodies.rs"]
 pub mod bodies;
+
+#[experimental]
+#[warn(missing_doc)]
+#[path="collisions/collisions.rs"]
+pub mod collisions;

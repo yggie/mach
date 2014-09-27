@@ -131,6 +131,7 @@ impl Matrix {
     /// assert_eq!((m[3], m[4], m[5]), ( 96.0,  81.0,  66.0))
     /// assert_eq!((m[6], m[7], m[8]), (150.0, 126.0, 102.0))
     /// ```
+    #[experimental]
     pub fn mult(a: &Matrix, b: &Matrix) -> Matrix {
         let elems: [f32, ..9] = [
             a[0]*b[0] + a[1]*b[3] + a[2]*b[6],

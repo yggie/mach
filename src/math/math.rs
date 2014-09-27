@@ -5,7 +5,9 @@ pub use self::vector::Vector;
 pub use self::matrix::Matrix;
 pub use self::transform::Transform;
 
+#[stable]
 mod vector;
+#[stable]
 mod matrix;
 mod transform;
 
