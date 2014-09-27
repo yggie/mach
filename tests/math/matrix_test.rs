@@ -5,36 +5,36 @@ fn new_test() {
     let elems: [f32, ..9] = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0];
     let m = Matrix::new(&elems);
 
-    assert_eq!((m[0], m[1], m[2]), (1.0, 2.0, 3.0))
-    assert_eq!((m[3], m[4], m[5]), (4.0, 5.0, 6.0))
-    assert_eq!((m[6], m[7], m[8]), (7.0, 8.0, 9.0))
+    assert_eq!((m[0], m[1], m[2]), (1.0, 2.0, 3.0));
+    assert_eq!((m[3], m[4], m[5]), (4.0, 5.0, 6.0));
+    assert_eq!((m[6], m[7], m[8]), (7.0, 8.0, 9.0));
 }
 
 #[test]
 fn identity_test() {
     let m = Matrix::identity();
 
-    assert_eq!((m[0], m[1], m[2]), (1.0, 0.0, 0.0))
-    assert_eq!((m[3], m[4], m[5]), (0.0, 1.0, 0.0))
-    assert_eq!((m[6], m[7], m[8]), (0.0, 0.0, 1.0))
+    assert_eq!((m[0], m[1], m[2]), (1.0, 0.0, 0.0));
+    assert_eq!((m[3], m[4], m[5]), (0.0, 1.0, 0.0));
+    assert_eq!((m[6], m[7], m[8]), (0.0, 0.0, 1.0));
 }
 
 #[test]
 fn diag_test() {
     let m = Matrix::diag(1.0, 2.0, 3.0);
 
-    assert_eq!((m[0], m[1], m[2]), (1.0, 0.0, 0.0))
-    assert_eq!((m[3], m[4], m[5]), (0.0, 2.0, 0.0))
-    assert_eq!((m[6], m[7], m[8]), (0.0, 0.0, 3.0))
+    assert_eq!((m[0], m[1], m[2]), (1.0, 0.0, 0.0));
+    assert_eq!((m[3], m[4], m[5]), (0.0, 2.0, 0.0));
+    assert_eq!((m[6], m[7], m[8]), (0.0, 0.0, 3.0));
 }
 
 #[test]
 fn skew_test() {
     let m = Matrix::skew(1.0, 2.0, 3.0);
 
-    assert_eq!((m[0], m[1], m[2]), ( 0.0, -3.0,  2.0))
-    assert_eq!((m[3], m[4], m[5]), ( 3.0,  0.0, -1.0))
-    assert_eq!((m[6], m[7], m[8]), (-2.0,  1.0,  0.0))
+    assert_eq!((m[0], m[1], m[2]), ( 0.0, -3.0,  2.0));
+    assert_eq!((m[3], m[4], m[5]), ( 3.0,  0.0, -1.0));
+    assert_eq!((m[6], m[7], m[8]), (-2.0,  1.0,  0.0));
 }
 
 #[test]
@@ -45,18 +45,18 @@ fn rotation_test() {
     let s = radians.sin();
     let r = Matrix::rotation(radians, &a);
 
-    assert_eq!((r[0], r[1], r[2]), (  c,  -s, 0.0))
-    assert_eq!((r[3], r[4], r[5]), (  s,   c, 0.0))
-    assert_eq!((r[6], r[7], r[8]), (0.0, 0.0, 1.0))
+    assert_eq!((r[0], r[1], r[2]), (  c,  -s, 0.0));
+    assert_eq!((r[3], r[4], r[5]), (  s,   c, 0.0));
+    assert_eq!((r[6], r[7], r[8]), (0.0, 0.0, 1.0));
 }
 
 #[test]
 fn element_getter_test() {
     let m = Matrix::diag(4.0, 5.0, 2.0);
 
-    assert_eq!((m.get(0, 0), m.get(0, 1), m.get(0, 2)), (4.0, 0.0, 0.0))
-    assert_eq!((m.get(1, 0), m.get(1, 1), m.get(1, 2)), (0.0, 5.0, 0.0))
-    assert_eq!((m.get(2, 0), m.get(2, 1), m.get(2, 2)), (0.0, 0.0, 2.0))
+    assert_eq!((m.get(0, 0), m.get(0, 1), m.get(0, 2)), (4.0, 0.0, 0.0));
+    assert_eq!((m.get(1, 0), m.get(1, 1), m.get(1, 2)), (0.0, 5.0, 0.0));
+    assert_eq!((m.get(2, 0), m.get(2, 1), m.get(2, 2)), (0.0, 0.0, 2.0));
 }
 
 #[test]
@@ -68,9 +68,9 @@ fn matrix_multiplication_test() {
 
     let m = Matrix::mult(&a, &b);
 
-    assert_eq!((m[0], m[1], m[2]), ( 42.0,  36.0,  30.0))
-    assert_eq!((m[3], m[4], m[5]), ( 96.0,  81.0,  66.0))
-    assert_eq!((m[6], m[7], m[8]), (150.0, 126.0, 102.0))
+    assert_eq!((m[0], m[1], m[2]), ( 42.0,  36.0,  30.0));
+    assert_eq!((m[3], m[4], m[5]), ( 96.0,  81.0,  66.0));
+    assert_eq!((m[6], m[7], m[8]), (150.0, 126.0, 102.0));
 }
 
 #[cfg(test)]
@@ -82,9 +82,9 @@ mod impls {
         let elems: [f32, ..9] = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0];
         let m = Matrix::new(&elems);
 
-        assert_eq!((m[0], m[1], m[2]), (1.0, 2.0, 3.0))
-        assert_eq!((m[3], m[4], m[5]), (4.0, 5.0, 6.0))
-        assert_eq!((m[6], m[7], m[8]), (7.0, 8.0, 9.0))
+        assert_eq!((m[0], m[1], m[2]), (1.0, 2.0, 3.0));
+        assert_eq!((m[3], m[4], m[5]), (4.0, 5.0, 6.0));
+        assert_eq!((m[6], m[7], m[8]), (7.0, 8.0, 9.0));
     }
 
     #[test]
@@ -96,9 +96,9 @@ mod impls {
         m[4] = 12.0;
         m[8] = 13.0;
 
-        assert_eq!((m[0], m[1], m[2]), (11.0, 2.0, 3.0))
-        assert_eq!((m[3], m[4], m[5]), (4.0, 12.0, 6.0))
-        assert_eq!((m[6], m[7], m[8]), (7.0, 8.0, 13.0))
+        assert_eq!((m[0], m[1], m[2]), (11.0, 2.0, 3.0));
+        assert_eq!((m[3], m[4], m[5]), (4.0, 12.0, 6.0));
+        assert_eq!((m[6], m[7], m[8]), (7.0, 8.0, 13.0));
     }
 
     #[test]
@@ -106,9 +106,9 @@ mod impls {
         let elems: [f32, ..9] = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0];
         let m = -Matrix::new(&elems);
 
-        assert_eq!((m[0], m[1], m[2]), (-1.0, -2.0, -3.0))
-        assert_eq!((m[3], m[4], m[5]), (-4.0, -5.0, -6.0))
-        assert_eq!((m[6], m[7], m[8]), (-7.0, -8.0, -9.0))
+        assert_eq!((m[0], m[1], m[2]), (-1.0, -2.0, -3.0));
+        assert_eq!((m[3], m[4], m[5]), (-4.0, -5.0, -6.0));
+        assert_eq!((m[6], m[7], m[8]), (-7.0, -8.0, -9.0));
     }
 
     #[test]
@@ -119,9 +119,9 @@ mod impls {
 
         let m = a + b;
 
-        assert_eq!((m[0], m[1], m[2]), (4.0, 2.0, 3.0))
-        assert_eq!((m[3], m[4], m[5]), (4.0, 7.0, 6.0))
-        assert_eq!((m[6], m[7], m[8]), (7.0, 8.0, 10.0))
+        assert_eq!((m[0], m[1], m[2]), (4.0, 2.0, 3.0));
+        assert_eq!((m[3], m[4], m[5]), (4.0, 7.0, 6.0));
+        assert_eq!((m[6], m[7], m[8]), (7.0, 8.0, 10.0));
     }
 
     #[test]
@@ -132,9 +132,9 @@ mod impls {
 
         let m = a - b;
 
-        assert_eq!((m[0], m[1], m[2]), (0.0, 2.0, 3.0))
-        assert_eq!((m[3], m[4], m[5]), (4.0, 3.0, 6.0))
-        assert_eq!((m[6], m[7], m[8]), (7.0, 8.0, 6.0))
+        assert_eq!((m[0], m[1], m[2]), (0.0, 2.0, 3.0));
+        assert_eq!((m[3], m[4], m[5]), (4.0, 3.0, 6.0));
+        assert_eq!((m[6], m[7], m[8]), (7.0, 8.0, 6.0));
     }
 
     #[test]
@@ -145,6 +145,6 @@ mod impls {
 
         let a = m * v;
 
-        assert_eq!((a[0], a[1], a[2]), (30.0, 36.0, 42.0))
+        assert_eq!((a[0], a[1], a[2]), (30.0, 36.0, 42.0));
     }
 }

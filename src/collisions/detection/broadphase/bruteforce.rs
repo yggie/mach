@@ -4,7 +4,7 @@ use collisions::BroadPhase;
 use std::rc::Rc;
 
 #[cfg(test)]
-#[path="../../../tests/collisions/broadphase/bruteforce_test.rs"]
+#[path="../../../../tests/collisions/detection/broadphase/bruteforce_test.rs"]
 mod tests;
 
 /// Represents a brute force approach for partitioning space. The entire

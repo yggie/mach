@@ -23,8 +23,19 @@ pub mod helpers {
         let partitions = broadphase.partitions();
         assert!(partitions.len() > 0);
 
-        for partition in partitions.iter() {
-            assert!(true);
+        // iterating over the structure should yield the first element
+        let mut counter = 0u;
+        for bodies in partitions.iter() {
+            let num_bodies = bodies.len();
+
+            for i in range(0u, num_bodies) {
+                counter += 1;
+                for j in range(i + 1, num_bodies) {
+                    counter += 1;
+                }
+            }
         }
+
+        assert_eq!(counter, 1);
     }
 }

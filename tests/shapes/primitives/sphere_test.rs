@@ -4,7 +4,7 @@ use shapes::Sphere;
 fn new_test() {
     let s = Sphere::new(5.0);
 
-    assert_eq!(s.radius, 5.0)
+    assert_eq!(s.radius, 5.0);
 }
 
 #[cfg(test)]
@@ -18,7 +18,7 @@ mod impls {
         let a = Sphere::new(8.8);
         let b = Sphere::new(8.8);
 
-        assert_eq!(a, b)
+        assert_eq!(a, b);
     }
 
     #[test]

@@ -1,18 +1,19 @@
-//! Contains an implementation of strategies for resolving collisions.
+//! Contains an implementation of strategies for optimizing spatial queries.
 
 use bodies::Body;
 
 use std::rc::Rc;
 use std::vec::Vec;
 
-pub use self::broadphase::BruteForce;
+pub use self::resolution::contactgraph::ContactGraph;
+pub use self::detection::broadphase::bruteforce::BruteForce;
 
 #[cfg(test)]
 #[path="../../tests/collisions/collisions_test.rs"]
 pub mod tests;
 
 /// Defines the trait for all spatial partitioning strategies to implement.
-trait BroadPhase {
+pub trait BroadPhase {
     /// Adds a new body to the structure.
     fn add(&mut self, &Rc<Body>);
     /// Returns the number of bodies in the structure.
@@ -21,8 +22,12 @@ trait BroadPhase {
     fn partitions(&self) -> &Vec<Vec<Rc<Body>>>;
 }
 
-mod broadphase {
-    pub use self::bruteforce::BruteForce;
+mod detection {
+    pub mod broadphase {
+        pub mod bruteforce;
+    }
+}
 
-    mod bruteforce;
+mod resolution {
+    pub mod contactgraph;
 }
