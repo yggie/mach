@@ -1,5 +1,5 @@
 use bodies::Body;
-use collisions::BroadPhase;
+use collisions::{ Space, Contact };
 
 use std::rc::Rc;
 
@@ -10,7 +10,7 @@ mod tests;
 /// Represents a brute force approach for partitioning space. The entire
 /// world is considered a single partition.
 pub struct BruteForce {
-    partitions: Vec<Vec<Rc<Body>>>,
+    bodies: Vec<Rc<Body>>,
     count: uint,
 }
 
@@ -18,27 +18,34 @@ impl BruteForce {
 
     /// Instantiates a new BruteForce strategy for spatial partitioning.
     pub fn new() -> BruteForce {
-        let mut p = Vec::new();
-        p.push(Vec::new());
-        BruteForce{ partitions: p, count: 0 }
+        BruteForce{ bodies: Vec::new(), count: 0 }
     }
 }
 
-impl BroadPhase for BruteForce {
+impl Space for BruteForce {
 
     /// Adds the body to the structure.
     fn add(&mut self, body: &Rc<Body>) {
         self.count += 1;
-        self.partitions.get_mut(0).push(body.clone());
+        self.bodies.push(body.clone());
     }
 
     /// Returns the number of bodies contained in the structure.
-    fn count(&self) -> uint {
+    fn size(&self) -> uint {
         self.count
     }
 
-    /// Returns all the spatial partitions in the structure.
-    fn partitions(&self) -> &Vec<Vec<Rc<Body>>> {
-        &self.partitions
+    /// Traverses the structure to look for any contact. Once a contact is
+    /// encountered, the callback function is immediately called.
+    fn each_contact(&mut self, callback: |Contact|) {
+        let total = self.bodies.len();
+        for i in range(0u, total) {
+            let a = &self.bodies[i];
+            for j in range(i + 1u, total) {
+                let b = &self.bodies[j];
+
+                callback(Contact::new(a.clone(), b.clone()));
+            }
+        }
     }
 }

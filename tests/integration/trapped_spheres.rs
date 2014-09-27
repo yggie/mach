@@ -1,4 +1,4 @@
-use mithril::collisions::{ BroadPhase, BruteForce, ContactGraph };
+use mithril::collisions::{ Space, BruteForce, ContactGraph };
 use mithril::properties::Rigid;
 use mithril::math::Transform;
 use mithril::shapes::Sphere;
@@ -6,7 +6,7 @@ use mithril::bodies::Body;
 
 use std::rc::Rc;
 
-fn populate(broadphase: &mut BroadPhase) {
+fn populate(space: &mut Space) {
     let s = Sphere::new(1.0);
     let p = Rigid::new(1.0);
     let num_bodies = 10u;
@@ -15,27 +15,21 @@ fn populate(broadphase: &mut BroadPhase) {
         let t = Transform::identity();
         let b = Rc::new(Body::new(box s, box p, t));
 
-        broadphase.add(&b);
+        space.add(&b);
     }
 
-    assert_eq!(broadphase.count(), num_bodies);
+    assert_eq!(space.size(), num_bodies);
 }
 
 #[test]
 fn trapped_spheres() {
-    let mut broadphase = BruteForce::new();
-    let mut contacts = ContactGraph::new();
-    populate(&mut broadphase);
+    let mut space = BruteForce::new();
+    let mut graph = ContactGraph::new();
+    populate(&mut space);
 
-    for bodies in broadphase.partitions().iter() {
-        let num_bodies = bodies.len();
+    space.each_contact(|contact| {
+        graph.add(contact);
+    });
 
-        for i in range(0u, num_bodies) {
-            for j in range(i + 1, num_bodies) {
-                contacts.add_pair(&*bodies[i], &*bodies[j]);
-            }
-        }
-
-        contacts.solve();
-    }
+    graph.solve();
 }

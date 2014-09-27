@@ -1,17 +1,21 @@
-use bodies::Body;
+use collisions::Contact;
 
 pub struct ContactGraph {
-    pairs: uint,
+    pairs: Vec<Contact>,
 }
 
 impl ContactGraph {
     pub fn new() -> ContactGraph {
-        ContactGraph{ pairs: 0 }
+        ContactGraph{ pairs: Vec::new() }
     }
 
-    pub fn add_pair<'a>(&self, a: &'a Body, b: &'a Body) {
+    pub fn add(&mut self, contact: Contact) {
+        self.pairs.push(contact);
     }
 
-    pub fn solve(&self) {
+    pub fn solve(&mut self) {
+        while self.pairs.len() > 0 {
+            self.pairs.pop();
+        }
     }
 }
