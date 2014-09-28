@@ -1,5 +1,5 @@
 use bodies::Body;
-use collisions::{ Space, Contact };
+use collisions::{ Space, Contact, ProximityPair };
 
 use std::rc::Rc;
 
@@ -11,6 +11,7 @@ mod tests;
 /// world is considered a single partition.
 pub struct BruteForce {
     bodies: Vec<Rc<Body>>,
+    pairs: Vec<ProximityPair>,
     count: uint,
 }
 
@@ -18,7 +19,7 @@ impl BruteForce {
 
     /// Instantiates a new BruteForce strategy for spatial partitioning.
     pub fn new() -> BruteForce {
-        BruteForce{ bodies: Vec::new(), count: 0 }
+        BruteForce{ bodies: Vec::new(), pairs: Vec::new(), count: 0 }
     }
 }
 
@@ -27,6 +28,9 @@ impl Space for BruteForce {
     /// Adds the body to the structure.
     fn add(&mut self, body: &Rc<Body>) {
         self.count += 1;
+        for b in self.bodies.iter() {
+            self.pairs.push(ProximityPair::new(b.clone(), body.clone()));
+        }
         self.bodies.push(body.clone());
     }
 
@@ -38,14 +42,8 @@ impl Space for BruteForce {
     /// Traverses the structure to look for any contact. Once a contact is
     /// encountered, the callback function is immediately called.
     fn each_contact(&mut self, callback: |Contact|) {
-        let total = self.bodies.len();
-        for i in range(0u, total) {
-            let a = &self.bodies[i];
-            for j in range(i + 1u, total) {
-                let b = &self.bodies[j];
-
-                callback(Contact::new(a.clone(), b.clone()));
-            }
+        for pair in self.pairs.iter() {
+            pair.if_contact(|contact| callback(contact));
         }
     }
 }

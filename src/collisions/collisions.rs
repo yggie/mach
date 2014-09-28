@@ -6,6 +6,7 @@ use std::rc::Rc;
 use std::vec::Vec;
 
 pub use self::contact::Contact;
+pub use self::proximitypair::ProximityPair;
 pub use self::resolution::contactgraph::ContactGraph;
 pub use self::detection::broadphase::bruteforce::BruteForce;
 
@@ -25,6 +26,7 @@ pub trait Space {
 }
 
 mod contact;
+mod proximitypair;
 
 mod detection {
     pub mod broadphase {
