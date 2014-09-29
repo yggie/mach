@@ -7,7 +7,7 @@ use math::{ Vector, Matrix, Transform };
 use std::rc::Rc;
 
 fn build_body<'a>(shape: Box<Sphere>, property: Box<Rigid>, transform: Transform) -> Rc<Body<'a>> {
-    Rc::new(Body::new(shape, property, transform))
+    Rc::new(Body::new(shape, property, transform, Transform::new_identity()))
 }
 
 #[test]
@@ -15,8 +15,8 @@ fn new_test() {
     let s = Sphere::new(5.0);
     let p = Rigid::new(3.0);
     let t = Transform::new_identity();
-    let a = Rc::new(Body::new(box s, box p, t));
-    let b = Rc::new(Body::new(box s, box p, t));
+    let a = Rc::new(Body::new(box s, box p, t, t));
+    let b = Rc::new(Body::new(box s, box p, t, t));
 
     ProximityPair::new(a, b);
 }
@@ -26,14 +26,17 @@ fn sphere_sphere_contact_test() {
     let s = Sphere::new(2.5);
     let p = Rigid::new(3.0);
 
-    let a = build_body(box s, box p, Transform::new(
-            Matrix::new_rotation(-1.3, Vector::new(0.1, 0.0, 0.8)),
-            Vector::new_zero()
-            ));
-    let b = build_body(box s, box p, Transform::new(
-            Matrix::new_rotation(2.1, Vector::new(0.5, 0.5, 1.0)),
-            Vector::new(4.0, 3.0, 0.0)
-            ));
+    let t1 = Transform::new(
+        Matrix::new_rotation(-1.3, Vector::new(0.1, 0.0, 0.8)),
+        Vector::new_zero()
+    );
+    let t2 = Transform::new(
+        Matrix::new_rotation(2.1, Vector::new(0.5, 0.5, 1.0)),
+        Vector::new(4.0, 3.0, 0.0)
+    );
+
+    let a = build_body(box s, box p, t1);
+    let b = build_body(box s, box p, t2);
 
     let pair = ProximityPair::new(a, b);
     let mut did_contact = false;

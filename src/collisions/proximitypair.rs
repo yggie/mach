@@ -21,7 +21,7 @@ impl<'a> ProximityPair<'a> {
     }
 
     /// Returns true if the pair is in contact.
-    pub fn in_contact(&self) -> bool {
+    pub fn in_contact(&'a self) -> bool {
         let mut did_contact = false;
         self.if_contact(|_| did_contact = true);
         return did_contact;
@@ -29,7 +29,7 @@ impl<'a> ProximityPair<'a> {
 
     /// Conditionally executes the given function if a contact is present. The
     /// execution occurs synchronously.
-    pub fn if_contact(&self, callback: |Contact|) {
+    pub fn if_contact(&self, callback: |Contact<'a>|) {
         let shapes = [self.bodies[0].shape(), self.bodies[1].shape()];
         let transforms = [self.bodies[0].transform(), self.bodies[1].transform()];
         let tolerance = shapes[0].surface_radius() + shapes[1].surface_radius();

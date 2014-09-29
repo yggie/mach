@@ -13,7 +13,8 @@ fn populate(space: &mut Space) {
 
     for _ in range(0u, num_bodies) {
         let t = Transform::new_identity();
-        let b = Rc::new(Body::new(box s, box p, t));
+        let dt = Transform::new_identity();
+        let b = Rc::new(Body::new(box s, box p, t, dt));
 
         space.add(&b);
     }
@@ -23,13 +24,10 @@ fn populate(space: &mut Space) {
 
 #[test]
 fn trapped_spheres() {
-    let mut space = BruteForce::new();
-    let mut graph = ContactGraph::new();
-    populate(&mut space);
-    //
-    // space.each_contact(|contact| {
-    //     graph.add(contact);
-    // });
-    //
-    // graph.solve();
+    let space = &mut BruteForce::new();
+    let graph = &mut ContactGraph::new();
+    populate(space);
+
+    space.each_contact(|contact| graph.add(contact));
+    graph.solve();
 }

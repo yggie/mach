@@ -1,4 +1,4 @@
-use math::Transform;
+use math::{ Vector, Transform };
 use shapes::Shape;
 use properties::Property;
 
@@ -7,23 +7,42 @@ pub struct Body<'a> {
     shape: Box<Shape + 'a>,
     property: Box<Property + 'a>,
     transform: Transform,
+    velocity: Vector,
 }
 
 impl<'a> Body<'a> {
     /// Creates a new instance of a Body object
-    pub fn new<'a>(shape: Box<'a Shape>, property: Box<'a Property>, transform: Transform) -> Body<'a> {
-        Body{ shape: shape, property: property, transform: transform }
+    pub fn new<'a>(shape: Box<'a Shape>, property: Box<'a Property>,
+                   transform: Transform, derivative_transform: Transform) -> Body<'a> {
+        Body {
+            shape: shape,
+            property: property,
+            transform: transform,
+            velocity: derivative_transform.translation_vector(),
+        }
     }
 
     /// Returns a borrowed pointer to the Shape object held internally.
     #[inline]
-    pub fn shape(&'a self) -> &Shape+'a {
+    pub fn shape(&self) -> &Shape+'a {
         &*self.shape
+    }
+
+    /// Returns the property object associated with the Body.
+    #[inline]
+    pub fn property(&self) -> &Property+'a {
+        &*self.property
     }
 
     /// Returns the transformation matrix associated with the Body.
     #[inline]
     pub fn transform(&self) -> &Transform {
         &self.transform
+    }
+
+    /// Returns the velocity associated with the Body.
+    #[inline]
+    pub fn velocity(&self) -> &Vector {
+        &self.velocity
     }
 }

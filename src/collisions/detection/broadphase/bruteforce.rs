@@ -23,7 +23,7 @@ impl<'a> BruteForce<'a> {
     }
 }
 
-impl<'a> Space for BruteForce<'a> {
+impl<'a> Space<'a> for BruteForce<'a> {
 
     /// Adds the body to the structure.
     fn add(&mut self, body: &Rc<Body>) {
@@ -41,7 +41,7 @@ impl<'a> Space for BruteForce<'a> {
 
     /// Traverses the structure to look for any contact. Once a contact is
     /// encountered, the callback function is immediately called.
-    fn each_contact(&mut self, callback: |Contact|) {
+    fn each_contact(&mut self, callback: |Contact<'a>|) {
         for pair in self.pairs.iter() {
             pair.if_contact(|contact| callback(contact));
         }
