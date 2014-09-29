@@ -9,21 +9,21 @@ mod tests;
 
 /// Represents a brute force approach for partitioning space. The entire
 /// world is considered a single partition.
-pub struct BruteForce {
-    bodies: Vec<Rc<Body>>,
-    pairs: Vec<ProximityPair>,
+pub struct BruteForce<'a> {
+    bodies: Vec<Rc<Body<'a>>>,
+    pairs: Vec<ProximityPair<'a>>,
     count: uint,
 }
 
-impl BruteForce {
+impl<'a> BruteForce<'a> {
 
     /// Instantiates a new BruteForce strategy for spatial partitioning.
-    pub fn new() -> BruteForce {
+    pub fn new() -> BruteForce<'a> {
         BruteForce{ bodies: Vec::new(), pairs: Vec::new(), count: 0 }
     }
 }
 
-impl Space for BruteForce {
+impl<'a> Space for BruteForce<'a> {
 
     /// Adds the body to the structure.
     fn add(&mut self, body: &Rc<Body>) {

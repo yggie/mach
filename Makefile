@@ -30,6 +30,9 @@ build:
 build-tests:
 	$(ECHO)$(CARGO) test
 
+bench:
+	$(ECHO)$(CARGO) bench
+
 docs:
 	$(ECHO)$(CARGO) doc
 	$(ECHO)open target/doc/mithril/index.html

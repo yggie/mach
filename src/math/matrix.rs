@@ -18,13 +18,13 @@ impl Matrix {
     }
 
     /// Constructs an identity matrix.
-    pub fn identity() -> Matrix {
-        Matrix::diag(1.0, 1.0, 1.0)
+    pub fn new_identity() -> Matrix {
+        Matrix::new_diag(1.0, 1.0, 1.0)
     }
 
     /// Constructs a new matrix given 3 elements in the matrix diagonal.
     #[inline(always)]
-    pub fn diag(x: f32, y: f32, z: f32) -> Matrix {
+    pub fn new_diag(x: f32, y: f32, z: f32) -> Matrix {
         Matrix{ elements: [
               x, 0.0, 0.0,
             0.0,   y, 0.0,
@@ -34,7 +34,7 @@ impl Matrix {
 
     /// Constructs a skew matrix based on the input vector.
     #[inline(always)]
-    pub fn skew(x: f32, y: f32, z: f32) -> Matrix {
+    pub fn new_skew(x: f32, y: f32, z: f32) -> Matrix {
         Matrix{ elements: [
             0.0,  -z,   y,
               z, 0.0,  -x,
@@ -44,13 +44,13 @@ impl Matrix {
 
     /// Computes the orientation matrix given the axis of rotation and angle
     /// of rotation measured in radians.
-    pub fn rotation(radians: f32, axis: &Vector) -> Matrix {
+    pub fn new_rotation(radians: f32, axis: Vector) -> Matrix {
         let c = radians.cos();
         let s = radians.sin();
         let a = axis.normalize();
         let c1 = 1.0 - c;
         let aa = Vector::new(a[0]*c1, a[1]*c1, a[2]*c1);
-        Matrix::diag(c, c, c) + a.outer(&aa) + Matrix::skew(a[0]*s, a[1]*s, a[2]*s)
+        Matrix::new_diag(c, c, c) + a.outer(&aa) + Matrix::new_skew(a[0]*s, a[1]*s, a[2]*s)
     }
 
     /// Returns an element from the matrix, given the row and column numbers.

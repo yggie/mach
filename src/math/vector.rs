@@ -1,4 +1,6 @@
-use math::Matrix;
+use math::{ TOLERANCE, Matrix };
+
+use std::fmt;
 
 #[cfg(test)]
 #[path="../../tests/math/vector_test.rs"]
@@ -19,7 +21,7 @@ impl Vector {
     }
 
     /// Constructs a zero vector.
-    pub fn zero() -> Vector {
+    pub fn new_zero() -> Vector {
         Vector::new(0.0, 0.0, 0.0)
     }
 
@@ -75,6 +77,34 @@ impl Vector {
             self[2]*other[0], self[2]*other[1], self[2]*other[2],
         ];
         Matrix::new(&elems)
+    }
+}
+
+/// Implements the `std::fmt` operations to allow using `println!` on Vectors.
+impl fmt::Show for Vector {
+
+    /// Implements the fmt operation for Vectors. The resulting format is
+    /// equivalent to:
+    ///
+    /// ```rust,ignore
+    /// println!("[{}, {}, {}]", vec[0], vec[1], vec[2]);
+    /// ```
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "[{}, {}, {}]", self[0], self[1], self[2])
+    }
+}
+
+/// Guarantees equivalence relation for all equality operations.
+impl Eq for Vector { }
+
+/// Implementation for the equality operations, allows the use of `==` and `!=`
+/// operators on Vectors.
+impl PartialEq for Vector {
+
+    /// Implements the equality operator for Vectors. Returns true if the
+    /// Euclidean distance between the two vectors is below the threshold.
+    fn eq(&self, other: &Vector) -> bool {
+        (self - *other).length_sq() < TOLERANCE*TOLERANCE
     }
 }
 

@@ -8,8 +8,8 @@ fn new_test() {
 }
 
 #[test]
-fn zero_test() {
-    let v = Vector::zero();
+fn new_zero_test() {
+    let v = Vector::new_zero();
 
     assert_eq!((v[0], v[1], v[2]), (0.0, 0.0, 0.0));
 }

@@ -1,19 +1,19 @@
 use collisions::Contact;
 
 /// A ContactGraph is a structure used to store and resolve collisions.
-pub struct ContactGraph {
-    pairs: Vec<Contact>,
+pub struct ContactGraph<'a> {
+    pairs: Vec<Contact<'a>>,
 }
 
-impl ContactGraph {
+impl<'a> ContactGraph<'a> {
 
     /// Constructs a new empty ContactGraph.
-    pub fn new() -> ContactGraph {
+    pub fn new() -> ContactGraph<'a> {
         ContactGraph{ pairs: Vec::new() }
     }
 
     /// Adds a contact to the structure.
-    pub fn add(&mut self, contact: Contact) {
+    pub fn add(&mut self, contact: Contact<'a>) {
         self.pairs.push(contact);
     }
 

@@ -1,4 +1,4 @@
-use math::approx_eq;
+use math::{ TOLERANCE, approx_eq };
 use shapes::Shape;
 
 use std::fmt;
@@ -48,5 +48,15 @@ impl Shape for Sphere {
     /// Calculates the volume of the Sphere.
     fn volume(&self) -> f32 {
         4.0*PI*self.radius*self.radius*self.radius/3.0
+    }
+
+    /// Returns the _surface radius_ of the Shape. The surface radius is the
+    /// tolerance used to determine if a collision has occurred, it is useful to
+    /// avoid problems with singularities such as edge-edge collisions.
+    /// Overrides the default implementation to return the Sphere’s radius and
+    /// the default tolerance.
+    #[inline]
+    fn surface_radius(&self) -> f32 {
+        self.radius + TOLERANCE
     }
 }
