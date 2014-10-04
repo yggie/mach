@@ -16,7 +16,7 @@ pub mod helpers {
         let initial_count = space.size();
 
         // adding elements should work
-        space.add(&b);
+        space.add(b);
         assert_eq!(space.size(), initial_count + 1);
     }
 }

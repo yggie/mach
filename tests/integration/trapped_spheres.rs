@@ -16,7 +16,7 @@ fn populate(space: &mut Space) {
         let dt = Transform::new_identity();
         let b = Rc::new(Body::new(box s, box p, t, dt));
 
-        space.add(&b);
+        space.add(b);
     }
 
     assert_eq!(space.size(), num_bodies);

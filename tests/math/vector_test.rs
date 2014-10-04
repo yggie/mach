@@ -27,7 +27,7 @@ fn dot_product_test() {
     let a = Vector::new(1.0, 2.0, 3.0);
     let b = Vector::new(2.0, -2.0, 2.0);
 
-    assert_eq!(a.dot(&b), 4.0);
+    assert_eq!(a.dot(b), 4.0);
 }
 
 #[test]
@@ -35,7 +35,7 @@ fn cross_product_test() {
     let a = Vector::new(1.0, 2.0, 1.0);
     let b = Vector::new(2.0, 1.0, 2.0);
 
-    let c = a.cross(&b);
+    let c = a.cross(b);
 
     assert_eq!((c[0], c[1], c[2]), (3.0, 0.0, -3.0));
 }
@@ -67,7 +67,7 @@ fn outer_product_test() {
     let a = Vector::new(1.0, 2.0, 3.0);
     let b = Vector::new(4.0, 5.0, 6.0);
 
-    let m = a.outer(&b);
+    let m = a.outer(b);
 
     assert_eq!((m[0], m[1], m[2]), ( 4.0,  5.0,  6.0));
     assert_eq!((m[3], m[4], m[5]), ( 8.0, 10.0, 12.0));

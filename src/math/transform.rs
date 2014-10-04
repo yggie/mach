@@ -33,11 +33,13 @@ impl Transform {
     }
 
     /// Returns the rotational component of the transformation matrix as a Matrix.
+    #[inline]
     pub fn rotation_matrix(&self) -> Matrix {
         self.rotation
     }
 
     /// Returns the translational component of the transformation matrix as a Vector.
+    #[inline]
     pub fn translation_vector(&self) -> Vector {
         self.translation
     }

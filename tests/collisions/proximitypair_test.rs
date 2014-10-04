@@ -39,16 +39,12 @@ fn sphere_sphere_contact_test() {
     let b = build_body(box s, box p, t2);
 
     let pair = ProximityPair::new(a, b);
-    let mut did_contact = false;
-
-    assert!(pair.in_contact());
-    pair.if_contact(|contact| {
-        if did_contact {
-            fail!("contact callback called more than once!");
-        }
-        did_contact = true;
-        assert_eq!(contact.point, Vector::new(2.0, 1.5, 0.0));
-    });
+    match pair.compute_contact() {
+        None => fail!("should be in contact"),
+        Some(contact) => {
+            assert_eq!(contact.point, Vector::new(2.0, 1.5, 0.0));
+        },
+    }
 }
 
 #[test]
@@ -60,8 +56,8 @@ fn sphere_sphere_no_contact_test() {
     let b = build_body(box s, box p, Transform::new_translation(Vector::new(5.0, 0.0, 0.0)));
 
     let pair = ProximityPair::new(a, b);
-    assert!(!pair.in_contact());
-    pair.if_contact(|_| {
-        fail!("contact callback called when it should not have!");
-    });
+    match pair.compute_contact() {
+        None => (),
+        Some(_) => fail!("should not be in contact"),
+    }
 }

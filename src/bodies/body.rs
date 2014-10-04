@@ -8,6 +8,7 @@ pub struct Body<'a> {
     property: Box<Property + 'a>,
     transform: Transform,
     velocity: Vector,
+    impulse: Vector,
 }
 
 impl<'a> Body<'a> {
@@ -19,6 +20,7 @@ impl<'a> Body<'a> {
             property: property,
             transform: transform,
             velocity: derivative_transform.translation_vector(),
+            impulse: Vector::new_zero(),
         }
     }
 
@@ -42,7 +44,24 @@ impl<'a> Body<'a> {
 
     /// Returns the velocity associated with the Body.
     #[inline]
-    pub fn velocity(&self) -> &Vector {
-        &self.velocity
+    pub fn velocity(&self) -> Vector {
+        self.velocity
+    }
+
+    /// Returns the mass of the Body.
+    #[inline]
+    pub fn mass(&self) -> f32 {
+        self.property.mass_of(&*self.shape)
+    }
+
+    /// Returns the position of the Body.
+    #[inline]
+    pub fn position(&self) -> Vector {
+        self.transform.translation_vector()
+    }
+
+    /// Applies an impulse on the body.
+    pub fn apply_impulse(&mut self, impulse: Vector) {
+        self.impulse = self.impulse + impulse;
     }
 }

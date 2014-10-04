@@ -20,25 +20,26 @@ impl<'a> ProximityPair<'a> {
         ProximityPair{ bodies: [a, b] }
     }
 
-    /// Returns true if the pair is in contact.
-    pub fn in_contact(&'a self) -> bool {
-        let mut did_contact = false;
-        self.if_contact(|_| did_contact = true);
-        return did_contact;
-    }
-
-    /// Conditionally executes the given function if a contact is present. The
-    /// execution occurs synchronously.
-    pub fn if_contact(&self, callback: |Contact<'a>|) {
+    /// Computes the contact point and optionally returns the value if present.
+    pub fn compute_contact(&self) -> Option<Contact<'a>> {
         let shapes = [self.bodies[0].shape(), self.bodies[1].shape()];
         let transforms = [self.bodies[0].transform(), self.bodies[1].transform()];
         let tolerance = shapes[0].surface_radius() + shapes[1].surface_radius();
 
         let translation_diff = transforms[1].translation_vector() - transforms[0].translation_vector();
         let dist_sq = translation_diff.length_sq();
+
         if dist_sq < tolerance*tolerance {
-            let contact_point = translation_diff.normalize().scale(dist_sq.sqrt() / 2.0);
-            callback(Contact::new(self.bodies[0].clone(), self.bodies[1].clone(), contact_point));
+            let contact_normal = translation_diff.normalize();
+            let contact_point = contact_normal.scale(dist_sq.sqrt() / 2.0);
+
+            return Some(Contact {
+                bodies: [self.bodies[0].clone(), self.bodies[1].clone()],
+                point: contact_point,
+                normal: contact_normal,
+            });
+        } else {
+            return None;
         }
     }
 }

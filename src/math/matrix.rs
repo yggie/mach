@@ -50,7 +50,7 @@ impl Matrix {
         let a = axis.normalize();
         let c1 = 1.0 - c;
         let aa = Vector::new(a[0]*c1, a[1]*c1, a[2]*c1);
-        Matrix::new_diag(c, c, c) + a.outer(&aa) + Matrix::new_skew(a[0]*s, a[1]*s, a[2]*s)
+        Matrix::new_diag(c, c, c) + a.outer(aa) + Matrix::new_skew(a[0]*s, a[1]*s, a[2]*s)
     }
 
     /// Returns an element from the matrix, given the row and column numbers.

@@ -36,13 +36,13 @@ impl Vector {
 
     /// Computes the dot product between two vectors.
     #[inline(always)]
-    pub fn dot(&self, other: &Vector) -> f32 {
+    pub fn dot(&self, other: Vector) -> f32 {
         self[0]*other[0] + self[1]*other[1] + self[2]*other[2]
     }
 
     /// Computes the cross product between two vectors.
     #[inline]
-    pub fn cross(&self, other: &Vector) -> Vector {
+    pub fn cross(&self, other: Vector) -> Vector {
         Vector::new(
             self[1]*other[2] - self[2]*other[1],
             self[2]*other[0] - self[0]*other[2],
@@ -70,7 +70,7 @@ impl Vector {
     }
 
     /// Computes the outer product between two Vectors.
-    pub fn outer(&self, other: &Vector) -> Matrix {
+    pub fn outer(&self, other: Vector) -> Matrix {
         let elems: [f32, ..9] = [
             self[0]*other[0], self[0]*other[1], self[0]*other[2],
             self[1]*other[0], self[1]*other[1], self[1]*other[2],

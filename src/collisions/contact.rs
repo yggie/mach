@@ -6,17 +6,12 @@ use std::rc::Rc;
 /// Represents a point of contact between two physical entities. Holds
 /// references to the contacting bodies and a point of contact.
 pub struct Contact<'a> {
-    /// References to the contacting bodies.
+    /// References to the contacting bodies. The order of the references matter,
+    /// the first body is always assumed to be in the direction of the contact
+    /// normal.
     pub bodies: [Rc<Body<'a>>, ..2],
     /// The point of contact.
     pub point: Vector,
-}
-
-impl<'a> Contact<'a> {
-
-    /// Constructs a Contact object using the given references and a point of
-    /// contact.
-    pub fn new<'a>(a: Rc<Body>, b: Rc<Body>, point: Vector) -> Contact<'a> {
-        Contact{ bodies: [a, b], point: point }
-    }
+    /// The contact normal.
+    pub normal: Vector,
 }

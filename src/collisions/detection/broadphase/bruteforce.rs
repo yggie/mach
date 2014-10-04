@@ -26,12 +26,12 @@ impl<'a> BruteForce<'a> {
 impl<'a> Space<'a> for BruteForce<'a> {
 
     /// Adds the body to the structure.
-    fn add(&mut self, body: &Rc<Body>) {
+    fn add(&mut self, body: Rc<Body>) {
         self.count += 1;
         for b in self.bodies.iter() {
             self.pairs.push(ProximityPair::new(b.clone(), body.clone()));
         }
-        self.bodies.push(body.clone());
+        self.bodies.push(body);
     }
 
     /// Returns the number of bodies contained in the structure.
@@ -43,7 +43,10 @@ impl<'a> Space<'a> for BruteForce<'a> {
     /// encountered, the callback function is immediately called.
     fn each_contact(&mut self, callback: |Contact<'a>|) {
         for pair in self.pairs.iter() {
-            pair.if_contact(|contact| callback(contact));
+            match pair.compute_contact() {
+                None => (),
+                Some(contact) => callback(contact),
+            }
         }
     }
 }
