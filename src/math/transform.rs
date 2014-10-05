@@ -1,7 +1,7 @@
 use math::{ Vector, Matrix };
 
 #[cfg(test)]
-#[path="../../tests/math/transform_test.rs"]
+#[path="../../tests/unit/math/transform_test.rs"]
 mod tests;
 
 /// Represents a rigid-body transformation in space.

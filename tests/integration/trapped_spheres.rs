@@ -1,12 +1,11 @@
-use mithril::collisions::{ Space, BruteForce, ContactGraph };
+use mithril::collisions::{ BroadPhase, BruteForce };
+use mithril::solvers::force::naive_solver;
 use mithril::properties::Rigid;
 use mithril::math::Transform;
+use mithril::core::Database;
 use mithril::shapes::Sphere;
-use mithril::bodies::Body;
 
-use std::rc::Rc;
-
-fn populate(space: &mut Space) {
+fn seed(database: &mut Database) {
     let s = Sphere::new(1.0);
     let p = Rigid::new(1.0);
     let num_bodies = 10u;
@@ -14,20 +13,21 @@ fn populate(space: &mut Space) {
     for _ in range(0u, num_bodies) {
         let t = Transform::new_identity();
         let dt = Transform::new_identity();
-        let b = Rc::new(Body::new(box s, box p, t, dt));
-
-        space.add(b);
+        database.create_body(s, p);
     }
 
-    assert_eq!(space.size(), num_bodies);
+    assert_eq!(database.size(), num_bodies);
 }
 
 #[test]
 fn trapped_spheres() {
-    let space = &mut BruteForce::new();
-    let graph = &mut ContactGraph::new();
-    populate(space);
+    let database = &mut Database::new();
+    let broadphase = &mut BruteForce::new();
+    let mut contacts = Vec::new();
+    seed(database);
 
-    space.each_contact(|contact| graph.add(contact));
-    graph.solve();
+    broadphase.reindex(database);
+    broadphase.each_contact(database, |contact| contacts.push(contact));
+
+    naive_solver(database, &contacts);
 }

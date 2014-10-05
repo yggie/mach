@@ -21,10 +21,15 @@ pub mod properties;
 
 #[experimental]
 #[warn(missing_doc)]
-#[path="bodies/bodies.rs"]
-pub mod bodies;
+#[path="core/core.rs"]
+pub mod core;
 
 #[experimental]
 #[warn(missing_doc)]
 #[path="collisions/collisions.rs"]
 pub mod collisions;
+
+#[experimental]
+#[warn(missing_doc)]
+#[path="solvers/solvers.rs"]
+pub mod solvers;

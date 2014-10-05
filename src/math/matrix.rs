@@ -1,7 +1,7 @@
 use math::Vector;
 
 #[cfg(test)]
-#[path="../../tests/math/matrix_test.rs"]
+#[path="../../tests/unit/math/matrix_test.rs"]
 mod tests;
 
 /// A representation of a 3-by-3 matrix

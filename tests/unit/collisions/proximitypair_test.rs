@@ -1,13 +1,11 @@
-use bodies::Body;
+use core::{ Body, UID };
 use shapes::Sphere;
 use properties::Rigid;
 use collisions::ProximityPair;
 use math::{ Vector, Matrix, Transform };
 
-use std::rc::Rc;
-
-fn build_body<'a>(shape: Box<Sphere>, property: Box<Rigid>, transform: Transform) -> Rc<Body<'a>> {
-    Rc::new(Body::new(shape, property, transform, Transform::new_identity()))
+fn build_body<'a>(id: UID, shape: Box<Sphere>, property: Box<Rigid>, transform: Transform) -> Body<'a> {
+    Body::new_with_id(id, shape, property, transform, Transform::new_identity())
 }
 
 #[test]
@@ -15,10 +13,10 @@ fn new_test() {
     let s = Sphere::new(5.0);
     let p = Rigid::new(3.0);
     let t = Transform::new_identity();
-    let a = Rc::new(Body::new(box s, box p, t, t));
-    let b = Rc::new(Body::new(box s, box p, t, t));
+    let a = Body::new(box s, box p, t, t);
+    let b = Body::new(box s, box p, t, t);
 
-    ProximityPair::new(a, b);
+    ProximityPair::new(&a, &b);
 }
 
 #[test]
@@ -35,11 +33,11 @@ fn sphere_sphere_contact_test() {
         Vector::new(4.0, 3.0, 0.0)
     );
 
-    let a = build_body(box s, box p, t1);
-    let b = build_body(box s, box p, t2);
+    let a = &build_body(10u, box s, box p, t1);
+    let b = &build_body(101u, box s, box p, t2);
 
-    let pair = ProximityPair::new(a, b);
-    match pair.compute_contact() {
+    let mut pair = ProximityPair::new(a, b);
+    match pair.compute_contact(a, b) {
         None => fail!("should be in contact"),
         Some(contact) => {
             assert_eq!(contact.point, Vector::new(2.0, 1.5, 0.0));
@@ -52,11 +50,11 @@ fn sphere_sphere_no_contact_test() {
     let s = Sphere::new(2.5);
     let p = Rigid::new(3.0);
 
-    let a = build_body(box s, box p, Transform::new_translation(Vector::new(-0.05, -0.05, 0.0)));
-    let b = build_body(box s, box p, Transform::new_translation(Vector::new(5.0, 0.0, 0.0)));
+    let a = &build_body(11u, box s, box p, Transform::new_translation(Vector::new(-0.05, -0.05, 0.0)));
+    let b = &build_body(1u, box s, box p, Transform::new_translation(Vector::new(5.0, 0.0, 0.0)));
 
-    let pair = ProximityPair::new(a, b);
-    match pair.compute_contact() {
+    let mut pair = ProximityPair::new(a, b);
+    match pair.compute_contact(a, b) {
         None => (),
         Some(_) => fail!("should not be in contact"),
     }

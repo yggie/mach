@@ -4,7 +4,7 @@ use shapes::Shape;
 use std::fmt;
 
 #[cfg(test)]
-#[path="../../../tests/shapes/primitives/cube_test.rs"]
+#[path="../../../tests/unit/shapes/primitives/cube_test.rs"]
 mod tests;
 
 /// A representation of a cube in 3 dimensions.

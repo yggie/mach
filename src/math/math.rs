@@ -10,7 +10,7 @@ mod matrix;
 mod transform;
 
 #[cfg(test)]
-#[path="../../tests/math/math_test.rs"]
+#[path="../../tests/unit/math/math_test.rs"]
 mod tests;
 
 /// The default tolerance used to resolve floating point differences.

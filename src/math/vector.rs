@@ -3,7 +3,7 @@ use math::{ TOLERANCE, Matrix };
 use std::fmt;
 
 #[cfg(test)]
-#[path="../../tests/math/vector_test.rs"]
+#[path="../../tests/unit/math/vector_test.rs"]
 mod tests;
 
 /// A representation of a 3-dimensional column vector.

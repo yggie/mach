@@ -5,7 +5,7 @@ use std::fmt;
 use std::f32::consts::PI;
 
 #[cfg(test)]
-#[path="../../../tests/shapes/primitives/sphere_test.rs"]
+#[path="../../../tests/unit/shapes/primitives/sphere_test.rs"]
 mod tests;
 
 /// A representation of a sphere in 3 dimensions.

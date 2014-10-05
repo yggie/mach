@@ -5,7 +5,7 @@ use properties::Property;
 use std::fmt;
 
 #[cfg(test)]
-#[path="../../tests/properties/rigid_test.rs"]
+#[path="../../tests/unit/properties/rigid_test.rs"]
 mod tests;
 
 /// Represents a rigid body with a fixed density.

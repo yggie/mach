@@ -1,29 +1,27 @@
 use collisions::Contact;
-use bodies::Body;
-
-use std::rc::Rc;
+use core::{ Body, UID };
 
 #[cfg(test)]
-#[path="../../tests/collisions/proximitypair_test.rs"]
+#[path="../../tests/unit/collisions/proximitypair_test.rs"]
 mod tests;
 
 /// Represents two bodies in close proximity.
-pub struct ProximityPair<'a> {
+pub struct ProximityPair {
     /// References to the two bodies.
-    pub bodies: [Rc<Body<'a>>, ..2],
+    pub body_ids: [UID, ..2],
 }
 
-impl<'a> ProximityPair<'a> {
+impl ProximityPair {
 
     /// Constructs a new ProximityPair object from two bodies.
-    pub fn new<'a>(a: Rc<Body>, b: Rc<Body>) -> ProximityPair<'a> {
-        ProximityPair{ bodies: [a, b] }
+    pub fn new(body_0: &Body, body_1: &Body) -> ProximityPair {
+        ProximityPair{ body_ids: [body_0.id(), body_1.id()] }
     }
 
     /// Computes the contact point and optionally returns the value if present.
-    pub fn compute_contact(&self) -> Option<Contact<'a>> {
-        let shapes = [self.bodies[0].shape(), self.bodies[1].shape()];
-        let transforms = [self.bodies[0].transform(), self.bodies[1].transform()];
+    pub fn compute_contact<'a>(&mut self, body_0: &Body, body_1: &Body) -> Option<Contact<'a>> {
+        let shapes = [body_0.shape(), body_1.shape()];
+        let transforms = [body_0.transform(), body_1.transform()];
         let tolerance = shapes[0].surface_radius() + shapes[1].surface_radius();
 
         let translation_diff = transforms[1].translation_vector() - transforms[0].translation_vector();
@@ -34,7 +32,7 @@ impl<'a> ProximityPair<'a> {
             let contact_point = contact_normal.scale(dist_sq.sqrt() / 2.0);
 
             return Some(Contact {
-                bodies: [self.bodies[0].clone(), self.bodies[1].clone()],
+                body_ids: self.body_ids,
                 point: contact_point,
                 normal: contact_normal,
             });
