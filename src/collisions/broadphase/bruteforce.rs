@@ -28,7 +28,7 @@ impl BroadPhase for BruteForce {
 
     fn each_contact(&mut self, database: &Database, callback: |Contact|) {
         for pair in self.pairs.iter_mut() {
-            match database.find_pair(pair.body_ids) {
+            match (database.find(pair.body_ids[0]), database.find(pair.body_ids[1])) {
                 (Some(body_0), Some(body_1)) => {
                     match pair.compute_contact(body_0, body_1) {
                         None => (),

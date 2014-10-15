@@ -13,7 +13,7 @@ fn seed(database: &mut Database) {
     for _ in range(0u, num_bodies) {
         let t = Transform::new_identity();
         let dt = Transform::new_identity();
-        database.create_body(s, p);
+        database.create_body(s, p, t, dt);
     }
 
     assert_eq!(database.size(), num_bodies);

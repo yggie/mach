@@ -10,7 +10,7 @@ pub type ForceSolver = fn(&Database, &Vec<Contact>);
 
 /// Contains implementations of the `ForceSolver` type.
 pub mod force {
-    pub use self::naive::naive_solver;
+    pub use self::naivesolver::naive_solver;
 
-    mod naive;
+    mod naivesolver;
 }

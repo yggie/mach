@@ -15,7 +15,7 @@ fn single_body_test() {
     let p = Rigid::new(3.0);
     let mut database = Database::new();
 
-    let uid = database.create_body(s, p);
+    let uid = database.create_body_stationary(s, p);
 
     // should increase the size by one
     assert!(database.size() == 1);
