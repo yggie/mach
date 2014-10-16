@@ -17,8 +17,8 @@ pub fn naive_solver(database: &mut Database, contacts: &Vec<Contact>) {
                 ];
 
                 let impulse = relative_velocity[1]*masses[1] - relative_velocity[0]*masses[0];
-                body_0.apply_impulse(contact.normal.scale(-impulse / masses[0]));
-                body_1.apply_impulse(contact.normal.scale(impulse / masses[1]));
+                body_0.apply_impulse(contact.normal * (-impulse / masses[0]));
+                body_1.apply_impulse(contact.normal * (impulse / masses[1]));
             },
 
             // TODO handle missing bodies

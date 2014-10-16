@@ -29,7 +29,7 @@ impl ProximityPair {
 
         if dist_sq < tolerance*tolerance {
             let contact_normal = translation_diff.normalize();
-            let contact_point = contact_normal.scale(dist_sq.sqrt() / 2.0);
+            let contact_point = contact_normal * (dist_sq.sqrt() / 2.0);
 
             return Some(Contact {
                 body_ids: self.body_ids,

@@ -25,15 +25,6 @@ impl Vector {
         Vector::new(0.0, 0.0, 0.0)
     }
 
-    /// A multiplies a Vector by a scalar.
-    ///
-    /// > *Will be removed once Traits support type inference.*
-    #[inline(always)]
-    #[experimental]
-    pub fn scale(&self, s: f32) -> Vector {
-        Vector::new(self[0]*s, self[1]*s, self[2]*s)
-    }
-
     /// Computes the dot product between two vectors.
     #[inline(always)]
     pub fn dot(&self, other: Vector) -> f32 {
@@ -150,5 +141,15 @@ impl Sub<Vector, Vector> for Vector {
     #[inline]
     fn sub(&self, other: &Vector) -> Vector {
         Vector{ elements: [ self[0] - other[0], self[1] - other[1], self[2] - other[2] ] }
+    }
+}
+
+/// Implement the multiplication operator between a scalar and a `Vector`.
+impl Mul<f32, Vector> for Vector {
+    /// A multiplies a `Vector` by a scalar.
+    #[inline]
+    fn mul(&self, scale: &f32) -> Vector {
+        let s = *scale;
+        Vector::new(self[0]*s, self[1]*s, self[2]*s)
     }
 }

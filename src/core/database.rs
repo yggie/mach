@@ -10,13 +10,13 @@ mod tests;
 /// The `Database` component is responsible for storing and retrieving bodies in
 /// the engine. It’s main purpose is to generate a unique id for each body, and
 /// allow access to the body via the generated id.
-pub struct Database<'a> {
-    bodies: Vec<Body<'a>>,
+pub struct Database {
+    bodies: Vec<Body>,
 }
 
-impl<'a> Database<'a> {
+impl Database {
     /// Creates a new empty `Database` instance.
-    pub fn new() -> Database<'a> {
+    pub fn new() -> Database {
         Database{ bodies: Vec::new() }
     }
 
@@ -84,6 +84,12 @@ impl<'a> Database<'a> {
         }
 
         return (option_0, option_1);
+    }
+
+    pub fn each_body_mut(&mut self, callback: |&mut Body|) {
+        for body in self.bodies.iter_mut() {
+            callback(body);
+        }
     }
 
     /// Loops over all unique `Body` instance pairs and runs the callback

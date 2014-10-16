@@ -17,7 +17,7 @@ fn new_zero_test() {
 #[test]
 fn scaling_test() {
     let a = Vector::new(1.0, 2.0, 3.0);
-    let v = a.scale(2.5);
+    let v = a * (2.5);
 
     assert_eq!((v[0], v[1], v[2]), (2.5, 5.0, 7.5));
 }

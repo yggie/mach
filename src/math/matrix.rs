@@ -140,20 +140,6 @@ impl Sub<Matrix, Matrix> for Matrix {
 // impl Mul<Matrix, Matrix> for Matrix {
 //     /// Calculates the result of applying matrix multiplication between two
 //     /// matrices.
-//     ///
-//     /// ```rust
-//     /// # use mithril::math::Matrix;
-//     /// let elems_a: [f32, ..9] = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0];
-//     /// let a = Matrix::new(&elems_a);
-//     /// let elems_b: [f32, ..9] = [3.0, 2.0, 1.0, 6.0, 5.0, 4.0, 9.0, 8.0, 7.0];
-//     /// let b = Matrix::new(&elems_b);
-//     ///
-//     /// let m = a * b;
-//     ///
-//     /// assert_eq!((m[0], m[1], m[2]), ( 42.0,  36.0,  30.0))
-//     /// assert_eq!((m[3], m[4], m[5]), ( 96.0,  81.0,  66.0))
-//     /// assert_eq!((m[6], m[7], m[8]), (150.0, 126.0, 102.0))
-//     /// ```
 //     fn mul(&self, other: &Matrix) -> Matrix {
 //         let elems: [f32, ..9] = [
 //             self[0]*other[0] + self[1]*other[3] + self[2]*other[6],

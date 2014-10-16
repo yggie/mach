@@ -143,7 +143,7 @@ mod impls {
         let m = Matrix::new(&elems);
         let v = Vector::new(1.0, 2.0, 3.0);
 
-        let a = m * v;
+        let a: Vector = m * v;
 
         assert_eq!((a[0], a[1], a[2]), (30.0, 36.0, 42.0));
     }

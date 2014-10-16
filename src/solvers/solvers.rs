@@ -8,6 +8,9 @@ use collisions::Contact;
 /// contact information.
 pub type ForceSolver = fn(&Database, &Vec<Contact>);
 
+/// Steps each `Body` in the `Database` forward in time by one tick.
+pub type TimeMarcher = fn(&mut Database, f32);
+
 /// Contains implementations of the `ForceSolver` type.
 pub mod force {
     pub use self::naivesolver::naive_solver;

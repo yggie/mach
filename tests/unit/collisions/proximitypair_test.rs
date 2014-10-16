@@ -4,7 +4,7 @@ use properties::Rigid;
 use collisions::ProximityPair;
 use math::{ Vector, Matrix, Transform };
 
-fn build_body<'a>(id: UID, shape: Box<Sphere>, property: Box<Rigid>, transform: Transform) -> Body<'a> {
+fn build_body(id: UID, shape: Box<Sphere>, property: Box<Rigid>, transform: Transform) -> Body {
     Body::new_with_id(id, shape, property, transform, Transform::new_identity())
 }
 

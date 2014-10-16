@@ -8,7 +8,7 @@ use shapes::Shape;
 use std::fmt;
 
 /// Defines the traits for all mechanical property descriptions.
-pub trait Property: Clone + Eq + fmt::Show {
+pub trait Property: Clone + Eq + Send + fmt::Show {
     /// Computes the mass when applied to a shape.
     fn mass_of(&self, &Shape) -> f32;
     /// Computes the density when applied to a shape.

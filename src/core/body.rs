@@ -4,25 +4,25 @@ use shapes::Shape;
 use properties::Property;
 
 /// Represents a physical entity in the world.
-pub struct Body<'a> {
+pub struct Body {
     id: UID,
-    shape: Box<Shape + 'a>,
-    property: Box<Property + 'a>,
+    shape: Box<Shape>,
+    property: Box<Property>,
     transform: Transform,
     velocity: Vector,
     impulse: Vector,
 }
 
-impl<'a> Body<'a> {
+impl Body {
     /// Creates a new instance of a Body object
-    pub fn new<'a>(shape: Box<'a Shape>, property: Box<'a Property>,
-                   transform: Transform, derivative_transform: Transform) -> Body<'a> {
+    pub fn new(shape: Box<Shape>, property: Box<Property>,
+                   transform: Transform, derivative_transform: Transform) -> Body {
         Body::new_with_id(0u, shape, property, transform, derivative_transform)
     }
 
     /// Creates a new instance of a `Body` with the specified id.
-    pub fn new_with_id<'a>(id: UID, shape: Box<'a Shape>, property: Box<'a Property>,
-                             transform: Transform, derivative_transform: Transform) -> Body<'a> {
+    pub fn new_with_id(id: UID, shape: Box<Shape>, property: Box<Property>,
+                             transform: Transform, derivative_transform: Transform) -> Body {
         Body {
             id: id,
             shape: shape,
@@ -41,13 +41,13 @@ impl<'a> Body<'a> {
 
     /// Returns a borrowed pointer to the Shape object held internally.
     #[inline]
-    pub fn shape(&self) -> &Shape+'a {
+    pub fn shape(&self) -> &Shape {
         &*self.shape
     }
 
     /// Returns the property object associated with the Body.
     #[inline]
-    pub fn property(&self) -> &Property+'a {
+    pub fn property(&self) -> &Property {
         &*self.property
     }
 
