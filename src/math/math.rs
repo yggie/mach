@@ -4,10 +4,12 @@
 pub use self::vector::Vector;
 pub use self::matrix::Matrix;
 pub use self::transform::Transform;
+pub use self::quaternion::Quaternion;
 
 mod vector;
 mod matrix;
 mod transform;
+mod quaternion;
 
 #[cfg(test)]
 #[path="../../tests/unit/math/math_test.rs"]

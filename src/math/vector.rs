@@ -25,6 +25,28 @@ impl Vector {
         Vector::new(0.0, 0.0, 0.0)
     }
 
+    /// Computes the sum of the `Vector` and three scalars treated as components
+    /// of a `Vector`.
+    #[inline]
+    pub fn add(&self, x: f32, y: f32, z: f32) -> Vector {
+        Vector{ elements: [
+            self[0] + x,
+            self[1] + y,
+            self[2] + z,
+        ] }
+    }
+
+    /// Computes the difference between a `Vector` and three scalars treated as
+    /// components of a `Vector`.
+    #[inline]
+    pub fn sub(&self, x: f32, y: f32, z: f32) -> Vector {
+        Vector{ elements: [
+            self[0] - x,
+            self[1] - y,
+            self[2] - z,
+        ] }
+    }
+
     /// Computes the dot product between two vectors.
     #[inline(always)]
     pub fn dot(&self, other: Vector) -> f32 {
@@ -44,8 +66,7 @@ impl Vector {
     /// Computes the direction vector of a Vector.
     #[inline]
     pub fn normalize(&self) -> Vector {
-        let l = self.length();
-        Vector::new(self[0]/l, self[1]/l, self[2]/l)
+        self / self.length()
     }
 
     /// Computes the squared length of a Vector.
@@ -73,7 +94,6 @@ impl Vector {
 
 /// Implements the `std::fmt` operations to allow using `println!` on Vectors.
 impl fmt::Show for Vector {
-
     /// Implements the fmt operation for Vectors. The resulting format is
     /// equivalent to:
     ///
@@ -85,13 +105,12 @@ impl fmt::Show for Vector {
     }
 }
 
-/// Guarantees equivalence relation for all equality operations.
+/// Guarantees that equality satisfies the equivalence relations.
 impl Eq for Vector { }
 
 /// Implementation for the equality operations, allows the use of `==` and `!=`
 /// operators on Vectors.
 impl PartialEq for Vector {
-
     /// Implements the equality operator for Vectors. Returns true if the
     /// Euclidean distance between the two vectors is below the threshold.
     fn eq(&self, other: &Vector) -> bool {
@@ -131,7 +150,7 @@ impl Add<Vector, Vector> for Vector {
     /// Calculates the sum of two vectors.
     #[inline]
     fn add(&self, other: &Vector) -> Vector {
-        Vector{ elements: [self[0] + other[0], self[1] + other[1], self[2] + other[2] ] }
+        self.add(other[0], other[1], other[2])
     }
 }
 
@@ -140,16 +159,26 @@ impl Sub<Vector, Vector> for Vector {
     /// Calculates the difference between two vectors.
     #[inline]
     fn sub(&self, other: &Vector) -> Vector {
-        Vector{ elements: [ self[0] - other[0], self[1] - other[1], self[2] - other[2] ] }
+        self.sub(other[0], other[1], other[2])
     }
 }
 
-/// Implement the multiplication operator between a scalar and a `Vector`.
+/// Implements the multiplication operator between a `Vector` and a scalar.
 impl Mul<f32, Vector> for Vector {
-    /// A multiplies a `Vector` by a scalar.
+    /// Multiplies a `Vector` by a scalar.
     #[inline]
     fn mul(&self, scale: &f32) -> Vector {
         let s = *scale;
         Vector::new(self[0]*s, self[1]*s, self[2]*s)
+    }
+}
+
+/// Implements the division operator between a `Vector` and a scalar.
+impl Div<f32, Vector> for Vector {
+    /// Divides the `Vector` by a scalar.
+    #[inline]
+    fn div(&self, scale: &f32) -> Vector {
+        let s = *scale;
+        Vector::new(self[0]/s, self[1]/s, self[2]/s)
     }
 }

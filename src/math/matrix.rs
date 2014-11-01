@@ -58,24 +58,6 @@ impl Matrix {
     pub fn get(&self, row: uint, col: uint) -> f32 {
         self.elements[3*col + row]
     }
-
-    /// Calculates the result of applying matrix multiplication between two
-    /// matrices. (TEMPORARY UNTIL ASSOCIATED TYPES ARE SUPPORTED IN RUST)
-    #[experimental]
-    pub fn mult(a: &Matrix, b: &Matrix) -> Matrix {
-        let elems: [f32, ..9] = [
-            a[0]*b[0] + a[1]*b[3] + a[2]*b[6],
-            a[0]*b[1] + a[1]*b[4] + a[2]*b[7],
-            a[0]*b[2] + a[1]*b[5] + a[2]*b[8],
-            a[3]*b[0] + a[4]*b[3] + a[5]*b[6],
-            a[3]*b[1] + a[4]*b[4] + a[5]*b[7],
-            a[3]*b[2] + a[4]*b[5] + a[5]*b[8],
-            a[6]*b[0] + a[7]*b[3] + a[8]*b[6],
-            a[6]*b[1] + a[7]*b[4] + a[8]*b[7],
-            a[6]*b[2] + a[7]*b[5] + a[8]*b[8],
-        ];
-        Matrix{ elements: elems }
-    }
 }
 
 /// Implement the index operator.
@@ -136,25 +118,25 @@ impl Sub<Matrix, Matrix> for Matrix {
     }
 }
 
-// /// Implement the multiplication operator between Matrices.
-// impl Mul<Matrix, Matrix> for Matrix {
-//     /// Calculates the result of applying matrix multiplication between two
-//     /// matrices.
-//     fn mul(&self, other: &Matrix) -> Matrix {
-//         let elems: [f32, ..9] = [
-//             self[0]*other[0] + self[1]*other[3] + self[2]*other[6],
-//             self[0]*other[1] + self[1]*other[4] + self[2]*other[7],
-//             self[0]*other[2] + self[1]*other[5] + self[2]*other[8],
-//             self[3]*other[0] + self[4]*other[3] + self[5]*other[6],
-//             self[3]*other[1] + self[4]*other[4] + self[5]*other[7],
-//             self[3]*other[2] + self[4]*other[5] + self[5]*other[8],
-//             self[6]*other[0] + self[7]*other[3] + self[8]*other[6],
-//             self[6]*other[1] + self[7]*other[4] + self[8]*other[7],
-//             self[6]*other[2] + self[7]*other[5] + self[8]*other[8],
-//         ];
-//         Matrix{ elements: elems }
-//     }
-// }
+/// Implement the multiplication operator between Matrices.
+impl Mul<Matrix, Matrix> for Matrix {
+    /// Calculates the result of applying matrix multiplication between two
+    /// matrices.
+    fn mul(&self, other: &Matrix) -> Matrix {
+        let elems: [f32, ..9] = [
+            self[0]*other[0] + self[1]*other[3] + self[2]*other[6],
+            self[0]*other[1] + self[1]*other[4] + self[2]*other[7],
+            self[0]*other[2] + self[1]*other[5] + self[2]*other[8],
+            self[3]*other[0] + self[4]*other[3] + self[5]*other[6],
+            self[3]*other[1] + self[4]*other[4] + self[5]*other[7],
+            self[3]*other[2] + self[4]*other[5] + self[5]*other[8],
+            self[6]*other[0] + self[7]*other[3] + self[8]*other[6],
+            self[6]*other[1] + self[7]*other[4] + self[8]*other[7],
+            self[6]*other[2] + self[7]*other[5] + self[8]*other[8],
+        ];
+        Matrix{ elements: elems }
+    }
+}
 
 impl Mul<Vector, Vector> for Matrix {
     /// Computes the resulting vector from the multiplication between a matrix

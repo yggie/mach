@@ -10,10 +10,10 @@ Rust version).
 
 ### Current Rust Version
 ```
-rustc 0.13.0-nightly (1c3ddd297 2014-10-13 23:27:46 +0000)
+rustc 0.13.0-nightly (f03745244 2014-10-26 16:42:33 +0000)
 ```
 
 ### Current Cargo Version
 ```
-cargo 0.0.1-pre-nightly (2459dfd 2014-10-13 23:45:00 +0000)
+cargo 0.0.1-pre-nightly (908cfed 2014-10-24 19:03:56 +0000)
 ```

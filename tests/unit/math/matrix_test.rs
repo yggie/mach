@@ -66,7 +66,7 @@ fn matrix_multiplication_test() {
     let elems_b: [f32, ..9] = [3.0, 2.0, 1.0, 6.0, 5.0, 4.0, 9.0, 8.0, 7.0];
     let b = Matrix::new(&elems_b);
 
-    let m = Matrix::mult(&a, &b);
+    let m = a * b;
 
     assert_eq!((m[0], m[1], m[2]), ( 42.0,  36.0,  30.0));
     assert_eq!((m[3], m[4], m[5]), ( 96.0,  81.0,  66.0));
@@ -76,16 +76,6 @@ fn matrix_multiplication_test() {
 #[cfg(test)]
 mod impls {
     use math::{ Matrix, Vector };
-
-    #[test]
-    fn index_getter_test() {
-        let elems: [f32, ..9] = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0];
-        let m = Matrix::new(&elems);
-
-        assert_eq!((m[0], m[1], m[2]), (1.0, 2.0, 3.0));
-        assert_eq!((m[3], m[4], m[5]), (4.0, 5.0, 6.0));
-        assert_eq!((m[6], m[7], m[8]), (7.0, 8.0, 9.0));
-    }
 
     #[test]
     fn index_setter_test() {
@@ -138,7 +128,7 @@ mod impls {
     }
 
     #[test]
-    fn vector_multiplication_test() {
+    fn multiplication_test() {
         let elems: [f32, ..9] = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0];
         let m = Matrix::new(&elems);
         let v = Vector::new(1.0, 2.0, 3.0);

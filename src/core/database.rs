@@ -86,6 +86,8 @@ impl Database {
         return (option_0, option_1);
     }
 
+    /// Iterates over all unique `Body` instances and runs the provided callback
+    /// function.
     pub fn each_body_mut(&mut self, callback: |&mut Body|) {
         for body in self.bodies.iter_mut() {
             callback(body);
