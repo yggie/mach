@@ -22,7 +22,7 @@ fn single_body_test() {
 
     // should be able to find the created Body by it’s UID
     match database.find(uid) {
-        None => fail!("Could not find Body which was just created!"),
+        None => panic!("Could not find Body which was just created!"),
         Some(_) => (),
     }
 }

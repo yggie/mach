@@ -1,30 +1,23 @@
 use mithril::shapes::Sphere;
 use mithril::properties::Rigid;
 use mithril::solvers::naive_solver;
-use mithril::core::{ Database, State };
-use mithril::collisions::{ BroadPhase, BruteForce };
+use mithril::core::{ State, World };
+use mithril::collisions::BruteForce;
+use mithril::integrators::euler_integration;
 
-fn seed(database: &mut Database) {
+#[test]
+fn trapped_spheres() {
+    let mut world = World::new(BruteForce::new(), naive_solver, euler_integration);
     let s = Sphere::new(1.0);
     let p = Rigid::new(1.0);
     let num_bodies = 10u;
 
     for _ in range(0u, num_bodies) {
-        database.create_body(s, p, State::new_stationary());
+        world.create_body(s, p, State::new_stationary());
     }
+    assert_eq!(world.num_bodies(), num_bodies);
 
-    assert_eq!(database.size(), num_bodies);
-}
-
-#[test]
-fn trapped_spheres() {
-    let database = &mut Database::new();
-    let broadphase = &mut BruteForce::new();
-    let mut contacts = Vec::new();
-    seed(database);
-
-    broadphase.reindex(database);
-    broadphase.each_contact(database, |contact| contacts.push(contact));
-
-    naive_solver(database, &contacts);
+    for _ in range(0u, 1000) {
+        world.update(0.2);
+    }
 }

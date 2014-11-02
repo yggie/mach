@@ -28,7 +28,7 @@ fn sphere_sphere_contact_test() {
 
     let mut pair = ProximityPair::new(a, b);
     match pair.compute_contact(a, b) {
-        None => fail!("should be in contact"),
+        None => panic!("should be in contact"),
         Some(contact) => {
             assert_eq!(contact.point, Vector::new(2.0, 1.5, 0.0));
         },
@@ -46,6 +46,6 @@ fn sphere_sphere_no_contact_test() {
     let mut pair = ProximityPair::new(a, b);
     match pair.compute_contact(a, b) {
         None => (),
-        Some(_) => fail!("should not be in contact"),
+        Some(_) => panic!("should not be in contact"),
     }
 }

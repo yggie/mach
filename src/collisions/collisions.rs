@@ -7,7 +7,7 @@ pub use self::proximitypair::ProximityPair;
 pub use self::broadphase::bruteforce::BruteForce;
 
 #[cfg(test)]
-#[path="../../tests/behaviour/broadphase_behaviour.rs"]
+#[path="../../tests/behaviours/broadphase_behaviour.rs"]
 mod behaviours;
 
 /// The `BroadPhase` component enhances the `Database` component by enabling

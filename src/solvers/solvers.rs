@@ -8,6 +8,6 @@ pub use self::naivesolver::naive_solver;
 
 /// Solvers which compute the forces acting on each `Body` based on the provided
 /// contact information.
-pub type ForceSolver = fn(&Database, &Vec<Contact>);
+pub type ForceSolver = fn(&mut Database, &Vec<Contact>);
 
 mod naivesolver;

@@ -34,13 +34,13 @@ fn non_rotating_sphere_sphere_collision() {
         Some(body) => {
             assert_eq!(body.impulse(), Vector::new(-0.7, 0.0, 0.0))
         },
-        None => fail!("Could not find Body with UID {}", uids[0]),
+        None => panic!("Could not find Body with UID {}", uids[0]),
     }
 
     match database.find(uids[1]) {
         Some(body) => {
             assert_eq!(body.impulse(), Vector::new(0.7, 0.0, 0.0))
         },
-        None => fail!("Could not find Body with UID {}", uids[1]),
+        None => panic!("Could not find Body with UID {}", uids[1]),
     }
 }
