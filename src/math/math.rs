@@ -1,19 +1,22 @@
 //! The math module contains all the logic associated with primitive mathematical
 //! operations.
 
+use std::f32;
+
 pub use self::vector::Vector;
 pub use self::matrix::Matrix;
-pub use self::transform::Transform;
 pub use self::quaternion::Quaternion;
 
 mod vector;
 mod matrix;
-mod transform;
 mod quaternion;
 
 #[cfg(test)]
 #[path="../../tests/unit/math/math_test.rs"]
 mod tests;
+
+/// The PI constant.
+pub static PI: f32 = f32::consts::PI;
 
 /// The default tolerance used to resolve floating point differences.
 pub static TOLERANCE: f32 = 1e-6;

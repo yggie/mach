@@ -21,14 +21,14 @@ impl ProximityPair {
     /// Computes the contact point and optionally returns the value if present.
     pub fn compute_contact<'a>(&mut self, body_0: &Body, body_1: &Body) -> Option<Contact<'a>> {
         let shapes = [body_0.shape(), body_1.shape()];
-        let transforms = [body_0.transform(), body_1.transform()];
+        let states = [body_0.state(), body_1.state()];
         let tolerance = shapes[0].surface_radius() + shapes[1].surface_radius();
 
-        let translation_diff = transforms[1].translation_vector() - transforms[0].translation_vector();
-        let dist_sq = translation_diff.length_sq();
+        let rel_pos = states[1].position() - states[0].position();
+        let dist_sq = rel_pos.length_sq();
 
         if dist_sq < tolerance*tolerance {
-            let contact_normal = translation_diff.normalize();
+            let contact_normal = rel_pos.normalize();
             let contact_point = contact_normal * (dist_sq.sqrt() / 2.0);
 
             return Some(Contact {

@@ -1,7 +1,6 @@
-use core::{ Body, UID };
-use math::Transform;
 use shapes::Shape;
 use properties::Property;
+use core::{ UID, Body, State };
 
 #[cfg(test)]
 #[path="../../tests/unit/core/database_test.rs"]
@@ -25,10 +24,9 @@ impl Database {
     pub fn create_body<T: Shape, U: Property>(&mut self,
                                               shape: T,
                                               property: U,
-                                              transform: Transform,
-                                              derivative_transform: Transform) -> UID {
+                                              state: State) -> UID {
         let uid = self.bodies.len();
-        self.bodies.push(Body::new_with_id(uid, box shape, box property, transform, derivative_transform));
+        self.bodies.push(Body::new_with_id(uid, box shape, box property, state));
 
         return uid;
     }
@@ -39,8 +37,7 @@ impl Database {
     pub fn create_body_stationary<T: Shape, U: Property>(&mut self,
                                                          shape: T,
                                                          property: U) -> UID {
-        let identity = Transform::new_identity();
-        self.create_body(shape, property, identity, identity)
+        self.create_body(shape, property, State::new_stationary())
     }
 
     /// Returns the number of `Body` instances stored in the `Database`.

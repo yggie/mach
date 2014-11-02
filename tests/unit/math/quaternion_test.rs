@@ -54,6 +54,13 @@ mod impls {
     use math::Quaternion;
 
     #[test]
+    fn clone_test() {
+        let q = Quaternion::new(1.0, 3.0, 4.0, 5.0).clone();
+
+        assert_eq!((q[0], q[1], q[2], q[3]), (1.0, 3.0, 4.0, 5.0));
+    }
+
+    #[test]
     fn index_setter_test() {
         let mut q = Quaternion::new(1.0, 3.0, 4.0, 5.0);
 

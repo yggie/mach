@@ -2,7 +2,7 @@ use core::Database;
 use collisions::Contact;
 
 #[cfg(test)]
-#[path="../../../tests/unit/solvers/force/naivesolver_test.rs"]
+#[path="../../tests/unit/solvers/naivesolver_test.rs"]
 mod tests;
 
 /// Naively solves for the contact forces

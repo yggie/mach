@@ -1,4 +1,6 @@
-use math::Vector;
+use math::{ Vector, TOLERANCE };
+
+use std::fmt;
 
 #[cfg(test)]
 #[path="../../tests/unit/math/matrix_test.rs"]
@@ -57,6 +59,55 @@ impl Matrix {
     #[inline(always)]
     pub fn get(&self, row: uint, col: uint) -> f32 {
         self.elements[3*col + row]
+    }
+}
+
+/// Implement the clone operation.
+impl Clone for Matrix {
+    /// Returns a copy of the `Matrix`.
+    fn clone(&self) -> Matrix {
+        Matrix{ elements: [
+            self[0], self[1], self[2],
+            self[3], self[4], self[5],
+            self[6], self[7], self[8],
+        ] }
+    }
+}
+
+/// Implements the `std::fmt` operations to allow using `println!` on `Matrix`
+/// instances.
+impl fmt::Show for Matrix {
+    /// Implements the fmt operation for `Matrix` instances. The resulting
+    /// format is equivalent to:
+    ///
+    /// ```rust,ignore
+    /// println!("[{}, {}, {}, {}, {}, {}, {}, {}, {}]", m[0], m[1], m[2], m[3],
+    ///          m[4], m[5], m[6], m[7], m[8]);
+    /// ```
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "[{}, {}, {}, {}, {}, {}, {}, {}, {}]",
+               self[0], self[1], self[2], self[3], self[4],
+               self[5], self[6], self[7], self[8])
+    }
+}
+
+/// Guarantees that equality satisfies the equivalence relations.
+impl Eq for Matrix { }
+
+/// Implementation for the equality operations, allows the use of `==` and `!=`
+/// operators on `Matrix` instances.
+impl PartialEq for Matrix {
+    /// Implements the equality operator for `Matrix` instances. Returns true if
+    /// the maximum difference in the `Matrix` components is less than the
+    /// allowed tolerance.
+    fn eq(&self, other: &Matrix) -> bool {
+        for i in range(0u, 9) {
+            if (self[i] - other[i]).abs() > TOLERANCE {
+                return false;
+            }
+        }
+
+        return true;
     }
 }
 

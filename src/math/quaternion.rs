@@ -24,6 +24,16 @@ impl Quaternion {
         Quaternion{ elements: [1.0, 0.0, 0.0, 0.0] }
     }
 
+    /// Creates a new `Quaternion` representing a rotation about an axis.
+    pub fn new_from_rotation(radians: f32, x: f32, y: f32, z: f32) -> Quaternion {
+        let length = (x*x + y*y + z*z).sqrt();
+        let half_radians = radians / 2.0;
+        let sl = half_radians.sin() / length;
+        let c = half_radians.cos();
+
+        return Quaternion::new(c, sl*x, sl*y, sl*z);
+    }
+
     /// Computes the squared length of the `Quaternion`.
     #[inline(always)]
     pub fn length_sq(&self) -> f32 {
@@ -41,6 +51,15 @@ impl Quaternion {
     #[inline]
     pub fn normalize(&self) -> Quaternion {
         self / self.length()
+    }
+
+    /// Sets the components of the `Quaternion` to the specified values.
+    #[inline]
+    pub fn set(&mut self, r: f32, i: f32, j: f32, k: f32) {
+        self[0] = r;
+        self[1] = i;
+        self[2] = j;
+        self[3] = k;
     }
 
     /// Computes the difference between the `Quaternion` and the input scalars
@@ -65,6 +84,14 @@ impl Quaternion {
             self[0]*j - self[1]*k + self[2]*r + self[3]*i,
             self[0]*k + self[1]*j - self[2]*i + self[3]*r,
         ] }
+    }
+}
+
+/// Implements the clone operation.
+impl Clone for Quaternion {
+    /// Returns a copy of the `Quaternion`.
+    fn clone(&self) -> Quaternion {
+        Quaternion::new(self[0], self[1], self[2], self[3])
     }
 }
 

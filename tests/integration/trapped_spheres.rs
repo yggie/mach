@@ -1,9 +1,8 @@
-use mithril::collisions::{ BroadPhase, BruteForce };
-use mithril::solvers::force::naive_solver;
-use mithril::properties::Rigid;
-use mithril::math::Transform;
-use mithril::core::Database;
 use mithril::shapes::Sphere;
+use mithril::properties::Rigid;
+use mithril::solvers::naive_solver;
+use mithril::core::{ Database, State };
+use mithril::collisions::{ BroadPhase, BruteForce };
 
 fn seed(database: &mut Database) {
     let s = Sphere::new(1.0);
@@ -11,9 +10,7 @@ fn seed(database: &mut Database) {
     let num_bodies = 10u;
 
     for _ in range(0u, num_bodies) {
-        let t = Transform::new_identity();
-        let dt = Transform::new_identity();
-        database.create_body(s, p, t, dt);
+        database.create_body(s, p, State::new_stationary());
     }
 
     assert_eq!(database.size(), num_bodies);

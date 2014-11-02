@@ -81,6 +81,13 @@ mod impls {
     use math::Vector;
 
     #[test]
+    fn clone_test() {
+        let v = Vector::new(1.0, 2.0, 3.0).clone();
+
+        assert_eq!((v[0], v[1], v[2]), (1.0, 2.0, 3.0));
+    }
+
+    #[test]
     fn index_test() {
         let v = Vector::new(1.0, 2.0, 3.0);
 

@@ -25,6 +25,14 @@ impl Vector {
         Vector::new(0.0, 0.0, 0.0)
     }
 
+    /// Set the components of the `Vector` to the specified values.
+    #[inline]
+    pub fn set(&mut self, x: f32, y: f32, z: f32) {
+        self[0] = x;
+        self[1] = y;
+        self[2] = z;
+    }
+
     /// Computes the sum of the `Vector` and three scalars treated as components
     /// of a `Vector`.
     #[inline]
@@ -92,9 +100,17 @@ impl Vector {
     }
 }
 
+/// Implements the clone operation.
+impl Clone for Vector {
+    /// Returns a copy of the `Vector`.
+    fn clone(&self) -> Vector {
+        Vector::new(self[0], self[1], self[2])
+    }
+}
+
 /// Implements the `std::fmt` operations to allow using `println!` on Vectors.
 impl fmt::Show for Vector {
-    /// Implements the fmt operation for Vectors. The resulting format is
+    /// Implements the fmt operation for `Vector`s. The resulting format is
     /// equivalent to:
     ///
     /// ```rust,ignore
@@ -109,10 +125,11 @@ impl fmt::Show for Vector {
 impl Eq for Vector { }
 
 /// Implementation for the equality operations, allows the use of `==` and `!=`
-/// operators on Vectors.
+/// operators on `Vector`s.
 impl PartialEq for Vector {
     /// Implements the equality operator for Vectors. Returns true if the
-    /// Euclidean distance between the two vectors is below the threshold.
+    /// Euclidean distance between the two vectors is below an allowed
+    /// tolerance.
     fn eq(&self, other: &Vector) -> bool {
         (self - *other).length_sq() < TOLERANCE*TOLERANCE
     }

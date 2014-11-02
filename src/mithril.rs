@@ -1,6 +1,8 @@
 #![crate_name = "mithril"]
 #![crate_type = "lib"]
 
+#![feature(macro_rules)]
+
 //! Contains the implementation of the Mithril Physics engine, an open-source
 //! physics engine built on the Rust programming language.
 
@@ -33,3 +35,8 @@ pub mod collisions;
 #[warn(missing_doc)]
 #[path="solvers/solvers.rs"]
 pub mod solvers;
+
+#[experimental]
+#[warn(missing_doc)]
+#[path="integrators/integrators.rs"]
+pub mod integrators;

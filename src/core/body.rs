@@ -1,34 +1,30 @@
-use core::UID;
-use math::{ Vector, Transform };
+use math::Vector;
 use shapes::Shape;
 use properties::Property;
+use core::{ UID, State };
 
 /// Represents a physical entity in the world.
 pub struct Body {
     id: UID,
     shape: Box<Shape>,
     property: Box<Property>,
-    transform: Transform,
-    velocity: Vector,
-    impulse: Vector,
+    state: State,
+    pub impulse: Vector,
 }
 
 impl Body {
     /// Creates a new instance of a Body object
-    pub fn new(shape: Box<Shape>, property: Box<Property>,
-                   transform: Transform, derivative_transform: Transform) -> Body {
-        Body::new_with_id(0u, shape, property, transform, derivative_transform)
+    pub fn new(shape: Box<Shape>, property: Box<Property>, state: State) -> Body {
+        Body::new_with_id(0u, shape, property, state)
     }
 
     /// Creates a new instance of a `Body` with the specified id.
-    pub fn new_with_id(id: UID, shape: Box<Shape>, property: Box<Property>,
-                             transform: Transform, derivative_transform: Transform) -> Body {
+    pub fn new_with_id(id: UID, shape: Box<Shape>, property: Box<Property>, state: State) -> Body {
         Body {
             id: id,
             shape: shape,
             property: property,
-            transform: transform,
-            velocity: derivative_transform.translation_vector(),
+            state: state,
             impulse: Vector::new_zero(),
         }
     }
@@ -51,16 +47,10 @@ impl Body {
         &*self.property
     }
 
-    /// Returns the transformation matrix associated with the Body.
+    /// Returns the `State` associated with the Body.
     #[inline]
-    pub fn transform(&self) -> &Transform {
-        &self.transform
-    }
-
-    /// Returns the velocity associated with the Body.
-    #[inline]
-    pub fn velocity(&self) -> Vector {
-        self.velocity
+    pub fn state(&self) -> &State {
+        &self.state
     }
 
     /// Returns the mass of the `Body`.
@@ -72,7 +62,25 @@ impl Body {
     /// Returns the position of the `Body`.
     #[inline]
     pub fn position(&self) -> Vector {
-        self.transform.translation_vector()
+        self.state.position()
+    }
+
+    /// Returns the velocity associated with the Body.
+    #[inline]
+    pub fn velocity(&self) -> Vector {
+        self.state.velocity()
+    }
+
+    /// Sets the `Body`’s position using the `Vector` provided.
+    #[inline]
+    pub fn set_position_with_vector(&mut self, position: Vector) {
+        self.state.set_position_with_vector(position);
+    }
+
+    /// Sets the `Body`’s velocity using the `Vector` provided.
+    #[inline]
+    pub fn set_velocity_with_vector(&mut self, velocity: Vector) {
+        self.state.set_velocity_with_vector(velocity);
     }
 
     /// Returns the impulse currently acting on the `Body`.
