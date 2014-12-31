@@ -1,7 +1,7 @@
 use math::{ Vector, Quaternion };
 
 #[cfg(test)]
-#[path="../../tests/unit/core/state_test.rs"]
+#[path="../../tests/core/state_test.rs"]
 mod tests;
 
 /// Represents a physical state. The state contains information regarding the
@@ -13,6 +13,9 @@ pub struct State {
     velocity: Vector,
     angular_velocity: Vector,
 }
+
+/// Safe to perform a semantic copy.
+impl Copy for State { }
 
 impl State {
     /// Creates a new `State` with zero position, rotation, velocity and angular

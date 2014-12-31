@@ -1,29 +1,29 @@
 use math::Vector;
 use shapes::Shape;
-use properties::Property;
+use materials::Material;
 use core::{ UID, State };
 
 /// Represents a physical entity in the world.
 pub struct Body {
     id: UID,
     shape: Box<Shape>,
-    property: Box<Property>,
+    material: Box<Material>,
     state: State,
-    pub impulse: Vector,
+    impulse: Vector,
 }
 
 impl Body {
     /// Creates a new instance of a Body object
-    pub fn new(shape: Box<Shape>, property: Box<Property>, state: State) -> Body {
-        Body::new_with_id(0u, shape, property, state)
+    pub fn new(shape: Box<Shape>, material: Box<Material>, state: State) -> Body {
+        Body::new_with_id(0u, shape, material, state)
     }
 
     /// Creates a new instance of a `Body` with the specified id.
-    pub fn new_with_id(id: UID, shape: Box<Shape>, property: Box<Property>, state: State) -> Body {
+    pub fn new_with_id(id: UID, shape: Box<Shape>, material: Box<Material>, state: State) -> Body {
         Body {
             id: id,
             shape: shape,
-            property: property,
+            material: material,
             state: state,
             impulse: Vector::new_zero(),
         }
@@ -41,10 +41,10 @@ impl Body {
         &*self.shape
     }
 
-    /// Returns the property object associated with the Body.
+    /// Returns the `Material` object associated with the Body.
     #[inline]
-    pub fn property(&self) -> &Property {
-        &*self.property
+    pub fn material(&self) -> &Material {
+        &*self.material
     }
 
     /// Returns the `State` associated with the Body.
@@ -56,7 +56,7 @@ impl Body {
     /// Returns the mass of the `Body`.
     #[inline]
     pub fn mass(&self) -> f32 {
-        self.property.mass_of(&*self.shape)
+        self.material.mass_of(&*self.shape)
     }
 
     /// Returns the position of the `Body`.

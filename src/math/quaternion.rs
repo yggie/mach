@@ -1,9 +1,11 @@
 use math::TOLERANCE;
 
 use std::fmt;
+use std::num::Float;
+use std::num::FloatMath;
 
 #[cfg(test)]
-#[path="../../tests/unit/math/quaternion_test.rs"]
+#[path="../../tests/math/quaternion_test.rs"]
 mod tests;
 
 /// A representation of a quaternion.
@@ -50,7 +52,7 @@ impl Quaternion {
     /// `Quaternion`.
     #[inline]
     pub fn normalize(&self) -> Quaternion {
-        self / self.length()
+        *self / self.length()
     }
 
     /// Sets the components of the `Quaternion` to the specified values.
@@ -65,7 +67,7 @@ impl Quaternion {
     /// Computes the difference between the `Quaternion` and the input scalars
     /// treated as components of a `Quaternion`.
     #[inline]
-    pub fn sub(&self, r: f32, i: f32, j: f32, k: f32) -> Quaternion {
+    pub fn sub(self, r: f32, i: f32, j: f32, k: f32) -> Quaternion {
         Quaternion{ elements: [
             self[0] - r,
             self[1] - i,
@@ -86,6 +88,9 @@ impl Quaternion {
         ] }
     }
 }
+
+/// Safe to perform a semantic copy.
+impl Copy for Quaternion { }
 
 /// Implements the clone operation.
 impl Clone for Quaternion {
@@ -118,7 +123,7 @@ impl PartialEq for Quaternion {
     /// are equal if the Euclidean distance between the two is below a
     /// threshold.
     fn eq(&self, other: &Quaternion) -> bool {
-        (self - *other).length_sq() < TOLERANCE*TOLERANCE
+        (*self - *other).length_sq() < TOLERANCE*TOLERANCE
     }
 }
 
@@ -145,7 +150,7 @@ impl IndexMut<uint, f32> for Quaternion {
 impl Neg<Quaternion> for Quaternion {
     /// Reverses the direction of the quaternion.
     #[inline]
-    fn neg(&self) -> Quaternion {
+    fn neg(self) -> Quaternion {
         Quaternion{ elements: [ -self[0], -self[1], -self[2], -self[3] ] }
     }
 }
@@ -154,7 +159,7 @@ impl Neg<Quaternion> for Quaternion {
 impl Sub<Quaternion, Quaternion> for Quaternion {
     /// Computes the difference between two `Quaternion`s.
     #[inline]
-    fn sub(&self, other: &Quaternion) -> Quaternion {
+    fn sub(self, other: Quaternion) -> Quaternion {
         self.sub(other[0], other[1], other[2], other[3])
     }
 }
@@ -162,8 +167,7 @@ impl Sub<Quaternion, Quaternion> for Quaternion {
 /// Implements the multiplication operator between a `Quaternion` and a scalar.
 impl Mul<f32, Quaternion> for Quaternion {
     /// Computes the result of multiplying a `Quaternion` by a scalar.
-    fn mul(&self, scalar: &f32) -> Quaternion {
-        let s = *scalar;
+    fn mul(self, s: f32) -> Quaternion {
         Quaternion::new(self[0]*s, self[1]*s, self[2]*s, self[3]*s)
     }
 }
@@ -172,7 +176,7 @@ impl Mul<f32, Quaternion> for Quaternion {
 impl Mul<Quaternion, Quaternion> for Quaternion {
     /// Multiplies two quaternions and returns the result.
     #[inline]
-    fn mul(&self, other: &Quaternion) -> Quaternion {
+    fn mul(self, other: Quaternion) -> Quaternion {
         self.mult(other[0], other[1], other[2], other[3])
     }
 }
@@ -181,8 +185,7 @@ impl Mul<Quaternion, Quaternion> for Quaternion {
 impl Div<f32, Quaternion> for Quaternion {
     /// Divides the `Quaternion` by a scalar.
     #[inline]
-    fn div(&self, scalar: &f32) -> Quaternion {
-        let s = *scalar;
+    fn div(self, s: f32) -> Quaternion {
         Quaternion::new(self[0]/s, self[1]/s, self[2]/s, self[3]/s)
     }
 }

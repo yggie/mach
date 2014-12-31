@@ -1,9 +1,11 @@
 use math::{ Vector, TOLERANCE };
 
 use std::fmt;
+use std::num::Float;
+use std::num::FloatMath;
 
 #[cfg(test)]
-#[path="../../tests/unit/math/matrix_test.rs"]
+#[path="../../tests/math/matrix_test.rs"]
 mod tests;
 
 /// A representation of a 3-by-3 matrix
@@ -12,7 +14,6 @@ pub struct Matrix {
 }
 
 impl Matrix {
-
     /// Constructs a new matrix given 9 elements in row major order.
     #[inline(always)]
     pub fn new(elements: &[f32, ..9]) -> Matrix {
@@ -61,6 +62,9 @@ impl Matrix {
         self.elements[3*col + row]
     }
 }
+
+/// Safe to perform a semantic copy.
+impl Copy for Matrix { }
 
 /// Implement the clone operation.
 impl Clone for Matrix {
@@ -133,7 +137,7 @@ impl IndexMut<uint, f32> for Matrix {
 /// Implement the unary negation operator.
 impl Neg<Matrix> for Matrix {
     /// Applies the negation operator to each element in the matrix.
-    fn neg(&self) -> Matrix {
+    fn neg(self) -> Matrix {
         let elems: [f32, ..9] = [
             -self[0], -self[1], -self[2],
             -self[3], -self[4], -self[5],
@@ -146,7 +150,7 @@ impl Neg<Matrix> for Matrix {
 /// Implement the addition operator between Matrices.
 impl Add<Matrix, Matrix> for Matrix {
     /// Calculates the sum of two matrices.
-    fn add(&self, other: &Matrix) -> Matrix {
+    fn add(self, other: Matrix) -> Matrix {
         let elems: [f32, ..9] = [
             self[0] + other[0], self[1] + other[1], self[2] + other[2],
             self[3] + other[3], self[4] + other[4], self[5] + other[5],
@@ -159,7 +163,7 @@ impl Add<Matrix, Matrix> for Matrix {
 /// Implement the subtraction operator between Matrices.
 impl Sub<Matrix, Matrix> for Matrix {
     /// Calculates the difference between two vectors.
-    fn sub(&self, other: &Matrix) -> Matrix {
+    fn sub(self, other: Matrix) -> Matrix {
         let elems: [f32, ..9] = [
             self[0] - other[0], self[1] - other[1], self[2] - other[2],
             self[3] - other[3], self[4] - other[4], self[5] - other[5],
@@ -173,7 +177,7 @@ impl Sub<Matrix, Matrix> for Matrix {
 impl Mul<Matrix, Matrix> for Matrix {
     /// Calculates the result of applying matrix multiplication between two
     /// matrices.
-    fn mul(&self, other: &Matrix) -> Matrix {
+    fn mul(self, other: Matrix) -> Matrix {
         let elems: [f32, ..9] = [
             self[0]*other[0] + self[1]*other[3] + self[2]*other[6],
             self[0]*other[1] + self[1]*other[4] + self[2]*other[7],
@@ -192,7 +196,7 @@ impl Mul<Matrix, Matrix> for Matrix {
 impl Mul<Vector, Vector> for Matrix {
     /// Computes the resulting vector from the multiplication between a matrix
     /// and a vector.
-    fn mul(&self, vect: &Vector) -> Vector {
+    fn mul(self, vect: Vector) -> Vector {
         Vector::new(
             self[0]*vect[0] + self[3]*vect[1] + self[6]*vect[2],
             self[1]*vect[0] + self[4]*vect[1] + self[7]*vect[2],

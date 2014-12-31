@@ -4,7 +4,7 @@ use shapes::Shape;
 use std::fmt;
 
 #[cfg(test)]
-#[path="../../../tests/unit/shapes/primitives/cube_test.rs"]
+#[path="../../../tests/shapes/primitives/cube_test.rs"]
 mod tests;
 
 /// A representation of a cube in 3 dimensions.
@@ -19,12 +19,14 @@ pub struct Cube {
 }
 
 impl Cube {
-
     /// Constructs a new Cube given the width, height and depth dimensions.
     pub fn new(width: f32, height: f32, depth: f32) -> Cube {
         Cube{ width: width, height: height, depth: depth }
     }
 }
+
+/// Safe to perform a semantic copy.
+impl Copy for Cube { }
 
 impl fmt::Show for Cube {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
@@ -37,7 +39,6 @@ impl fmt::Show for Cube {
 impl Eq for Cube {}
 
 impl PartialEq for Cube {
-
     /// Implements the `==` operator for the Cube class. Compares the dimensions
     /// of the cube to be within reasonable tolerance.
     fn eq(&self, other: &Cube) -> bool {
@@ -48,7 +49,6 @@ impl PartialEq for Cube {
 }
 
 impl Shape for Cube {
-
     /// Calculates the volume of the Cube.
     fn volume(&self) -> f32 {
         self.width * self.height * self.depth

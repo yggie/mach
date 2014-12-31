@@ -1,56 +1,64 @@
+use core::{ UID, State };
+use space::Space;
 use shapes::Shape;
-use solvers::ForceSolver;
-use properties::Property;
-use collisions::BroadPhase;
-use integrators::StateIntegrator;
-use core::{ UID, Database, State };
+use dynamics::Dynamics;
+use materials::Material;
 
 /// A `World` is a physical world in mithril, it contains physical bodies and a
 /// set of rules dictating how the bodies interact with the environment.
-pub struct World<BP: BroadPhase> {
-    database: Database,
-    broadphase: BP,
-    solver: ForceSolver,
-    integrator: StateIntegrator,
+pub struct World<S: Space, D: Dynamics> {
+    space: S,
+    dynamics: D,
 }
 
-impl<BP: BroadPhase> World<BP> {
-    /// Initializes a new `World` instance with the `BroadPhase`, `ForceSolver`
-    /// and `StateIntegrator` provided.
-    pub fn new(broadphase: BP, solver: ForceSolver, integrator: StateIntegrator) -> World<BP> {
+impl<S: Space, D: Dynamics> World<S, D> {
+    /// Creates a new instance of a `World` with the given `Space` and `Time`
+    /// components.
+    pub fn new(space: S, dynamics: D) -> World<S, D> {
         World{
-            database: Database::new(),
-            broadphase: broadphase,
-            solver: solver,
-            integrator: integrator,
+            space: space,
+            dynamics: dynamics,
         }
     }
 
-    /// Creates a new `Body` with the given `Shape`, `Property` and `State`.
-    /// Returns the `UID` for the instance created.
-    pub fn create_body<T: Shape, U: Property>(&mut self,
-                                              shape: T,
-                                              property: U,
-                                              state: State) -> UID {
-        self.database.create_body(shape, property, state)
-    }
-
-    /// Returns the number of `Body` instances currently in the `World`.
-    pub fn num_bodies(&self) -> uint {
-        self.database.size()
+    /// Creates an instance of a `Body` from the given components, returns a
+    /// handle which can be used to retrieve the `Body` from the `Space`.
+    #[inline(always)]
+    pub fn create_body<S: Shape, M: Material>(&mut self, shape: S, material: M, state: State) -> UID {
+        self.space.create_body(shape, material, state)
     }
 
     /// Steps the `World` forward in time by the specified amount.
+    #[inline(always)]
     pub fn update(&mut self, time_step: f32) {
-        let mut contacts = Vec::new();
+        self.dynamics.update(&mut self.space, time_step);
+    }
 
-        self.broadphase.reindex(&self.database);
-        self.broadphase.each_contact(&self.database, |contact| contacts.push(contact));
+    /// Returns an immutable reference to the `Shape` object associated with the
+    /// instance.
+    #[inline(always)]
+    pub fn space(&self) -> &S {
+        &self.space
+    }
 
-        (self.solver)(&mut self.database, &contacts);
+    /// Returns a mutable reference to the `Shape` object associated with the
+    /// instance.
+    #[inline(always)]
+    pub fn space_mut(&mut self) -> &mut S {
+        &mut self.space
+    }
 
-        // TODO possibly fixed in the future
-        let integrator = self.integrator;
-        self.database.each_body_mut(|body| integrator(body, time_step));
+    /// Returns an immutable reference to the `Dynamics` object associated with
+    /// the instance.
+    #[inline(always)]
+    pub fn dynamics(&self) -> &D {
+        &self.dynamics
+    }
+
+    /// Returns a mutable reference to the `Dynamics` object associated with the
+    /// instance.
+    #[inline(always)]
+    pub fn dynamics_mut(&mut self) -> &mut D {
+        &mut self.dynamics
     }
 }
