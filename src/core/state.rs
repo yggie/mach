@@ -6,16 +6,13 @@ mod tests;
 
 /// Represents a physical state. The state contains information regarding the
 /// current position, rotation, velocity and rotational velocity.
-#[deriving(Clone)]
+#[derive(Clone, Copy)]
 pub struct State {
     position: Vector,
     rotation: Quaternion,
     velocity: Vector,
     angular_velocity: Vector,
 }
-
-/// Safe to perform a semantic copy.
-impl Copy for State { }
 
 impl State {
     /// Creates a new `State` with zero position, rotation, velocity and angular
@@ -76,9 +73,9 @@ impl State {
     /// position `Vector`. This function can be chained.
     #[inline]
     pub fn with_position(&self, x: f32, y: f32, z: f32) -> State {
-        let mut s = self.clone();
-        s.set_position(x, y, z);
-        return s;
+        let mut state = self.clone();
+        state.set_position(x, y, z);
+        return state;
     }
 
     /// Sets the position to the `Vector` provided.

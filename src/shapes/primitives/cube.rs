@@ -8,7 +8,7 @@ use std::fmt;
 mod tests;
 
 /// A representation of a cube in 3 dimensions.
-#[deriving(Clone)]
+#[derive(Clone, Copy, Show)]
 pub struct Cube {
     /// The width of the cube
     pub width: f32,
@@ -25,10 +25,7 @@ impl Cube {
     }
 }
 
-/// Safe to perform a semantic copy.
-impl Copy for Cube { }
-
-impl fmt::Show for Cube {
+impl fmt::String for Cube {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "Cube{{ w={}, h={}, d={} }}", self.width, self.height, self.depth)
     }

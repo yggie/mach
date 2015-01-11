@@ -4,12 +4,10 @@
 
 use math;
 
-use std::fmt::Show;
-
 pub use self::primitives::{ Sphere, Cube };
 
 /// Defines the traits for all geometric property descriptions.
-pub trait Shape: Eq + Send + Show {
+pub trait Shape: Eq + Send {
     /// Computes the volume for the shape.
     fn volume(&self) -> f32;
     /// Returns the _surface radius_ of the Shape. The surface radius is the

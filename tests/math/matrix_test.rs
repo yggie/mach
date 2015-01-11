@@ -1,10 +1,9 @@
-use std::num::FloatMath;
-
+use std::num::Float;
 use math::{ Vector, Matrix };
 
 #[test]
 fn new_test() {
-    let elems: [f32, ..9] = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0];
+    let elems: [f32; 9] = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0];
     let m = Matrix::new(&elems);
 
     assert_eq!((m[0], m[1], m[2]), (1.0, 2.0, 3.0));
@@ -63,9 +62,9 @@ fn element_getter_test() {
 
 #[test]
 fn matrix_multiplication_test() {
-    let elems_a: [f32, ..9] = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0];
+    let elems_a: [f32; 9] = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0];
     let a = Matrix::new(&elems_a);
-    let elems_b: [f32, ..9] = [3.0, 2.0, 1.0, 6.0, 5.0, 4.0, 9.0, 8.0, 7.0];
+    let elems_b: [f32; 9] = [3.0, 2.0, 1.0, 6.0, 5.0, 4.0, 9.0, 8.0, 7.0];
     let b = Matrix::new(&elems_b);
 
     let m = a * b;
@@ -81,7 +80,7 @@ mod impls {
 
     #[test]
     fn clone_test() {
-        let elems: [f32, ..9] = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0];
+        let elems: [f32; 9] = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0];
         let m = Matrix::new(&elems).clone();
 
         assert_eq!((m[0], m[1], m[2]), (1.0, 2.0, 3.0));
@@ -91,7 +90,7 @@ mod impls {
 
     #[test]
     fn index_setter_test() {
-        let elems: [f32, ..9] = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0];
+        let elems: [f32; 9] = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0];
         let mut m = Matrix::new(&elems);
 
         m[0] = 11.0;
@@ -105,7 +104,7 @@ mod impls {
 
     #[test]
     fn negation_test() {
-        let elems: [f32, ..9] = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0];
+        let elems: [f32; 9] = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0];
         let m = -Matrix::new(&elems);
 
         assert_eq!((m[0], m[1], m[2]), (-1.0, -2.0, -3.0));
@@ -115,7 +114,7 @@ mod impls {
 
     #[test]
     fn addition_test() {
-        let elems: [f32, ..9] = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0];
+        let elems: [f32; 9] = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0];
         let a = Matrix::new(&elems);
         let b = Matrix::new_diag(3.0, 2.0, 1.0);
 
@@ -128,7 +127,7 @@ mod impls {
 
     #[test]
     fn subtraction_test() {
-        let elems: [f32, ..9] = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0];
+        let elems: [f32; 9] = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0];
         let a = Matrix::new(&elems);
         let b = Matrix::new_diag(1.0, 2.0, 3.0);
 
@@ -141,7 +140,7 @@ mod impls {
 
     #[test]
     fn multiplication_test() {
-        let elems: [f32, ..9] = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0];
+        let elems: [f32; 9] = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0];
         let m = Matrix::new(&elems);
         let v = Vector::new(1.0, 2.0, 3.0);
 

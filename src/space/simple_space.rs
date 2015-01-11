@@ -21,7 +21,7 @@ impl SimpleSpace {
         SimpleSpace{ bodies: Vec::new() }
     }
 
-    fn compute_contact_between_bodies(&self, index_0: uint, index_1: uint) -> Option<Contact> {
+    fn compute_contact_between_bodies(&self, index_0: usize, index_1: usize) -> Option<Contact> {
         let bodies = [&self.bodies[index_0], &self.bodies[index_1]];
         let shapes = [bodies[0].shape(), bodies[1].shape()];
         let states = [bodies[0].state(), bodies[1].state()];
@@ -47,13 +47,23 @@ impl SimpleSpace {
 impl Space for SimpleSpace {
     fn create_body<S: Shape, M: Material>(&mut self, shape: S, material: M, state: State) -> UID {
         let uid = self.bodies.len();
-        let body = Body::new_with_id(uid, box shape, box material, state);
+        let body = Body::new_with_id(uid, Box::new(shape), Box::new(material), state);
         self.bodies.push(body);
         return uid;
     }
 
     fn find_body(&self, id: UID) -> Option<&Body> {
         for body in self.bodies.iter() {
+            if body.id() == id {
+                return Some(body);
+            }
+        }
+
+        return None;
+    }
+
+    fn find_body_mut(&mut self, id: UID) -> Option<&mut Body> {
+        for body in self.bodies.iter_mut() {
             if body.id() == id {
                 return Some(body);
             }
@@ -95,7 +105,7 @@ impl Space for SimpleSpace {
         let mut contacts = Vec::new();
         let length = self.bodies.len();
 
-        for i in range(0u, length) {
+        for i in range(0us, length) {
             for j in range(i + 1, length) {
                 match self.compute_contact_between_bodies(i, j) {
                     Some(contact) => {

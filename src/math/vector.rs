@@ -2,15 +2,16 @@ use math::{ TOLERANCE, Matrix };
 
 use std::fmt;
 use std::num::Float;
+use std::ops::{ Add, Div, Index, IndexMut, Mul, Neg, Sub };
 
 #[cfg(test)]
 #[path="../../tests/math/vector_test.rs"]
 mod tests;
 
 /// A representation of a 3-dimensional column vector.
-#[deriving(Copy)]
+#[derive(Clone, Copy, Show)]
 pub struct Vector {
-    elements: [f32, ..3]
+    elements: [f32; 3]
 }
 
 /// Static methods for the Vector struct.
@@ -92,7 +93,7 @@ impl Vector {
 
     /// Computes the outer product between two Vectors.
     pub fn outer(&self, other: Vector) -> Matrix {
-        let elems: [f32, ..9] = [
+        let elems: [f32; 9] = [
             self[0]*other[0], self[0]*other[1], self[0]*other[2],
             self[1]*other[0], self[1]*other[1], self[1]*other[2],
             self[2]*other[0], self[2]*other[1], self[2]*other[2],
@@ -106,16 +107,8 @@ impl Vector {
     }
 }
 
-/// Implements the clone operation.
-impl Clone for Vector {
-    /// Returns a copy of the `Vector`.
-    fn clone(&self) -> Vector {
-        Vector::new(self[0], self[1], self[2])
-    }
-}
-
 /// Implements the `std::fmt` operations to allow using `println!` on Vectors.
-impl fmt::Show for Vector {
+impl fmt::String for Vector {
     /// Implements the fmt operation for `Vector`s. The resulting format is
     /// equivalent to:
     ///
@@ -139,25 +132,31 @@ impl PartialEq for Vector {
 }
 
 /// Implement the index operator.
-impl Index<uint, f32> for Vector {
+impl Index<usize> for Vector {
+    type Output = f32;
+
     /// Obtain the vector's elements by index. Uses zero-based indexing.
     #[inline(always)]
-    fn index<'a>(&'a self, index: &uint) -> &'a f32 {
+    fn index<'a>(&'a self, index: &usize) -> &'a f32 {
         &self.elements[*index]
     }
 }
 
 /// Implement the mutable index operator.
-impl IndexMut<uint, f32> for Vector {
+impl IndexMut<usize> for Vector {
+    type Output = f32;
+
     /// Allows setting a vector's element using index notation.
     #[inline(always)]
-    fn index_mut<'a>(&'a mut self, index: &uint) -> &'a mut f32 {
+    fn index_mut<'a>(&'a mut self, index: &usize) -> &'a mut f32 {
         &mut self.elements[*index]
     }
 }
 
 /// Implement the unary negation operator.
-impl Neg<Vector> for Vector {
+impl Neg for Vector {
+    type Output = Vector;
+
     /// Reverses the direction of the vector.
     #[inline]
     fn neg(self) -> Vector {
@@ -166,7 +165,9 @@ impl Neg<Vector> for Vector {
 }
 
 /// Implement the addition operator between Vectors.
-impl Add<Vector, Vector> for Vector {
+impl Add<Vector> for Vector {
+    type Output = Vector;
+
     /// Calculates the sum of two vectors.
     #[inline]
     fn add(self, other: Vector) -> Vector {
@@ -175,7 +176,9 @@ impl Add<Vector, Vector> for Vector {
 }
 
 /// Implement the subtraction operator between Vectors.
-impl Sub<Vector, Vector> for Vector {
+impl Sub<Vector> for Vector {
+    type Output = Vector;
+
     /// Calculates the difference between two vectors.
     #[inline]
     fn sub(self, other: Vector) -> Vector {
@@ -184,7 +187,9 @@ impl Sub<Vector, Vector> for Vector {
 }
 
 /// Implements the multiplication operator between a `Vector` and a scalar.
-impl Mul<f32, Vector> for Vector {
+impl Mul<f32> for Vector {
+    type Output = Vector;
+
     /// Multiplies a `Vector` by a scalar.
     #[inline]
     fn mul(self, s: f32) -> Vector {
@@ -193,7 +198,9 @@ impl Mul<f32, Vector> for Vector {
 }
 
 /// Implements the division operator between a `Vector` and a scalar.
-impl Div<f32, Vector> for Vector {
+impl Div<f32> for Vector {
+    type Output = Vector;
+
     /// Divides the `Vector` by a scalar.
     #[inline]
     fn div(self, s: f32) -> Vector {

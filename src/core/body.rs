@@ -9,13 +9,14 @@ pub struct Body {
     shape: Box<Shape>,
     material: Box<Material>,
     state: State,
-    impulse: Vector,
+    force_impulse_accumulated: Vector,
+    torque_impulse_accumulated: Vector,
 }
 
 impl Body {
     /// Creates a new instance of a Body object
     pub fn new(shape: Box<Shape>, material: Box<Material>, state: State) -> Body {
-        Body::new_with_id(0u, shape, material, state)
+        Body::new_with_id(0us, shape, material, state)
     }
 
     /// Creates a new instance of a `Body` with the specified id.
@@ -25,7 +26,8 @@ impl Body {
             shape: shape,
             material: material,
             state: state,
-            impulse: Vector::new_zero(),
+            force_impulse_accumulated: Vector::new_zero(),
+            torque_impulse_accumulated: Vector::new_zero(),
         }
     }
 
@@ -83,14 +85,29 @@ impl Body {
         self.state.set_velocity_with_vector(velocity);
     }
 
-    /// Returns the impulse currently acting on the `Body`.
-    #[inline]
-    pub fn impulse(&self) -> Vector {
-        self.impulse
+    /// Returns the total accumulated force acting on the `Body`.
+    #[inline(always)]
+    pub fn accumulated_force(&self) -> Vector {
+        self.force_impulse_accumulated
     }
 
-    /// Applies an impulse on the `Body`.
-    pub fn apply_impulse(&mut self, impulse: Vector) {
-        self.impulse = self.impulse + impulse;
+    /// Returns the total accumulated torque acting on the `Body`.
+    #[inline(always)]
+    pub fn accumulated_torque(&self) -> Vector {
+        self.torque_impulse_accumulated
+    }
+
+    /// Applies a force on the `Body` acting on a specific point. This adds to
+    /// the total accumulated force and torque.
+    pub fn apply_impulse(&mut self, impulse: Vector, point: Vector) {
+        self.force_impulse_accumulated = self.force_impulse_accumulated + impulse;
+        self.torque_impulse_accumulated = self.torque_impulse_accumulated + impulse.cross(point - self.position());
+    }
+
+    /// Clears the accumulated force and torque acting on the `Body`.
+    #[inline]
+    pub fn reset_accumulators(&mut self) {
+        self.force_impulse_accumulated = Vector::new_zero();
+        self.torque_impulse_accumulated = Vector::new_zero();
     }
 }

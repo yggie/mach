@@ -4,9 +4,9 @@
 #![crate_name = "mithril"]
 #![crate_type = "lib"]
 
+#![allow(unstable)]
 #![unstable]
 #![warn(missing_docs)]
-#![feature(macro_rules)]
 
 pub mod math;
 pub mod shapes;

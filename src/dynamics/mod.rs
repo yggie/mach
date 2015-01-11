@@ -16,7 +16,7 @@ pub trait Dynamics {
     fn update<S: Space>(&mut self, &mut S, f32);
 }
 
-#[macro_escape]
+#[macro_use]
 #[cfg(test)]
 #[path="../../tests/behaviours/dynamics_behaviour.rs"]
 mod behaviours;

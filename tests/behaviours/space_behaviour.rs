@@ -4,7 +4,7 @@ use shapes::Sphere;
 use materials::Rigid;
 use core::{ State };
 
-pub fn sphere_sphere_contact_test<S: Space>(new_space: || -> S) {
+pub fn sphere_sphere_contact_test<S: Space, F: FnOnce() -> S>(new_space: F) {
     // SETUP
     let mut space = new_space();
     let shape = Sphere::new(2.5);
@@ -21,11 +21,11 @@ pub fn sphere_sphere_contact_test<S: Space>(new_space: || -> S) {
     let contacts = space.find_contacts();
 
     // VERIFY
-    assert_eq!(contacts.len(), 1);
+    assert_eq!(contacts.len(), 1us);
     assert_eq!(contacts[0].point, Vector::new(2.0, 1.5, 0.0));
 }
 
-pub fn sphere_sphere_no_contact_test<S: Space>(new_space: || -> S) {
+pub fn sphere_sphere_no_contact_test<S: Space, F: FnOnce() -> S>(new_space: F) {
     // SETUP
     let mut space = new_space();
     let shape = Sphere::new(2.5);

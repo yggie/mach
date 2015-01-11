@@ -4,10 +4,10 @@ use space::Space;
 
 /// Represents a point of contact between two physical entities. Holds
 /// references to the contacting bodies and a point of contact.
-#[deriving(Copy)]
+#[derive(Clone, Copy)]
 pub struct Contact {
     /// References to the two bodies.
-    pub body_ids: [UID, ..2],
+    pub body_ids: [UID; 2],
     /// The point of contact.
     pub point: Vector,
     /// The contact normal.

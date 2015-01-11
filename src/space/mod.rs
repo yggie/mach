@@ -13,7 +13,7 @@ use core::{ Body, State, UID };
 pub use self::contact::Contact;
 pub use self::simple_space::SimpleSpace;
 
-#[macro_escape]
+#[macro_use]
 #[cfg(test)]
 #[path="../../tests/behaviours/space_behaviour.rs"]
 mod behaviours;
@@ -24,8 +24,10 @@ pub trait Space {
     /// Creates an instance of a `Body` from the given properties, returns a
     /// handle which can be used to retrieve the `Body` from the `Space`.
     fn create_body<S: Shape, M: Material>(&mut self, S, M, State) -> UID;
-    /// Returns the `Body` with the `UID` specified
+    /// Returns a reference to the `Body` with the `UID` given.
     fn find_body(&self, UID) -> Option<&Body>;
+    /// Returns a mutable reference to the `Body` with the `UID` given.
+    fn find_body_mut(&mut self, UID) -> Option<&mut Body>;
     /// Finds all matching `Body` objects with the `UID` specified and returns
     /// a mutable list of these `Body` objects.
     fn find_bodies_mut(&mut self, Vec<UID>) -> Vec<Option<&mut Body>>;

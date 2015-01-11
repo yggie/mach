@@ -7,7 +7,7 @@ pub use self::state::State;
 pub use self::world::World;
 
 /// A unique identifier primarily used to identify a `Body` in a `Database`.
-pub type UID = uint;
+pub type UID = usize;
 
 mod body;
 mod state;

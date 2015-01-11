@@ -24,7 +24,7 @@ impl<S: Space, D: Dynamics> World<S, D> {
     /// Creates an instance of a `Body` from the given components, returns a
     /// handle which can be used to retrieve the `Body` from the `Space`.
     #[inline(always)]
-    pub fn create_body<S: Shape, M: Material>(&mut self, shape: S, material: M, state: State) -> UID {
+    pub fn create_body<Sh: Shape, M: Material>(&mut self, shape: Sh, material: M, state: State) -> UID {
         self.space.create_body(shape, material, state)
     }
 

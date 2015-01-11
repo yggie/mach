@@ -9,7 +9,7 @@ use std::fmt;
 mod tests;
 
 /// Represents a rigid body with a fixed density.
-#[deriving(Clone)]
+#[derive(Clone, Copy, Show)]
 pub struct Rigid {
     /// The density in M/L^3 units.
     pub density: f32,
@@ -22,10 +22,7 @@ impl Rigid {
     }
 }
 
-/// Safe to perform a semantic copy.
-impl Copy for Rigid { }
-
-impl fmt::Show for Rigid {
+impl fmt::String for Rigid {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "Rigid{{ d={} }}", self.density)
     }

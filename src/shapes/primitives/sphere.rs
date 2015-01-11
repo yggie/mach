@@ -9,7 +9,7 @@ use std::f32::consts::PI;
 mod tests;
 
 /// A representation of a sphere in 3 dimensions.
-#[deriving(Clone)]
+#[derive(Clone, Copy, Show)]
 pub struct Sphere {
     /// The radius of the sphere.
     pub radius: f32,
@@ -22,10 +22,7 @@ impl Sphere {
     }
 }
 
-/// Safe to perform a semantic copy.
-impl Copy for Sphere { }
-
-impl fmt::Show for Sphere {
+impl fmt::String for Sphere {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "Circle{{ r={} }}", self.radius)
     }
