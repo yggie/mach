@@ -29,7 +29,7 @@ current Rust and Cargo version currently used to compile the project:
 
 ```
 $ rustc --version
-rustc 1.0.0-nightly (44a287e6e 2015-01-08 17:03:40 -0800)
+rustc 1.0.0-nightly (ed530d7a3 2015-01-16 22:41:16 +0000)
 $ cargo version
-cargo 0.0.1-pre-nightly (8c01b6b 2015-01-08 20:52:43 +0000)
+cargo 0.0.1-pre-nightly (8154255 2015-01-14 19:14:12 +0000)
 ```

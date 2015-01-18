@@ -56,6 +56,13 @@ impl Quaternion {
         *self / self.length()
     }
 
+    /// Computes the inverse of the `Quaternion`.
+    #[inline]
+    pub fn inverse(&self) -> Quaternion {
+        let denom = self.length_sq();
+        Quaternion::new(self[0]/denom, -self[1]/denom, -self[2]/denom, -self[3]/denom)
+    }
+
     /// Sets the components of the `Quaternion` to the specified values.
     #[inline]
     pub fn set(&mut self, r: f32, i: f32, j: f32, k: f32) {

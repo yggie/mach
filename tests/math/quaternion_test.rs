@@ -38,6 +38,13 @@ fn normalize_test() {
 }
 
 #[test]
+fn inverse_test() {
+    let q = Quaternion::new(1.0, 0.0, 1.0, 0.0).inverse();
+
+    assert_eq!((q[0], q[1], q[2], q[3]), (0.5, 0.0, -0.5, 0.0));
+}
+
+#[test]
 fn sub_test() {
     let q = Quaternion::new(1.0, 3.0, 4.0, -1.0).sub(1.0, 3.0, -4.0, 1.0);
 
