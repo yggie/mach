@@ -4,6 +4,7 @@
 
 #![unstable]
 
+use math::Vector;
 use space::Space;
 
 pub use self::simple_dynamics::SimpleDynamics;
@@ -14,6 +15,8 @@ pub use self::simple_dynamics::SimpleDynamics;
 pub trait Dynamics {
     /// Steps the simulation forward in time by the specified amount.
     fn update<S: Space>(&mut self, &mut S, f32);
+    /// Adjusts the global gravitational force acting on the `Body` objects.
+    fn set_gravity(&mut self, Vector);
 }
 
 #[macro_use]

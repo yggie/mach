@@ -66,7 +66,7 @@ impl Matrix {
 
 /// Implements the `std::fmt` operations to allow using `println!` on `Matrix`
 /// instances.
-impl fmt::String for Matrix {
+impl fmt::Display for Matrix {
     /// Implements the fmt operation for `Matrix` instances. The resulting
     /// format is equivalent to:
     ///

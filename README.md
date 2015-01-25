@@ -1,7 +1,8 @@
 # Mithril Physics engine
 
 An open source 3D physics engine. A reincarnation of my old physics engine:
-[react](https://github.com/yggie/react) in Rust.
+[react](https://github.com/yggie/react) in Rust. Feature list is currently very
+limited and the library is still in the experimentation phase.
 
 # Documentation
 
@@ -29,7 +30,7 @@ current Rust and Cargo version currently used to compile the project:
 
 ```
 $ rustc --version
-rustc 1.0.0-nightly (ed530d7a3 2015-01-16 22:41:16 +0000)
+rustc 1.0.0-nightly (4e4e8cff1 2015-01-24 22:14:14 +0000)
 $ cargo version
-cargo 0.0.1-pre-nightly (8154255 2015-01-14 19:14:12 +0000)
+cargo 0.0.1-pre-nightly (bb28e71 2015-01-22 06:06:34 +0000)
 ```

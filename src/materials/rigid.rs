@@ -22,7 +22,7 @@ impl Rigid {
     }
 }
 
-impl fmt::String for Rigid {
+impl fmt::Display for Rigid {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "Rigid{{ d={} }}", self.density)
     }

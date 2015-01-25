@@ -1,3 +1,4 @@
+use math::Vector;
 use space::Space;
 use dynamics::Dynamics;
 
@@ -6,13 +7,17 @@ use dynamics::Dynamics;
 mod tests;
 
 /// Contains the simplest implementation for a time marching scheme.
-#[derive(Clone, Copy)]
-pub struct SimpleDynamics;
+#[derive(Copy)]
+pub struct SimpleDynamics {
+    gravity: Vector,
+}
 
 impl SimpleDynamics {
     /// Instantiates a new `SimpleDynamics` object.
     pub fn new() -> SimpleDynamics {
-        SimpleDynamics
+        SimpleDynamics{
+            gravity: Vector::new_zero(),
+        }
     }
 }
 
@@ -43,16 +48,21 @@ impl Dynamics for SimpleDynamics {
             }
         }
 
+        let scaled_gravity = self.gravity * time_step;
         for body in space.bodies_mut() {
             // TODO rotation component
             // TODO deal with temporaries
             let v = body.velocity();
             let p = body.position();
-            let i = body.accumulated_force();
-            body.set_velocity_with_vector(v + i * time_step);
-            let v2 = body.velocity();
-            body.set_position_with_vector(p + v2 * time_step);
+            let accumulated_force = body.accumulated_force();
+            body.set_velocity_with_vector(v + accumulated_force + scaled_gravity);
+            let new_velocity = body.velocity();
+            body.set_position_with_vector(p + new_velocity * time_step);
             body.reset_accumulators();
         }
+    }
+
+    fn set_gravity(&mut self, gravity: Vector) {
+        self.gravity = gravity;
     }
 }

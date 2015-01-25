@@ -32,6 +32,34 @@ pub fn constant_velocity_test<D: Dynamics, F: FnOnce() -> D>(new_dynamics: F) {
     assert_eq!(points[4], Vector::new(1.50, -1.50, 0.75));
 }
 
+pub fn gravity_test<D: Dynamics, F: FnOnce() -> D>(new_dynamics: F) {
+    // SETUP
+    let mut dynamics = new_dynamics();
+    let mut space = &mut SimpleSpace::new();
+    let tolerance = 0.10; // allow tolerance for different integration techniques
+    let uid = space.create_body(
+        Sphere::new(1.0),
+        Rigid::new(1.0),
+        State::new_stationary().with_velocity(1.0, -1.0, 0.5),
+    );
+    dynamics.set_gravity(Vector::new(2.5, -2.5, 3.3));
+
+    // EXERCISE
+    dynamics.update(space, 0.2);
+
+    let body = space.find_body_mut(uid).unwrap();
+    let diff = body.position().distance_to(Vector::new(0.30, -0.30, 0.15));
+    if diff > tolerance {
+        panic!("Expected {} to be less than {}", diff, tolerance);
+    }
+
+    let diff_vel = body.velocity().distance_to(Vector::new(1.50, -1.50, 1.16));
+    if diff_vel > tolerance {
+        panic!("Velocity change failed tolerance test: {} should be less than {}",
+             diff_vel, tolerance);
+    }
+}
+
 pub fn constant_force_test<D: Dynamics, F: FnOnce() -> D>(new_dynamics: F) {
     // SETUP
     let mut dynamics = new_dynamics();
@@ -52,12 +80,12 @@ pub fn constant_force_test<D: Dynamics, F: FnOnce() -> D>(new_dynamics: F) {
     dynamics.update(space, 0.2);
 
     let body = space.find_body_mut(uid).unwrap();
-    let diff = body.position().distance_to(Vector::new(0.30, -0.30, 0.15));
+    let diff = body.position().distance_to(Vector::new(0.70, -0.70, 0.76));
     if diff > tolerance {
         panic!("Expected {} to be less than {}", diff, tolerance);
     }
 
-    let diff_vel = body.velocity().distance_to(Vector::new(1.50, -1.50, 1.16));
+    let diff_vel = body.velocity().distance_to(Vector::new(3.50, -3.50, 3.8));
     if diff_vel > tolerance {
         panic!("Velocity change failed tolerance test: {} should be less than {}",
              diff_vel, tolerance);
@@ -74,6 +102,11 @@ macro_rules! assert_dynamics_behaviour(
         #[test]
         fn constant_force_test() {
             behaviours::constant_force_test($new_dynamics);
+        }
+
+        #[test]
+        fn gravity_test() {
+            behaviours::gravity_test($new_dynamics);
         }
     );
 );

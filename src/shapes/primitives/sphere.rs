@@ -22,7 +22,7 @@ impl Sphere {
     }
 }
 
-impl fmt::String for Sphere {
+impl fmt::Display for Sphere {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "Circle{{ r={} }}", self.radius)
     }

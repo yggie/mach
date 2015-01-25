@@ -108,7 +108,7 @@ impl Vector {
 }
 
 /// Implements the `std::fmt` operations to allow using `println!` on Vectors.
-impl fmt::String for Vector {
+impl fmt::Display for Vector {
     /// Implements the fmt operation for `Vector`s. The resulting format is
     /// equivalent to:
     ///

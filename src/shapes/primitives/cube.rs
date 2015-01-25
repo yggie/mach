@@ -25,7 +25,7 @@ impl Cube {
     }
 }
 
-impl fmt::String for Cube {
+impl fmt::Display for Cube {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "Cube{{ w={}, h={}, d={} }}", self.width, self.height, self.depth)
     }

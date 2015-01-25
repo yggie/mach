@@ -99,7 +99,7 @@ impl Quaternion {
 
 /// Implements the `std::fmt` operations to allow using `println!` on
 /// `Quaternion`s
-impl fmt::String for Quaternion {
+impl fmt::Display for Quaternion {
     /// Implements the fmt operation for `Quaternion`s. The resulting format is
     /// equivalent to:
     ///
