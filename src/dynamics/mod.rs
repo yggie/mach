@@ -15,6 +15,8 @@ pub use self::simple_dynamics::SimpleDynamics;
 pub trait Dynamics {
     /// Steps the simulation forward in time by the specified amount.
     fn update<S: Space>(&mut self, &mut S, f32);
+    /// Returns the global gravitational force acting on the `Body` objects.
+    fn gravity(&self) -> Vector;
     /// Adjusts the global gravitational force acting on the `Body` objects.
     fn set_gravity(&mut self, Vector);
 }

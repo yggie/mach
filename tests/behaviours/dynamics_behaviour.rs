@@ -44,6 +44,9 @@ pub fn gravity_test<D: Dynamics, F: FnOnce() -> D>(new_dynamics: F) {
     );
     dynamics.set_gravity(Vector::new(2.5, -2.5, 3.3));
 
+    let g = dynamics.gravity();
+    assert_eq!((2.5, -2.5, 3.3), (g[0], g[1], g[2]));
+
     // EXERCISE
     dynamics.update(space, 0.2);
 

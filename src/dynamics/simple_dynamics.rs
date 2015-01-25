@@ -62,6 +62,10 @@ impl Dynamics for SimpleDynamics {
         }
     }
 
+    fn gravity(&self) -> Vector {
+        self.gravity
+    }
+
     fn set_gravity(&mut self, gravity: Vector) {
         self.gravity = gravity;
     }
