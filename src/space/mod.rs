@@ -25,12 +25,12 @@ pub trait Space {
     /// handle which can be used to retrieve the `Body` from the `Space`.
     fn create_body<S: Shape, M: Material>(&mut self, S, M, State) -> UID;
     /// Returns a reference to the `Body` with the `UID` given.
-    fn find_body(&self, UID) -> Option<&Body>;
+    fn get_body(&self, UID) -> Option<&Body>;
     /// Returns a mutable reference to the `Body` with the `UID` given.
-    fn find_body_mut(&mut self, UID) -> Option<&mut Body>;
+    fn get_body_mut(&mut self, UID) -> Option<&mut Body>;
     /// Finds all matching `Body` objects with the `UID` specified and returns
     /// a mutable list of these `Body` objects.
-    fn find_bodies_mut(&mut self, Vec<UID>) -> Vec<Option<&mut Body>>;
+    fn get_bodies_mut(&mut self, Vec<UID>) -> Vec<Option<&mut Body>>;
     /// Returns an iterator which iterates over unique `Body` instances in the
     /// `Space`.
     #[experimental]

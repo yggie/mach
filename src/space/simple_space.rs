@@ -52,7 +52,7 @@ impl Space for SimpleSpace {
         return uid;
     }
 
-    fn find_body(&self, id: UID) -> Option<&Body> {
+    fn get_body(&self, id: UID) -> Option<&Body> {
         for body in self.bodies.iter() {
             if body.id() == id {
                 return Some(body);
@@ -62,7 +62,7 @@ impl Space for SimpleSpace {
         return None;
     }
 
-    fn find_body_mut(&mut self, id: UID) -> Option<&mut Body> {
+    fn get_body_mut(&mut self, id: UID) -> Option<&mut Body> {
         for body in self.bodies.iter_mut() {
             if body.id() == id {
                 return Some(body);
@@ -80,7 +80,7 @@ impl Space for SimpleSpace {
         self.bodies.iter_mut()
     }
 
-    fn find_bodies_mut(&mut self, uids: Vec<UID>) -> Vec<Option<&mut Body>> {
+    fn get_bodies_mut(&mut self, uids: Vec<UID>) -> Vec<Option<&mut Body>> {
         let mut options = Vec::with_capacity(uids.len());
 
         for body in self.bodies.iter_mut() {

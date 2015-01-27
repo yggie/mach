@@ -1,3 +1,4 @@
+use core::Body;
 use math::Vector;
 use space::Space;
 use dynamics::Dynamics;
@@ -26,7 +27,11 @@ impl Dynamics for SimpleDynamics {
         let contacts = space.find_contacts();
 
         for contact in contacts.iter() {
-            match contact.deref_bodies(space) {
+            let mut bodies: Vec<Option<&mut Body>> = space.get_bodies_mut(vec!(contact.body_ids[0], contact.body_ids[1]));
+            let option_1 = bodies.pop().unwrap();
+            let option_0 = bodies.pop().unwrap();
+
+            match (option_0, option_1) {
                 (Some(body_0), Some(body_1)) => {
                     let masses = [body_0.mass(), body_1.mass()];
                     let relative_velocity = [

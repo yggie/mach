@@ -21,7 +21,7 @@ pub fn constant_velocity_test<D: Dynamics, F: FnOnce() -> D>(new_dynamics: F) {
     // EXERCISE
     for i in range(0us, NUM_POINTS) {
         dynamics.update(space, TIME_STEP);
-        points[i] = space.find_body(uid).unwrap().position();
+        points[i] = space.get_body(uid).unwrap().position();
     }
 
     // VERIFY
@@ -50,7 +50,7 @@ pub fn gravity_test<D: Dynamics, F: FnOnce() -> D>(new_dynamics: F) {
     // EXERCISE
     dynamics.update(space, 0.2);
 
-    let body = space.find_body_mut(uid).unwrap();
+    let body = space.get_body_mut(uid).unwrap();
     let diff = body.position().distance_to(Vector::new(0.30, -0.30, 0.15));
     if diff > tolerance {
         panic!("Expected {} to be less than {}", diff, tolerance);
@@ -74,7 +74,7 @@ pub fn constant_force_test<D: Dynamics, F: FnOnce() -> D>(new_dynamics: F) {
         State::new_stationary().with_velocity(1.0, -1.0, 0.5),
     );
     {
-        let body = space.find_body_mut(uid).unwrap();
+        let body = space.get_body_mut(uid).unwrap();
         let p = body.position();
         body.apply_impulse(Vector::new(2.5, -2.5, 3.3), p + Vector::new(1.0, 0.0, 0.0));
     }
@@ -82,7 +82,7 @@ pub fn constant_force_test<D: Dynamics, F: FnOnce() -> D>(new_dynamics: F) {
     // EXERCISE
     dynamics.update(space, 0.2);
 
-    let body = space.find_body_mut(uid).unwrap();
+    let body = space.get_body_mut(uid).unwrap();
     let diff = body.position().distance_to(Vector::new(0.70, -0.70, 0.76));
     if diff > tolerance {
         panic!("Expected {} to be less than {}", diff, tolerance);

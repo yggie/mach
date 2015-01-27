@@ -1,4 +1,5 @@
 use core::{ UID, State };
+use math::Vector;
 use space::Space;
 use shapes::Shape;
 use dynamics::Dynamics;
@@ -12,8 +13,8 @@ pub struct World<S: Space, D: Dynamics> {
 }
 
 impl<S: Space, D: Dynamics> World<S, D> {
-    /// Creates a new instance of a `World` with the given `Space` and `Time`
-    /// components.
+    /// Creates a new instance of a `World` with the given `Space` and
+    /// `Dynamics` components.
     pub fn new(space: S, dynamics: D) -> World<S, D> {
         World{
             space: space,
@@ -32,6 +33,12 @@ impl<S: Space, D: Dynamics> World<S, D> {
     #[inline(always)]
     pub fn update(&mut self, time_step: f32) {
         self.dynamics.update(&mut self.space, time_step);
+    }
+
+    /// Changes the global gravitational force acting on `Body` objects.
+    #[inline(always)]
+    pub fn set_gravity(&mut self, gravity: Vector) {
+        self.dynamics.set_gravity(gravity);
     }
 
     /// Returns an immutable reference to the `Shape` object associated with the
