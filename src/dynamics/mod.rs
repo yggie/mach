@@ -26,5 +26,4 @@ pub trait Dynamics {
 #[path="../../tests/behaviours/dynamics_behaviour.rs"]
 mod behaviours;
 
-#[experimental]
 mod simple_dynamics;

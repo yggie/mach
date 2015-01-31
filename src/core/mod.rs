@@ -1,7 +1,5 @@
 //! The `core` module contains the core implementation of the engine’s logic.
 
-#![experimental]
-
 pub use self::body::Body;
 pub use self::state::State;
 pub use self::world::World;

@@ -1,8 +1,6 @@
 //! The `properties` module defines objects representing mechanical properties
 //! of the physical entities.
 
-#![experimental]
-
 pub use self::rigid::Rigid;
 
 use shapes::Shape;

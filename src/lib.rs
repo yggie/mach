@@ -4,7 +4,7 @@
 #![crate_name = "mithril"]
 #![crate_type = "lib"]
 
-#![allow(unstable)]
+#![feature(core)]
 #![unstable]
 #![warn(missing_docs)]
 
