@@ -1,5 +1,3 @@
-use std::slice::{ Iter, IterMut };
-
 use shapes::Shape;
 use materials::Material;
 use space::{ Contact, Pair, Space };
@@ -55,12 +53,12 @@ impl Space for SimpleSpace {
         return None;
     }
 
-    fn bodies(&self) -> Iter<Body> {
-        self.bodies.iter()
+    fn bodies_iter(&self) -> Box<Iterator<Item=&Body>> {
+        Box::new(self.bodies.iter())
     }
 
-    fn bodies_mut(&mut self) -> IterMut<Body> {
-        self.bodies.iter_mut()
+    fn bodies_iter_mut(&mut self) -> Box<Iterator<Item=&mut Body>> {
+        Box::new(self.bodies.iter_mut())
     }
 
     fn get_bodies(&self, uids: Vec<UID>) -> Vec<Option<&Body>> {

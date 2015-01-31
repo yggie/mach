@@ -4,8 +4,6 @@
 
 #![unstable]
 
-use std::slice::{ Iter, IterMut };
-
 use shapes::Shape;
 use materials::Material;
 use core::{ Body, State, UID };
@@ -37,10 +35,10 @@ pub trait Space {
     fn get_bodies_mut(&mut self, Vec<UID>) -> Vec<Option<&mut Body>>;
     /// Returns an iterator which iterates over unique `Body` instances in the
     /// `Space`.
-    fn bodies(&self) -> Iter<Body>;
+    fn bodies_iter(&self) -> Box<Iterator<Item=&Body>>;
     /// Returns an iterator which iterates over unique `Body` instances in the
     /// `Space`. This iterator allows mutation of the `Body` objects.
-    fn bodies_mut(&mut self) -> IterMut<Body>;
+    fn bodies_iter_mut(&mut self) -> Box<Iterator<Item=&mut Body>>;
     /// Computes the contacts between bodies within the `Space`, caches the
     /// results so that the next time it looks it up will be faster.
     fn find_contacts(&self) -> Vec<Contact>;

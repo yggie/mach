@@ -2,7 +2,7 @@
 
 #![unstable]
 
-use math;
+use math::{ TOLERANCE, Vector };
 
 pub use self::primitives::{ Sphere, Cube };
 
@@ -10,6 +10,14 @@ pub use self::primitives::{ Sphere, Cube };
 pub trait Shape: Eq + Send {
     /// Computes the volume for the shape.
     fn volume(&self) -> f32;
+    /// Obtains the vertex with the index specified.
+    fn vertex(&self, usize) -> Vector;
+    /// Returns the number of vertices in the `Shape`.
+    fn vertices_len(&self) -> usize;
+    /// Returns an iterator over all the vertices in the shape.
+    fn vertices_iter(&self) -> Box<Iterator<Item=&Vector>>;
+    /// Returns the index of the vertex furthest in the direction specified.
+    fn farthest_index_in_direction(&self, Vector) -> usize;
     /// Returns the _surface radius_ of the Shape. The surface radius is the
     /// tolerance used to determine if a collision has occurred, it is useful to
     /// avoid problems with singularities such as edge-edge collisions. By
@@ -17,7 +25,7 @@ pub trait Shape: Eq + Send {
     /// `mithril::math::TOLERANCE`.
     #[inline]
     fn surface_radius(&self) -> f32 {
-        return math::TOLERANCE;
+        return TOLERANCE;
     }
 }
 

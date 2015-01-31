@@ -54,7 +54,7 @@ impl Dynamics for SimpleDynamics {
         }
 
         let scaled_gravity = self.gravity * time_step;
-        for body in space.bodies_mut() {
+        for body in space.bodies_iter_mut() {
             // TODO rotation component
             // TODO deal with temporaries
             let v = body.velocity();

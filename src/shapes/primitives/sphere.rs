@@ -1,4 +1,4 @@
-use math::{ TOLERANCE, approx_eq };
+use math::{ approx_eq, TOLERANCE, Vector };
 use shapes::Shape;
 
 use std::fmt;
@@ -9,16 +9,21 @@ use std::f32::consts::PI;
 mod tests;
 
 /// A representation of a sphere in 3 dimensions.
-#[derive(Clone, Copy, Show)]
+#[derive(Clone, Show)]
 pub struct Sphere {
-    /// The radius of the sphere.
-    pub radius: f32,
+    radius: f32,
+    vertices: Vec<Vector>,
 }
 
 impl Sphere {
     /// Constructs a new Sphere with the radius provided.
     pub fn new(radius: f32) -> Sphere {
-        Sphere{ radius: radius }
+        Sphere{ radius: radius, vertices: vec!(Vector::new_zero()) }
+    }
+
+    /// Returns the radius of the `Sphere`.
+    pub fn radius(&self) -> f32 {
+        self.radius
     }
 }
 
@@ -42,9 +47,25 @@ impl PartialEq for Sphere {
 }
 
 impl Shape for Sphere {
-    /// Calculates the volume of the Sphere.
+    /// Calculates the volume of the `Sphere`.
     fn volume(&self) -> f32 {
         4.0*PI*self.radius*self.radius*self.radius/3.0
+    }
+
+    fn vertex(&self, index: usize) -> Vector {
+        self.vertices[index]
+    }
+
+    fn vertices_len(&self) -> usize {
+        1
+    }
+
+    fn vertices_iter(&self) -> Box<Iterator<Item=&Vector>> {
+        Box::new(self.vertices.iter())
+    }
+
+    fn farthest_index_in_direction(&self, _: Vector) -> usize {
+        0us
     }
 
     /// Returns the _surface radius_ of the Shape. The surface radius is the

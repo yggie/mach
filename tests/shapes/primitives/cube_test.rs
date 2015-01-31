@@ -9,7 +9,26 @@ fn new_test() {
 
 #[cfg(test)]
 mod impls {
+    use math::Vector;
     use shapes::{ Shape, Cube };
+
+    #[test]
+    fn vertices_len_test() {
+        let c = Cube::new(3.0, 2.0, 1.0);
+
+        assert_eq!(c.vertices_len(), 8);
+    }
+
+    #[test]
+    fn farthest_index_in_direction_test() {
+        let c = Cube::new(2.0, 3.0, 1.0);
+        let dir = Vector::new(-1.0, 1.0, -1.0);
+
+        let index = c.farthest_index_in_direction(dir);
+        let v = c.vertex(index);
+
+        assert_eq!((v[0], v[1], v[2]), (-1.0, 1.5, -0.5));
+    }
 
     #[test]
     fn equality_test() {

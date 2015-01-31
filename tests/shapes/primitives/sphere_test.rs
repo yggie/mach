@@ -4,14 +4,30 @@ use shapes::Sphere;
 fn new_test() {
     let s = Sphere::new(5.0);
 
-    assert_eq!(s.radius, 5.0);
+    assert_eq!(s.radius(), 5.0);
 }
 
 #[cfg(test)]
 mod impls {
-    use shapes::{ Shape, Sphere };
-    use math::approx_eq;
     use std::f32::consts::PI;
+
+    use math::{ approx_eq, Vector };
+    use shapes::{ Shape, Sphere };
+
+    #[test]
+    fn vertex_test() {
+        let s = Sphere::new(3.3);
+
+        let v = s.vertex(0);
+        assert_eq!((v[0], v[1], v[2]), (0.0, 0.0, 0.0));
+    }
+
+    #[test]
+    fn farthest_index_in_direction_test() {
+        let s = Sphere::new(5.0);
+        assert_eq!(s.farthest_index_in_direction(Vector::new(1.0, 1.0, 1.0)), 0);
+    }
+
 
     #[test]
     fn equality_test() {
