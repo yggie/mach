@@ -1,6 +1,6 @@
 use core::State;
 use math::Vector;
-use shapes::Sphere;
+use shapes::Cube;
 use materials::Rigid;
 use dynamics::Dynamics;
 use space::{ Space, SimpleSpace };
@@ -13,7 +13,7 @@ pub fn constant_velocity_test<D: Dynamics, F: FnOnce() -> D>(new_dynamics: F) {
     let mut space = &mut SimpleSpace::new();
     let mut points = [Vector::new_zero(); NUM_POINTS];
     let uid = space.create_body(
-        Sphere::new(1.0),
+        Cube::new(1.0, 1.0, 1.0),
         Rigid::new(1.0),
         State::new_stationary().with_velocity(1.0, -1.0, 0.5),
     );
@@ -38,7 +38,7 @@ pub fn gravity_test<D: Dynamics, F: FnOnce() -> D>(new_dynamics: F) {
     let mut space = &mut SimpleSpace::new();
     let tolerance = 0.10; // allow tolerance for different integration techniques
     let uid = space.create_body(
-        Sphere::new(1.0),
+        Cube::new(1.0, 1.0, 1.0),
         Rigid::new(1.0),
         State::new_stationary().with_velocity(1.0, -1.0, 0.5),
     );
@@ -69,7 +69,7 @@ pub fn constant_force_test<D: Dynamics, F: FnOnce() -> D>(new_dynamics: F) {
     let mut space = &mut SimpleSpace::new();
     let tolerance = 0.10; // allow tolerance for different integration techniques
     let uid = space.create_body(
-        Sphere::new(1.0),
+        Cube::new(1.0, 1.0, 1.0),
         Rigid::new(1.0),
         State::new_stationary().with_velocity(1.0, -1.0, 0.5),
     );

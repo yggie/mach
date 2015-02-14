@@ -34,8 +34,8 @@ impl State {
 
     /// Creates a new `State` with a non-zero rotation.
     #[inline]
-    pub fn new_with_rotation(radians: f32, x: f32, y: f32, z: f32) -> State {
-        State::new_stationary().with_rotation(radians, x, y, z)
+    pub fn new_with_rotation(axis: Vector, angle_in_radians: f32) -> State {
+        State::new_stationary().with_rotation(axis, angle_in_radians)
     }
 
     /// Returns the position of the `State`.
@@ -84,19 +84,19 @@ impl State {
         self.position.set(position[0], position[1], position[2]);
     }
 
-    /// Sets the rotation with the provided angle and axis of rotation.
+    /// Sets the rotation with the provided axis and angle of rotation.
     #[inline]
-    pub fn set_rotation(&mut self, radians: f32, x: f32, y: f32, z: f32) {
-        let q = Quaternion::new_from_rotation(radians, x, y, z);
+    pub fn set_rotation(&mut self, axis: Vector, angle_in_radians: f32) {
+        let q = Quaternion::new_from_axis_angle(axis, angle_in_radians);
         self.rotation.set(q[0], q[1], q[2], q[3]);
     }
 
     /// Returns a copy of the `State` using the specified angle and axis of
     /// rotation to initialize the rotation. This function can be chained.
     #[inline]
-    pub fn with_rotation(&self, radians: f32, x: f32, y: f32, z: f32) -> State {
+    pub fn with_rotation(&self, axis: Vector, angle_in_radians: f32) -> State {
         let mut state = self.clone();
-        state.set_rotation(radians, x, y, z);
+        state.set_rotation(axis, angle_in_radians);
         return state;
     }
 
@@ -135,5 +135,23 @@ impl State {
         let mut state = self.clone();
         state.set_angular_velocity(u, v, w);
         return state;
+    }
+
+    /// Applies the `State` transformations to a `Vector`, treating the `Vector`
+    /// as a point.
+    pub fn transform_point(&self, point: Vector) -> Vector {
+        point.rotate_by_quaternion(self.rotation) + self.position
+    }
+
+    /// Applies the `State` transformation to a `Vector`, treating the `Vector`
+    /// as a direction.
+    pub fn transform_direction(&self, direction: Vector) -> Vector {
+        direction.rotate_by_quaternion(self.rotation)
+    }
+
+    /// Applies the inverse `State` transformation to a `Vector`, treating the
+    /// `Vector` as a direction.
+    pub fn inverse_transform_direction(&self, direction: Vector) -> Vector {
+        direction.rotate_by_quaternion(self.rotation.inverse())
     }
 }

@@ -1,6 +1,6 @@
 use std::num::Float;
 
-use math::Quaternion;
+use math::{ Quaternion, Vector };
 
 #[test]
 fn new_test() {
@@ -14,6 +14,19 @@ fn new_identity_test() {
     let q = Quaternion::new_identity();
 
     assert_eq!((q[0], q[1], q[2], q[3]), (1.0, 0.0, 0.0, 0.0));
+}
+
+#[test]
+fn new_from_axis_angle_test() {
+    let radians = 2.5;
+    let hr = radians / 2.0;
+
+    let q = Quaternion::new_from_axis_angle(Vector::new(2.0, 3.0, 6.0), radians);
+
+    let chr = hr.cos();
+    let shr = hr.sin();
+    let diff = (q - Quaternion::new(chr, 2.0*shr/7.0, 3.0*shr/7.0, 6.0*shr/7.0)).length();
+    assert!(diff < 0.001);
 }
 
 #[test]

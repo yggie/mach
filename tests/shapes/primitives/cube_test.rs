@@ -20,14 +20,14 @@ mod impls {
     }
 
     #[test]
-    fn farthest_index_in_direction_test() {
+    fn support_index_for_test() {
         let c = Cube::new(2.0, 3.0, 1.0);
-        let dir = Vector::new(-1.0, 1.0, -1.0);
+        let dir = Vector::new(-0.1, 1.0, 0.1);
 
-        let index = c.farthest_index_in_direction(dir);
+        let index = c.support_index_for(dir);
         let v = c.vertex(index);
 
-        assert_eq!((v[0], v[1], v[2]), (-1.0, 1.5, -0.5));
+        assert_eq!((v[0], v[1], v[2]), (-1.0, 1.5, 0.5));
     }
 
     #[test]

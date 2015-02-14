@@ -9,7 +9,7 @@ use std::fmt;
 mod tests;
 
 /// Represents a rigid body with a fixed density.
-#[derive(Clone, Copy, Show)]
+#[derive(Clone, Copy, Debug)]
 pub struct Rigid {
     /// The density in M/L^3 units.
     pub density: f32,

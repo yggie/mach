@@ -4,7 +4,7 @@
 
 use math::{ TOLERANCE, Vector };
 
-pub use self::primitives::{ Sphere, Cube };
+pub use self::primitives::Cube;
 
 /// Defines the traits for all geometric property descriptions.
 pub trait Shape: Eq + Send {
@@ -16,8 +16,9 @@ pub trait Shape: Eq + Send {
     fn vertices_len(&self) -> usize;
     /// Returns an iterator over all the vertices in the shape.
     fn vertices_iter(&self) -> Box<Iterator<Item=&Vector>>;
-    /// Returns the index of the vertex furthest in the direction specified.
-    fn farthest_index_in_direction(&self, Vector) -> usize;
+    /// Returns the index of the vertex furthest in the direction specified,
+    /// primarily used by collision detection routines.
+    fn support_index_for(&self, Vector) -> usize;
     /// Returns the _surface radius_ of the Shape. The surface radius is the
     /// tolerance used to determine if a collision has occurred, it is useful to
     /// avoid problems with singularities such as edge-edge collisions. By
@@ -30,9 +31,10 @@ pub trait Shape: Eq + Send {
 }
 
 mod primitives {
-    pub use self::sphere::Sphere;
+    // TODO re-enable Sphere once GJK-EPA has stabilized
+    // pub use self::sphere::Sphere;
     pub use self::cube::Cube;
 
-    mod sphere;
+    // mod sphere;
     mod cube;
 }

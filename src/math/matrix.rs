@@ -9,7 +9,7 @@ use std::ops::{ Add, Index, IndexMut, Mul, Neg, Sub };
 mod tests;
 
 /// A representation of a 3-by-3 matrix
-#[derive(Clone, Copy, Show)]
+#[derive(Clone, Copy, Debug)]
 pub struct Matrix {
     elements: [f32; 9]
 }
@@ -114,8 +114,6 @@ impl Index<usize> for Matrix {
 
 /// Implement the mutable index operator.
 impl IndexMut<usize> for Matrix {
-    type Output = f32;
-
     /// Obtains a mutable reference to the element in the Matrix in column
     /// major order.
     #[inline(always)]

@@ -1,4 +1,4 @@
-use math::TOLERANCE;
+use math::{ TOLERANCE, Vector };
 
 use std::fmt;
 use std::num::Float;
@@ -9,7 +9,7 @@ use std::ops::{ Div, Index, IndexMut, Mul, Neg, Sub };
 mod tests;
 
 /// A representation of a quaternion.
-#[derive(Clone, Copy, Show)]
+#[derive(Clone, Copy, Debug)]
 pub struct Quaternion {
     elements: [f32; 4]
 }
@@ -18,23 +18,23 @@ impl Quaternion {
     /// Creates a new `Quaternion` with the coordinates provided.
     #[inline(always)]
     pub fn new(r: f32, i: f32, j: f32, k: f32) -> Quaternion {
-        Quaternion{ elements: [r, i, j, k] }
+        Quaternion { elements: [r, i, j, k] }
     }
 
     /// Creates a new `Quaternion` representing an identity transformation.
     #[inline(always)]
     pub fn new_identity() -> Quaternion {
-        Quaternion{ elements: [1.0, 0.0, 0.0, 0.0] }
+        Quaternion { elements: [1.0, 0.0, 0.0, 0.0] }
     }
 
     /// Creates a new `Quaternion` representing a rotation about an axis.
-    pub fn new_from_rotation(radians: f32, x: f32, y: f32, z: f32) -> Quaternion {
-        let length = (x*x + y*y + z*z).sqrt();
-        let half_radians = radians / 2.0;
+    pub fn new_from_axis_angle(axis: Vector, angle_in_radians: f32) -> Quaternion {
+        let length = axis.length();
+        let half_radians = angle_in_radians / 2.0;
         let sl = half_radians.sin() / length;
         let c = half_radians.cos();
 
-        return Quaternion::new(c, sl*x, sl*y, sl*z);
+        return Quaternion::new(c, sl*axis[0], sl*axis[1], sl*axis[2]);
     }
 
     /// Computes the squared length of the `Quaternion`.
@@ -137,8 +137,6 @@ impl Index<usize> for Quaternion {
 
 /// Implements the mutable index operator.
 impl IndexMut<usize> for Quaternion {
-    type Output = f32;
-
     /// Obtains a mutable reference to a component from the `Quaternion` by
     /// index.
     #[inline(always)]

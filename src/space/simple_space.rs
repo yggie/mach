@@ -107,7 +107,8 @@ impl Space for SimpleSpace {
         let mut contacts = Vec::new();
 
         for pair in self.pairs.iter() {
-            match pair.compute_contact(self) {
+            let bodies: Vec<&Body> = self.get_bodies(vec!(pair.uid_0, pair.uid_1)).iter().map(|b| b.unwrap()).collect();
+            match pair.compute_contact(bodies[0], bodies[1]) {
                 Some(contact) => { contacts.push(contact); }
 
                 None => { /* do nothing */ }

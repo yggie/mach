@@ -23,7 +23,7 @@ fn new_with_position_test() {
 
 #[test]
 fn new_with_rotation_test() {
-    let s = State::new_with_rotation(PI, 20.0, 12.0, -9.0);
+    let s = State::new_with_rotation(Vector::new(20.0, 12.0, -9.0), PI);
 
     assert_eq!(s.position(), Vector::new(0.0, 0.0, 0.0));
     assert_eq!(s.rotation(), Quaternion::new(0.0, 0.80, 0.48, -0.36));
@@ -51,7 +51,7 @@ fn set_position_with_vector_test() {
 #[test]
 fn set_rotation_test() {
     let mut s = State::new_stationary();
-    s.set_rotation(0.0, 11.0, -9.0, 20.0);
+    s.set_rotation(Vector::new(11.0, -9.0, 20.0), 0.0);
 
     assert_eq!(s.rotation(), Quaternion::new(1.0, 0.0, 0.0, 0.0));
 }
@@ -75,7 +75,7 @@ fn set_velocity_test() {
 #[test]
 fn with_rotation_test() {
     let original_state = State::new_stationary();
-    let state = original_state.with_rotation(3.0*PI, 20.0, 12.0, -9.0);
+    let state = original_state.with_rotation(Vector::new(20.0, 12.0, -9.0), 3.0*PI);
 
     assert_eq!(state.rotation(), Quaternion::new(0.0, -0.80, -0.48, 0.36));
 }
@@ -111,4 +111,72 @@ fn with_angular_velocity_test() {
     let state = original_state.with_angular_velocity(1.0, 3.0, 9.0);
 
     assert_eq!(state.angular_velocity(), Vector::new(1.0, 3.0, 9.0));
+}
+
+#[cfg(test)]
+mod transform_point {
+    use core::State;
+    use math::{ PI, Vector };
+
+    #[test]
+    fn translation_only_test() {
+        let state = State::new_with_position(1.0, 2.0, 3.0);
+
+        let v = state.transform_point(Vector::new(4.0, 5.0, 6.0));
+
+        assert_eq!((v[0], v[1], v[2]), (5.0, 7.0, 9.0));
+    }
+
+    #[test]
+    fn rotation_only_test() {
+        let state = State::new_with_rotation(Vector::new(1.0, 1.0, 1.0), PI/2.0);
+
+        let v = state.transform_point(Vector::new(4.0, 5.0, 6.0));
+
+        assert!(v.distance_to(Vector::new(5.577350269189626, 3.845299461620749, 5.577350269189626)) < 0.001);
+    }
+
+    #[test]
+    fn rotation_and_translation_test() {
+        let state = State::new_with_rotation(Vector::new(1.0, 2.0, -1.0), PI/3.0)
+            .with_position(1.0, -1.0, 2.0);
+
+        let v = state.transform_point(Vector::new(3.0, 2.0, 1.0));
+
+        assert!(v.distance_to(Vector::new(4.4142135623730954, -0.41421356237309503, 0.5857864376269053)) < 0.001);
+    }
+}
+
+#[cfg(test)]
+mod transform_direction {
+    use core::State;
+    use math::{ PI, Vector };
+
+    #[test]
+    fn translation_only_test() {
+        let state = State::new_with_position(7.0, 8.0, 9.0);
+
+        let v = state.transform_direction(Vector::new(1.0, 2.0, 3.0));
+
+        assert_eq!((v[0], v[1], v[2]), (1.0, 2.0, 3.0));
+    }
+
+    #[test]
+    fn rotation_only_test() {
+        let state = State::new_with_rotation(Vector::new(1.0, 1.0, 1.0), PI/2.0);
+
+        let v = state.transform_direction(Vector::new(4.0, 5.0, 6.0));
+
+        assert!(v.distance_to(Vector::new(5.577350269189626, 3.845299461620749, 5.577350269189626)) < 0.001);
+    }
+
+    #[test]
+    fn rotation_and_translation_test() {
+        let state = State::new_with_rotation(Vector::new(1.0, 1.0, 1.0), PI/2.0)
+            .with_position(1.0, -1.0, 2.0);
+
+        let v = state.transform_direction(Vector::new(4.0, 5.0, 6.0));
+
+        assert!(v.distance_to(Vector::new(5.577350269189626, 3.845299461620749, 5.577350269189626)) < 0.001);
+    }
 }

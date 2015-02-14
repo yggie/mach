@@ -1,4 +1,4 @@
-use math::{ TOLERANCE, Matrix };
+use math::{ TOLERANCE, Matrix, Quaternion };
 
 use std::fmt;
 use std::num::Float;
@@ -9,7 +9,7 @@ use std::ops::{ Add, Div, Index, IndexMut, Mul, Neg, Sub };
 mod tests;
 
 /// A representation of a 3-dimensional column vector.
-#[derive(Clone, Copy, Show)]
+#[derive(Clone, Copy, Debug)]
 pub struct Vector {
     elements: [f32; 3]
 }
@@ -105,6 +105,13 @@ impl Vector {
     pub fn distance_to(&self, other: Vector) -> f32 {
         (*self - other).length()
     }
+
+    /// Computes the `Vector` that is the result of being rotated by the input
+    /// `Quaternion`.
+    pub fn rotate_by_quaternion(&self, q: Quaternion) -> Vector {
+        let result = q * Quaternion::new(0.0, self[0], self[1], self[2]) * q.inverse();
+        return Vector::new(result[1], result[2], result[3]);
+    }
 }
 
 /// Implements the `std::fmt` operations to allow using `println!` on Vectors.
@@ -144,8 +151,6 @@ impl Index<usize> for Vector {
 
 /// Implement the mutable index operator.
 impl IndexMut<usize> for Vector {
-    type Output = f32;
-
     /// Allows setting a vector's element using index notation.
     #[inline(always)]
     fn index_mut<'a>(&'a mut self, index: &usize) -> &'a mut f32 {

@@ -73,6 +73,12 @@ impl Body {
         self.state.velocity()
     }
 
+    /// Returns an `Iterator` over the vertices of the `Body`.
+    pub fn vertices_iter(&self) -> Box<Iterator<Item=Vector>> {
+        let s = self.state.clone();
+        Box::new(self.shape.vertices_iter().map(move |&v| s.transform_point(v)))
+    }
+
     /// Sets the `Body`’s position using the `Vector` provided.
     #[inline]
     pub fn set_position_with_vector(&mut self, position: Vector) {

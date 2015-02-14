@@ -8,7 +8,7 @@ use std::fmt;
 mod tests;
 
 /// A representation of a cube in 3 dimensions.
-#[derive(Clone, Show)]
+#[derive(Clone, Debug)]
 pub struct Cube {
     width: f32,
     height: f32,
@@ -96,7 +96,7 @@ impl Shape for Cube {
         Box::new(self.vertices.iter())
     }
 
-    fn farthest_index_in_direction(&self, direction: Vector) -> usize {
+    fn support_index_for(&self, direction: Vector) -> usize {
         let new_direction = Vector::new(
             direction[0]/self.width,
             direction[1]/self.height,

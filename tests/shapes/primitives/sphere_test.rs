@@ -23,9 +23,10 @@ mod impls {
     }
 
     #[test]
-    fn farthest_index_in_direction_test() {
+    fn support_index_for_test() {
         let s = Sphere::new(5.0);
-        assert_eq!(s.farthest_index_in_direction(Vector::new(1.0, 1.0, 1.0)), 0);
+
+        assert_eq!(s.support_index_for(Vector::new(1.0, 1.0, 1.0)), 0);
     }
 
 

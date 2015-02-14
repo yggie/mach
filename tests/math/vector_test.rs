@@ -1,4 +1,4 @@
-use math::Vector;
+use math::{ PI, Vector, Quaternion };
 
 #[test]
 fn new_test() {
@@ -11,7 +11,6 @@ fn new_test() {
 fn new_zero_test() {
     let v = Vector::new_zero();
 
-    println!("{}", v);
     assert_eq!((v[0], v[1], v[2]), (0.0, 0.0, 0.0));
 }
 
@@ -85,6 +84,16 @@ fn distance_to_test() {
     let d = a.distance_to(b);
 
     assert_eq!(d, 5.0);
+}
+
+#[test]
+fn rotate_by_quaternion_test() {
+    let v = Vector::new(1.0, 0.0, 0.0);
+    let q = Quaternion::new_from_axis_angle(Vector::new(1.0, 0.5, 0.5), PI/3.0);
+
+    let res = v.rotate_by_quaternion(q);
+
+    assert!(res.distance_to(Vector::new(0.8333333333333335, 0.5202200572599405, -0.18688672392660716)) < 0.001);
 }
 
 #[cfg(test)]

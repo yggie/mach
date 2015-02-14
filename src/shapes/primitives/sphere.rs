@@ -9,7 +9,7 @@ use std::f32::consts::PI;
 mod tests;
 
 /// A representation of a sphere in 3 dimensions.
-#[derive(Clone, Show)]
+#[derive(Clone, Debug)]
 pub struct Sphere {
     radius: f32,
     vertices: Vec<Vector>,
@@ -64,7 +64,7 @@ impl Shape for Sphere {
         Box::new(self.vertices.iter())
     }
 
-    fn farthest_index_in_direction(&self, _: Vector) -> usize {
+    fn support_index_for(&self, _: Vector) -> usize {
         0us
     }
 
