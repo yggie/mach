@@ -10,7 +10,7 @@ mod tests;
 /// A simple implementation for representing space in the simulation.
 pub struct SimpleSpace {
     bodies: Vec<Body>,
-    pairs: Vec<Pair>,
+    pairs: Vec<Pair<UID>>,
 }
 
 impl SimpleSpace {
@@ -26,7 +26,7 @@ impl Space for SimpleSpace {
         let body = Body::new_with_id(uid, Box::new(shape), Box::new(material), state);
 
         for other_body in self.bodies.iter() {
-            self.pairs.push(Pair::new(other_body, &body));
+            self.pairs.push(Pair::new(other_body.id(), body.id()));
         }
 
         self.bodies.push(body);
@@ -53,11 +53,11 @@ impl Space for SimpleSpace {
         return None;
     }
 
-    fn bodies_iter(&self) -> Box<Iterator<Item=&Body>> {
+    fn bodies_iter<'a>(&'a self) -> Box<Iterator<Item=&Body> + 'a> {
         Box::new(self.bodies.iter())
     }
 
-    fn bodies_iter_mut(&mut self) -> Box<Iterator<Item=&mut Body>> {
+    fn bodies_iter_mut<'a>(&'a mut self) -> Box<Iterator<Item=&mut Body> + 'a> {
         Box::new(self.bodies.iter_mut())
     }
 
@@ -107,7 +107,7 @@ impl Space for SimpleSpace {
         let mut contacts = Vec::new();
 
         for pair in self.pairs.iter() {
-            let bodies: Vec<&Body> = self.get_bodies(vec!(pair.uid_0, pair.uid_1)).iter().map(|b| b.unwrap()).collect();
+            let bodies: Vec<&Body> = self.get_bodies(vec!(pair.handles[0], pair.handles[1])).iter().map(|b| b.unwrap()).collect();
             match pair.compute_contact(bodies[0], bodies[1]) {
                 Some(contact) => { contacts.push(contact); }
 

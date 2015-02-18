@@ -7,7 +7,7 @@ use space::{ Space, SimpleSpace };
 
 pub fn constant_velocity_test<D: Dynamics, F: FnOnce() -> D>(new_dynamics: F) {
     // SETUP
-    const NUM_POINTS: usize = 5us;
+    const NUM_POINTS: usize = 5;
     const TIME_STEP: f32 = 0.3;
     let mut dynamics = new_dynamics();
     let mut space = &mut SimpleSpace::new();
@@ -19,7 +19,7 @@ pub fn constant_velocity_test<D: Dynamics, F: FnOnce() -> D>(new_dynamics: F) {
     );
 
     // EXERCISE
-    for i in range(0us, NUM_POINTS) {
+    for i in range(0, NUM_POINTS) {
         dynamics.update(space, TIME_STEP);
         points[i] = space.get_body(uid).unwrap().position();
     }

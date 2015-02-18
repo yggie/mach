@@ -16,7 +16,7 @@ pub struct Body {
 impl Body {
     /// Creates a new instance of a Body object
     pub fn new(shape: Box<Shape>, material: Box<Material>, state: State) -> Body {
-        Body::new_with_id(0us, shape, material, state)
+        Body::new_with_id(0, shape, material, state)
     }
 
     /// Creates a new instance of a `Body` with the specified id.
@@ -73,8 +73,13 @@ impl Body {
         self.state.velocity()
     }
 
+    /// Returns the position of the vertex associated with the index.
+    pub fn vertex(&self, index: usize) -> Vector {
+        self.state.transform_point(self.shape.vertex(index))
+    }
+
     /// Returns an `Iterator` over the vertices of the `Body`.
-    pub fn vertices_iter(&self) -> Box<Iterator<Item=Vector>> {
+    pub fn vertices_iter<'a>(&'a self) -> Box<Iterator<Item=Vector> + 'a> {
         let s = self.state.clone();
         Box::new(self.shape.vertices_iter().map(move |&v| s.transform_point(v)))
     }

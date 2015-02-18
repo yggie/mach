@@ -1,7 +1,8 @@
-use math::{ approx_eq, Vector };
-use shapes::Shape;
-
 use std::fmt;
+use std::num::Float;
+
+use math::{ approx_eq, Vector, TOLERANCE };
+use shapes::Shape;
 
 #[cfg(test)]
 #[path="../../../tests/shapes/primitives/cube_test.rs"]
@@ -92,27 +93,32 @@ impl Shape for Cube {
         8
     }
 
-    fn vertices_iter(&self) -> Box<Iterator<Item=&Vector>> {
+    fn vertices_iter<'a>(&'a self) -> Box<Iterator<Item=&Vector> + 'a> {
         Box::new(self.vertices.iter())
     }
 
-    fn support_index_for(&self, direction: Vector) -> usize {
+    fn support_indices_for(&self, direction: Vector) -> Vec<usize> {
         let new_direction = Vector::new(
             direction[0]/self.width,
             direction[1]/self.height,
             direction[2]/self.depth,
         );
         let mut max_value = 0.0;
-        let mut max_index = 0us;
+        let mut max_indices = Vec::new();
 
         for (index, vertex) in self.vertices.iter().enumerate() {
             let value = vertex.dot(new_direction);
-            if value > max_value {
+
+            let diff = value - max_value;
+            if diff > TOLERANCE {
                 max_value = value;
-                max_index = index;
+                max_indices = Vec::new();
+                max_indices.push(index)
+            } else if diff.abs() < TOLERANCE {
+                max_indices.push(index)
             }
         }
 
-        return max_index;
+        return max_indices;
     }
 }

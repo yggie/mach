@@ -35,10 +35,10 @@ pub trait Space {
     fn get_bodies_mut(&mut self, Vec<UID>) -> Vec<Option<&mut Body>>;
     /// Returns an iterator which iterates over unique `Body` instances in the
     /// `Space`.
-    fn bodies_iter(&self) -> Box<Iterator<Item=&Body>>;
+    fn bodies_iter<'a>(&'a self) -> Box<Iterator<Item=&Body> + 'a>;
     /// Returns an iterator which iterates over unique `Body` instances in the
     /// `Space`. This iterator allows mutation of the `Body` objects.
-    fn bodies_iter_mut(&mut self) -> Box<Iterator<Item=&mut Body>>;
+    fn bodies_iter_mut<'a>(&'a mut self) -> Box<Iterator<Item=&mut Body> + 'a>;
     /// Computes the contacts between bodies within the `Space`, caches the
     /// results so that the next time it looks it up will be faster.
     fn find_contacts(&self) -> Vec<Contact>;
