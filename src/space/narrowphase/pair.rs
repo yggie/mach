@@ -20,6 +20,12 @@ pub struct Pair<T: Copy> {
     pub handles: [T; 2],
 }
 
+enum ContactType {
+    Vertex(usize),
+    Edge(usize),
+    Face,
+}
+
 #[derive(Copy)]
 struct SupportPoint {
     indices: [usize; 2],
@@ -265,15 +271,49 @@ impl<T: Copy> Pair<T> {
             }
         }
 
-        let (_, contact_normal, _) = closest_surface.unwrap();
-        let contact_point = Vector::new_zero();
+        let (depth, contact_normal, indices) = closest_surface.unwrap();
+        let mut contact_center = Vector::new_zero();
 
-        // TODO compute contact point
+        for i in range(0, 2) {
+            let mapped_indices = [
+                polytope.vertices[indices[0]].indices[i],
+                polytope.vertices[indices[1]].indices[i],
+                polytope.vertices[indices[2]].indices[i],
+            ];
+
+            match Pair::<T>::infer_contact_type(mapped_indices) {
+                ContactType::Vertex(vertex_index) => {
+                    let correction = if i == 1 {
+                                         contact_normal * depth / 2.0
+                                     } else {
+                                         contact_normal * depth / -2.0
+                                     };
+                    contact_center = bodies[i].vertex(vertex_index) + correction;
+                    break;
+                },
+
+                ContactType::Edge(_) => {
+                },
+
+                ContactType::Face => {
+                },
+            }
+        }
 
         return Contact {
             body_ids: [bodies[0].id(), bodies[1].id()],
-            point: contact_point,
+            center: contact_center,
             normal: contact_normal,
         };
+    }
+
+    fn infer_contact_type(indices: [usize; 3]) -> ContactType {
+        if indices[0] == indices[1] && indices[1] == indices[2] {
+            return ContactType::Vertex(indices[0]);
+        } else if indices[0] == indices[1] || indices[0] == indices[2] || indices[1] == indices[2] {
+            return ContactType::Edge(0);
+        } else {
+            return ContactType::Face;
+        }
     }
 }

@@ -1,14 +1,13 @@
 use core::UID;
 use math::Vector;
 
-/// Represents a point of contact between two physical entities. Holds
-/// references to the contacting bodies and a point of contact.
+/// `Contact` holds contact information for two intersecting bodies.
 #[derive(Clone, Copy)]
 pub struct Contact {
     /// References to the two bodies.
     pub body_ids: [UID; 2],
-    /// The point of contact.
-    pub point: Vector,
+    /// The center of the contact.
+    pub center: Vector,
     /// The contact normal.
     pub normal: Vector,
 }

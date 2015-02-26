@@ -35,13 +35,8 @@ pub fn compute_surfaces_for_convex_hull(vertices: &Vec<Vector>) -> Vec<Surface> 
                         .map(|(index, _)| index);
 
                     match similar_edge_index {
-                        Some(index) => {
-                            free_edge_list.remove(index);
-                        },
-
-                        None => {
-                            free_edge_list.push(*new_edge);
-                        },
+                        Some(index) => { free_edge_list.remove(index); },
+                        None => { free_edge_list.push(*new_edge); },
                     }
                 }
 
