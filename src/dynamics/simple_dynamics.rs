@@ -1,35 +1,35 @@
-use core::Body;
+use core::UID;
 use math::Vector;
-use space::Space;
-use dynamics::Dynamics;
+use dynamics::{ Dynamics, ForceAccumulator };
+use collisions::Collisions;
 
 #[cfg(test)]
 #[path="../../tests/dynamics/simple_dynamics_test.rs"]
 mod tests;
 
 /// Contains the simplest implementation for a time marching scheme.
-#[derive(Copy)]
 pub struct SimpleDynamics {
     gravity: Vector,
+    accumulator: ForceAccumulator<UID>,
 }
 
 impl SimpleDynamics {
     /// Instantiates a new `SimpleDynamics` object.
     pub fn new() -> SimpleDynamics {
-        SimpleDynamics{
+        SimpleDynamics {
             gravity: Vector::new_zero(),
+            accumulator: ForceAccumulator::new(),
         }
     }
 }
 
 impl Dynamics for SimpleDynamics {
-    fn update<S: Space>(&mut self, space: &mut S, time_step: f32) {
-        let contacts = space.find_contacts();
+    fn update<C: Collisions>(&mut self, collisions: &mut C, time_step: f32) {
+        let contacts = collisions.find_contacts();
 
         for contact in contacts.iter() {
-            let mut bodies: Vec<Option<&mut Body>> = space.get_bodies_mut(vec!(contact.body_ids[0], contact.body_ids[1]));
-            let option_1 = bodies.pop().unwrap();
-            let option_0 = bodies.pop().unwrap();
+            let option_0 = collisions.find_body(contact.body_ids[0]);
+            let option_1 = collisions.find_body(contact.body_ids[1]);
 
             match (option_0, option_1) {
                 (Some(body_0), Some(body_1)) => {
@@ -41,10 +41,8 @@ impl Dynamics for SimpleDynamics {
 
                     let impulse = relative_velocity[1]*masses[1] - relative_velocity[0]*masses[0];
 
-                    // TODO compiler satisfying haxxx
-                    let pos = [body_0.position(), body_1.position()];
-                    body_0.apply_impulse(contact.normal * (-impulse / masses[0]), pos[0]);
-                    body_1.apply_impulse(contact.normal * (impulse / masses[1]), pos[1]);
+                    self.accumulator.add_impulse(body_0, -contact.normal * impulse / masses[0], contact.center);
+                    self.accumulator.add_impulse(body_1, contact.normal * impulse / masses[1], contact.center);
                 }
 
                 _ => {
@@ -54,16 +52,15 @@ impl Dynamics for SimpleDynamics {
         }
 
         let scaled_gravity = self.gravity * time_step;
-        for body in space.bodies_iter_mut() {
+        for body in collisions.bodies_iter_mut() {
             // TODO rotation component
             // TODO deal with temporaries
             let v = body.velocity();
             let p = body.position();
-            let accumulated_force = body.accumulated_force();
+            let (accumulated_force, _) = self.accumulator.consume_forces(&body);
             body.set_velocity_with_vector(v + accumulated_force + scaled_gravity);
             let new_velocity = body.velocity();
             body.set_position_with_vector(p + new_velocity * time_step);
-            body.reset_accumulators();
         }
     }
 

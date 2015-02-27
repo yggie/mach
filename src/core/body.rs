@@ -1,40 +1,31 @@
+use core::{ Handle, State };
 use math::Vector;
 use shapes::Shape;
 use materials::Material;
-use core::{ UID, State };
 
 /// Represents a physical entity in the world.
-pub struct Body {
-    id: UID,
+pub struct Body<H: Handle> {
+    handle: H,
     shape: Box<Shape>,
     material: Box<Material>,
     state: State,
-    force_impulse_accumulated: Vector,
-    torque_impulse_accumulated: Vector,
 }
 
-impl Body {
+impl<H: Handle> Body<H> {
     /// Creates a new instance of a Body object
-    pub fn new(shape: Box<Shape>, material: Box<Material>, state: State) -> Body {
-        Body::new_with_id(0, shape, material, state)
-    }
-
-    /// Creates a new instance of a `Body` with the specified id.
-    pub fn new_with_id(id: UID, shape: Box<Shape>, material: Box<Material>, state: State) -> Body {
+    pub fn new_with_handle(handle: H, shape: Box<Shape>, material: Box<Material>, state: State) -> Body<H> {
         Body {
-            id: id,
+            handle: handle,
             shape: shape,
             material: material,
             state: state,
-            force_impulse_accumulated: Vector::new_zero(),
-            torque_impulse_accumulated: Vector::new_zero(),
         }
     }
 
-    /// Returns the `Body`’s UID.
+    /// Returns the handle associated with the `Body`.
     #[inline]
-    pub fn id(&self) -> UID {
-        self.id
+    pub fn handle(&self) -> H {
+        self.handle
     }
 
     /// Returns a borrowed pointer to the Shape object held internally.
@@ -94,31 +85,5 @@ impl Body {
     #[inline]
     pub fn set_velocity_with_vector(&mut self, velocity: Vector) {
         self.state.set_velocity_with_vector(velocity);
-    }
-
-    /// Returns the total accumulated force acting on the `Body`.
-    #[inline(always)]
-    pub fn accumulated_force(&self) -> Vector {
-        self.force_impulse_accumulated
-    }
-
-    /// Returns the total accumulated torque acting on the `Body`.
-    #[inline(always)]
-    pub fn accumulated_torque(&self) -> Vector {
-        self.torque_impulse_accumulated
-    }
-
-    /// Applies a force on the `Body` acting on a specific point. This adds to
-    /// the total accumulated force and torque.
-    pub fn apply_impulse(&mut self, impulse: Vector, point: Vector) {
-        self.force_impulse_accumulated = self.force_impulse_accumulated + impulse;
-        self.torque_impulse_accumulated = self.torque_impulse_accumulated + impulse.cross(point - self.position());
-    }
-
-    /// Clears the accumulated force and torque acting on the `Body`.
-    #[inline]
-    pub fn reset_accumulators(&mut self) {
-        self.force_impulse_accumulated = Vector::new_zero();
-        self.torque_impulse_accumulated = Vector::new_zero();
     }
 }

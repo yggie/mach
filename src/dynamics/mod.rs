@@ -5,18 +5,22 @@
 #![unstable]
 
 use math::Vector;
-use space::Space;
+use collisions::Collisions;
 
+pub use self::force_accumulator::ForceAccumulator;
 pub use self::simple_dynamics::SimpleDynamics;
 
 /// The `Dynamics` component is responsible for handling the dynamic component
 /// of the simulation, including stepping the simulation forward in time and
 /// managing environmental effects on bodies.
 pub trait Dynamics {
+
     /// Steps the simulation forward in time by the specified amount.
-    fn update<S: Space>(&mut self, &mut S, f32);
+    fn update<C: Collisions>(&mut self, &mut C, f32);
+
     /// Returns the global gravitational force acting on the `Body` objects.
     fn gravity(&self) -> Vector;
+
     /// Adjusts the global gravitational force acting on the `Body` objects.
     fn set_gravity(&mut self, Vector);
 }
@@ -26,4 +30,5 @@ pub trait Dynamics {
 #[path="../../tests/behaviours/dynamics_behaviour.rs"]
 mod behaviours;
 
+mod force_accumulator;
 mod simple_dynamics;

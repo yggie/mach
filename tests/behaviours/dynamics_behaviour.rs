@@ -1,16 +1,16 @@
 use core::State;
 use math::Vector;
 use shapes::Cube;
-use materials::Rigid;
 use dynamics::Dynamics;
-use space::{ Space, SimpleSpace };
+use materials::Rigid;
+use collisions::{ Collisions, SimpleCollisions };
 
 pub fn constant_velocity_test<D: Dynamics, F: FnOnce() -> D>(new_dynamics: F) {
     // SETUP
     const NUM_POINTS: usize = 5;
     const TIME_STEP: f32 = 0.3;
     let mut dynamics = new_dynamics();
-    let mut space = &mut SimpleSpace::new();
+    let mut space = &mut SimpleCollisions::new();
     let mut points = [Vector::new_zero(); NUM_POINTS];
     let uid = space.create_body(
         Cube::new(1.0, 1.0, 1.0),
@@ -21,7 +21,7 @@ pub fn constant_velocity_test<D: Dynamics, F: FnOnce() -> D>(new_dynamics: F) {
     // EXERCISE
     for i in range(0, NUM_POINTS) {
         dynamics.update(space, TIME_STEP);
-        points[i] = space.get_body(uid).unwrap().position();
+        points[i] = space.find_body(uid).unwrap().position();
     }
 
     // VERIFY
@@ -35,7 +35,7 @@ pub fn constant_velocity_test<D: Dynamics, F: FnOnce() -> D>(new_dynamics: F) {
 pub fn gravity_test<D: Dynamics, F: FnOnce() -> D>(new_dynamics: F) {
     // SETUP
     let mut dynamics = new_dynamics();
-    let mut space = &mut SimpleSpace::new();
+    let mut space = &mut SimpleCollisions::new();
     let tolerance = 0.10; // allow tolerance for different integration techniques
     let uid = space.create_body(
         Cube::new(1.0, 1.0, 1.0),
@@ -50,7 +50,7 @@ pub fn gravity_test<D: Dynamics, F: FnOnce() -> D>(new_dynamics: F) {
     // EXERCISE
     dynamics.update(space, 0.2);
 
-    let body = space.get_body_mut(uid).unwrap();
+    let body = space.find_body_mut(uid).unwrap();
     let diff = body.position().distance_to(Vector::new(0.30, -0.30, 0.15));
     if diff > tolerance {
         panic!("Expected {} to be less than {}", diff, tolerance);
@@ -66,7 +66,7 @@ pub fn gravity_test<D: Dynamics, F: FnOnce() -> D>(new_dynamics: F) {
 pub fn constant_force_test<D: Dynamics, F: FnOnce() -> D>(new_dynamics: F) {
     // SETUP
     let mut dynamics = new_dynamics();
-    let mut space = &mut SimpleSpace::new();
+    let mut space = &mut SimpleCollisions::new();
     let tolerance = 0.10; // allow tolerance for different integration techniques
     let uid = space.create_body(
         Cube::new(1.0, 1.0, 1.0),
@@ -74,15 +74,15 @@ pub fn constant_force_test<D: Dynamics, F: FnOnce() -> D>(new_dynamics: F) {
         State::new_stationary().with_velocity(1.0, -1.0, 0.5),
     );
     {
-        let body = space.get_body_mut(uid).unwrap();
+        let body = space.find_body_mut(uid).unwrap();
         let p = body.position();
-        body.apply_impulse(Vector::new(2.5, -2.5, 3.3), p + Vector::new(1.0, 0.0, 0.0));
+        // body.apply_impulse(Vector::new(2.5, -2.5, 3.3), p + Vector::new(1.0, 0.0, 0.0));
     }
 
     // EXERCISE
     dynamics.update(space, 0.2);
 
-    let body = space.get_body_mut(uid).unwrap();
+    let body = space.find_body_mut(uid).unwrap();
     let diff = body.position().distance_to(Vector::new(0.70, -0.70, 0.76));
     if diff > tolerance {
         panic!("Expected {} to be less than {}", diff, tolerance);

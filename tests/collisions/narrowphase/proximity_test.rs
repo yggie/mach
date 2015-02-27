@@ -4,45 +4,45 @@ mod cube_cube {
 
     use core::{ Body, State, UID };
     use math::{ PI, Vector };
-    use space::Pair;
     use shapes::Cube;
     use materials::Rigid;
+    use collisions::Proximity;
 
-    fn setup_cubes(cube_0: Cube, state_0: State, cube_1: Cube, state_1: State) -> (Pair<UID>, [Body; 2]) {
+    fn setup_cubes(cube_0: Cube, state_0: State, cube_1: Cube, state_1: State) -> (Proximity<UID>, [Body<usize>; 2]) {
         let material = Rigid::new(3.0);
 
-        let body_0 = Body::new_with_id(0, Box::new(cube_0), Box::new(material), state_0);
-        let body_1 = Body::new_with_id(1, Box::new(cube_1), Box::new(material), state_1);
+        let body_0 = Body::new_with_handle(0, Box::new(cube_0), Box::new(material), state_0);
+        let body_1 = Body::new_with_handle(1, Box::new(cube_1), Box::new(material), state_1);
 
-        let pair = Pair::new(body_0.id(), body_1.id());
+        let proximity = Proximity::new(0, 1);
 
-        return (pair, [body_0, body_1]);
+        return (proximity, [body_0, body_1]);
     }
 
     #[test]
     fn vertex_vertex_no_contact_test() {
-        let (pair, bodies) = setup_cubes(
+        let (proximity, bodies) = setup_cubes(
             Cube::new(1.0, 2.0, 1.0),
             State::new_stationary(),
             Cube::new(2.0, 1.0, 1.0),
             State::new_with_position(1.51, 1.51, 1.01),
         );
 
-        let contact = pair.compute_contact(&bodies[0], &bodies[1]);
+        let contact = proximity.find_intersection(&bodies[0], &bodies[1]);
 
         assert!(contact.is_none());
     }
 
     #[test]
     fn vertex_vertex_contact_test() {
-        let (pair, bodies) = setup_cubes(
+        let (proximity, bodies) = setup_cubes(
             Cube::new(1.0, 2.0, 1.0),
             State::new_stationary(),
             Cube::new(2.0, 1.0, 1.0),
             State::new_with_position(1.49, 1.49, 0.99),
         );
 
-        let contact = pair.compute_contact(&bodies[0], &bodies[1]);
+        let contact = proximity.find_intersection(&bodies[0], &bodies[1]);
 
         assert!(contact.is_some());
         // TODO officially support vertex – vertex contacts
@@ -53,28 +53,28 @@ mod cube_cube {
 
     #[test]
     fn edge_edge_no_contact_test() {
-        let (pair, bodies) = setup_cubes(
+        let (proximity, bodies) = setup_cubes(
             Cube::new(1.0, 2.0, 3.0),
             State::new_stationary(),
             Cube::new(1.0, 2.0, 3.0),
             State::new_with_position(1.01, 1.51, 0.00),
         );
 
-        let contact = pair.compute_contact(&bodies[0], &bodies[1]);
+        let contact = proximity.find_intersection(&bodies[0], &bodies[1]);
 
         assert!(contact.is_none());
     }
 
     #[test]
     fn edge_edge_contact_test() {
-        let (pair, bodies) = setup_cubes(
+        let (proximity, bodies) = setup_cubes(
             Cube::new(1.0, 2.0, 3.0),
             State::new_stationary(),
             Cube::new(1.0, 2.0, 3.0),
             State::new_with_position(0.99, 1.49, 0.00),
         );
 
-        let contact = pair.compute_contact(&bodies[0], &bodies[1]);
+        let contact = proximity.find_intersection(&bodies[0], &bodies[1]);
 
         assert!(contact.is_some());
         // TODO officially support edge – edge contacts
@@ -85,28 +85,28 @@ mod cube_cube {
 
     #[test]
     fn face_face_no_contact_test() {
-        let (pair, bodies) = setup_cubes(
+        let (proximity, bodies) = setup_cubes(
             Cube::new(1.0, 1.0, 1.0),
             State::new_stationary(),
             Cube::new(1.0, 1.0, 1.0),
             State::new_with_position(1.01, 0.5, 0.5),
         );
 
-        let contact = pair.compute_contact(&bodies[0], &bodies[1]);
+        let contact = proximity.find_intersection(&bodies[0], &bodies[1]);
 
         assert!(contact.is_none());
     }
 
     #[test]
     fn face_face_contact_test() {
-        let (pair, bodies) = setup_cubes(
+        let (proximity, bodies) = setup_cubes(
             Cube::new(1.0, 1.0, 1.0),
             State::new_stationary(),
             Cube::new(1.0, 1.0, 1.0),
             State::new_with_position(0.99, 0.5, 0.5),
         );
 
-        let contact = pair.compute_contact(&bodies[0], &bodies[1]);
+        let contact = proximity.find_intersection(&bodies[0], &bodies[1]);
 
         assert!(contact.is_some());
         let c = contact.unwrap();
@@ -117,7 +117,7 @@ mod cube_cube {
 
     #[test]
     fn edge_face_no_contact_test() {
-        let (pair, bodies) = setup_cubes(
+        let (proximity, bodies) = setup_cubes(
             Cube::new(1.0, 1.0, 1.0),
             State::new_stationary(),
             Cube::new(1.0, 1.0, 1.0),
@@ -125,14 +125,14 @@ mod cube_cube {
                 .with_rotation(Vector::new(0.0, 1.0, 0.0), PI/4.0),
         );
 
-        let contact = pair.compute_contact(&bodies[0], &bodies[1]);
+        let contact = proximity.find_intersection(&bodies[0], &bodies[1]);
 
         assert!(contact.is_none());
     }
 
     #[test]
     fn edge_face_contact_test() {
-        let (pair, bodies) = setup_cubes(
+        let (proximity, bodies) = setup_cubes(
             Cube::new(1.0, 1.0, 1.0),
             State::new_stationary(),
             Cube::new(1.0, 1.0, 1.0),
@@ -140,7 +140,7 @@ mod cube_cube {
                 .with_rotation(Vector::new(0.0, 0.0, 1.0), PI/4.0),
         );
 
-        let contact = pair.compute_contact(&bodies[0], &bodies[1]);
+        let contact = proximity.find_intersection(&bodies[0], &bodies[1]);
 
         assert!(contact.is_some());
         let c = contact.unwrap();
@@ -157,7 +157,7 @@ mod cube_cube {
         let rotation = initial_axis.cross(final_axis);
         let state_1 = State::new_with_position((1.01 + 3.0.sqrt())/2.0, 0.0, 0.0)
             .with_rotation(rotation, rotation.length().asin());
-        let (pair, bodies) = setup_cubes(
+        let (proximity, bodies) = setup_cubes(
             Cube::new(1.0, 1.0, 1.0),
             State::new_stationary(),
             Cube::new(1.0, 1.0, 1.0),
@@ -165,7 +165,7 @@ mod cube_cube {
         );
 
         // EXERCISE
-        let contact = pair.compute_contact(&bodies[0], &bodies[1]);
+        let contact = proximity.find_intersection(&bodies[0], &bodies[1]);
 
         // VERIFY
         assert!(contact.is_none());
@@ -179,7 +179,7 @@ mod cube_cube {
         let rotation = initial_axis.cross(final_axis);
         let state_1 = State::new_with_position((0.98 + 3.0.sqrt())/2.0, 0.0, 0.0)
             .with_rotation(rotation, rotation.length().asin());
-        let (pair, bodies) = setup_cubes(
+        let (proximity, bodies) = setup_cubes(
             Cube::new(1.0, 1.0, 1.0),
             State::new_stationary(),
             Cube::new(1.0, 1.0, 1.0),
@@ -187,7 +187,7 @@ mod cube_cube {
         );
 
         // EXERCISE
-        let contact = pair.compute_contact(&bodies[0], &bodies[1]);
+        let contact = proximity.find_intersection(&bodies[0], &bodies[1]);
 
         // VERIFY
         assert!(contact.is_some());

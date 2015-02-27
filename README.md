@@ -25,12 +25,6 @@ like! But hopefully it will all pay off later. It is my hope that with a
 transparent, solid and well tested foundation, this project could eventually be
 completely self supported by the community.
 
-# Features
-
-- Gravity – Global environment force.
-- Primitive Shapes – Cubes only, spheres have been disabled temporarily.
-- Contact Detection – **Coming soon!**
-
 # Documentation
 
 The documentation can be viewed locally. Simply run the following command in the
@@ -58,7 +52,7 @@ is the version that the library has been compiled with:
 
 ```
 $ rustc --version
-rustc 1.0.0-nightly (4db0b3246 2015-02-25) (built 2015-02-25)
+rustc 1.0.0-nightly (e233987ce 2015-02-27) (built 2015-02-27)
 $ cargo version
-cargo 0.0.1-pre-nightly (5773064 2015-02-25) (built 2015-02-25)
+cargo 0.0.1-pre-nightly (a58ffd7 2015-02-27) (built 2015-02-27)
 ```

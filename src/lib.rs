@@ -5,19 +5,18 @@
 #![crate_type = "lib"]
 
 #![feature(core)]
+
 #![unstable]
 #![warn(missing_docs)]
 
-pub use self::core::{ World, Body, State };
-pub use self::math::{ Vector, Quaternion, Matrix };
-pub use self::space::{ Space, SimpleSpace };
-pub use self::materials::{ Material, Rigid };
-pub use self::dynamics::{ Dynamics, SimpleDynamics };
+pub use self::world::World;
+
+mod world;
 
 pub mod math;
 pub mod shapes;
 pub mod materials;
 pub mod core;
-pub mod space;
+pub mod collisions;
 pub mod dynamics;
 pub mod utils;

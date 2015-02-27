@@ -1,5 +1,6 @@
-//! The `properties` module defines objects representing mechanical properties
-//! of the physical entities.
+//! The `materials` module defines objects representing mechanical properties
+//! of the physical entities. This module is currently experimental, and may
+//! undergo a complete refactoring in the near future.
 
 pub use self::rigid::Rigid;
 

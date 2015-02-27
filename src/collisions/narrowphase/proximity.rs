@@ -1,23 +1,23 @@
 use std::num::Float;
 
 use math::{ Vector, TOLERANCE };
-use core::{ Body, State };
+use core::{ Body, Handle, State };
 use utils::compute_surfaces_for_convex_hull;
-use space::Contact;
 use shapes::Shape;
+use collisions::Contact;
 
 #[cfg(test)]
-#[path="../../../tests/space/narrowphase/pair_test.rs"]
+#[path="../../../tests/collisions/narrowphase/proximity_test.rs"]
 mod tests;
 
-/// A `Pair` object caches the relationship between two `Body` objects in close
+/// A `Proximity` object caches the relationship between two bodies in close
 /// proximity.
 #[derive(Clone, Debug)]
-pub struct Pair<T: Copy> {
+pub struct Proximity<H: Handle> {
     /// The unique handles to the pair of `Body` instances. These values are
     /// never used internally, simply as an aid for the external implementation
     /// to identify the related `Body` instances.
-    pub handles: [T; 2],
+    pub handles: [H; 2],
 }
 
 enum ContactType {
@@ -178,7 +178,7 @@ impl Polytope {
         }).is_some();
     }
 
-    fn expand_fully(&mut self, body_0: &Body, body_1: &Body) {
+    fn expand_fully<H: Handle>(&mut self, body_0: &Body<H>, body_1: &Body<H>) {
         let shapes = [body_0.shape(), body_1.shape()];
         let states = [body_0.state(), body_1.state()];
         loop {
@@ -229,15 +229,14 @@ impl Polytope {
     }
 }
 
-impl<T: Copy> Pair<T> {
-    /// Creates a new `Pair` object to cache the relationship between two `Body`
-    /// instances.
-    pub fn new(handle_0: T, handle_1: T) -> Pair<T> {
-        Pair{ handles: [handle_0, handle_1] }
+impl<H: Handle> Proximity<H> {
+    /// Creates a new `Proximity` object with the specified handles.
+    pub fn new(handle_0: H, handle_1: H) -> Proximity<H> {
+        Proximity { handles: [handle_0, handle_1] }
     }
 
     /// Computes the `Contact` between the `Body` and returns the result if any.
-    pub fn compute_contact(&self, body_0: &Body, body_1: &Body) -> Option<Contact> {
+    pub fn find_intersection(&self, body_0: &Body<H>, body_1: &Body<H>) -> Option<Contact<H>> {
         let shapes = [body_0.shape(), body_1.shape()];
         let states = [body_0.state(), body_1.state()];
 
@@ -246,14 +245,19 @@ impl<T: Copy> Pair<T> {
                 let mut polytope = Polytope::new(&simplex);
                 polytope.expand_fully(body_0, body_1);
 
-                return Some(Pair::<T>::contact_for_polytope(&polytope, [body_0, body_1]));
+                let (contact_normal, contact_center) = Proximity::<H>::contact_for_polytope(&polytope, [body_0, body_1]);
+                return Some(Contact {
+                    body_ids: [body_0.handle(), body_1.handle()],
+                    center: contact_center,
+                    normal: contact_normal,
+                });
             },
 
             None => return None,
         }
     }
 
-    fn contact_for_polytope(polytope: &Polytope, bodies: [&Body; 2]) -> Contact {
+    fn contact_for_polytope(polytope: &Polytope, bodies: [&Body<H>; 2]) -> (Vector, Vector) {
         let mut closest_surface: Option<(f32, Vector, [usize; 3])> = None;
         for &(surface_normal, indices) in polytope.surfaces.iter() {
             let current_depth = surface_normal.dot(polytope.vertices[indices[0]].position);
@@ -281,7 +285,7 @@ impl<T: Copy> Pair<T> {
                 polytope.vertices[indices[2]].indices[i],
             ];
 
-            match Pair::<T>::infer_contact_type(mapped_indices) {
+            match Proximity::<H>::infer_contact_type(mapped_indices) {
                 ContactType::Vertex(vertex_index) => {
                     let correction = if i == 1 {
                                          contact_normal * depth / 2.0
@@ -300,11 +304,7 @@ impl<T: Copy> Pair<T> {
             }
         }
 
-        return Contact {
-            body_ids: [bodies[0].id(), bodies[1].id()],
-            center: contact_center,
-            normal: contact_normal,
-        };
+        return (contact_normal, contact_center);
     }
 
     fn infer_contact_type(indices: [usize; 3]) -> ContactType {
