@@ -4,12 +4,17 @@
 
 pub use self::rigid::Rigid;
 
+use math::Matrix;
 use shapes::Shape;
 
 /// Defines the traits for all mechanical property descriptions.
 pub trait Material: 'static {
-    /// Computes the mass when applied to a shape.
+    /// Computes the mass using the volume of the provided shape.
     fn mass_of(&self, &Shape) -> f32;
+
+    /// Computes the inertia tensor for the shape provided.
+    fn inertia_for(&self, &Shape) -> Matrix;
+
     /// Computes the density when applied to a shape.
     fn density_of(&self, &Shape) -> f32;
 }

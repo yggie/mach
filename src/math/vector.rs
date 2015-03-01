@@ -93,12 +93,11 @@ impl Vector {
 
     /// Computes the outer product between two Vectors.
     pub fn outer(&self, other: Vector) -> Matrix {
-        let elems: [f32; 9] = [
+        return Matrix::new(
             self[0]*other[0], self[0]*other[1], self[0]*other[2],
             self[1]*other[0], self[1]*other[1], self[1]*other[2],
             self[2]*other[0], self[2]*other[1], self[2]*other[2],
-        ];
-        Matrix::new(&elems)
+        );
     }
 
     /// Computes the distance to the `Vector` specified.

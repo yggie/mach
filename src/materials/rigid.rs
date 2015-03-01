@@ -1,4 +1,4 @@
-use math::approx_eq;
+use math::{ approx_eq, Matrix };
 use shapes::Shape;
 use materials::Material;
 
@@ -40,12 +40,15 @@ impl PartialEq for Rigid {
 
 /// Implements the `Material` trait
 impl Material for Rigid {
-    /// Computes the mass using the volume of the provided shape.
     fn mass_of(&self, shape: &Shape) -> f32 {
         self.density * shape.volume()
     }
 
-    /// Simple returns the pre-defined density.
+    fn inertia_for(&self, shape: &Shape) -> Matrix {
+        shape.inertia_tensor() * self.mass_of(shape)
+    }
+
+    /// Returns the pre-defined density.
     fn density_of(&self, _: &Shape) -> f32 {
         self.density
     }

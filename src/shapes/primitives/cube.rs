@@ -1,7 +1,7 @@
 use std::fmt;
 use std::num::Float;
 
-use math::{ approx_eq, Vector, TOLERANCE };
+use math::{ approx_eq, Matrix, Vector, TOLERANCE };
 use shapes::Shape;
 
 #[cfg(test)]
@@ -24,6 +24,7 @@ impl Cube {
         let half_height = height / 2.0;
         let half_depth = depth / 2.0;
 
+        // TODO refactor this to something else (z = height??)
         let mut vertices = Vec::new();
         vertices.push(Vector::new( half_width,  half_height,  half_depth));
         vertices.push(Vector::new(-half_width,  half_height,  half_depth));
@@ -83,6 +84,18 @@ impl Shape for Cube {
     /// Calculates the volume of the `Cube`.
     fn volume(&self) -> f32 {
         self.width * self.height * self.depth
+    }
+
+    fn inertia_tensor(&self) -> Matrix {
+        let w2 = self.width*self.width;
+        let h2 = self.height*self.height;
+        let d2 = self.depth*self.depth;
+
+        return Matrix::new(
+            (h2 + d2)/12.0,            0.0,            0.0,
+                       0.0, (w2 + d2)/12.0,            0.0,
+                       0.0,            0.0, (h2 + w2)/12.0,
+        );
     }
 
     fn vertex(&self, index: usize) -> Vector {

@@ -1,5 +1,5 @@
 use core::{ Handle, State };
-use math::Vector;
+use math::{ Matrix, Vector };
 use shapes::Shape;
 use materials::Material;
 
@@ -52,16 +52,28 @@ impl<H: Handle> Body<H> {
         self.material.mass_of(&*self.shape)
     }
 
+    /// Returns the inertia tensor of the `Body`.
+    #[inline]
+    pub fn inertia(&self) -> Matrix {
+        self.material.inertia_for(&*self.shape)
+    }
+
     /// Returns the position of the `Body`.
     #[inline]
     pub fn position(&self) -> Vector {
         self.state.position()
     }
 
-    /// Returns the velocity associated with the Body.
+    /// Returns the velocity of the Body.
     #[inline]
     pub fn velocity(&self) -> Vector {
         self.state.velocity()
+    }
+
+    /// Returns the angular velocity of the Body.
+    #[inline]
+    pub fn angular_velocity(&self) -> Vector {
+        self.state.angular_velocity()
     }
 
     /// Returns the position of the vertex associated with the index.

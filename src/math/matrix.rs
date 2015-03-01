@@ -2,7 +2,7 @@ use math::{ Vector, TOLERANCE };
 
 use std::fmt;
 use std::num::Float;
-use std::ops::{ Add, Index, IndexMut, Mul, Neg, Sub };
+use std::ops::{ Add, Div, Index, IndexMut, Mul, Neg, Sub };
 
 #[cfg(test)]
 #[path="../../tests/math/matrix_test.rs"]
@@ -17,8 +17,38 @@ pub struct Matrix {
 impl Matrix {
     /// Constructs a new matrix given 9 elements in row major order.
     #[inline(always)]
-    pub fn new(elements: &[f32; 9]) -> Matrix {
-        Matrix{ elements: *elements }
+    pub fn new(m11: f32, m12: f32, m13: f32, m21: f32, m22: f32, m23: f32, m31: f32, m32: f32, m33: f32) -> Matrix {
+        Matrix {
+            elements: [
+                m11,
+                m12,
+                m13,
+                m21,
+                m22,
+                m23,
+                m31,
+                m32,
+                m33,
+            ]
+        }
+    }
+
+    /// Constructs a new matrix from a slice given 9 elements in row major
+    /// order.
+    pub fn new_from_slice(elements: &[f32]) -> Matrix {
+        Matrix {
+            elements: [
+                elements[0],
+                elements[1],
+                elements[2],
+                elements[3],
+                elements[4],
+                elements[5],
+                elements[6],
+                elements[7],
+                elements[8],
+            ]
+        }
     }
 
     /// Constructs an identity matrix.
@@ -61,6 +91,28 @@ impl Matrix {
     #[inline(always)]
     pub fn get(&self, row: usize, col: usize) -> f32 {
         self.elements[3*col + row]
+    }
+
+    /// Computes the determinant of the `Matrix`.
+    pub fn determinant(&self) -> f32 {
+        return self[0]*(self[4]*self[8] - self[5]*self[7]) -
+               self[1]*(self[3]*self[8] - self[5]*self[6]) +
+               self[2]*(self[3]*self[7] - self[4]*self[6]);
+    }
+
+    /// Computes the inverse of the `Matrix`.
+    pub fn inverse(&self) -> Matrix {
+        return Matrix::new(
+            self[4]*self[8] - self[5]*self[7],
+            self[2]*self[7] - self[1]*self[8],
+            self[1]*self[5] - self[2]*self[4],
+            self[5]*self[6] - self[3]*self[8],
+            self[0]*self[8] - self[2]*self[6],
+            self[2]*self[3] - self[0]*self[5],
+            self[3]*self[7] - self[4]*self[6],
+            self[1]*self[6] - self[0]*self[7],
+            self[0]*self[4] - self[1]*self[3],
+        ) / self.determinant();
     }
 }
 
@@ -167,6 +219,63 @@ impl Sub<Matrix> for Matrix {
     }
 }
 
+/// Implement the multiplication operator between a `Matrix` and a `Vector`.
+impl Div<f32> for Matrix {
+    type Output = Matrix;
+
+    /// Divides all elements of the `Matrix` by the input and returns the
+    /// resulting `Matrix`.
+    fn div(self, scalar: f32) -> Matrix {
+        return Matrix::new(
+            self[0]/scalar,
+            self[1]/scalar,
+            self[2]/scalar,
+            self[3]/scalar,
+            self[4]/scalar,
+            self[5]/scalar,
+            self[6]/scalar,
+            self[7]/scalar,
+            self[8]/scalar,
+        );
+    }
+}
+
+/// Implement the multiplication operator between a `Matrix` and a `Vector`.
+impl Mul<f32> for Matrix {
+    type Output = Matrix;
+
+    /// Multiplies all elements of the `Matrix` by the input and returns the
+    /// resulting `Matrix`.
+    fn mul(self, scalar: f32) -> Matrix {
+        return Matrix::new(
+            self[0]*scalar,
+            self[1]*scalar,
+            self[2]*scalar,
+            self[3]*scalar,
+            self[4]*scalar,
+            self[5]*scalar,
+            self[6]*scalar,
+            self[7]*scalar,
+            self[8]*scalar,
+        );
+    }
+}
+
+/// Implement the multiplication operator between a `Matrix` and a `Vector`.
+impl Mul<Vector> for Matrix {
+    type Output = Vector;
+
+    /// Computes the resulting vector from the multiplication between a matrix
+    /// and a vector.
+    fn mul(self, vect: Vector) -> Vector {
+        Vector::new(
+            self[0]*vect[0] + self[3]*vect[1] + self[6]*vect[2],
+            self[1]*vect[0] + self[4]*vect[1] + self[7]*vect[2],
+            self[2]*vect[0] + self[5]*vect[1] + self[8]*vect[2],
+        )
+    }
+}
+
 /// Implement the multiplication operator between Matrices.
 impl Mul<Matrix> for Matrix {
     type Output = Matrix;
@@ -185,21 +294,7 @@ impl Mul<Matrix> for Matrix {
             self[6]*other[1] + self[7]*other[4] + self[8]*other[7],
             self[6]*other[2] + self[7]*other[5] + self[8]*other[8],
         ];
-        Matrix{ elements: elems }
-    }
-}
 
-/// Implement the multiplication operator between a `Matrix` and a `Vector`.
-impl Mul<Vector> for Matrix {
-    type Output = Vector;
-
-    /// Computes the resulting vector from the multiplication between a matrix
-    /// and a vector.
-    fn mul(self, vect: Vector) -> Vector {
-        Vector::new(
-            self[0]*vect[0] + self[3]*vect[1] + self[6]*vect[2],
-            self[1]*vect[0] + self[4]*vect[1] + self[7]*vect[2],
-            self[2]*vect[0] + self[5]*vect[1] + self[8]*vect[2],
-        )
+        return Matrix { elements: elems };
     }
 }

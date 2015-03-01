@@ -177,7 +177,7 @@ mod cube_cube {
         let initial_axis = Vector::new(1.0, 1.0, 1.0).normalize();
         let final_axis = Vector::new(1.0, 0.0, 0.0);
         let rotation = initial_axis.cross(final_axis);
-        let state_1 = State::new_with_position((0.98 + 3.0.sqrt())/2.0, 0.0, 0.0)
+        let state_1 = State::new_with_position((0.98 + 3.0.sqrt())/2.0, 0.1, 0.0)
             .with_rotation(rotation, rotation.length().asin());
         let (proximity, bodies) = setup_cubes(
             Cube::new(1.0, 1.0, 1.0),
@@ -193,6 +193,6 @@ mod cube_cube {
         assert!(contact.is_some());
         let c = contact.unwrap();
         assert_eq!(c.normal, Vector::new(1.0, 0.0, 0.0));
-        assert_eq!(c.center, Vector::new(0.495, 0.0, 0.0));
+        assert_eq!(c.center, Vector::new(0.495, 0.1, 0.0));
     }
 }

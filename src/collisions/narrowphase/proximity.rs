@@ -53,43 +53,36 @@ impl Simplex {
         let mut simplex = Simplex::new(shapes, states);
         let surface_radius = shapes[0].surface_radius() + shapes[1].surface_radius();
 
-        let mut iteration_count = 0;
         loop {
-            let mut next_guess: Option<(Vector, usize)> = None;
-            for (index, (normal, indices)) in simplex.surfaces_iter().enumerate() {
+            let mut next_guess: Option<(Vector, usize, usize)> = None;
+            for (normal, indices, not_in_index) in simplex.surfaces_iter() {
                 let vertex_to_origin = -simplex.vertices[indices[0]].position;
                 let distance_to_origin = vertex_to_origin.dot(normal);
 
                 if distance_to_origin > surface_radius {
-                    next_guess = Some((normal, index));
+                    next_guess = Some((normal, indices[0], not_in_index));
                     break;
                 }
             }
 
             match next_guess {
-                Some((direction, index)) => {
+                Some((direction, index_on_surface, index_to_replace)) => {
                     let new_support_points = Simplex::generate_support_points(direction, shapes, states);
 
-                    let new_point = new_support_points.iter().find(|point| {
+                    let new_support_point = new_support_points.iter().find(|point| {
                         !simplex.has_matching_support_point(&point)
                     });
 
-                    match new_point {
-                        Some(&new_support_point) => {
-                            simplex.vertices[index] = new_support_point;
+                    match new_support_point {
+                        Some(point) if direction.dot(point.position - simplex.vertices[index_on_surface].position) > TOLERANCE => {
+                            simplex.vertices[index_to_replace] = *point;
                         },
 
-                        None => return None,
+                        _ => return None,
                     }
                 },
 
                 None => return Some(simplex),
-            }
-
-            // TODO should implement simplex history to avoid infinite loops?
-            iteration_count = iteration_count + 1;
-            if iteration_count > 150 {
-                return None;
             }
         }
     }
@@ -106,13 +99,13 @@ impl Simplex {
         }).is_some();
     }
 
-    fn surfaces_iter<'a>(&'a self) -> Box<Iterator<Item=(Vector, [usize; 3])> + 'a> {
+    fn surfaces_iter<'a>(&'a self) -> Box<Iterator<Item=(Vector, [usize; 3], usize)> + 'a> {
         let centroid = self.centroid();
         let combinations = [
-            [0, 1, 2],
-            [0, 1, 3],
-            [0, 2, 3],
             [1, 2, 3],
+            [0, 2, 3],
+            [0, 1, 3],
+            [0, 1, 2],
         ];
 
         return Box::new(range(0, 4).map(move |index| {
@@ -126,7 +119,7 @@ impl Simplex {
                 surface_normal = -surface_normal;
             }
 
-            return (surface_normal, indices);
+            return (surface_normal, indices, index);
         }));
     }
 
@@ -168,7 +161,7 @@ impl Polytope {
     fn new(simplex: &Simplex) -> Polytope {
         Polytope {
             vertices: vec!(simplex.vertices[0], simplex.vertices[1], simplex.vertices[2], simplex.vertices[3]),
-            surfaces: simplex.surfaces_iter().collect(),
+            surfaces: simplex.surfaces_iter().map(|(a, b, _)| (a, b)).collect(),
         }
     }
 

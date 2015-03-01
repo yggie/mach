@@ -52,7 +52,7 @@ is the version that the library has been compiled with:
 
 ```
 $ rustc --version
-rustc 1.0.0-nightly (e233987ce 2015-02-27) (built 2015-02-27)
+rustc 1.0.0-nightly (b0746ff19 2015-03-05) (built 2015-03-05)
 $ cargo version
-cargo 0.0.1-pre-nightly (a58ffd7 2015-02-27) (built 2015-02-27)
+cargo 0.0.1-pre-nightly (dd7c7bd 2015-03-04) (built 2015-03-04)
 ```
