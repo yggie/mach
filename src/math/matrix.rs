@@ -1,7 +1,6 @@
 use math::{ Vector, TOLERANCE };
 
 use std::fmt;
-use std::num::Float;
 use std::ops::{ Add, Div, Index, IndexMut, Mul, Neg, Sub };
 
 #[cfg(test)]
@@ -143,7 +142,7 @@ impl PartialEq for Matrix {
     /// the maximum difference in the `Matrix` components is less than the
     /// allowed tolerance.
     fn eq(&self, other: &Matrix) -> bool {
-        for i in range(0, 9) {
+        for i in (0..9) {
             if (self[i] - other[i]).abs() > TOLERANCE {
                 return false;
             }
@@ -159,8 +158,8 @@ impl Index<usize> for Matrix {
 
     /// Obtain the elements in the Matrix in column major order.
     #[inline(always)]
-    fn index<'a>(&'a self, index: &usize) -> &'a f32 {
-        &self.elements[*index]
+    fn index<'a>(&'a self, index: usize) -> &'a f32 {
+        &self.elements[index]
     }
 }
 
@@ -169,8 +168,8 @@ impl IndexMut<usize> for Matrix {
     /// Obtains a mutable reference to the element in the Matrix in column
     /// major order.
     #[inline(always)]
-    fn index_mut<'a>(&'a mut self, index: &usize) -> &'a mut f32 {
-        &mut self.elements[*index]
+    fn index_mut<'a>(&'a mut self, index: usize) -> &'a mut f32 {
+        &mut self.elements[index]
     }
 }
 

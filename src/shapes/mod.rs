@@ -2,12 +2,14 @@
 
 #![unstable]
 
+use std::fmt;
+
 use math::{ Matrix, TOLERANCE, Vector };
 
 pub use self::primitives::Cube;
 
 /// Defines the traits for all geometric property descriptions.
-pub trait Shape: 'static {
+pub trait Shape: fmt::Display + 'static {
     /// Computes the volume for the shape.
     fn volume(&self) -> f32;
 

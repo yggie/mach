@@ -1,7 +1,6 @@
 use math::{ TOLERANCE, Matrix, Quaternion };
 
 use std::fmt;
-use std::num::Float;
 use std::ops::{ Add, Div, Index, IndexMut, Mul, Neg, Sub };
 
 #[cfg(test)]
@@ -143,8 +142,8 @@ impl Index<usize> for Vector {
 
     /// Obtain the vector's elements by index. Uses zero-based indexing.
     #[inline(always)]
-    fn index<'a>(&'a self, index: &usize) -> &'a f32 {
-        &self.elements[*index]
+    fn index<'a>(&'a self, index: usize) -> &'a f32 {
+        &self.elements[index]
     }
 }
 
@@ -152,8 +151,8 @@ impl Index<usize> for Vector {
 impl IndexMut<usize> for Vector {
     /// Allows setting a vector's element using index notation.
     #[inline(always)]
-    fn index_mut<'a>(&'a mut self, index: &usize) -> &'a mut f32 {
-        &mut self.elements[*index]
+    fn index_mut<'a>(&'a mut self, index: usize) -> &'a mut f32 {
+        &mut self.elements[index]
     }
 }
 

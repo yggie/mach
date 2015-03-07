@@ -1,7 +1,5 @@
 #[cfg(test)]
 mod cube_cube {
-    use std::num::Float;
-
     use core::{ Body, State, UID };
     use math::{ PI, Vector };
     use shapes::Cube;
@@ -121,7 +119,7 @@ mod cube_cube {
             Cube::new(1.0, 1.0, 1.0),
             State::new_stationary(),
             Cube::new(1.0, 1.0, 1.0),
-            State::new_with_position(0.51 + 0.5*2.0.sqrt(), 0.00, 0.00)
+            State::new_with_position(0.51 + 0.5*2.0f32.sqrt(), 0.00, 0.00)
                 .with_rotation(Vector::new(0.0, 1.0, 0.0), PI/4.0),
         );
 
@@ -136,7 +134,7 @@ mod cube_cube {
             Cube::new(1.0, 1.0, 1.0),
             State::new_stationary(),
             Cube::new(1.0, 1.0, 1.0),
-            State::new_with_position(0.49 + 0.5*2.0.sqrt(), 0.00, 0.00)
+            State::new_with_position(0.49 + 0.5*2.0f32.sqrt(), 0.00, 0.00)
                 .with_rotation(Vector::new(0.0, 0.0, 1.0), PI/4.0),
         );
 
@@ -155,7 +153,7 @@ mod cube_cube {
         let initial_axis = Vector::new(1.0, 1.0, 1.0).normalize();
         let final_axis = Vector::new(1.0, 0.0, 0.0);
         let rotation = initial_axis.cross(final_axis);
-        let state_1 = State::new_with_position((1.01 + 3.0.sqrt())/2.0, 0.0, 0.0)
+        let state_1 = State::new_with_position((1.01 + 3.0f32.sqrt())/2.0, 0.0, 0.0)
             .with_rotation(rotation, rotation.length().asin());
         let (proximity, bodies) = setup_cubes(
             Cube::new(1.0, 1.0, 1.0),
@@ -177,7 +175,7 @@ mod cube_cube {
         let initial_axis = Vector::new(1.0, 1.0, 1.0).normalize();
         let final_axis = Vector::new(1.0, 0.0, 0.0);
         let rotation = initial_axis.cross(final_axis);
-        let state_1 = State::new_with_position((0.98 + 3.0.sqrt())/2.0, 0.1, 0.0)
+        let state_1 = State::new_with_position((0.98 + 3.0f32.sqrt())/2.0, 0.1, 0.0)
             .with_rotation(rotation, rotation.length().asin());
         let (proximity, bodies) = setup_cubes(
             Cube::new(1.0, 1.0, 1.0),

@@ -1,7 +1,6 @@
 use math::{ TOLERANCE, Vector };
 
 use std::fmt;
-use std::num::Float;
 use std::ops::{ Div, Index, IndexMut, Mul, Neg, Sub };
 
 #[cfg(test)]
@@ -25,6 +24,13 @@ impl Quaternion {
     #[inline(always)]
     pub fn new_identity() -> Quaternion {
         Quaternion { elements: [1.0, 0.0, 0.0, 0.0] }
+    }
+
+    /// Creates a new `Quaternion` taking the input `Vector` as the components
+    /// of the complex part of the `Quaternion`.
+    #[inline]
+    pub fn new_from_vector(vector: Vector) -> Quaternion {
+        Quaternion::new(0.0, vector[0], vector[1], vector[2])
     }
 
     /// Creates a new `Quaternion` representing a rotation about an axis.
@@ -130,8 +136,8 @@ impl Index<usize> for Quaternion {
 
     /// Obtains a component from the `Quaternion` by index.
     #[inline(always)]
-    fn index<'a>(&'a self, index: &usize) -> &'a f32 {
-        &self.elements[*index]
+    fn index<'a>(&'a self, index: usize) -> &'a f32 {
+        &self.elements[index]
     }
 }
 
@@ -140,8 +146,8 @@ impl IndexMut<usize> for Quaternion {
     /// Obtains a mutable reference to a component from the `Quaternion` by
     /// index.
     #[inline(always)]
-    fn index_mut<'a>(&'a mut self, index: &usize) -> &'a mut f32 {
-        &mut self.elements[*index]
+    fn index_mut<'a>(&'a mut self, index: usize) -> &'a mut f32 {
+        &mut self.elements[index]
     }
 }
 

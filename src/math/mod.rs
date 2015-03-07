@@ -4,7 +4,6 @@
 #![unstable]
 
 use std::f32;
-use std::num::Float;
 
 pub use self::vector::Vector;
 pub use self::matrix::Matrix;

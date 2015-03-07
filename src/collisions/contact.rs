@@ -1,8 +1,8 @@
 use math::Vector;
 
 /// `Contact` holds contact information for two intersecting bodies.
-#[derive(Copy)]
-pub struct Contact<T> {
+#[derive(Clone, Copy)]
+pub struct Contact<T: Copy> {
     /// References to the two bodies.
     pub body_ids: [T; 2],
     /// The center of the contact.

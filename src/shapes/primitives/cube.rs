@@ -1,5 +1,4 @@
 use std::fmt;
-use std::num::Float;
 
 use math::{ approx_eq, Matrix, Vector, TOLERANCE };
 use shapes::Shape;

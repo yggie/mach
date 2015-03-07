@@ -91,6 +91,12 @@ impl State {
         self.rotation.set(q[0], q[1], q[2], q[3]);
     }
 
+    /// Sets the rotation using a quaternion.
+    #[inline]
+    pub fn set_rotation_with_quaternion(&mut self, rotation: Quaternion) {
+        self.rotation = rotation;
+    }
+
     /// Returns a copy of the `State` using the specified angle and axis of
     /// rotation to initialize the rotation. This function can be chained.
     #[inline]

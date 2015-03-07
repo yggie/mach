@@ -7,8 +7,8 @@
 use math::Vector;
 use collisions::Collisions;
 
-pub use self::force_accumulator::ForceAccumulator;
 pub use self::simple_dynamics::SimpleDynamics;
+pub use self::force_accumulator::ForceAccumulator;
 
 /// The `Dynamics` component is responsible for handling the dynamic component
 /// of the simulation, including stepping the simulation forward in time and

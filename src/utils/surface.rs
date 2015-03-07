@@ -1,7 +1,7 @@
 use math::{ Vector, TOLERANCE };
 
 /// Represents a `Surface` for a given set of points.
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Surface {
     /// The `Surface` normal
     pub normal: Vector,

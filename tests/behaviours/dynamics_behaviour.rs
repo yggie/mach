@@ -23,8 +23,6 @@ pub fn gravity_test<D: Dynamics, F: FnOnce() -> D>(new_dynamics: F) {
 }
 
 pub mod update {
-    use std::num::Float;
-
     use core::State;
     use math::Vector;
     use utils::{ kinetic_energy_for };
@@ -32,6 +30,7 @@ pub mod update {
     use dynamics::Dynamics;
     use materials::Rigid;
     use collisions::{ Collisions, SimpleCollisions };
+    use utils::log::{ CollisionsLogger, DynamicsLogger };
 
     fn assert_approximately_equal(a: Vector, b: Vector) {
         // uses a larger tolerance to accommodate different algorithms
@@ -49,7 +48,17 @@ pub mod update {
         );
 
         // EXERCISE
+        println!("[Update: START] step: {}", 0.3);
         dynamics.update(space, 0.3);
+        for body in space.bodies_iter() {
+            println!(
+                "[Body: STATE] {}: pos: {}, rot: {}",
+                body.handle(),
+                body.position(),
+                body.rotation_quaternion()
+            );
+        }
+        println!("[Update: END]");
 
         // VERIFY
         let body = space.find_body(uid).unwrap();
@@ -78,8 +87,8 @@ pub mod update {
 
     pub fn with_contact_test<D: Dynamics, F: FnOnce() -> D>(new_dynamics: F) {
         // SETUP
-        let mut dynamics = new_dynamics();
-        let mut space = &mut SimpleCollisions::new();
+        let mut dynamics = DynamicsLogger::new(new_dynamics());
+        let mut space = &mut CollisionsLogger::new(SimpleCollisions::new());
         let uid_0 = space.create_body(
             Cube::new(1.0, 1.0, 1.0),
             Rigid::new(1.0),
@@ -88,7 +97,7 @@ pub mod update {
         let initial_axis = Vector::new(1.0, 1.0, 1.0).normalize();
         let final_axis = Vector::new(1.0, 0.0, 0.0);
         let rotation = initial_axis.cross(final_axis);
-        let state_1 = State::new_with_position((0.98 + 3.0.sqrt())/2.0, 0.0, 0.0)
+        let state_1 = State::new_with_position((0.98 + 3.0f32.sqrt())/2.0, 0.0, 0.0)
             .with_rotation(rotation, rotation.length().asin())
             .with_velocity(-1.0, 0.0, 0.0);
         let uid_1 = space.create_body(
@@ -111,8 +120,8 @@ pub mod update {
 
     pub fn with_rotating_contact_test<D: Dynamics, F: FnOnce() -> D>(new_dynamics: F) {
         // SETUP
-        let mut dynamics = new_dynamics();
-        let mut space = &mut SimpleCollisions::new();
+        let mut dynamics = DynamicsLogger::new(new_dynamics());
+        let mut space = &mut CollisionsLogger::new(SimpleCollisions::new());
         let uid_0 = space.create_body(
             Cube::new(1.0, 1.0, 1.0),
             Rigid::new(1.0),
@@ -121,7 +130,7 @@ pub mod update {
         let initial_axis = Vector::new(1.0, 1.0, 1.0).normalize();
         let final_axis = Vector::new(1.0, 0.0, 0.0);
         let rotation = initial_axis.cross(final_axis);
-        let state_1 = State::new_with_position((0.98 + 3.0.sqrt())/2.0, 0.0, 0.2)
+        let state_1 = State::new_with_position((0.98 + 3.0f32.sqrt())/2.0, 0.0, 0.2)
             .with_rotation(rotation, rotation.length().asin())
             .with_velocity(-1.0, 0.0, 0.0);
         let uid_1 = space.create_body(
@@ -156,9 +165,8 @@ pub mod update {
         println!("AFTER BODY 0: ANG VEL: {} => {}", body_0.angular_velocity(), body_0.angular_velocity().length());
         println!("AFTER BODY 1: VEL: {} => {}", body_1.velocity(), body_1.velocity().length());
         println!("AFTER BODY 1: ANG VEL: {} => {}", body_1.angular_velocity(), body_1.angular_velocity().length());
-        // TODO finish these tests
-        // assert_eq!(body_0.velocity(), Vector::new(-1.0, 0.0, 0.0));
-        // assert_eq!(body_1.velocity(), Vector::new( 0.0, 0.0, 0.0));
+        assert_eq!(body_0.velocity(), Vector::new(-1.0, 0.0, 0.0));
+        assert_eq!(body_1.velocity(), Vector::new( 0.0, 0.0, 0.0));
     }
 }
 

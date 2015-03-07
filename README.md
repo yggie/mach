@@ -31,7 +31,7 @@ The documentation can be viewed locally. Simply run the following command in the
 project directory:
 
 ```
-$ cargo doc --open
+cargo doc --open
 ```
 
 # Testing
@@ -40,7 +40,7 @@ Tests are written using the standard library tools. All are under the `tests/`
 directory, and can be run using the command:
 
 ```
-$ cargo test
+cargo test
 ```
 
 # Compatibility
@@ -52,7 +52,13 @@ is the version that the library has been compiled with:
 
 ```
 $ rustc --version
-rustc 1.0.0-nightly (b0746ff19 2015-03-05) (built 2015-03-05)
+rustc 1.0.0-beta (9854143cb 2015-04-02) (built 2015-04-02)
 $ cargo version
-cargo 0.0.1-pre-nightly (dd7c7bd 2015-03-04) (built 2015-03-04)
+cargo 0.0.1-pre-nightly (84d6d2c 2015-03-31) (built 2015-03-31)
 ```
+
+
+# License
+
+This software is distributed under the
+[MIT License](https://github.com/yggie/mithril/blob/master/LICENSE).

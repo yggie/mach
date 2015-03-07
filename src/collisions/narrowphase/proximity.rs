@@ -1,5 +1,3 @@
-use std::num::Float;
-
 use math::{ Vector, TOLERANCE };
 use core::{ Body, Handle, State };
 use utils::compute_surfaces_for_convex_hull;
@@ -26,7 +24,7 @@ enum ContactType {
     Face,
 }
 
-#[derive(Copy)]
+#[derive(Clone, Copy)]
 struct SupportPoint {
     indices: [usize; 2],
     position: Vector,
@@ -108,7 +106,7 @@ impl Simplex {
             [0, 1, 2],
         ];
 
-        return Box::new(range(0, 4).map(move |index| {
+        return Box::new((0..4).map(move |index| {
             let indices = combinations[index];
             let edge_0 = self.vertices[indices[1]].position - self.vertices[indices[0]].position;
             let edge_1 = self.vertices[indices[2]].position - self.vertices[indices[0]].position;
@@ -225,7 +223,7 @@ impl Polytope {
 impl<H: Handle> Proximity<H> {
     /// Creates a new `Proximity` object with the specified handles.
     pub fn new(handle_0: H, handle_1: H) -> Proximity<H> {
-        Proximity { handles: [handle_0, handle_1] }
+        Proximity { handles: [ handle_0, handle_1 ] }
     }
 
     /// Computes the `Contact` between the `Body` and returns the result if any.
@@ -238,7 +236,7 @@ impl<H: Handle> Proximity<H> {
                 let mut polytope = Polytope::new(&simplex);
                 polytope.expand_fully(body_0, body_1);
 
-                let (contact_normal, contact_center) = Proximity::<H>::contact_for_polytope(&polytope, [body_0, body_1]);
+                let (contact_normal, contact_center) = Proximity::<H>::contact_for_polytope(&polytope, body_0, body_1);
                 return Some(Contact {
                     body_ids: [body_0.handle(), body_1.handle()],
                     center: contact_center,
@@ -250,7 +248,7 @@ impl<H: Handle> Proximity<H> {
         }
     }
 
-    fn contact_for_polytope(polytope: &Polytope, bodies: [&Body<H>; 2]) -> (Vector, Vector) {
+    fn contact_for_polytope(polytope: &Polytope, body_0: &Body<H>, body_1: &Body<H>) -> (Vector, Vector) {
         let mut closest_surface: Option<(f32, Vector, [usize; 3])> = None;
         for &(surface_normal, indices) in polytope.surfaces.iter() {
             let current_depth = surface_normal.dot(polytope.vertices[indices[0]].position);
@@ -271,7 +269,7 @@ impl<H: Handle> Proximity<H> {
         let (depth, contact_normal, indices) = closest_surface.unwrap();
         let mut contact_center = Vector::new_zero();
 
-        for i in range(0, 2) {
+        for i in (0..2) {
             let mapped_indices = [
                 polytope.vertices[indices[0]].indices[i],
                 polytope.vertices[indices[1]].indices[i],
@@ -280,12 +278,13 @@ impl<H: Handle> Proximity<H> {
 
             match Proximity::<H>::infer_contact_type(mapped_indices) {
                 ContactType::Vertex(vertex_index) => {
-                    let correction = if i == 1 {
-                                         contact_normal * depth / 2.0
-                                     } else {
-                                         contact_normal * depth / -2.0
-                                     };
-                    contact_center = bodies[i].vertex(vertex_index) + correction;
+                    if i == 1 {
+                        let correction = contact_normal * depth / 2.0;
+                        contact_center = body_1.vertex(vertex_index) + correction;
+                    } else {
+                        let correction = contact_normal * depth / -2.0;
+                        contact_center = body_0.vertex(vertex_index) + correction;
+                    }
                     break;
                 },
 

@@ -1,5 +1,7 @@
+use std::fmt;
+
 use core::{ Handle, State };
-use math::{ Matrix, Vector };
+use math::{ Matrix, Vector, Quaternion };
 use shapes::Shape;
 use materials::Material;
 
@@ -70,6 +72,12 @@ impl<H: Handle> Body<H> {
         self.state.velocity()
     }
 
+    /// Returns the rotation of the `Body` expressed as a `Quaternion`.
+    #[inline]
+    pub fn rotation_quaternion(&self) -> Quaternion {
+        self.state.rotation()
+    }
+
     /// Returns the angular velocity of the Body.
     #[inline]
     pub fn angular_velocity(&self) -> Vector {
@@ -93,9 +101,32 @@ impl<H: Handle> Body<H> {
         self.state.set_position_with_vector(position);
     }
 
+    /// Sets the `Body`’s rotation using the `Quaternion` provided.
+    #[inline]
+    pub fn set_rotation_with_quaternion(&mut self, rotation: Quaternion) {
+        self.state.set_rotation_with_quaternion(rotation);
+    }
+
     /// Sets the `Body`’s velocity using the `Vector` provided.
     #[inline]
     pub fn set_velocity_with_vector(&mut self, velocity: Vector) {
         self.state.set_velocity_with_vector(velocity);
+    }
+
+    /// Set the `Body`’s angular velocity using the `Vector` provided.
+    #[inline]
+    pub fn set_angular_velocity_with_vector(&mut self, angular_velocity: Vector) {
+        self.state.set_angular_velocity(angular_velocity[0], angular_velocity[1], angular_velocity[2]);
+    }
+}
+
+impl<H: Handle> fmt::Display for Body<H> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f,
+            "Body[{}]: Pos={}, Rot={}",
+            self.handle(),
+            self.position(),
+            self.rotation_quaternion()
+        )
     }
 }

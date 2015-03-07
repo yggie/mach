@@ -1,5 +1,3 @@
-use std::num::Float;
-
 use math::{ Vector, TOLERANCE };
 use utils::Surface;
 
@@ -75,7 +73,7 @@ enum Result {
     OnEdge(usize, usize),
 }
 
-#[derive(Copy)]
+#[derive(Clone, Copy)]
 struct Node {
     index: usize,
     position: Vector,
@@ -92,7 +90,7 @@ impl Node {
     }
 }
 
-#[derive(Copy)]
+#[derive(Clone, Copy)]
 struct DirectedEdge {
     nodes: [usize; 2],
     up_vector: Vector,
@@ -153,9 +151,9 @@ fn initialize_surface(vertices: &Vec<Vector>) -> (Surface, Vec<Node>, Vec<Direct
         .collect();
 
     let mut first_surface_option: Option<Surface> = None;
-    'outer: for index_0 in range(0, vertices.len()) {
-        for index_1 in range(index_0 + 1, vertices.len()) {
-            for index_2 in range(index_1 + 1, vertices.len()) {
+    'outer: for index_0 in (0..vertices.len()) {
+        for index_1 in ((index_0 + 1)..vertices.len()) {
+            for index_2 in ((index_1 + 1)..vertices.len()) {
 
                 let trial_surface = Surface::new(vertices, index_0, index_1, index_2);
                 let point_on_surface = vertices[index_0];
@@ -173,7 +171,7 @@ fn initialize_surface(vertices: &Vec<Vector>) -> (Surface, Vec<Node>, Vec<Direct
     }
 
     let surface = first_surface_option.unwrap();
-    for i in range(0, 3) {
+    for i in (0..3) {
         let index = surface.nodes[i];
         available_nodes[index].on_edge = true;
     }
@@ -188,7 +186,7 @@ fn initialize_surface(vertices: &Vec<Vector>) -> (Surface, Vec<Node>, Vec<Direct
 }
 
 fn select_best_node_for_edge(available_nodes: &Vec<Node>, edge_list: &Vec<DirectedEdge>, current_edge: DirectedEdge) -> Option<Result> {
-    return available_nodes.iter()
+    let filtered_nodes_with_gradients_iter = available_nodes.iter()
         .enumerate()
         .filter_map(|(availability_index, node)| {
             let (ref_x, ref_y) = current_edge.project_to_directed_plane(node.position);
@@ -200,8 +198,19 @@ fn select_best_node_for_edge(available_nodes: &Vec<Node>, edge_list: &Vec<Direct
                 let gradient = ref_y.atan2(ref_x + TOLERANCE);
                 return Some((availability_index, node, gradient));
             }
-        })
-        .max_by(|&(_, _, gradient)| (gradient / TOLERANCE) as i32)
+        });
+
+    let mut max_gradient = -1e5;
+    let mut node_with_max_gradient = None;
+    for node_with_gradient in filtered_nodes_with_gradients_iter {
+        let gradient: f32 = node_with_gradient.2;
+        if gradient > max_gradient {
+            max_gradient = gradient;
+            node_with_max_gradient = Some(node_with_gradient);
+        }
+    }
+
+    return node_with_max_gradient
         .and_then(|original| {
             let node = original.1;
             if node.on_edge {
