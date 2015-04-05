@@ -83,13 +83,8 @@ impl Dynamics for SimpleDynamics {
             let (accumulated_force, accumulated_torque) = self.accumulator.consume_forces(&body);
             let normalized_force = accumulated_force / body.mass();
             body.set_velocity_with_vector(v + normalized_force + scaled_gravity);
-            let q = Quaternion::new_from_vector(body.angular_velocity()) *
-                Quaternion::new_from_vector(accumulated_torque);
-            body.set_angular_velocity_with_vector(Vector::new(q[1], q[2], q[3]));
             let new_velocity = body.velocity();
             body.set_position_with_vector(p + new_velocity * time_step);
-            let new_q = body.rotation_quaternion() * q;
-            body.set_rotation_with_quaternion(new_q);
         }
     }
 
