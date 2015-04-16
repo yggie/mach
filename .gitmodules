@@ -1,0 +1,3 @@
+[submodule "mithril-ci-offline"]
+	path = tests/mithril-ci-offline
+	url = git@github.com:yggie/mithril-ci-offline.git

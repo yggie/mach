@@ -31,7 +31,7 @@ The documentation can be viewed locally. Simply run the following command in the
 project directory:
 
 ```
-cargo doc --open
+make docs
 ```
 
 # Testing
@@ -40,8 +40,18 @@ Tests are written using the standard library tools. All are under the `tests/`
 directory, and can be run using the command:
 
 ```
-cargo test
+make test
 ```
+
+To visualize the test results, you can use:
+
+```
+make debug
+```
+
+Which opens the
+[mithril-ci-offline](https://github.com/yggie/mithril-ci-offline) on a browser
+window with the test output.
 
 # Compatibility
 
