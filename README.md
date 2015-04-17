@@ -1,5 +1,7 @@
 # Mithril Physics engine
 
+[![License](https://img.shields.io/badge/license-MIT-yellow.svg)](#license)
+
 An open source 3D physics engine. A reincarnation of my old physics engine:
 [react](https://github.com/yggie/react) in Rust. Feature list is currently very
 limited and the library is still in the experimentation phase, therefore I do
@@ -73,4 +75,4 @@ cargo 0.0.1-pre-nightly (84d6d2c 2015-03-31) (built 2015-03-31)
 # License
 
 This software is distributed under the
-[MIT License](https://github.com/yggie/mithril/blob/master/LICENSE).
+[MIT License](LICENSE).
