@@ -19,7 +19,7 @@ impl<H: Handle> ForceAccumulator<H> {
             .unwrap_or(&(Vector::new_zero(), Vector::new_zero()));
 
         let new_force = force + impulse;
-        let new_torque = torque + impulse.cross(point - body.position());
+        let new_torque = torque - impulse.cross(point - body.position());
 
         self.0.insert(body.handle(), (new_force, new_torque));
     }

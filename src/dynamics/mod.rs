@@ -2,8 +2,6 @@
 //! engine. It contains subcomponents to handle time updates and collision
 //! resolution.
 
-#![unstable]
-
 use math::Vector;
 use collisions::Collisions;
 

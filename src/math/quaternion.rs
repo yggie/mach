@@ -1,7 +1,7 @@
 use math::{ TOLERANCE, Vector };
 
 use std::fmt;
-use std::ops::{ Div, Index, IndexMut, Mul, Neg, Sub };
+use std::ops::{ Add, Div, Index, IndexMut, Mul, Neg, Sub };
 
 #[cfg(test)]
 #[path="../../tests/math/quaternion_test.rs"]
@@ -76,6 +76,19 @@ impl Quaternion {
         self[1] = i;
         self[2] = j;
         self[3] = k;
+    }
+
+    /// Computes the sum between the `Quaternion` and the input scalars treated
+    /// as components of a `Quaternion`.
+    #[inline]
+    pub fn add(self, r: f32, i: f32, j: f32, k: f32) -> Quaternion {
+        Quaternion{ elements: [
+            self[0] + r,
+            self[1] + i,
+            self[2] + j,
+            self[3] + k,
+        ] }
+
     }
 
     /// Computes the difference between the `Quaternion` and the input scalars
@@ -159,6 +172,17 @@ impl Neg for Quaternion {
     #[inline]
     fn neg(self) -> Quaternion {
         Quaternion{ elements: [ -self[0], -self[1], -self[2], -self[3] ] }
+    }
+}
+
+/// Implements the addition operator.
+impl Add<Quaternion> for Quaternion {
+    type Output = Quaternion;
+
+    /// Computes the sum of two `Quaternion`s.
+    #[inline]
+    fn add(self, other: Quaternion) -> Quaternion {
+        self.add(other[0], other[1], other[2], other[3])
     }
 }
 

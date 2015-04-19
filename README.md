@@ -57,7 +57,7 @@ window with the test output.
 
 # Dependencies
 
-- [rand](https://github.com/rust-lang/rand) – For random number generators
+This library currently has no dependencies.
 
 
 # License

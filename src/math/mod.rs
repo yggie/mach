@@ -1,8 +1,6 @@
 //! The `math` module contains all the logic associated with primitive
 //! mathematical operations.
 
-#![unstable]
-
 use std::f32;
 
 pub use self::vector::Vector;

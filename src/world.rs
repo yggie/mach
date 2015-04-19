@@ -1,4 +1,4 @@
-use core::{ UID, State };
+use core::{ Body, UID, State };
 use math::Vector;
 use shapes::Shape;
 use dynamics::Dynamics;
@@ -27,6 +27,13 @@ impl<C: Collisions, D: Dynamics> World<C, D> {
     #[inline(always)]
     pub fn create_body<S: Shape, M: Material>(&mut self, shape: S, material: M, state: State) -> UID {
         self.collisions.create_body(shape, material, state)
+    }
+
+    /// Searches the world for a matching `Body` instance with the `UID`
+    /// specified and returns a reference to the `Body` if found.
+    #[inline(always)]
+    pub fn find_body(&mut self, uid: UID) -> Option<&Body<UID>> {
+        self.collisions.find_body(uid)
     }
 
     /// Steps the `World` forward in time by the specified amount.

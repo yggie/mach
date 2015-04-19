@@ -18,7 +18,7 @@ impl State {
     /// Creates a new `State` with zero position, rotation, velocity and angular
     /// velocity.
     pub fn new_stationary() -> State {
-        State{
+        State {
             position: Vector::new_zero(),
             rotation: Quaternion::new_identity(),
             velocity: Vector::new_zero(),

@@ -4,7 +4,6 @@
 #![crate_name = "mithril"]
 #![crate_type = "lib"]
 
-#![unstable]
 #![warn(missing_docs)]
 
 pub use self::world::World;

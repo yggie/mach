@@ -123,10 +123,12 @@ impl<H: Handle> Body<H> {
 impl<H: Handle> fmt::Display for Body<H> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f,
-            "Body[{}]: Pos={}, Rot={}",
+            "Body[{}]: Pos={}, Rot={}, Vel={}, AngVel={}",
             self.handle(),
             self.position(),
-            self.rotation_quaternion()
+            self.rotation_quaternion(),
+            self.velocity(),
+            self.angular_velocity(),
         )
     }
 }

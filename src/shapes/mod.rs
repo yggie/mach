@@ -1,7 +1,5 @@
 //! The `shapes` module defines the shared traits for all geometric models.
 
-#![unstable]
-
 use std::fmt;
 
 use math::{ Matrix, TOLERANCE, Vector };

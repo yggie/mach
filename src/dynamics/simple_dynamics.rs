@@ -76,15 +76,26 @@ impl Dynamics for SimpleDynamics {
 
         let scaled_gravity = self.gravity * time_step;
         for body in collisions.bodies_iter_mut() {
-            // TODO rotation component
             // TODO deal with temporaries
+            let t = time_step;
             let v = body.velocity();
             let p = body.position();
             let (accumulated_force, accumulated_torque) = self.accumulator.consume_forces(&body);
-            let normalized_force = accumulated_force / body.mass();
-            body.set_velocity_with_vector(v + normalized_force + scaled_gravity);
+            let impulse = accumulated_force / body.mass();
+            body.set_velocity_with_vector(v + impulse + scaled_gravity);
             let new_velocity = body.velocity();
-            body.set_position_with_vector(p + new_velocity * time_step);
+            body.set_position_with_vector(p + new_velocity * t);
+
+            let angular_impulse = body.inertia().inverse() * accumulated_torque;
+            let w_old = body.angular_velocity();
+            body.set_angular_velocity_with_vector(w_old + angular_impulse);
+
+            let w = body.angular_velocity();
+            let w_as_quat = Quaternion::new(0.0, w[0] * t, w[1] * t, w[2] * t);
+            let q = body.rotation_quaternion();
+            let new_rotation = q + w_as_quat * q * 0.5;
+
+            body.set_rotation_with_quaternion(new_rotation.normalize());
         }
     }
 

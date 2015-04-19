@@ -51,8 +51,9 @@ impl Simplex {
         let mut simplex = Simplex::new(shapes, states);
         let surface_radius = shapes[0].surface_radius() + shapes[1].surface_radius();
 
-        loop {
+        for _ in (0..1000) {
             let mut next_guess: Option<(Vector, usize, usize)> = None;
+            // find any surface facing the origin
             for (normal, indices, not_in_index) in simplex.surfaces_iter() {
                 let vertex_to_origin = -simplex.vertices[indices[0]].position;
                 let distance_to_origin = vertex_to_origin.dot(normal);
@@ -72,8 +73,11 @@ impl Simplex {
                     });
 
                     match new_support_point {
-                        Some(point) if direction.dot(point.position - simplex.vertices[index_on_surface].position) > TOLERANCE => {
-                            simplex.vertices[index_to_replace] = *point;
+                        // update the simplex with the new support point if the
+                        // support point is in the direction of the surface
+                        // normal
+                        Some(vertex) if direction.dot(vertex.position - simplex.vertices[index_on_surface].position) > TOLERANCE => {
+                            simplex.vertices[index_to_replace] = *vertex;
                         },
 
                         _ => return None,
@@ -83,6 +87,8 @@ impl Simplex {
                 None => return Some(simplex),
             }
         }
+
+        unreachable!();
     }
 
     fn centroid(&self) -> Vector {
@@ -110,10 +116,10 @@ impl Simplex {
             let indices = combinations[index];
             let edge_0 = self.vertices[indices[1]].position - self.vertices[indices[0]].position;
             let edge_1 = self.vertices[indices[2]].position - self.vertices[indices[0]].position;
-            let to_centroid = centroid - self.vertices[indices[0]].position;
+            let vertex_to_centroid = centroid - self.vertices[indices[0]].position;
             let mut surface_normal = edge_0.cross(edge_1).normalize();
 
-            if surface_normal.dot(to_centroid) > 0.0 {
+            if surface_normal.dot(vertex_to_centroid) > 0.0 {
                 surface_normal = -surface_normal;
             }
 
@@ -172,9 +178,12 @@ impl Polytope {
     fn expand_fully<H: Handle>(&mut self, body_0: &Body<H>, body_1: &Body<H>) {
         let shapes = [body_0.shape(), body_1.shape()];
         let states = [body_0.state(), body_1.state()];
-        loop {
+
+        for _ in (0..1000) {
             if !self.expand(shapes, states) { return }
         }
+
+        unreachable!();
     }
 
     fn expand(&mut self, shapes: [&Shape; 2], states: [&State; 2]) -> bool {
@@ -231,21 +240,18 @@ impl<H: Handle> Proximity<H> {
         let shapes = [body_0.shape(), body_1.shape()];
         let states = [body_0.state(), body_1.state()];
 
-        match Simplex::new_containing_origin(shapes, states) {
-            Some(simplex) => {
+        return Simplex::new_containing_origin(shapes, states).map(|simplex| {
                 let mut polytope = Polytope::new(&simplex);
                 polytope.expand_fully(body_0, body_1);
 
                 let (contact_normal, contact_center) = Proximity::<H>::contact_for_polytope(&polytope, body_0, body_1);
-                return Some(Contact {
+                println!("CONTACT AT {}", contact_center);
+                return Contact {
                     body_ids: [body_0.handle(), body_1.handle()],
                     center: contact_center,
                     normal: contact_normal,
-                });
-            },
-
-            None => return None,
-        }
+                };
+            });
     }
 
     fn contact_for_polytope(polytope: &Polytope, body_0: &Body<H>, body_1: &Body<H>) -> (Vector, Vector) {

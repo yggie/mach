@@ -2,8 +2,6 @@
 //! physics engine. It contains subcomponents to handle storage, retrieval and
 //! queries for physical bodies.
 
-#![unstable]
-
 use shapes::Shape;
 use materials::Material;
 use core::{ Body, State, UID };
