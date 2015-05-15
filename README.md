@@ -55,18 +55,6 @@ Which opens the
 [mithril-ci-offline](https://github.com/yggie/mithril-ci-offline) on a browser
 window with the test output.
 
-# Compatibility
-
-The library has been tested under Rust-beta and does not use any unstable
-dependencies.
-
-```
-$ rustc --version
-rustc 1.0.0-beta (9854143cb 2015-04-02) (built 2015-04-02)
-$ cargo version
-cargo 0.0.1-pre-nightly (84d6d2c 2015-03-31) (built 2015-03-31)
-```
-
 # Dependencies
 
 - [rand](https://github.com/rust-lang/rand) – For random number generators
