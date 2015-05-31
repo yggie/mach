@@ -3,10 +3,6 @@ use math::{ TOLERANCE, Vector };
 use std::fmt;
 use std::ops::{ Add, Div, Index, IndexMut, Mul, Neg, Sub };
 
-#[cfg(test)]
-#[path="../../tests/math/quaternion_test.rs"]
-mod tests;
-
 /// A representation of a quaternion.
 #[derive(Clone, Copy, Debug)]
 pub struct Quaternion {

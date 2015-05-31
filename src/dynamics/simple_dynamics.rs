@@ -3,10 +3,6 @@ use math::{ Vector, Quaternion };
 use dynamics::{ Dynamics, ForceAccumulator };
 use collisions::{ Contact, Collisions };
 
-#[cfg(test)]
-#[path="../../tests/dynamics/simple_dynamics_test.rs"]
-mod tests;
-
 /// Contains the simplest implementation for a time marching scheme.
 pub struct SimpleDynamics {
     gravity: Vector,

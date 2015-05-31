@@ -1,21 +1,26 @@
-use core::{ Body, State, UID };
-use shapes::Shape;
-use materials::Material;
-use collisions::{ Contact, Collisions };
-use utils::log::verbose_format_body;
+extern crate mithril;
+
+use mithril::core::{ Body, Handle, State, UID };
+use mithril::shapes::Shape;
+use mithril::materials::Material;
+use mithril::collisions::{ Contact, Collisions };
+
+fn verbose_format_body<H: Handle>(body: &Body<H>) -> String {
+    format!("{}, Shape={}", body, body.shape())
+}
 
 /// A utility class which wraps around a `Collisions` component and produces
 /// parseable output for debugging.
-pub struct CollisionsLogger<C: Collisions>(C);
+pub struct CollisionsMonitor<C: Collisions>(C);
 
-impl<C: Collisions> CollisionsLogger<C> {
-    /// Returns a new `CollisionsLogger` wrapped around a `Collisions` instance.
-    pub fn new(collisions: C) -> CollisionsLogger<C> {
-        CollisionsLogger(collisions)
+impl<C: Collisions> CollisionsMonitor<C> {
+    /// Returns a new `CollisionsMonitor` wrapped around a `Collisions` instance.
+    pub fn new(collisions: C) -> CollisionsMonitor<C> {
+        CollisionsMonitor(collisions)
     }
 }
 
-impl<C: Collisions> Collisions for CollisionsLogger<C> {
+impl<C: Collisions> Collisions for CollisionsMonitor<C> {
     fn create_body<S: Shape, M: Material>(&mut self, shape: S, material: M, state: State) -> UID {
         let uid = self.0.create_body(shape, material, state);
         let body = self.0.find_body(uid).unwrap();

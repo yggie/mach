@@ -1,19 +1,21 @@
-use core::State;
-use math::Vector;
-use shapes::Cube;
-use dynamics::Dynamics;
-use materials::Rigid;
-use collisions::{ Collisions, SimpleCollisions };
+use utils::{ CollisionsMonitor, DynamicsMonitor };
 
-pub fn gravity_test<D: Dynamics, F: FnOnce() -> D>(new_dynamics: F) {
+use mithril::core::State;
+use mithril::math::Vector;
+use mithril::shapes::Cube;
+use mithril::dynamics::Dynamics;
+use mithril::materials::Rigid;
+use mithril::collisions::{ Collisions, SimpleCollisions };
+
+
+fn assert_approximately_equal(a: Vector, b: Vector) {
+    // uses a larger tolerance to accommodate different algorithms
+    assert!(a.distance_to(b) < 0.01, format!("Expected {} to be approximately equal to {}", a, b));
+}
+
+pub fn defining_gravity<D: Dynamics, F: FnOnce() -> D>(new_dynamics: F) {
     // SETUP
     let mut dynamics = new_dynamics();
-    let mut space = &mut SimpleCollisions::new();
-    space.create_body(
-        Cube::new(1.0, 1.0, 1.0),
-        Rigid::new(1.0),
-        State::new_stationary().with_velocity(1.0, -1.0, 0.5),
-    );
 
     // EXERCISE
     dynamics.set_gravity(Vector::new(2.5, -2.5, 3.3));
@@ -22,113 +24,97 @@ pub fn gravity_test<D: Dynamics, F: FnOnce() -> D>(new_dynamics: F) {
     assert_eq!(dynamics.gravity(), Vector::new(2.5, -2.5, 3.3));
 }
 
-pub mod update {
-    use core::State;
-    use math::Vector;
-    use utils::{ kinetic_energy_for };
-    use shapes::Cube;
-    use dynamics::Dynamics;
-    use materials::Rigid;
-    use collisions::{ Collisions, SimpleCollisions };
-    use utils::log::{ CollisionsLogger, DynamicsLogger };
+pub fn moving_at_constant_velocity<D: Dynamics, F: FnOnce() -> D>(new_dynamics: F) {
+    // SETUP
+    let mut dynamics = DynamicsMonitor::new(new_dynamics());
+    let mut space = &mut CollisionsMonitor::new(SimpleCollisions::new());
+    let uid = space.create_body(
+        Cube::new(1.0, 1.0, 1.0),
+        Rigid::new(1.0),
+        State::new_stationary().with_velocity(1.0, -1.0, 0.5),
+    );
 
-    fn assert_approximately_equal(a: Vector, b: Vector) {
-        // uses a larger tolerance to accommodate different algorithms
-        assert!(a.distance_to(b) < 0.01, format!("Expected {} to be approximately equal to {}", a, b));
-    }
+    // EXERCISE
+    dynamics.update(space, 0.3);
 
-    pub fn constant_velocity_test<D: Dynamics, F: FnOnce() -> D>(new_dynamics: F) {
-        // SETUP
-        let mut dynamics = DynamicsLogger::new(new_dynamics());
-        let mut space = &mut CollisionsLogger::new(SimpleCollisions::new());
-        let uid = space.create_body(
-            Cube::new(1.0, 1.0, 1.0),
-            Rigid::new(1.0),
-            State::new_stationary().with_velocity(1.0, -1.0, 0.5),
-        );
+    // VERIFY
+    let body = space.find_body(uid).unwrap();
+    assert_eq!(body.position(), Vector::new(0.30, -0.30, 0.15));
+    assert_eq!(body.velocity(), Vector::new(1.0, -1.0, 0.5));
+}
 
-        // EXERCISE
-        dynamics.update(space, 0.3);
+pub fn moving_at_constant_velocity_with_gravity<D: Dynamics, F: FnOnce() -> D>(new_dynamics: F) {
+    // SETUP
+    let mut dynamics = DynamicsMonitor::new(new_dynamics());
+    let mut space = &mut CollisionsMonitor::new(SimpleCollisions::new());
+    let uid = space.create_body(
+        Cube::new(1.0, 1.0, 1.0),
+        Rigid::new(1.0),
+        State::new_stationary().with_velocity(1.0, -1.0, 0.5),
+    );
+    dynamics.set_gravity(Vector::new(3.0, -2.0, 4.0));
 
-        // VERIFY
-        let body = space.find_body(uid).unwrap();
-        assert_eq!(body.position(), Vector::new(0.30, -0.30, 0.15));
-        assert_eq!(body.velocity(), Vector::new(1.0, -1.0, 0.5));
-    }
+    // EXERCISE
+    dynamics.update(space, 0.2);
 
-    pub fn with_gravity_test<D: Dynamics, F: FnOnce() -> D>(new_dynamics: F) {
-        // SETUP
-        let mut dynamics = DynamicsLogger::new(new_dynamics());
-        let mut space = &mut CollisionsLogger::new(SimpleCollisions::new());
-        let uid = space.create_body(
-            Cube::new(1.0, 1.0, 1.0),
-            Rigid::new(1.0),
-            State::new_stationary().with_velocity(1.0, -1.0, 0.5),
-        );
-        dynamics.set_gravity(Vector::new(3.0, -2.0, 4.0));
+    let body = space.find_body(uid).unwrap();
+    assert_approximately_equal(body.position(), Vector::new(0.32, -0.28, 0.26));
+    assert_approximately_equal(body.velocity(), Vector::new(1.6, -1.4, 1.3));
+}
 
-        // EXERCISE
-        dynamics.update(space, 0.2);
+pub fn moving_after_a_collision_without_rotation<D: Dynamics, F: FnOnce() -> D>(new_dynamics: F) {
+    // SETUP
+    let mut dynamics = DynamicsMonitor::new(new_dynamics());
+    let mut space = &mut CollisionsMonitor::new(SimpleCollisions::new());
+    let uid_0 = space.create_body(
+        Cube::new(1.0, 1.0, 1.0),
+        Rigid::new(1.0),
+        State::new_stationary(),
+    );
+    let initial_axis = Vector::new(1.0, 1.0, 1.0).normalize();
+    let final_axis = Vector::new(1.0, 0.0, 0.0);
+    let rotation = initial_axis.cross(final_axis);
+    let state_1 = State::new_with_position((0.98 + 3.0f32.sqrt())/2.0, 0.0, 0.0)
+        .with_rotation(rotation, rotation.length().asin())
+        .with_velocity(-1.0, 0.0, 0.0);
+    let uid_1 = space.create_body(
+        Cube::new(1.0, 1.0, 1.0),
+        Rigid::new(1.0),
+        state_1,
+    );
 
-        let body = space.find_body(uid).unwrap();
-        assert_approximately_equal(body.position(), Vector::new(0.32, -0.28, 0.26));
-        assert_approximately_equal(body.velocity(), Vector::new(1.6, -1.4, 1.3));
-    }
+    // EXERCISE
+    dynamics.update(space, 0.2);
 
-    pub fn with_contact_test<D: Dynamics, F: FnOnce() -> D>(new_dynamics: F) {
-        // SETUP
-        let mut dynamics = DynamicsLogger::new(new_dynamics());
-        let mut space = &mut CollisionsLogger::new(SimpleCollisions::new());
-        let uid_0 = space.create_body(
-            Cube::new(1.0, 1.0, 1.0),
-            Rigid::new(1.0),
-            State::new_stationary(),
-        );
-        let initial_axis = Vector::new(1.0, 1.0, 1.0).normalize();
-        let final_axis = Vector::new(1.0, 0.0, 0.0);
-        let rotation = initial_axis.cross(final_axis);
-        let state_1 = State::new_with_position((0.98 + 3.0f32.sqrt())/2.0, 0.0, 0.0)
-            .with_rotation(rotation, rotation.length().asin())
-            .with_velocity(-1.0, 0.0, 0.0);
-        let uid_1 = space.create_body(
-            Cube::new(1.0, 1.0, 1.0),
-            Rigid::new(1.0),
-            state_1,
-        );
-
-        // EXERCISE
-        dynamics.update(space, 0.2);
-
-        // VERIFY
-        let body_0 = space.find_body(uid_0).unwrap();
-        let body_1 = space.find_body(uid_1).unwrap();
-        assert_eq!(body_0.velocity(), Vector::new(-1.0, 0.0, 0.0));
-        assert_eq!(body_0.angular_velocity(), Vector::new(0.0, 0.0, 0.0));
-        assert_eq!(body_1.velocity(), Vector::new( 0.0, 0.0, 0.0));
-        assert_eq!(body_1.angular_velocity(), Vector::new(0.0, 0.0, 0.0));
-    }
+    // VERIFY
+    let body_0 = space.find_body(uid_0).unwrap();
+    let body_1 = space.find_body(uid_1).unwrap();
+    assert_eq!(body_0.velocity(), Vector::new(-1.0, 0.0, 0.0));
+    assert_eq!(body_0.angular_velocity(), Vector::new(0.0, 0.0, 0.0));
+    assert_eq!(body_1.velocity(), Vector::new( 0.0, 0.0, 0.0));
+    assert_eq!(body_1.angular_velocity(), Vector::new(0.0, 0.0, 0.0));
 }
 
 macro_rules! assert_dynamics_behaviour(
     ($new_dynamics:expr) => (
         #[test]
-        fn gravity_test() {
-            behaviours::gravity_test($new_dynamics);
+        fn defining_gravity() {
+            behaviours::dynamics_behaviour::defining_gravity($new_dynamics);
         }
 
         #[test]
-        fn update_constant_velocity_test() {
-            behaviours::update::constant_velocity_test($new_dynamics);
+        fn moving_at_constant_velocity() {
+            behaviours::dynamics_behaviour::moving_at_constant_velocity($new_dynamics);
         }
 
         #[test]
-        fn update_with_gravity_test() {
-            behaviours::update::with_gravity_test($new_dynamics);
+        fn moving_at_constant_velocity_with_gravity() {
+            behaviours::dynamics_behaviour::moving_at_constant_velocity_with_gravity($new_dynamics);
         }
 
         #[test]
-        fn update_with_contact_test() {
-            behaviours::update::with_contact_test($new_dynamics);
+        fn moving_after_a_collision_without_rotation() {
+            behaviours::dynamics_behaviour::moving_after_a_collision_without_rotation($new_dynamics);
         }
     );
 );

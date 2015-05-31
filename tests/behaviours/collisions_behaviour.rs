@@ -1,9 +1,9 @@
-use core::{ State, UID };
-use shapes::Cube;
-use materials::Rigid;
-use collisions::Collisions;
+use mithril::core::{ State, UID };
+use mithril::shapes::Cube;
+use mithril::materials::Rigid;
+use mithril::collisions::Collisions;
 
-pub fn create_body_test<C: Collisions, F: FnOnce() -> C>(new_collisions: F) {
+pub fn creating_a_rigid_body<C: Collisions, F: FnOnce() -> C>(new_collisions: F) {
     let mut collisions = new_collisions();
     let shape = Cube::new(1.0, 1.0, 1.0);
     let material = Rigid::new(3.0);
@@ -13,7 +13,7 @@ pub fn create_body_test<C: Collisions, F: FnOnce() -> C>(new_collisions: F) {
     assert!(collisions.find_body(uid).is_some());
 }
 
-pub fn find_body_test<C: Collisions, F: FnOnce() -> C>(new_collisions: F) {
+pub fn finding_a_body_with_a_handle<C: Collisions, F: FnOnce() -> C>(new_collisions: F) {
     let mut collisions = new_collisions();
     let shape = Cube::new(1.0, 1.0, 1.0);
     let material = Rigid::new(3.0);
@@ -26,7 +26,7 @@ pub fn find_body_test<C: Collisions, F: FnOnce() -> C>(new_collisions: F) {
     assert_eq!(body.unwrap().handle(), uid);
 }
 
-pub fn find_body_mut_test<C: Collisions, F: FnOnce() -> C>(new_collisions: F) {
+pub fn mutably_finding_a_body_with_a_handle<C: Collisions, F: FnOnce() -> C>(new_collisions: F) {
     let mut collisions = new_collisions();
     let shape = Cube::new(1.0, 1.0, 1.0);
     let material = Rigid::new(3.0);
@@ -39,7 +39,7 @@ pub fn find_body_mut_test<C: Collisions, F: FnOnce() -> C>(new_collisions: F) {
     assert_eq!(body.unwrap().handle(), uid);
 }
 
-pub fn bodies_iter_test<C: Collisions, F: FnOnce() -> C>(new_collisions: F) {
+pub fn iterating_over_bodies<C: Collisions, F: FnOnce() -> C>(new_collisions: F) {
     let mut collisions = new_collisions();
     let shape = Cube::new(1.0, 1.0, 1.0);
     let material = Rigid::new(3.0);
@@ -60,7 +60,7 @@ pub fn bodies_iter_test<C: Collisions, F: FnOnce() -> C>(new_collisions: F) {
     }
 }
 
-pub fn bodies_iter_mut_test<C: Collisions, F: FnOnce() -> C>(new_collisions: F) {
+pub fn mutably_iterating_over_bodies<C: Collisions, F: FnOnce() -> C>(new_collisions: F) {
     let mut collisions = new_collisions();
     let shape = Cube::new(1.0, 1.0, 1.0);
     let material = Rigid::new(3.0);
@@ -84,28 +84,28 @@ pub fn bodies_iter_mut_test<C: Collisions, F: FnOnce() -> C>(new_collisions: F) 
 macro_rules! assert_collisions_behaviour(
     ($new_collisions:expr) => (
         #[test]
-        fn create_body_test() {
-            super::super::behaviours::create_body_test($new_collisions);
+        fn creating_a_rigid_body() {
+            behaviours::collisions_behaviour::creating_a_rigid_body($new_collisions);
         }
 
         #[test]
-        fn find_body_test() {
-            super::super::behaviours::find_body_test($new_collisions);
+        fn finding_a_body_with_a_handle() {
+            behaviours::collisions_behaviour::finding_a_body_with_a_handle($new_collisions);
         }
 
         #[test]
-        fn find_body_mut_test() {
-            super::super::behaviours::find_body_mut_test($new_collisions);
+        fn mutably_finding_a_body_with_a_handle() {
+            behaviours::collisions_behaviour::mutably_finding_a_body_with_a_handle($new_collisions);
         }
 
         #[test]
-        fn bodies_iter_test() {
-            super::super::behaviours::bodies_iter_test($new_collisions);
+        fn iterating_over_bodies() {
+            behaviours::collisions_behaviour::iterating_over_bodies($new_collisions);
         }
 
         #[test]
-        fn bodies_iter_mut_test() {
-            super::super::behaviours::bodies_iter_mut_test($new_collisions);
+        fn mutably_iterating_over_bodies() {
+            behaviours::collisions_behaviour::mutably_iterating_over_bodies($new_collisions);
         }
     );
 );

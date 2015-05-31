@@ -11,10 +11,6 @@ mod vector;
 mod matrix;
 mod quaternion;
 
-#[cfg(test)]
-#[path="../../tests/math/math_helpers.rs"]
-mod tests;
-
 /// The PI constant.
 pub static PI: f32 = f32::consts::PI;
 

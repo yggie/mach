@@ -4,10 +4,6 @@ use materials::Material;
 
 use std::fmt;
 
-#[cfg(test)]
-#[path="../../tests/materials/rigid_test.rs"]
-mod tests;
-
 /// Represents a rigid body with a fixed density.
 #[derive(Clone, Copy, Debug)]
 pub struct Rigid {

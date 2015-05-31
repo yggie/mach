@@ -10,11 +10,6 @@ pub use self::contact::Contact;
 pub use self::simple_collisions::SimpleCollisions;
 pub use self::narrowphase::proximity::Proximity;
 
-#[macro_use]
-#[cfg(test)]
-#[path="../../tests/behaviours/collisions_behaviour.rs"]
-mod behaviours;
-
 /// A `Collisions` component is responsible for the storage, retrieval and
 /// querying of physical bodies in the simulation.
 pub trait Collisions {

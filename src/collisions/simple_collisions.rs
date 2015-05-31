@@ -5,10 +5,6 @@ use shapes::Shape;
 use materials::Material;
 use collisions::{ Collisions, Contact, Proximity };
 
-#[cfg(test)]
-#[path="../../tests/collisions/simple_collisions_test.rs"]
-mod tests;
-
 /// A simple implementation for representing space in the simulation.
 pub struct SimpleCollisions {
     registry: HashMap<UID, Body<UID>>,

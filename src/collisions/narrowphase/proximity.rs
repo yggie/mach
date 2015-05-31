@@ -4,10 +4,6 @@ use utils::compute_surfaces_for_convex_hull;
 use shapes::Shape;
 use collisions::Contact;
 
-#[cfg(test)]
-#[path="../../../tests/collisions/narrowphase/proximity_test.rs"]
-mod tests;
-
 /// A `Proximity` object caches the relationship between two bodies in close
 /// proximity.
 #[derive(Clone, Debug)]

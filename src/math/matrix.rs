@@ -3,10 +3,6 @@ use math::{ Vector, TOLERANCE };
 use std::fmt;
 use std::ops::{ Add, Div, Index, IndexMut, Mul, Neg, Sub };
 
-#[cfg(test)]
-#[path="../../tests/math/matrix_test.rs"]
-mod tests;
-
 /// A representation of a 3-by-3 matrix
 #[derive(Clone, Copy, Debug)]
 pub struct Matrix {

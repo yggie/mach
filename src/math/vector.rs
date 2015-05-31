@@ -3,10 +3,6 @@ use math::{ TOLERANCE, Matrix, Quaternion };
 use std::fmt;
 use std::ops::{ Add, Div, Index, IndexMut, Mul, Neg, Sub };
 
-#[cfg(test)]
-#[path="../../tests/math/vector_test.rs"]
-mod tests;
-
 /// A representation of a 3-dimensional column vector.
 #[derive(Clone, Copy, Debug)]
 pub struct Vector {

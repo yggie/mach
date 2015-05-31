@@ -1,9 +1,5 @@
 use math::{ Vector, Quaternion };
 
-#[cfg(test)]
-#[path="../../tests/core/state_test.rs"]
-mod tests;
-
 /// Represents a physical state. The state contains information regarding the
 /// current position, rotation, velocity and rotational velocity.
 #[derive(Clone, Copy)]

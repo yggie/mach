@@ -6,6 +6,5 @@ pub use self::compute_surfaces_for_convex_hull::compute_surfaces_for_convex_hull
 
 mod energy;
 
-pub mod log;
 mod surface;
 mod compute_surfaces_for_convex_hull;

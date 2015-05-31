@@ -23,10 +23,5 @@ pub trait Dynamics {
     fn set_gravity(&mut self, Vector);
 }
 
-#[macro_use]
-#[cfg(test)]
-#[path="../../tests/behaviours/dynamics_behaviour.rs"]
-mod behaviours;
-
 mod force_accumulator;
 mod simple_dynamics;

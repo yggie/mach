@@ -3,10 +3,6 @@ use std::fmt;
 use math::{ approx_eq, Matrix, Vector, TOLERANCE };
 use shapes::Shape;
 
-#[cfg(test)]
-#[path="../../../tests/shapes/primitives/cube_test.rs"]
-mod tests;
-
 /// A representation of a cube in 3 dimensions.
 #[derive(Clone, Debug)]
 pub struct Cube {
@@ -35,7 +31,7 @@ impl Cube {
         vertices.push(Vector::new(-half_width, -half_height, -half_depth));
         vertices.push(Vector::new( half_width, -half_height, -half_depth));
 
-        Cube{
+        Cube {
             width: width,
             height: height,
             depth: depth,
