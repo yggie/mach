@@ -1,4 +1,4 @@
-use utils::{ CollisionsMonitor, DynamicsMonitor };
+use support::{ CollisionsMonitor, DynamicsMonitor };
 
 use mithril::core::State;
 use mithril::math::Vector;

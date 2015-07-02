@@ -1,7 +1,7 @@
 extern crate mithril;
 
 #[cfg(test)]
-mod utils;
+mod support;
 
 #[macro_use]
 #[cfg(test)]

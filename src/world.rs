@@ -36,10 +36,22 @@ impl<C: Collisions, D: Dynamics> World<C, D> {
         self.collisions.find_body(uid)
     }
 
+    /// Returns an iterator over unique `Body` instances in the `World`.
+    #[inline(always)]
+    pub fn bodies_iter<'a>(&'a self) -> Box<Iterator<Item=&Body<UID>> + 'a> {
+        self.collisions.bodies_iter()
+    }
+
     /// Steps the `World` forward in time by the specified amount.
     #[inline(always)]
     pub fn update(&mut self, time_step: f32) {
         self.dynamics.update(&mut self.collisions, time_step);
+    }
+
+    /// Returns the value of the global gravity `Vector` set in the `World`.
+    #[inline(always)]
+    pub fn gravity(&self) -> Vector {
+        self.dynamics.gravity()
     }
 
     /// Changes the global gravitational force acting on `Body` objects.
