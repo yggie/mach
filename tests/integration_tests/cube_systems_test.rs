@@ -25,6 +25,6 @@ fn colliding_two_cubes() {
                 .with_velocity(0.0,  1.0, 0.0);
             world.create_body(shape.clone(), material.clone(), state_1);
         })
-        .execute_multiple_steps(100, 0.5)
+        .execute_multiple_steps(100, 0.2)
         .assert_compliance();
 }

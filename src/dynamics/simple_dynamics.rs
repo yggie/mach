@@ -80,13 +80,13 @@ impl Dynamics for SimpleDynamics {
             let impulse = accumulated_force / body.mass();
             body.set_velocity_with_vector(v + impulse + scaled_gravity);
             let new_velocity = body.velocity();
-            body.set_position_with_vector(p + new_velocity * t);
+            body.set_position_with_vector(p + (new_velocity + impulse) * t);
 
             let angular_impulse = body.inertia().inverse() * accumulated_torque;
             let w_old = body.angular_velocity();
             body.set_angular_velocity_with_vector(w_old + angular_impulse);
 
-            let w = body.angular_velocity();
+            let w = body.angular_velocity() + angular_impulse;
             let w_as_quat = Quaternion::new(0.0, w[0] * t, w[1] * t, w[2] * t);
             let q = body.rotation_quaternion();
             let new_rotation = q + w_as_quat * q * 0.5;

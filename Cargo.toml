@@ -11,3 +11,6 @@ license = "MIT"
 [lib]
 name = "mithril"
 path = "src/lib.rs"
+
+[dependencies]
+rand = "*"

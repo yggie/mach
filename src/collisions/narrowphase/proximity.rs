@@ -1,3 +1,5 @@
+use rand::random;
+
 use math::{ Vector, TOLERANCE };
 use core::{ Body, Handle, State };
 use utils::compute_surfaces_for_convex_hull;
@@ -20,25 +22,39 @@ enum ContactType {
     Face,
 }
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug)]
 struct SupportPoint {
     indices: [usize; 2],
     position: Vector,
 }
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug)]
 struct Simplex {
     vertices: [SupportPoint; 4],
 }
 
 impl Simplex {
     fn new(shapes: [&Shape; 2], states: [&State; 2]) -> Simplex {
+        let mut support_points: Vec<SupportPoint> = Vec::new();
+        while support_points.len() < 4 {
+            let vector = Vector::new(
+                random::<f32>() - 0.5,
+                random::<f32>() - 0.5,
+                random::<f32>() - 0.5,
+            );
+            let candidate_support_point = Simplex::generate_support_points(vector.normalize(), shapes, states)[0];
+
+            if support_points.iter().find(|p| { p.indices == candidate_support_point.indices }).is_none() {
+                support_points.push(candidate_support_point);
+            }
+        }
+
         return Simplex {
             vertices: [
-                Simplex::generate_support_points(Vector::new( 0.9, -0.1, -0.1), shapes, states)[0],
-                Simplex::generate_support_points(Vector::new(-0.1,  0.9, -0.1), shapes, states)[0],
-                Simplex::generate_support_points(Vector::new(-0.1, -0.1,  0.9), shapes, states)[0],
-                Simplex::generate_support_points(Vector::new( 1.0,  1.0,  1.0), shapes, states)[0],
+                support_points[0],
+                support_points[1],
+                support_points[2],
+                support_points[3],
             ],
         };
     }
@@ -291,9 +307,15 @@ impl<H: Handle> Proximity<H> {
                 },
 
                 ContactType::Edge(_) => {
+                    // TODO implement this
+                    println!("CONTACT EDGE");
+                    // unimplemented!();
                 },
 
                 ContactType::Face => {
+                    // TODO implement this
+                    println!("CONTACT FACE");
+                    // unimplemented!();
                 },
             }
         }
