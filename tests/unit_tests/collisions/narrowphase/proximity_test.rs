@@ -1,14 +1,14 @@
-use mithril::core::{ Body, State, UID };
+use mithril::core::{ Body, State };
 use mithril::math::{ PI, Vector };
 use mithril::shapes::Cube;
 use mithril::materials::Rigid;
 use mithril::collisions::Proximity;
 
-fn setup_cubes(cube_0: Cube, state_0: State, cube_1: Cube, state_1: State) -> (Proximity<UID>, [Body<usize>; 2]) {
+fn setup_cubes(cube_0: Cube, state_0: State, cube_1: Cube, state_1: State) -> (Proximity<usize>, [Body<usize>; 2]) {
     let material = Rigid::new(3.0);
 
-    let body_0 = Body::new_with_handle(0, Box::new(cube_0), Box::new(material), state_0);
-    let body_1 = Body::new_with_handle(1, Box::new(cube_1), Box::new(material), state_1);
+    let body_0 = Body::new_with_id(0, Box::new(cube_0), Box::new(material), state_0);
+    let body_1 = Body::new_with_id(1, Box::new(cube_1), Box::new(material), state_1);
 
     let proximity = Proximity::new(0, 1);
 

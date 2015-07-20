@@ -2,6 +2,7 @@
 //! engine. It contains subcomponents to handle time updates and collision
 //! resolution.
 
+use core::Handle;
 use math::Vector;
 use collisions::Collisions;
 
@@ -12,9 +13,11 @@ pub use self::force_accumulator::ForceAccumulator;
 /// of the simulation, including stepping the simulation forward in time and
 /// managing environmental effects on bodies.
 pub trait Dynamics {
+    /// The identifier used to dereference `Body` instances.
+    type Identifier: Handle;
 
     /// Steps the simulation forward in time by the specified amount.
-    fn update<C: Collisions>(&mut self, &mut C, f32);
+    fn update<C: Collisions<Identifier=Self::Identifier>>(&mut self, &mut C, f32);
 
     /// Returns the global gravitational force acting on the `Body` objects.
     fn gravity(&self) -> Vector;

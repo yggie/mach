@@ -10,10 +10,7 @@ pub use self::state::State;
 /// for a `Body`.
 pub trait Handle: Copy + Hash + Eq + fmt::Display { }
 
-/// A unique identifier primarily used to identify a `Body` in a `Database`.
-pub type UID = usize;
-
-impl Handle for UID { }
+impl Handle for usize { }
 
 mod body;
 mod state;

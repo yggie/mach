@@ -1,4 +1,4 @@
-use core::{ Body, UID, State };
+use core::{ Body, Handle, State };
 use math::Vector;
 use shapes::Shape;
 use dynamics::Dynamics;
@@ -7,15 +7,15 @@ use collisions::Collisions;
 
 /// A `World` is a physical world in mithril, it contains physical bodies and a
 /// set of rules dictating how the bodies interact with the environment.
-pub struct World<C: Collisions, D: Dynamics> {
+pub struct World<H: Handle, C: Collisions<Identifier=H>, D: Dynamics<Identifier=H>> {
     collisions: C,
     dynamics: D,
 }
 
-impl<C: Collisions, D: Dynamics> World<C, D> {
+impl<H: Handle, C: Collisions<Identifier=H>, D: Dynamics<Identifier=H>> World<H, C, D> {
     /// Creates a new instance of a `World` with the given `Collisions` and
     /// `Dynamics` components.
-    pub fn new(collisions: C, dynamics: D) -> World<C, D> {
+    pub fn new(collisions: C, dynamics: D) -> World<H, C, D> {
         World{
             collisions: collisions,
             dynamics: dynamics,
@@ -25,20 +25,20 @@ impl<C: Collisions, D: Dynamics> World<C, D> {
     /// Creates an instance of a `Body` from the given components, returns a
     /// handle which can later be used to retrieve the `Body`.
     #[inline(always)]
-    pub fn create_body<S: Shape, M: Material>(&mut self, shape: S, material: M, state: State) -> UID {
+    pub fn create_body<S: Shape, M: Material>(&mut self, shape: S, material: M, state: State) -> C::Identifier {
         self.collisions.create_body(shape, material, state)
     }
 
-    /// Searches the world for a matching `Body` instance with the `UID`
+    /// Searches the world for a matching `Body` instance with the identifier
     /// specified and returns a reference to the `Body` if found.
     #[inline(always)]
-    pub fn find_body(&mut self, uid: UID) -> Option<&Body<UID>> {
+    pub fn find_body(&mut self, uid: C::Identifier) -> Option<&Body<C::Identifier>> {
         self.collisions.find_body(uid)
     }
 
     /// Returns an iterator over unique `Body` instances in the `World`.
     #[inline(always)]
-    pub fn bodies_iter<'a>(&'a self) -> Box<Iterator<Item=&Body<UID>> + 'a> {
+    pub fn bodies_iter<'a>(&'a self) -> Box<Iterator<Item=&Body<C::Identifier>> + 'a> {
         self.collisions.bodies_iter()
     }
 

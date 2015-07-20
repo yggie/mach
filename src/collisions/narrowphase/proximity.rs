@@ -259,7 +259,7 @@ impl<H: Handle> Proximity<H> {
                 let (contact_normal, contact_center) = Proximity::<H>::contact_for_polytope(&polytope, body_0, body_1);
                 println!("CONTACT AT {}", contact_center);
                 return Contact {
-                    ids: ContactPair::RigidRigid(body_0.handle(), body_1.handle()),
+                    ids: ContactPair::RigidRigid(body_0.id(), body_1.id()),
                     center: contact_center,
                     normal: contact_normal,
                 };

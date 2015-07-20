@@ -1,9 +1,9 @@
-use mithril::core::{ State, UID };
+use mithril::core::State;
 use mithril::shapes::Cube;
 use mithril::materials::Rigid;
 use mithril::collisions::Collisions;
 
-pub fn creating_a_rigid_body<C: Collisions, F: FnOnce() -> C>(new_collisions: F) {
+pub fn creating_a_rigid_body<C: Collisions<Identifier=usize>, F: FnOnce() -> C>(new_collisions: F) {
     let mut collisions = new_collisions();
     let shape = Cube::new(1.0, 1.0, 1.0);
     let material = Rigid::new(3.0);
@@ -13,7 +13,7 @@ pub fn creating_a_rigid_body<C: Collisions, F: FnOnce() -> C>(new_collisions: F)
     assert!(collisions.find_body(uid).is_some());
 }
 
-pub fn finding_a_body_with_a_handle<C: Collisions, F: FnOnce() -> C>(new_collisions: F) {
+pub fn finding_a_body_with_a_handle<C: Collisions<Identifier=usize>, F: FnOnce() -> C>(new_collisions: F) {
     let mut collisions = new_collisions();
     let shape = Cube::new(1.0, 1.0, 1.0);
     let material = Rigid::new(3.0);
@@ -23,10 +23,10 @@ pub fn finding_a_body_with_a_handle<C: Collisions, F: FnOnce() -> C>(new_collisi
 
     let body = collisions.find_body(uid);
 
-    assert_eq!(body.unwrap().handle(), uid);
+    assert_eq!(body.unwrap().id(), uid);
 }
 
-pub fn mutably_finding_a_body_with_a_handle<C: Collisions, F: FnOnce() -> C>(new_collisions: F) {
+pub fn mutably_finding_a_body_with_a_handle<C: Collisions<Identifier=usize>, F: FnOnce() -> C>(new_collisions: F) {
     let mut collisions = new_collisions();
     let shape = Cube::new(1.0, 1.0, 1.0);
     let material = Rigid::new(3.0);
@@ -36,10 +36,10 @@ pub fn mutably_finding_a_body_with_a_handle<C: Collisions, F: FnOnce() -> C>(new
 
     let body = collisions.find_body_mut(uid);
 
-    assert_eq!(body.unwrap().handle(), uid);
+    assert_eq!(body.unwrap().id(), uid);
 }
 
-pub fn iterating_over_bodies<C: Collisions, F: FnOnce() -> C>(new_collisions: F) {
+pub fn iterating_over_bodies<C: Collisions<Identifier=usize>, F: FnOnce() -> C>(new_collisions: F) {
     let mut collisions = new_collisions();
     let shape = Cube::new(1.0, 1.0, 1.0);
     let material = Rigid::new(3.0);
@@ -49,8 +49,8 @@ pub fn iterating_over_bodies<C: Collisions, F: FnOnce() -> C>(new_collisions: F)
         collisions.create_body(shape.clone(), material, State::new_stationary()),
     );
 
-    let mut iterated_uids: Vec<UID> = collisions.bodies_iter()
-        .map(|body| body.handle())
+    let mut iterated_uids: Vec<usize> = collisions.bodies_iter()
+        .map(|body| body.id())
         .collect();
 
     uids.sort_by(|a, b| a.cmp(&b));
@@ -60,7 +60,7 @@ pub fn iterating_over_bodies<C: Collisions, F: FnOnce() -> C>(new_collisions: F)
     }
 }
 
-pub fn mutably_iterating_over_bodies<C: Collisions, F: FnOnce() -> C>(new_collisions: F) {
+pub fn mutably_iterating_over_bodies<C: Collisions<Identifier=usize>, F: FnOnce() -> C>(new_collisions: F) {
     let mut collisions = new_collisions();
     let shape = Cube::new(1.0, 1.0, 1.0);
     let material = Rigid::new(3.0);
@@ -70,8 +70,8 @@ pub fn mutably_iterating_over_bodies<C: Collisions, F: FnOnce() -> C>(new_collis
         collisions.create_body(shape.clone(), material, State::new_stationary()),
     );
 
-    let mut iterated_uids: Vec<UID> = collisions.bodies_iter_mut()
-        .map(|body| body.handle())
+    let mut iterated_uids: Vec<usize> = collisions.bodies_iter_mut()
+        .map(|body| body.id())
         .collect();
 
     uids.sort_by(|a, b| a.cmp(&b));

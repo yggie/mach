@@ -7,7 +7,7 @@ use materials::Material;
 
 /// Represents a physical entity in the world.
 pub struct Body<H: Handle> {
-    handle: H,
+    id: H,
     shape: Box<Shape>,
     material: Box<Material>,
     state: State,
@@ -15,9 +15,9 @@ pub struct Body<H: Handle> {
 
 impl<H: Handle> Body<H> {
     /// Creates a new instance of a Body object
-    pub fn new_with_handle(handle: H, shape: Box<Shape>, material: Box<Material>, state: State) -> Body<H> {
+    pub fn new_with_id(id: H, shape: Box<Shape>, material: Box<Material>, state: State) -> Body<H> {
         Body {
-            handle: handle,
+            id: id,
             shape: shape,
             material: material,
             state: state,
@@ -26,8 +26,8 @@ impl<H: Handle> Body<H> {
 
     /// Returns the handle associated with the `Body`.
     #[inline]
-    pub fn handle(&self) -> H {
-        self.handle
+    pub fn id(&self) -> H {
+        self.id
     }
 
     /// Returns a borrowed pointer to the Shape object held internally.
@@ -124,7 +124,7 @@ impl<H: Handle> fmt::Display for Body<H> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f,
             "Body[{}]: Pos={}, Rot={}, Vel={}, AngVel={}",
-            self.handle(),
+            self.id(),
             self.position(),
             self.rotation_quaternion(),
             self.velocity(),

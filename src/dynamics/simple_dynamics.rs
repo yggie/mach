@@ -1,4 +1,4 @@
-use core::{ Body, UID };
+use core::Body;
 use math::{ Vector, Quaternion };
 use dynamics::{ Dynamics, ForceAccumulator };
 use collisions::{ Contact, ContactPair, Collisions };
@@ -6,7 +6,7 @@ use collisions::{ Contact, ContactPair, Collisions };
 /// Contains the simplest implementation for a time marching scheme.
 pub struct SimpleDynamics {
     gravity: Vector,
-    accumulator: ForceAccumulator<UID>,
+    accumulator: ForceAccumulator<usize>,
 }
 
 impl SimpleDynamics {
@@ -19,7 +19,7 @@ impl SimpleDynamics {
     }
 
     #[allow(non_snake_case)]
-    fn solve_for_contact(&mut self, body_0: &Body<UID>, body_1: &Body<UID>, contact: &Contact<UID>) {
+    fn solve_for_contact(&mut self, body_0: &Body<usize>, body_1: &Body<usize>, contact: &Contact<usize>) {
         // TODO compute dynamically
         let epsilon = 1.0;
         // body masses
@@ -52,7 +52,9 @@ impl SimpleDynamics {
 }
 
 impl Dynamics for SimpleDynamics {
-    fn update<C: Collisions>(&mut self, collisions: &mut C, time_step: f32) {
+    type Identifier = usize;
+
+    fn update<C: Collisions<Identifier=Self::Identifier>>(&mut self, collisions: &mut C, time_step: f32) {
         let contacts = collisions.find_contacts();
 
         for contact in contacts.iter() {
