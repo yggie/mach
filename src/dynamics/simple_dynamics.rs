@@ -1,7 +1,7 @@
 use core::{ Body, UID };
 use math::{ Vector, Quaternion };
 use dynamics::{ Dynamics, ForceAccumulator };
-use collisions::{ Contact, Collisions };
+use collisions::{ Contact, ContactPair, Collisions };
 
 /// Contains the simplest implementation for a time marching scheme.
 pub struct SimpleDynamics {
@@ -56,17 +56,25 @@ impl Dynamics for SimpleDynamics {
         let contacts = collisions.find_contacts();
 
         for contact in contacts.iter() {
-            let option_0 = collisions.find_body(contact.body_ids[0]);
-            let option_1 = collisions.find_body(contact.body_ids[1]);
+            match contact.ids {
+                ContactPair::RigidRigid(id_0, id_1) => {
+                    let option_0 = collisions.find_body(id_0);
+                    let option_1 = collisions.find_body(id_1);
 
-            match (option_0, option_1) {
-                (Some(body_0), Some(body_1)) => {
-                    self.solve_for_contact(body_0, body_1, contact);
-                }
+                    match (option_0, option_1) {
+                        (Some(body_0), Some(body_1)) => {
+                            self.solve_for_contact(body_0, body_1, &contact);
+                        }
 
-                _ => {
-                    panic!("One or more bodies went missing!! [0: {}, 1: {}]", contact.body_ids[0], contact.body_ids[1]);
-                }
+                        _ => {
+                            panic!("One or more bodies went missing!! [0: {}, 1: {}]", id_0, id_1);
+                        }
+                    }
+                },
+
+                ContactPair::RigidStatic { rigid_id: _, static_id: _ } => {
+                    unimplemented!();
+                },
             }
         }
 

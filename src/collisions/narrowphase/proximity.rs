@@ -4,7 +4,7 @@ use math::{ Vector, TOLERANCE };
 use core::{ Body, Handle, State };
 use utils::compute_surfaces_for_convex_hull;
 use shapes::Shape;
-use collisions::Contact;
+use collisions::{ Contact, ContactPair };
 
 /// A `Proximity` object caches the relationship between two bodies in close
 /// proximity.
@@ -259,11 +259,11 @@ impl<H: Handle> Proximity<H> {
                 let (contact_normal, contact_center) = Proximity::<H>::contact_for_polytope(&polytope, body_0, body_1);
                 println!("CONTACT AT {}", contact_center);
                 return Contact {
-                    body_ids: [body_0.handle(), body_1.handle()],
+                    ids: ContactPair::RigidRigid(body_0.handle(), body_1.handle()),
                     center: contact_center,
                     normal: contact_normal,
                 };
-            });
+        });
     }
 
     fn contact_for_polytope(polytope: &Polytope, body_0: &Body<H>, body_1: &Body<H>) -> (Vector, Vector) {

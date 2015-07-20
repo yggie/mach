@@ -6,7 +6,7 @@ use shapes::Shape;
 use materials::Material;
 use core::{ Body, State, UID };
 
-pub use self::contact::Contact;
+pub use self::contact::{ Contact, ContactPair };
 pub use self::simple_collisions::SimpleCollisions;
 pub use self::narrowphase::proximity::Proximity;
 
