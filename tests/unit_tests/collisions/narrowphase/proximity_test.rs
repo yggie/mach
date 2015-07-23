@@ -105,8 +105,8 @@ fn colliding_face_to_face() {
     let contact = proximity.find_intersection(&bodies[0], &bodies[1]);
 
     assert!(contact.is_some());
-    let c = contact.unwrap();
-    assert_eq!(c.normal, Vector::new(1.0, 0.0, 0.0));
+    let (_, contact_normal) = contact.unwrap();
+    assert_eq!(contact_normal, Vector::new(1.0, 0.0, 0.0));
     // TODO compute contact point
     // assert_eq!(c.point, Vector::new(0.995, 0.750, 0.750));
 }
@@ -139,8 +139,8 @@ fn colliding_edge_to_face() {
     let contact = proximity.find_intersection(&bodies[0], &bodies[1]);
 
     assert!(contact.is_some());
-    let c = contact.unwrap();
-    assert_eq!(c.normal, Vector::new(1.0, 0.0, 0.0));
+    let (_, contact_normal) = contact.unwrap();
+    assert_eq!(contact_normal, Vector::new(1.0, 0.0, 0.0));
     // TODO compute contact point
     // assert_eq!(c.point, Vector::new(0.5, 0.0, 0.0));
 }
@@ -187,7 +187,7 @@ fn colliding_vertex_to_face() {
 
     // VERIFY
     assert!(contact.is_some());
-    let c = contact.unwrap();
-    assert_eq!(c.normal, Vector::new(1.0, 0.0, 0.0));
-    assert_eq!(c.center, Vector::new(0.495, 0.1, 0.0));
+    let (contact_center, contact_normal) = contact.unwrap();
+    assert_eq!(contact_normal, Vector::new(1.0, 0.0, 0.0));
+    assert_eq!(contact_center, Vector::new(0.495, 0.1, 0.0));
 }

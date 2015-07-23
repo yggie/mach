@@ -4,6 +4,7 @@
 
 use shapes::Shape;
 use materials::Material;
+use math::{ Vector, Quaternion };
 use core::{ Body, Handle, State };
 
 pub use self::contact::{ Contact, ContactPair };
@@ -16,9 +17,14 @@ pub trait Collisions {
     /// The identifier used to dereference `Body` instances.
     type Identifier: Handle;
 
-    /// Creates an instance of a `Body` from the given properties, returns a
-    /// handle which can be used to retrieve the `Body` at a later time.
+    /// Creates an instance of a `Body` from the given properties, returns an
+    /// identifier which can be used to retrieve the `Body` at a later time.
     fn create_body<S: Shape, M: Material>(&mut self, S, M, State) -> Self::Identifier;
+
+    /// Creates an instance of a `StaticBody` from the given properties, returns
+    /// an identifier which can be used to retrieve the `StaticBody` at a later
+    /// time.
+    fn create_static_body<S: Shape, M: Material>(&mut self, S, M, Vector, Quaternion) -> Self::Identifier;
 
     /// Searches the data structure for a matching `Body` instance with the
     /// identifier specified and returns a reference to the `Body` if found.

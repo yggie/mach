@@ -4,7 +4,6 @@ use math::{ Vector, TOLERANCE };
 use core::{ Body, Handle, State };
 use utils::compute_surfaces_for_convex_hull;
 use shapes::Shape;
-use collisions::{ Contact, ContactPair };
 
 /// A `Proximity` object caches the relationship between two bodies in close
 /// proximity.
@@ -248,7 +247,7 @@ impl<H: Handle> Proximity<H> {
     }
 
     /// Computes the `Contact` between the `Body` and returns the result if any.
-    pub fn find_intersection(&self, body_0: &Body<H>, body_1: &Body<H>) -> Option<Contact<H>> {
+    pub fn find_intersection(&self, body_0: &Body<H>, body_1: &Body<H>) -> Option<(Vector, Vector)> {
         let shapes = [body_0.shape(), body_1.shape()];
         let states = [body_0.state(), body_1.state()];
 
@@ -258,11 +257,7 @@ impl<H: Handle> Proximity<H> {
 
                 let (contact_normal, contact_center) = Proximity::<H>::contact_for_polytope(&polytope, body_0, body_1);
                 println!("CONTACT AT {}", contact_center);
-                return Contact {
-                    ids: ContactPair::RigidRigid(body_0.id(), body_1.id()),
-                    center: contact_center,
-                    normal: contact_normal,
-                };
+                return (contact_center, contact_normal);
         });
     }
 

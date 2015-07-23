@@ -1,6 +1,7 @@
 extern crate mithril;
 
 use mithril::core::{ Body, Handle, State };
+use mithril::math::{ Vector, Quaternion };
 use mithril::shapes::Shape;
 use mithril::materials::Material;
 use mithril::collisions::{ Contact, Collisions };
@@ -27,6 +28,13 @@ impl<C: Collisions> Collisions for CollisionsMonitor<C> {
         let uid = self.0.create_body(shape, material, state);
         let body = self.0.find_body(uid).unwrap();
         println!("[Collisions create_body] {}", verbose_format_body(body));
+        return uid;
+    }
+
+    fn create_static_body<S: Shape, M: Material>(&mut self, shape: S, material: M, position: Vector, rotation: Quaternion) -> Self::Identifier {
+        let uid = self.0.create_static_body(shape, material, position, rotation);
+        // let body = self.0.find_body(uid).unwrap();
+        // println!("[Collisions create_static_body] {}", verbose_format_body(body));
         return uid;
     }
 

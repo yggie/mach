@@ -1,13 +1,15 @@
 use std::collections::HashMap;
 
-use core::{ Body, State };
+use core::{ Body, State, StaticBody };
+use math::{ Vector, Quaternion };
 use shapes::Shape;
 use materials::Material;
-use collisions::{ Collisions, Contact, Proximity };
+use collisions::{ Collisions, Contact, ContactPair, Proximity };
 
 /// A simple implementation for representing space in the simulation.
 pub struct SimpleCollisions {
     registry: HashMap<usize, Body<usize>>,
+    static_registry: HashMap<usize, StaticBody<usize>>,
     proximities: Vec<Proximity<usize>>,
     counter: usize,
 }
@@ -17,6 +19,7 @@ impl SimpleCollisions {
     pub fn new() -> SimpleCollisions {
         SimpleCollisions {
             registry: HashMap::new(),
+            static_registry: HashMap::new(),
             proximities: Vec::new(),
             counter: 0,
         }
@@ -40,6 +43,18 @@ impl Collisions for SimpleCollisions {
         }
 
         self.registry.insert(new_uid, new_body);
+        return new_uid;
+    }
+
+    fn create_static_body<S: Shape, M: Material>(&mut self, shape: S, material: M, position: Vector, rotation: Quaternion) -> Self::Identifier {
+        let new_uid = self.generate_uid();
+        let new_static_body = StaticBody::new_with_id(new_uid, Box::new(shape), Box::new(material), position, rotation);
+
+        for &uid in self.registry.keys() {
+            self.proximities.push(Proximity::new(uid, new_uid));
+        }
+
+        self.static_registry.insert(new_uid, new_static_body);
         return new_uid;
     }
 
@@ -67,7 +82,15 @@ impl Collisions for SimpleCollisions {
             let body_1 = self.find_body(proximity.handles[1]).unwrap();
 
             match proximity.find_intersection(body_0, body_1) {
-                Some(contact) => { contacts.push(contact); }
+                Some((contact_center, contact_normal)) => {
+                    contacts.push(
+                        Contact {
+                            ids: ContactPair::RigidRigid(body_0.id(), body_1.id()),
+                            center: contact_center,
+                            normal: contact_normal,
+                        }
+                    );
+                }
 
                 None => { /* do nothing */ }
             }

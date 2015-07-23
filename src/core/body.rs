@@ -1,6 +1,6 @@
 use std::fmt;
 
-use core::{ Handle, State };
+use core::{ Handle, State, Volumetric };
 use math::{ Matrix, Vector, Quaternion };
 use shapes::Shape;
 use materials::Material;
@@ -117,6 +117,23 @@ impl<H: Handle> Body<H> {
     #[inline]
     pub fn set_angular_velocity_with_vector(&mut self, angular_velocity: Vector) {
         self.state.set_angular_velocity(angular_velocity[0], angular_velocity[1], angular_velocity[2]);
+    }
+}
+
+impl<H: Handle> Volumetric for Body<H> {
+    #[inline(always)]
+    fn shape(&self) -> &Shape {
+        (self as &Body<H>).shape()
+    }
+
+    #[inline(always)]
+    fn position(&self) -> Vector {
+        (self as &Body<H>).position()
+    }
+
+    #[inline(always)]
+    fn rotation(&self) -> Quaternion {
+        (self as &Body<H>).rotation_quaternion()
     }
 }
 
