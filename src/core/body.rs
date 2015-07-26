@@ -1,6 +1,6 @@
 use std::fmt;
 
-use core::{ Handle, State };
+use core::{ Handle, State, Transform };
 use math::{ Matrix, Vector, Quaternion };
 use shapes::{ Shape, ShapeEntity };
 use materials::Material;
@@ -126,14 +126,8 @@ impl<H: Handle> ShapeEntity for Body<H> {
         (self as &Body<H>).shape()
     }
 
-    #[inline(always)]
-    fn position(&self) -> Vector {
-        (self as &Body<H>).position()
-    }
-
-    #[inline(always)]
-    fn rotation(&self) -> Quaternion {
-        (self as &Body<H>).rotation_quaternion()
+    fn transform(&self) -> Transform {
+        Transform::new(self.position(), self.rotation_quaternion())
     }
 }
 

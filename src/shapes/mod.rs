@@ -1,11 +1,24 @@
 //! The `shapes` module defines the shared traits for all geometric models.
 
+/// TODO temporary workaround for the issue of rexporting traits, see
+/// https://github.com/rust-lang/rust/issues/16264
+pub mod shape_entity;
+
+mod primitives {
+    // TODO re-enable Sphere once GJK-EPA has stabilized
+    // pub use self::sphere::Sphere;
+    pub use self::cube::Cube;
+
+    // mod sphere;
+    mod cube;
+}
+
+pub use self::primitives::Cube;
+pub use self::shape_entity::ShapeEntity;
+
 use std::fmt;
 
 use math::{ Matrix, TOLERANCE, Vector };
-
-pub use self::shape_entity::ShapeEntity;
-pub use self::primitives::Cube;
 
 /// Defines the traits for all geometric property descriptions.
 pub trait Shape: fmt::Display + 'static {
@@ -37,15 +50,4 @@ pub trait Shape: fmt::Display + 'static {
     fn surface_radius(&self) -> f32 {
         return TOLERANCE;
     }
-}
-
-mod shape_entity;
-
-mod primitives {
-    // TODO re-enable Sphere once GJK-EPA has stabilized
-    // pub use self::sphere::Sphere;
-    pub use self::cube::Cube;
-
-    // mod sphere;
-    mod cube;
 }

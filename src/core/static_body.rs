@@ -1,4 +1,4 @@
-use core::Handle;
+use core::{ Handle, Transform };
 use math::{ Vector, Quaternion };
 use shapes::{ Shape, ShapeEntity };
 use materials::Material;
@@ -49,13 +49,7 @@ impl<H: Handle> ShapeEntity for StaticBody<H> {
         (self as &StaticBody<H>).shape()
     }
 
-    #[inline(always)]
-    fn position(&self) -> Vector {
-        (self as &StaticBody<H>).position()
-    }
-
-    #[inline(always)]
-    fn rotation(&self) -> Quaternion {
-        (self as &StaticBody<H>).rotation()
+    fn transform(&self) -> Transform {
+        Transform::new(self.position(), self.rotation())
     }
 }
