@@ -188,7 +188,7 @@ fn initialize_surface(vertices: &Vec<Vector>) -> (Surface, Vec<Node>, Vec<Direct
 fn select_best_node_for_edge(available_nodes: &Vec<Node>, edge_list: &Vec<DirectedEdge>, current_edge: DirectedEdge) -> Option<Result> {
     let filtered_nodes_with_gradients_iter = available_nodes.iter()
         .enumerate()
-        .filter_map(|(availability_index, node)| {
+        .filter_map(|(node_index, node)| {
             let (ref_x, ref_y) = current_edge.project_to_directed_plane(node.position);
             let ref_distance = ref_x*ref_x + ref_y*ref_y;
 
@@ -196,7 +196,7 @@ fn select_best_node_for_edge(available_nodes: &Vec<Node>, edge_list: &Vec<Direct
                 return None;
             } else {
                 let gradient = ref_y.atan2(ref_x + TOLERANCE);
-                return Some((availability_index, node, gradient));
+                return Some((node_index, node, gradient));
             }
         });
 
@@ -226,11 +226,11 @@ fn select_best_node_for_edge(available_nodes: &Vec<Node>, edge_list: &Vec<Direct
 
             return Some(original);
         })
-        .map(|(availability_index, node, _)| {
+        .map(|(node_index, node, _)| {
             if node.on_edge {
-                Result::OnEdge(availability_index, node.index)
+                Result::OnEdge(node_index, node.index)
             } else {
-                Result::Free(availability_index, node.index)
+                Result::Free(node_index, node.index)
             }
         });
 }
@@ -254,5 +254,7 @@ fn new_surface_from_edge(vertices: &Vec<Vector>, edge: DirectedEdge, vertex_inde
         new_edges.push(new_edge);
     }
 
+    // TODO investigate why sometimes new edges list only has one entry, this is
+    // likely due to a repeated node in the surface
     return (new_surface, [new_edges.remove(0), new_edges.remove(0)]);
 }

@@ -24,12 +24,11 @@ impl GjkEpaImplementation {
     /// entities.
     pub fn find_intersection(&self, entity_0: &ShapeEntity, entity_1: &ShapeEntity) -> Option<Intersection> {
         Simplex::new_containing_origin([entity_0, entity_1]).map(|simplex| {
-                let mut polytope = Polytope::new(&simplex);
-                polytope.expand_fully([entity_0, entity_1]);
+            let mut polytope = Polytope::new(&simplex);
+            polytope.expand_fully([entity_0, entity_1]);
 
-                let intersection = GjkEpaImplementation::contact_for_polytope(&polytope, [entity_0, entity_1]);
-                println!("CONTACT AT {}", intersection.point());
-                return intersection;
+            let intersection = GjkEpaImplementation::contact_for_polytope(&polytope, [entity_0, entity_1]);
+            return intersection;
         })
     }
 

@@ -1,3 +1,5 @@
+use std::fmt::{ Display, Formatter, Result };
+
 use core::{ Handle, Transform };
 use math::{ Vector, Quaternion };
 use shapes::{ Shape, ShapeEntity };
@@ -9,37 +11,49 @@ pub struct StaticBody<H: Handle> {
     id: H,
     shape: Box<Shape>,
     material: Box<Material>,
-    position: Vector,
-    rotation: Quaternion,
+    transform: Transform,
 }
 
 impl<H: Handle> StaticBody<H> {
-    pub fn new_with_id(id: H, shape: Box<Shape>, material: Box<Material>, position: Vector, rotation: Quaternion) -> StaticBody<H> {
+    /// Creates a new `StaticBody` instance using the components provided to
+    /// construct the entity.
+    pub fn new_with_id(id: H, shape: Box<Shape>, material: Box<Material>, transform: Transform) -> StaticBody<H> {
         StaticBody {
             id: id,
             shape: shape,
             material: material,
-            position: position,
-            rotation: rotation,
+            transform: transform,
         }
     }
 
-    /// Returns a borrowed pointer to the Shape object held internally.
+    /// Returns the identifier for the `StaticBody` instance.
+    #[inline]
+    pub fn id(&self) -> H {
+        self.id
+    }
+
+    /// Returns the associated `Shape` object for the entity.
     #[inline]
     pub fn shape(&self) -> &Shape {
         &*self.shape
     }
 
+    /// Returns the associated `Transform` object for the entity.
+    #[inline]
+    pub fn transform(&self) -> &Transform {
+        &self.transform
+    }
+
     /// Returns the position of the `StaticBody`.
     #[inline]
     pub fn position(&self) -> Vector {
-        self.position
+        self.transform.translation()
     }
 
     /// Returns the rotation of the `StaticBody` expressed as a `Quaternion`.
     #[inline]
     pub fn rotation(&self) -> Quaternion {
-        self.rotation
+        self.transform.rotation()
     }
 }
 
@@ -50,6 +64,19 @@ impl<H: Handle> ShapeEntity for StaticBody<H> {
     }
 
     fn transform(&self) -> Transform {
-        Transform::new(self.position(), self.rotation())
+        *(self as &StaticBody<H>).transform()
+    }
+}
+
+impl<H: Handle> Display for StaticBody<H> {
+    fn fmt(&self, f: &mut Formatter) -> Result {
+        write!(f,
+            "Body[{}]: Pos={}, Rot={}, Vel={}, AngVel={}",
+            self.id(),
+            self.position(),
+            self.rotation(),
+            Vector::new_zero(),
+            Vector::new_zero(),
+        )
     }
 }

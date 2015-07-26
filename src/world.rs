@@ -1,4 +1,4 @@
-use core::{ Body, Handle, State };
+use core::{ Body, Handle, State, Transform };
 use math::Vector;
 use shapes::Shape;
 use dynamics::Dynamics;
@@ -27,6 +27,13 @@ impl<H: Handle, C: Collisions<Identifier=H>, D: Dynamics<Identifier=H>> World<H,
     #[inline(always)]
     pub fn create_body<S: Shape, M: Material>(&mut self, shape: S, material: M, state: State) -> C::Identifier {
         self.collisions.create_body(shape, material, state)
+    }
+
+    /// Creates an instance of a `StaticBody` from the given components and
+    /// returns an identifier which can be later used to retrieve the
+    /// `StaticBody`.
+    pub fn create_static_body<S: Shape, M: Material>(&mut self, shape: S, material: M, transform: Transform) -> C::Identifier {
+        self.collisions.create_static_body(shape, material, transform)
     }
 
     /// Searches the world for a matching `Body` instance with the identifier

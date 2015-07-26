@@ -4,8 +4,7 @@
 
 use shapes::Shape;
 use materials::Material;
-use math::{ Vector, Quaternion };
-use core::{ Body, Handle, State };
+use core::{ Body, Handle, State, StaticBody, Transform };
 
 pub use self::contact::{ Contact, ContactPair };
 pub use self::simple_collisions::SimpleCollisions;
@@ -24,11 +23,15 @@ pub trait Collisions {
     /// Creates an instance of a `StaticBody` from the given properties, returns
     /// an identifier which can be used to retrieve the `StaticBody` at a later
     /// time.
-    fn create_static_body<S: Shape, M: Material>(&mut self, S, M, Vector, Quaternion) -> Self::Identifier;
+    fn create_static_body<S: Shape, M: Material>(&mut self, S, M, Transform) -> Self::Identifier;
 
     /// Searches the data structure for a matching `Body` instance with the
     /// identifier specified and returns a reference to the `Body` if found.
     fn find_body(&self, Self::Identifier) -> Option<&Body<Self::Identifier>>;
+
+    /// Returns the `StaticBody` instance associated with the identifier
+    /// provided.
+    fn find_static_body(&self, Self::Identifier) -> Option<&StaticBody<Self::Identifier>>;
 
     /// Searches the data structure for a matching `Body` instance with the
     /// identifier specified and returns a mutable reference to the `Body` if

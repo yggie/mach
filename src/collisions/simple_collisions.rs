@@ -1,21 +1,20 @@
 use std::collections::HashMap;
 
-use core::{ Body, Handle, State, StaticBody };
-use math::{ Vector, Quaternion };
+use core::{ Body, Handle, State, StaticBody, Transform };
 use shapes::Shape;
 use materials::Material;
 use collisions::{ Collisions, Contact, ContactPair };
 use collisions::narrowphase::GjkEpaImplementation;
 
 struct Detector<H: Handle> {
-    handles: [H; 2],
+    ids: [H; 2],
     narrowphase: GjkEpaImplementation,
 }
 
 impl<H: Handle> Detector<H> {
     fn new(handle_0: H, handle_1: H) -> Detector<H> {
         Detector {
-            handles: [handle_0, handle_1],
+            ids: [handle_0, handle_1],
             narrowphase: GjkEpaImplementation,
         }
     }
@@ -26,6 +25,7 @@ pub struct SimpleCollisions {
     registry: HashMap<usize, Body<usize>>,
     static_registry: HashMap<usize, StaticBody<usize>>,
     detectors: Vec<Detector<usize>>,
+    static_detectors: Vec<Detector<usize>>,
     counter: usize,
 }
 
@@ -36,6 +36,7 @@ impl SimpleCollisions {
             registry: HashMap::new(),
             static_registry: HashMap::new(),
             detectors: Vec::new(),
+            static_detectors: Vec::new(),
             counter: 0,
         }
     }
@@ -61,12 +62,12 @@ impl Collisions for SimpleCollisions {
         return new_uid;
     }
 
-    fn create_static_body<S: Shape, M: Material>(&mut self, shape: S, material: M, position: Vector, rotation: Quaternion) -> Self::Identifier {
+    fn create_static_body<S: Shape, M: Material>(&mut self, shape: S, material: M, transform: Transform) -> Self::Identifier {
         let new_uid = self.generate_uid();
-        let new_static_body = StaticBody::new_with_id(new_uid, Box::new(shape), Box::new(material), position, rotation);
+        let new_static_body = StaticBody::new_with_id(new_uid, Box::new(shape), Box::new(material), transform);
 
         for &uid in self.registry.keys() {
-            self.detectors.push(Detector::new(uid, new_uid));
+            self.static_detectors.push(Detector::new(uid, new_uid));
         }
 
         self.static_registry.insert(new_uid, new_static_body);
@@ -75,6 +76,10 @@ impl Collisions for SimpleCollisions {
 
     fn find_body(&self, uid: Self::Identifier) -> Option<&Body<Self::Identifier>> {
         self.registry.get(&uid)
+    }
+
+    fn find_static_body(&self, uid: Self::Identifier) -> Option<&StaticBody<Self::Identifier>> {
+        self.static_registry.get(&uid)
     }
 
     fn find_body_mut(&mut self, uid: Self::Identifier) -> Option<&mut Body<Self::Identifier>> {
@@ -93,21 +98,35 @@ impl Collisions for SimpleCollisions {
         let mut contacts = Vec::new();
 
         for detector in self.detectors.iter() {
-            let body_0 = self.find_body(detector.handles[0]).unwrap();
-            let body_1 = self.find_body(detector.handles[1]).unwrap();
+            let body_0 = self.find_body(detector.ids[0]).unwrap();
+            let body_1 = self.find_body(detector.ids[1]).unwrap();
 
-            match detector.narrowphase.find_intersection(body_0, body_1) {
-                Some(intersection) => {
-                    contacts.push(
-                        Contact {
-                            ids: ContactPair::RigidRigid(body_0.id(), body_1.id()),
-                            center: intersection.point(),
-                            normal: intersection.normal(),
-                        }
-                    );
-                }
+            if let Some(intersection) = detector.narrowphase.find_intersection(body_0, body_1) {
+                contacts.push(
+                    Contact {
+                        ids: ContactPair::RigidRigid(body_0.id(), body_1.id()),
+                        center: intersection.point(),
+                        normal: intersection.normal(),
+                    }
+                );
+            }
+        }
 
-                None => { /* do nothing */ }
+        for detector in self.static_detectors.iter() {
+            let rigid_body = self.find_body(detector.ids[0]).unwrap();
+            let static_body = self.find_static_body(detector.ids[1]).unwrap();
+
+            if let Some(intersection) = detector.narrowphase.find_intersection(rigid_body, static_body) {
+                contacts.push(
+                    Contact {
+                        ids: ContactPair::RigidStatic {
+                            rigid_id: rigid_body.id(),
+                            static_id: static_body.id(),
+                        },
+                        center: intersection.point(),
+                        normal: intersection.normal(),
+                    }
+                );
             }
         }
 

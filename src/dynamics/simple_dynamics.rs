@@ -1,4 +1,4 @@
-use core::Body;
+use core::{ Body, StaticBody };
 use math::{ Vector, Quaternion };
 use dynamics::{ Dynamics, ForceAccumulator };
 use collisions::{ Contact, ContactPair, Collisions };
@@ -49,6 +49,30 @@ impl SimpleDynamics {
         self.accumulator.add_impulse(body_0,  impulse_vector, contact.center);
         self.accumulator.add_impulse(body_1, -impulse_vector, contact.center);
     }
+
+    #[allow(non_snake_case)]
+    fn solve_for_contact_with_static(&mut self, body_0: &Body<usize>, body_1: &StaticBody<usize>, contact: &Contact<usize>) {
+        // TODO compute dynamically
+        let epsilon = 1.0;
+        // relative vector from position to contact center
+        let to_contact_center = [
+            contact.center - body_0.position(),
+            contact.center - body_1.position(),
+        ];
+        // perpendicular vector (to contact normal) from position to
+        // contact center
+        let r = [
+            to_contact_center[0].cross(contact.normal),
+            to_contact_center[1].cross(contact.normal),
+        ];
+
+        let impulse = - (1.0 + epsilon) *
+            (contact.normal.dot(body_0.velocity()) + body_0.angular_velocity().dot(r[0])) /
+            (1.0/body_0.mass() + r[0].dot(body_0.inertia().inverse()*r[0]));
+
+        let impulse_vector = contact.normal * impulse;
+        self.accumulator.add_impulse(body_0,  impulse_vector, contact.center);
+    }
 }
 
 impl Dynamics for SimpleDynamics {
@@ -60,22 +84,17 @@ impl Dynamics for SimpleDynamics {
         for contact in contacts.iter() {
             match contact.ids {
                 ContactPair::RigidRigid(id_0, id_1) => {
-                    let option_0 = collisions.find_body(id_0);
-                    let option_1 = collisions.find_body(id_1);
+                    let body_0 = collisions.find_body(id_0).expect("A RigidBody went missing!");
+                    let body_1 = collisions.find_body(id_1).expect("A RigidBody went missing!");
 
-                    match (option_0, option_1) {
-                        (Some(body_0), Some(body_1)) => {
-                            self.solve_for_contact(body_0, body_1, &contact);
-                        }
-
-                        _ => {
-                            panic!("One or more bodies went missing!! [0: {}, 1: {}]", id_0, id_1);
-                        }
-                    }
+                    self.solve_for_contact(body_0, body_1, &contact);
                 },
 
-                ContactPair::RigidStatic { rigid_id: _, static_id: _ } => {
-                    unimplemented!();
+                ContactPair::RigidStatic { rigid_id, static_id } => {
+                    let rigid_body = collisions.find_body(rigid_id).expect("A RigidBody went missing!");
+                    let static_body = collisions.find_static_body(static_id).expect("A StaticBody went missing!");
+
+                    self.solve_for_contact_with_static(rigid_body, static_body, &contact);
                 },
             }
         }

@@ -42,11 +42,7 @@ impl<C: Collisions<Identifier=usize>, D: Dynamics<Identifier=usize>> Simulation<
 
     pub fn assert_compliance(&mut self) {
         self.did_assert = true;
-    }
-}
 
-impl<C: Collisions<Identifier=usize>, D: Dynamics<Identifier=usize>> Drop for Simulation<C, D> {
-    fn drop(&mut self) {
         if !self.did_assert {
             panic!("The simulation did not check for any violations!")
         }

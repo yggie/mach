@@ -8,13 +8,19 @@ pub struct Transform {
 }
 
 impl Transform {
-    /// Create a new `Transform` instance with the given translation and
+    /// Creates a new `Transform` instance with the given translation and
     /// rotation.
     pub fn new(translation: Vector, rotation: Quaternion) -> Transform {
         Transform {
             translation: translation,
             rotation: rotation,
         }
+    }
+
+    /// Creates a new `Transform` instance representing the identity
+    /// transformation.
+    pub fn new_identity() -> Transform {
+        Transform::new(Vector::new_zero(), Quaternion::new_identity())
     }
 
     /// The positional translation component of the transform.

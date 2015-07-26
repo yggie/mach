@@ -1,13 +1,16 @@
 extern crate mithril;
 
-use mithril::core::{ Body, Handle, State };
-use mithril::math::{ Vector, Quaternion };
+use mithril::core::{ Body, Handle, State, StaticBody, Transform };
 use mithril::shapes::Shape;
 use mithril::materials::Material;
 use mithril::collisions::{ Contact, Collisions };
 
 fn verbose_format_body<H: Handle>(body: &Body<H>) -> String {
     format!("{}, Shape={}", body, body.shape())
+}
+
+fn verbose_format_static_body<H: Handle>(static_body: &StaticBody<H>) -> String {
+    format!("{}, Shape={}", static_body, static_body.shape())
 }
 
 /// A utility class which wraps around a `Collisions` component and produces
@@ -31,15 +34,19 @@ impl<C: Collisions> Collisions for CollisionsMonitor<C> {
         return uid;
     }
 
-    fn create_static_body<S: Shape, M: Material>(&mut self, shape: S, material: M, position: Vector, rotation: Quaternion) -> Self::Identifier {
-        let uid = self.0.create_static_body(shape, material, position, rotation);
-        // let body = self.0.find_body(uid).unwrap();
-        // println!("[Collisions create_static_body] {}", verbose_format_body(body));
+    fn create_static_body<S: Shape, M: Material>(&mut self, shape: S, material: M, transform: Transform) -> Self::Identifier {
+        let uid = self.0.create_static_body(shape, material, transform);
+        let static_body = self.0.find_static_body(uid).unwrap();
+        println!("[Collisions create_static_body] {}", verbose_format_static_body(static_body));
         return uid;
     }
 
     fn find_body(&self, uid: Self::Identifier) -> Option<&Body<Self::Identifier>> {
         self.0.find_body(uid)
+    }
+
+    fn find_static_body(&self, uid: Self::Identifier) -> Option<&StaticBody<Self::Identifier>> {
+        self.0.find_static_body(uid)
     }
 
     fn find_body_mut(&mut self, uid: Self::Identifier) -> Option<&mut Body<Self::Identifier>> {
