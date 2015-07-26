@@ -1,16 +1,31 @@
 use std::collections::HashMap;
 
-use core::{ Body, State, StaticBody };
+use core::{ Body, Handle, State, StaticBody };
 use math::{ Vector, Quaternion };
 use shapes::Shape;
 use materials::Material;
-use collisions::{ Collisions, Contact, ContactPair, Proximity };
+use collisions::{ Collisions, Contact, ContactPair };
+use collisions::narrowphase::GjkEpaImplementation;
+
+struct Detector<H: Handle> {
+    handles: [H; 2],
+    narrowphase: GjkEpaImplementation,
+}
+
+impl<H: Handle> Detector<H> {
+    fn new(handle_0: H, handle_1: H) -> Detector<H> {
+        Detector {
+            handles: [handle_0, handle_1],
+            narrowphase: GjkEpaImplementation,
+        }
+    }
+}
 
 /// A simple implementation for representing space in the simulation.
 pub struct SimpleCollisions {
     registry: HashMap<usize, Body<usize>>,
     static_registry: HashMap<usize, StaticBody<usize>>,
-    proximities: Vec<Proximity<usize>>,
+    detectors: Vec<Detector<usize>>,
     counter: usize,
 }
 
@@ -20,7 +35,7 @@ impl SimpleCollisions {
         SimpleCollisions {
             registry: HashMap::new(),
             static_registry: HashMap::new(),
-            proximities: Vec::new(),
+            detectors: Vec::new(),
             counter: 0,
         }
     }
@@ -39,7 +54,7 @@ impl Collisions for SimpleCollisions {
         let new_body = Body::new_with_id(new_uid, Box::new(shape), Box::new(material), state);
 
         for &uid in self.registry.keys() {
-            self.proximities.push(Proximity::new(uid, new_uid));
+            self.detectors.push(Detector::new(uid, new_uid));
         }
 
         self.registry.insert(new_uid, new_body);
@@ -51,7 +66,7 @@ impl Collisions for SimpleCollisions {
         let new_static_body = StaticBody::new_with_id(new_uid, Box::new(shape), Box::new(material), position, rotation);
 
         for &uid in self.registry.keys() {
-            self.proximities.push(Proximity::new(uid, new_uid));
+            self.detectors.push(Detector::new(uid, new_uid));
         }
 
         self.static_registry.insert(new_uid, new_static_body);
@@ -77,17 +92,17 @@ impl Collisions for SimpleCollisions {
     fn find_contacts(&self) -> Vec<Contact<Self::Identifier>> {
         let mut contacts = Vec::new();
 
-        for proximity in self.proximities.iter() {
-            let body_0 = self.find_body(proximity.handles[0]).unwrap();
-            let body_1 = self.find_body(proximity.handles[1]).unwrap();
+        for detector in self.detectors.iter() {
+            let body_0 = self.find_body(detector.handles[0]).unwrap();
+            let body_1 = self.find_body(detector.handles[1]).unwrap();
 
-            match proximity.find_intersection(body_0, body_1) {
-                Some((contact_center, contact_normal)) => {
+            match detector.narrowphase.find_intersection(body_0, body_1) {
+                Some(intersection) => {
                     contacts.push(
                         Contact {
                             ids: ContactPair::RigidRigid(body_0.id(), body_1.id()),
-                            center: contact_center,
-                            normal: contact_normal,
+                            center: intersection.point(),
+                            normal: intersection.normal(),
                         }
                     );
                 }

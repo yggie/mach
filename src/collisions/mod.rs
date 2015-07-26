@@ -9,7 +9,7 @@ use core::{ Body, Handle, State };
 
 pub use self::contact::{ Contact, ContactPair };
 pub use self::simple_collisions::SimpleCollisions;
-pub use self::narrowphase::proximity::Proximity;
+pub use self::narrowphase::NarrowPhase;
 
 /// A `Collisions` component is responsible for the storage, retrieval and
 /// querying of physical bodies in the simulation.
@@ -49,4 +49,4 @@ pub trait Collisions {
 mod contact;
 mod simple_collisions;
 
-mod narrowphase;
+pub mod narrowphase;

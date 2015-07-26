@@ -1,6 +1,6 @@
 mod simple_collisions_test;
 
 mod narrowphase {
-    mod proximity_test;
+    mod gjk_epa_implementation_test;
 }
 
