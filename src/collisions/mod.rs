@@ -49,6 +49,4 @@ pub trait Collisions {
 mod contact;
 mod simple_collisions;
 
-mod narrowphase {
-    pub mod proximity;
-}
+mod narrowphase;

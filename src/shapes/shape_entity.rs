@@ -3,7 +3,7 @@ use shapes::Shape;
 
 /// This trait describes a physical entity which has both geometric and spatial
 /// configurations.
-pub trait Volumetric {
+pub trait ShapeEntity {
     /// Returns the `Shape` associated with the entity.
     fn shape(&self) -> &Shape;
     /// Returns the position of the entity.

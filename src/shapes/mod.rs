@@ -4,6 +4,7 @@ use std::fmt;
 
 use math::{ Matrix, TOLERANCE, Vector };
 
+pub use self::shape_entity::ShapeEntity;
 pub use self::primitives::Cube;
 
 /// Defines the traits for all geometric property descriptions.
@@ -37,6 +38,8 @@ pub trait Shape: fmt::Display + 'static {
         return TOLERANCE;
     }
 }
+
+mod shape_entity;
 
 mod primitives {
     // TODO re-enable Sphere once GJK-EPA has stabilized

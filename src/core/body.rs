@@ -1,8 +1,8 @@
 use std::fmt;
 
-use core::{ Handle, State, Volumetric };
+use core::{ Handle, State };
 use math::{ Matrix, Vector, Quaternion };
-use shapes::Shape;
+use shapes::{ Shape, ShapeEntity };
 use materials::Material;
 
 /// Represents a physical entity in the world.
@@ -120,7 +120,7 @@ impl<H: Handle> Body<H> {
     }
 }
 
-impl<H: Handle> Volumetric for Body<H> {
+impl<H: Handle> ShapeEntity for Body<H> {
     #[inline(always)]
     fn shape(&self) -> &Shape {
         (self as &Body<H>).shape()

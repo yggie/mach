@@ -1,6 +1,6 @@
-use core::{ Handle, Volumetric };
+use core::Handle;
 use math::{ Vector, Quaternion };
-use shapes::Shape;
+use shapes::{ Shape, ShapeEntity };
 use materials::Material;
 
 /// Represents a physical entity which cannot move. Within the engine, the
@@ -43,7 +43,7 @@ impl<H: Handle> StaticBody<H> {
     }
 }
 
-impl<H: Handle> Volumetric for StaticBody<H> {
+impl<H: Handle> ShapeEntity for StaticBody<H> {
     #[inline(always)]
     fn shape(&self) -> &Shape {
         (self as &StaticBody<H>).shape()

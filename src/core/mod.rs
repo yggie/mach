@@ -4,7 +4,6 @@ use std::fmt;
 use std::hash::Hash;
 
 pub use self::body::Body;
-pub use self::volumetric::Volumetric;
 pub use self::static_body::StaticBody;
 pub use self::state::State;
 
@@ -15,6 +14,5 @@ pub trait Handle: Copy + Hash + Eq + fmt::Display { }
 impl Handle for usize { }
 
 mod body;
-mod volumetric;
 mod static_body;
 mod state;
