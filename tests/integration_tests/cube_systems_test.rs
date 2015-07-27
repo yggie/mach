@@ -1,11 +1,11 @@
 use support::Simulation;
 
-use mithril::core::{ State, Transform };
-use mithril::maths::Vector;
-use mithril::shapes::Cube;
-use mithril::materials::Rigid;
-use mithril::dynamics::SimpleDynamics;
-use mithril::collisions::SimpleCollisions;
+use mach::core::{ State, Transform };
+use mach::maths::Vector;
+use mach::shapes::Cube;
+use mach::materials::Rigid;
+use mach::dynamics::SimpleDynamics;
+use mach::collisions::SimpleCollisions;
 
 #[test]
 fn colliding_two_cubes() {

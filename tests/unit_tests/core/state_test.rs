@@ -1,5 +1,5 @@
-use mithril::core::State;
-use mithril::maths::{ Vector, Quaternion, PI };
+use mach::core::State;
+use mach::maths::{ Vector, Quaternion, PI };
 
 #[test]
 fn instantiating_as_stationary() {

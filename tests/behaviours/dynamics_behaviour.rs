@@ -1,11 +1,11 @@
 use support::{ CollisionsMonitor, DynamicsMonitor };
 
-use mithril::core::State;
-use mithril::maths::Vector;
-use mithril::shapes::Cube;
-use mithril::dynamics::Dynamics;
-use mithril::materials::Rigid;
-use mithril::collisions::{ Collisions, SimpleCollisions };
+use mach::core::State;
+use mach::maths::Vector;
+use mach::shapes::Cube;
+use mach::dynamics::Dynamics;
+use mach::materials::Rigid;
+use mach::collisions::{ Collisions, SimpleCollisions };
 
 
 fn assert_approximately_equal(a: Vector, b: Vector) {

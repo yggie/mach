@@ -1,6 +1,6 @@
 TARGET=target
 DEBUG_OUTPUT=$(TARGET)/debug.logs
-VIZ_GENERATOR=tests/mithril-ci-offline/generate_index
+VIZ_GENERATOR=tests/mach-ci-offline/generate_index
 
 PHONY: build debug docs test clean
 

@@ -1,5 +1,5 @@
-use mithril::maths::Vector;
-use mithril::shapes::{ Shape, Cube };
+use mach::maths::Vector;
+use mach::shapes::{ Shape, Cube };
 
 #[test]
 fn instantiating_with_dimensions() {

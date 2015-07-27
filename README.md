@@ -1,4 +1,4 @@
-# Mithril Physics engine
+# Mach Physics engine
 
 [![License](https://img.shields.io/badge/license-MIT-yellow.svg)](#license)
 
@@ -52,7 +52,7 @@ make debug
 ```
 
 Which opens the
-[mithril-ci-offline](https://github.com/yggie/mithril-ci-offline) on a browser
+[mach-ci-offline](https://github.com/yggie/mach-ci-offline) on a browser
 window with the test output.
 
 # Dependencies

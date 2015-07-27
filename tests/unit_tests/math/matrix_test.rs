@@ -1,4 +1,4 @@
-use mithril::maths::{ Vector, Matrix };
+use mach::maths::{ Vector, Matrix };
 
 #[test]
 fn instantiating_with_components() {

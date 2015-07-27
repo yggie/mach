@@ -1,4 +1,4 @@
 use behaviours;
-use mithril::dynamics::SimpleDynamics;
+use mach::dynamics::SimpleDynamics;
 
 assert_dynamics_behaviour!(|| SimpleDynamics::new());

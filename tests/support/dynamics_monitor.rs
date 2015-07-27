@@ -1,10 +1,10 @@
-extern crate mithril;
+extern crate mach;
 
 use std::f32;
 
-use mithril::maths::Vector;
-use mithril::dynamics::Dynamics;
-use mithril::collisions::Collisions;
+use mach::maths::Vector;
+use mach::dynamics::Dynamics;
+use mach::collisions::Collisions;
 
 /// A utility class which wraps around `Dynamics` components. It produces
 /// parseable output for debugging and stores useful information regarding the

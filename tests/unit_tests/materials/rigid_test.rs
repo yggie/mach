@@ -1,5 +1,5 @@
-use mithril::shapes::Cube;
-use mithril::materials::{ Material, Rigid };
+use mach::shapes::Cube;
+use mach::materials::{ Material, Rigid };
 
 #[test]
 fn instantiating_with_parameters() {

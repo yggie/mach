@@ -1,4 +1,4 @@
-extern crate mithril;
+extern crate mach;
 
 #[cfg(test)]
 mod support;

@@ -1,6 +1,6 @@
-use mithril::World;
-use mithril::dynamics::{ Dynamics, SimpleDynamics };
-use mithril::collisions::{ Collisions, SimpleCollisions };
+use mach::World;
+use mach::dynamics::{ Dynamics, SimpleDynamics };
+use mach::collisions::{ Collisions, SimpleCollisions };
 
 use support::{ CollisionsMonitor, DynamicsMonitor };
 

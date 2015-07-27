@@ -1,9 +1,9 @@
-extern crate mithril;
+extern crate mach;
 
-use mithril::core::{ Body, Handle, State, StaticBody, Transform };
-use mithril::shapes::Shape;
-use mithril::materials::Material;
-use mithril::collisions::{ Contact, Collisions };
+use mach::core::{ Body, Handle, State, StaticBody, Transform };
+use mach::shapes::Shape;
+use mach::materials::Material;
+use mach::collisions::{ Contact, Collisions };
 
 fn verbose_format_body<H: Handle>(body: &Body<H>) -> String {
     format!("{}, Shape={}", body, body.shape())

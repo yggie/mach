@@ -1,15 +1,15 @@
 [package]
-name = "mithril"
+name = "mach"
 version = "0.0.1"
 authors = ["Bryan Yap <bryan.yap.mh@gmail.com>"]
 description = "3D physics engine in Rust"
 keywords = ["physics"]
 readme = "README.md"
-repository = "https://github.com/yggie/mithril"
+repository = "https://github.com/yggie/mach"
 license = "MIT"
 
 [lib]
-name = "mithril"
+name = "mach"
 path = "src/lib.rs"
 
 [dependencies]

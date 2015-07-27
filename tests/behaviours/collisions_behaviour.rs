@@ -1,7 +1,7 @@
-use mithril::core::State;
-use mithril::shapes::Cube;
-use mithril::materials::Rigid;
-use mithril::collisions::Collisions;
+use mach::core::State;
+use mach::shapes::Cube;
+use mach::materials::Rigid;
+use mach::collisions::Collisions;
 
 pub fn creating_a_rigid_body<C: Collisions<Identifier=usize>, F: FnOnce() -> C>(new_collisions: F) {
     let mut collisions = new_collisions();

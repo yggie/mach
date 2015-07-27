@@ -1,7 +1,7 @@
-//! Contains the implementation of the Mithril Physics engine, an open-source
+//! Contains the implementation of the Mach Physics engine, an open-source
 //! physics engine built on the Rust programming language.
 
-#![crate_name = "mithril"]
+#![crate_name = "mach"]
 #![crate_type = "lib"]
 
 #![warn(missing_docs)]

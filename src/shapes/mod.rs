@@ -45,7 +45,7 @@ pub trait Shape: fmt::Display + 'static {
     /// tolerance used to determine if a collision has occurred, it is useful to
     /// avoid problems with singularities such as edge-edge collisions. By
     /// default it returns the Engine’s tolerance, _i.e._
-    /// `mithril::maths::TOLERANCE`.
+    /// `mach::maths::TOLERANCE`.
     #[inline]
     fn surface_radius(&self) -> f32 {
         return TOLERANCE;

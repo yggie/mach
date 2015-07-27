@@ -5,8 +5,8 @@ use dynamics::Dynamics;
 use materials::Material;
 use collisions::Collisions;
 
-/// A `World` is a physical world in mithril, it contains physical bodies and a
-/// set of rules dictating how the bodies interact with the environment.
+/// A `World` is a physical world in mach, it contains physical bodies and a set
+/// of rules dictating how the bodies interact with the environment.
 pub struct World<H: Handle, C: Collisions<Identifier=H>, D: Dynamics<Identifier=H>> {
     collisions: C,
     dynamics: D,

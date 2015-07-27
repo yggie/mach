@@ -1,4 +1,4 @@
 use behaviours;
-use mithril::collisions::SimpleCollisions;
+use mach::collisions::SimpleCollisions;
 
 assert_collisions_behaviour!(|| SimpleCollisions::new() );
