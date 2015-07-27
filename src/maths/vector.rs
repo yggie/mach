@@ -1,4 +1,4 @@
-use math::{ TOLERANCE, Matrix, Quaternion };
+use maths::{ TOLERANCE, Matrix, Quaternion };
 
 use std::fmt;
 use std::ops::{ Add, Div, Index, IndexMut, Mul, Neg, Sub };

@@ -1,7 +1,7 @@
 use support::Simulation;
 
 use mithril::core::{ State, Transform };
-use mithril::math::Vector;
+use mithril::maths::Vector;
 use mithril::shapes::Cube;
 use mithril::materials::Rigid;
 use mithril::dynamics::SimpleDynamics;

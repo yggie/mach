@@ -1,4 +1,4 @@
-use math::{ Vector, Quaternion };
+use maths::{ Vector, Quaternion };
 
 /// The `Transform` object represents a spatial transformation in 3D space.
 #[derive(Clone, Copy)]

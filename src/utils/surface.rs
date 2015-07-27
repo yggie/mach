@@ -1,4 +1,4 @@
-use math::{ Vector, TOLERANCE };
+use maths::{ Vector, TOLERANCE };
 
 /// Represents a `Surface` for a given set of points.
 #[derive(Copy, Clone)]

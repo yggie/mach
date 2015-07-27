@@ -1,7 +1,7 @@
 use std::fmt;
 
 use core::{ Handle, State, Transform };
-use math::{ Matrix, Vector, Quaternion };
+use maths::{ Matrix, Vector, Quaternion };
 use shapes::{ Shape, ShapeEntity };
 use materials::Material;
 

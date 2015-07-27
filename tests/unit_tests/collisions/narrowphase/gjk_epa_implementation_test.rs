@@ -1,5 +1,5 @@
 use mithril::core::{ Body, State };
-use mithril::math::{ PI, Vector };
+use mithril::maths::{ PI, Vector };
 use mithril::shapes::Cube;
 use mithril::materials::Rigid;
 use mithril::collisions::narrowphase::GjkEpaImplementation;

@@ -1,5 +1,5 @@
 use core::{ Body, StaticBody };
-use math::{ Vector, Quaternion };
+use maths::{ Vector, Quaternion };
 use dynamics::{ Dynamics, ForceAccumulator };
 use collisions::{ Contact, ContactPair, Collisions };
 

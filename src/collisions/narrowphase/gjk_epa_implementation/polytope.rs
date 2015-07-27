@@ -1,7 +1,7 @@
 use super::simplex::{ SupportPoint, Simplex };
 
 use shapes::ShapeEntity;
-use math::{ Vector, TOLERANCE };
+use maths::{ Vector, TOLERANCE };
 use utils::compute_surfaces_for_convex_hull;
 
 pub struct Polytope {

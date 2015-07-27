@@ -1,7 +1,7 @@
 use support::{ CollisionsMonitor, DynamicsMonitor };
 
 use mithril::core::State;
-use mithril::math::Vector;
+use mithril::maths::Vector;
 use mithril::shapes::Cube;
 use mithril::dynamics::Dynamics;
 use mithril::materials::Rigid;

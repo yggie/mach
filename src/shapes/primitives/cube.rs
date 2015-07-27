@@ -1,6 +1,6 @@
 use std::fmt;
 
-use math::{ approx_eq, Matrix, Vector, TOLERANCE };
+use maths::{ approx_eq, Matrix, Vector, TOLERANCE };
 use shapes::Shape;
 
 /// A representation of a cube in 3 dimensions.

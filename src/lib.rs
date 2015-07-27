@@ -12,7 +12,7 @@ pub use self::world::World;
 
 mod world;
 
-pub mod math;
+pub mod maths;
 pub mod shapes;
 pub mod materials;
 pub mod core;

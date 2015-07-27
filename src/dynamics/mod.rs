@@ -2,8 +2,11 @@
 //! engine. It contains subcomponents to handle time updates and collision
 //! resolution.
 
+mod force_accumulator;
+mod simple_dynamics;
+
 use core::Handle;
-use math::Vector;
+use maths::Vector;
 use collisions::Collisions;
 
 pub use self::simple_dynamics::SimpleDynamics;
@@ -25,6 +28,3 @@ pub trait Dynamics {
     /// Adjusts the global gravitational force acting on the `Body` objects.
     fn set_gravity(&mut self, Vector);
 }
-
-mod force_accumulator;
-mod simple_dynamics;

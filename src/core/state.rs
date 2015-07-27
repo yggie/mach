@@ -1,4 +1,4 @@
-use math::{ Vector, Quaternion };
+use maths::{ Vector, Quaternion };
 
 /// Represents a physical state. The state contains information regarding the
 /// current position, rotation, velocity and rotational velocity.

@@ -1,4 +1,4 @@
-use math::{ Vector, TOLERANCE };
+use maths::{ Vector, TOLERANCE };
 use utils::Surface;
 
 /// Computes a set of `Surfaces` for the point cloud provided. The computation

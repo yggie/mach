@@ -1,4 +1,4 @@
-use math::Vector;
+use maths::Vector;
 use core::Transform;
 use shapes::Shape;
 

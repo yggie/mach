@@ -1,5 +1,5 @@
 use core::Handle;
-use math::Vector;
+use maths::Vector;
 
 /// `ContactPair` holds information about the identities of the intersecting
 /// bodies.

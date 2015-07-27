@@ -1,6 +1,6 @@
 use rand::random;
 
-use math::{ Vector, TOLERANCE };
+use maths::{ Vector, TOLERANCE };
 use shapes::{ Shape, ShapeEntity };
 
 #[derive(Clone, Copy, Debug)]

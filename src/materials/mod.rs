@@ -2,9 +2,11 @@
 //! of the physical entities. This module is currently experimental, and may
 //! undergo a complete refactoring in the near future.
 
+mod rigid;
+
 pub use self::rigid::Rigid;
 
-use math::Matrix;
+use maths::Matrix;
 use shapes::Shape;
 
 /// Defines the traits for all mechanical property descriptions.
@@ -18,5 +20,3 @@ pub trait Material: 'static {
     /// Computes the density when applied to a shape.
     fn density_of(&self, &Shape) -> f32;
 }
-
-mod rigid;

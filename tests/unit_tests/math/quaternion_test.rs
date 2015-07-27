@@ -1,4 +1,4 @@
-use mithril::math::{ Quaternion, Vector };
+use mithril::maths::{ Quaternion, Vector };
 
 #[test]
 fn instantiating_with_components() {

@@ -1,4 +1,4 @@
-use mithril::math::Vector;
+use mithril::maths::Vector;
 use mithril::shapes::{ Shape, Cube };
 
 #[test]

@@ -1,4 +1,4 @@
-use mithril::math::{ PI, Vector, Quaternion };
+use mithril::maths::{ PI, Vector, Quaternion };
 
 #[test]
 fn instantiating_with_components() {

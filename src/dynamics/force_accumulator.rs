@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use math::Vector;
+use maths::Vector;
 use core::{ Body, Handle };
 
 /// This data structure maintains the accumulated impulse acting on a `Body`.

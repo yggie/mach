@@ -1,4 +1,4 @@
-use math::{ approx_eq, Matrix };
+use maths::{ approx_eq, Matrix };
 use shapes::Shape;
 use materials::Material;
 

@@ -1,4 +1,4 @@
-use math::Vector;
+use maths::Vector;
 
 /// This object contains information about the intersection between two
 /// entities.

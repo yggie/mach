@@ -2,7 +2,7 @@ extern crate mithril;
 
 use std::f32;
 
-use mithril::math::Vector;
+use mithril::maths::Vector;
 use mithril::dynamics::Dynamics;
 use mithril::collisions::Collisions;
 

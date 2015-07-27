@@ -1,5 +1,5 @@
 use core::{ Body, Handle, State, Transform };
-use math::Vector;
+use maths::Vector;
 use shapes::Shape;
 use dynamics::Dynamics;
 use materials::Material;
