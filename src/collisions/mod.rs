@@ -41,6 +41,9 @@ pub trait Collisions {
     /// Returns an iterator over unique `Body` instances managed by this object.
     fn bodies_iter<'a>(&'a self) -> Box<Iterator<Item=&Body<Self::Identifier>> + 'a>;
 
+    /// Returns an iterator over unique `StaticBody` instances managed by this object.
+    fn static_bodies_iter<'a>(&'a self) -> Box<Iterator<Item=&StaticBody<Self::Identifier>> + 'a>;
+
     /// Returns an iterator over unique `Body` instances managed by this object.
     /// This iterator allows mutation of the `Body` objects.
     fn bodies_iter_mut<'a>(&'a mut self) -> Box<Iterator<Item=&mut Body<Self::Identifier>> + 'a>;

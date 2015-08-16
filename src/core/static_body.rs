@@ -71,12 +71,10 @@ impl<H: Handle> ShapeEntity for StaticBody<H> {
 impl<H: Handle> Display for StaticBody<H> {
     fn fmt(&self, f: &mut Formatter) -> Result {
         write!(f,
-            "Body[{}]: Pos={}, Rot={}, Vel={}, AngVel={}",
+            "StaticBody[{}]: Pos={}, Rot={}",
             self.id(),
             self.position(),
             self.rotation(),
-            Vector::new_zero(),
-            Vector::new_zero(),
         )
     }
 }

@@ -90,6 +90,10 @@ impl Collisions for SimpleCollisions {
         Box::new(self.registry.values())
     }
 
+    fn static_bodies_iter<'a>(&'a self) -> Box<Iterator<Item=&StaticBody<Self::Identifier>> + 'a> {
+        Box::new(self.static_registry.values())
+    }
+
     fn bodies_iter_mut<'a>(&'a mut self) -> Box<Iterator<Item=&mut Body<Self::Identifier>> + 'a> {
         Box::new(self.registry.iter_mut().map(|(_, body)| body))
     }

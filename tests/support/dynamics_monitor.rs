@@ -36,7 +36,7 @@ impl<D: Dynamics> Dynamics for DynamicsMonitor<D> {
     type Identifier = D::Identifier;
 
     fn update<C: Collisions<Identifier=Self::Identifier>>(&mut self, collisions: &mut C, time_step: f32) {
-        println!("[Dynamics update] START step={}", time_step);
+        println!("[UPDATE] START step={}", time_step);
         self.dynamics.update(collisions, time_step);
 
         let total_energy = collisions.bodies_iter()
@@ -44,17 +44,21 @@ impl<D: Dynamics> Dynamics for DynamicsMonitor<D> {
                 let kinetic_energy = 0.5 * body.mass() * body.velocity().length_sq();
                 let potential_energy = body.mass() * body.position().dot(self.gravity());
 
-                println!("[Dynamics update] {}", body);
+                println!("[UPDATE] {}", body);
                 return cumulative_energy + kinetic_energy + potential_energy;
             });
 
+        for static_body in collisions.static_bodies_iter() {
+            println!("[UPDATE] {}", static_body);
+        }
+
         if total_energy > self.previous_total_energy {
-            println!("[Violation] Total energy increased by {}", total_energy - self.previous_total_energy);
+            println!("[VIOLATION] Total energy increased by {}", total_energy - self.previous_total_energy);
             self.total_energy_violation_count += 1;
         }
         self.previous_total_energy = total_energy;
 
-        println!("[Dynamics update] END");
+        println!("[UPDATE] END");
     }
 
     fn gravity(&self) -> Vector {

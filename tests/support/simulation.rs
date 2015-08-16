@@ -18,6 +18,8 @@ impl<C: Collisions<Identifier=usize>, D: Dynamics<Identifier=usize>> Simulation<
             DynamicsMonitor::new(dynamics)
         );
 
+        println!("[RENDERABLE]");
+
         return Simulation {
             world: world,
             did_assert: false

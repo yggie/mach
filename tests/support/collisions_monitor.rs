@@ -30,14 +30,14 @@ impl<C: Collisions> Collisions for CollisionsMonitor<C> {
     fn create_body<S: Shape, M: Material>(&mut self, shape: S, material: M, state: State) -> Self::Identifier {
         let uid = self.0.create_body(shape, material, state);
         let body = self.0.find_body(uid).unwrap();
-        println!("[Collisions create_body] {}", verbose_format_body(body));
+        println!("[CREATE] {}", verbose_format_body(body));
         return uid;
     }
 
     fn create_static_body<S: Shape, M: Material>(&mut self, shape: S, material: M, transform: Transform) -> Self::Identifier {
         let uid = self.0.create_static_body(shape, material, transform);
         let static_body = self.0.find_static_body(uid).unwrap();
-        println!("[Collisions create_static_body] {}", verbose_format_static_body(static_body));
+        println!("[CREATE] {}", verbose_format_static_body(static_body));
         return uid;
     }
 
@@ -55,6 +55,10 @@ impl<C: Collisions> Collisions for CollisionsMonitor<C> {
 
     fn bodies_iter<'a>(&'a self) -> Box<Iterator<Item=&Body<Self::Identifier>> + 'a>{
         self.0.bodies_iter()
+    }
+
+    fn static_bodies_iter<'a>(&'a self) -> Box<Iterator<Item=&StaticBody<Self::Identifier>> + 'a>{
+        self.0.static_bodies_iter()
     }
 
     fn bodies_iter_mut<'a>(&'a mut self) -> Box<Iterator<Item=&mut Body<Self::Identifier>> + 'a>{
