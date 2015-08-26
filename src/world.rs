@@ -1,4 +1,4 @@
-use core::{ Body, UID, State, Transform };
+use core::{ RigidBody, UID, State, Transform };
 use maths::Vector;
 use shapes::Shape;
 use dynamics::Dynamics;
@@ -22,8 +22,8 @@ impl<C: Collisions, D: Dynamics> World<C, D> {
         }
     }
 
-    /// Creates an instance of a `Body` from the given components, returns a
-    /// handle which can later be used to retrieve the `Body`.
+    /// Creates an instance of a `RigidBody` from the given components, returns
+    /// a handle which can later be used to retrieve the `RigidBody`.
     #[inline(always)]
     pub fn create_body<S: Shape, M: Material>(&mut self, shape: S, material: M, state: State) -> UID {
         self.collisions.create_body(shape, material, state)
@@ -36,16 +36,17 @@ impl<C: Collisions, D: Dynamics> World<C, D> {
         self.collisions.create_static_body(shape, material, transform)
     }
 
-    /// Searches the world for a matching `Body` instance with the identifier
-    /// specified and returns a reference to the `Body` if found.
+    /// Searches the world for a matching `RigidBody` instance with the
+    /// identifier specified and returns a reference to the `RigidBody` if
+    /// found.
     #[inline(always)]
-    pub fn find_body(&mut self, uid: UID) -> Option<&Body> {
+    pub fn find_body(&mut self, uid: UID) -> Option<&RigidBody> {
         self.collisions.find_body(uid)
     }
 
-    /// Returns an iterator over unique `Body` instances in the `World`.
+    /// Returns an iterator over unique `RigidBody` instances in the `World`.
     #[inline(always)]
-    pub fn bodies_iter<'a>(&'a self) -> Box<Iterator<Item=&Body> + 'a> {
+    pub fn bodies_iter<'a>(&'a self) -> Box<Iterator<Item=&RigidBody> + 'a> {
         self.collisions.bodies_iter()
     }
 
@@ -61,7 +62,7 @@ impl<C: Collisions, D: Dynamics> World<C, D> {
         self.dynamics.gravity()
     }
 
-    /// Changes the global gravitational force acting on `Body` objects.
+    /// Changes the global gravitational force acting on `RigidBody` objects.
     #[inline(always)]
     pub fn set_gravity(&mut self, gravity: Vector) {
         self.dynamics.set_gravity(gravity);

@@ -6,17 +6,17 @@ use shapes::{ Shape, ShapeEntity };
 use materials::Material;
 
 /// Represents a physical entity in the world.
-pub struct Body {
+pub struct RigidBody {
     id: UID,
     shape: Box<Shape>,
     material: Box<Material>,
     state: State,
 }
 
-impl Body {
-    /// Creates a new instance of a Body object
-    pub fn new_with_id(id: UID, shape: Box<Shape>, material: Box<Material>, state: State) -> Body {
-        Body {
+impl RigidBody {
+    /// Creates a new instance of a `RigidBody` object
+    pub fn new_with_id(id: UID, shape: Box<Shape>, material: Box<Material>, state: State) -> RigidBody {
+        RigidBody {
             id: id,
             shape: shape,
             material: material,
@@ -24,7 +24,7 @@ impl Body {
         }
     }
 
-    /// Returns the handle associated with the `Body`.
+    /// Returns the handle associated with the `RigidBody`.
     #[inline]
     pub fn id(&self) -> UID {
         self.id
@@ -36,49 +36,49 @@ impl Body {
         &*self.shape
     }
 
-    /// Returns the `Material` object associated with the Body.
+    /// Returns the `Material` object associated with the `RigidBody`.
     #[inline]
     pub fn material(&self) -> &Material {
         &*self.material
     }
 
-    /// Returns the `State` associated with the Body.
+    /// Returns the `State` associated with the `RigidBody`.
     #[inline]
     pub fn state(&self) -> &State {
         &self.state
     }
 
-    /// Returns the mass of the `Body`.
+    /// Returns the mass of the `RigidBody`.
     #[inline]
     pub fn mass(&self) -> f32 {
         self.material.mass_of(&*self.shape)
     }
 
-    /// Returns the inertia tensor of the `Body`.
+    /// Returns the inertia tensor of the `RigidBody`.
     #[inline]
     pub fn inertia(&self) -> Matrix {
         self.material.inertia_for(&*self.shape)
     }
 
-    /// Returns the position of the `Body`.
+    /// Returns the position of the `RigidBody`.
     #[inline]
     pub fn position(&self) -> Vector {
         self.state.position()
     }
 
-    /// Returns the velocity of the Body.
+    /// Returns the velocity of the `RigidBody`.
     #[inline]
     pub fn velocity(&self) -> Vector {
         self.state.velocity()
     }
 
-    /// Returns the rotation of the `Body` expressed as a `Quaternion`.
+    /// Returns the rotation of the `RigidBody` expressed as a `Quaternion`.
     #[inline]
     pub fn rotation_quaternion(&self) -> Quaternion {
         self.state.rotation()
     }
 
-    /// Returns the angular velocity of the Body.
+    /// Returns the angular velocity of the `RigidBody`.
     #[inline]
     pub fn angular_velocity(&self) -> Vector {
         self.state.angular_velocity()
@@ -89,41 +89,41 @@ impl Body {
         self.state.transform_point(self.shape.vertex(index))
     }
 
-    /// Returns an `Iterator` over the vertices of the `Body`.
+    /// Returns an `Iterator` over the vertices of the `RigidBody`.
     pub fn vertices_iter<'a>(&'a self) -> Box<Iterator<Item=Vector> + 'a> {
         let s = self.state.clone();
         Box::new(self.shape.vertices_iter().map(move |&v| s.transform_point(v)))
     }
 
-    /// Sets the `Body`’s position using the `Vector` provided.
+    /// Sets the `RigidBody`’s position using the `Vector` provided.
     #[inline]
     pub fn set_position_with_vector(&mut self, position: Vector) {
         self.state.set_position_with_vector(position);
     }
 
-    /// Sets the `Body`’s rotation using the `Quaternion` provided.
+    /// Sets the `RigidBody`’s rotation using the `Quaternion` provided.
     #[inline]
     pub fn set_rotation_with_quaternion(&mut self, rotation: Quaternion) {
         self.state.set_rotation_with_quaternion(rotation);
     }
 
-    /// Sets the `Body`’s velocity using the `Vector` provided.
+    /// Sets the `RigidBody`’s velocity using the `Vector` provided.
     #[inline]
     pub fn set_velocity_with_vector(&mut self, velocity: Vector) {
         self.state.set_velocity_with_vector(velocity);
     }
 
-    /// Set the `Body`’s angular velocity using the `Vector` provided.
+    /// Set the `RigidBody`’s angular velocity using the `Vector` provided.
     #[inline]
     pub fn set_angular_velocity_with_vector(&mut self, angular_velocity: Vector) {
         self.state.set_angular_velocity(angular_velocity[0], angular_velocity[1], angular_velocity[2]);
     }
 }
 
-impl ShapeEntity for Body {
+impl ShapeEntity for RigidBody {
     #[inline(always)]
     fn shape(&self) -> &Shape {
-        (self as &Body).shape()
+        (self as &RigidBody).shape()
     }
 
     fn transform(&self) -> Transform {
@@ -131,10 +131,10 @@ impl ShapeEntity for Body {
     }
 }
 
-impl fmt::Display for Body {
+impl fmt::Display for RigidBody {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f,
-            "Body[{}]: Pos={}, Rot={}, Vel={}, AngVel={}",
+            "RigidBody[{}]: Pos={}, Rot={}, Vel={}, AngVel={}",
             self.id(),
             self.position(),
             self.rotation_quaternion(),

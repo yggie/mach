@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use core::{ Body, UID, State, StaticBody, Transform };
+use core::{ RigidBody, UID, State, StaticBody, Transform };
 use shapes::Shape;
 use materials::Material;
 use collisions::{ Collisions, Contact, Constraint };
@@ -22,7 +22,7 @@ impl Detector {
 
 /// A simple implementation for representing space in the simulation.
 pub struct SimpleCollisions {
-    registry: HashMap<UID, Body>,
+    registry: HashMap<UID, RigidBody>,
     static_registry: HashMap<UID, StaticBody>,
     detectors: Vec<Detector>,
     static_detectors: Vec<Detector>,
@@ -50,7 +50,7 @@ impl SimpleCollisions {
 impl Collisions for SimpleCollisions {
     fn create_body<S: Shape, M: Material>(&mut self, shape: S, material: M, state: State) -> UID {
         let new_uid = self.generate_uid();
-        let new_body = Body::new_with_id(new_uid, Box::new(shape), Box::new(material), state);
+        let new_body = RigidBody::new_with_id(new_uid, Box::new(shape), Box::new(material), state);
 
         for &uid in self.registry.keys() {
             self.detectors.push(Detector::new(uid, new_uid));
@@ -72,7 +72,7 @@ impl Collisions for SimpleCollisions {
         return new_uid;
     }
 
-    fn find_body(&self, uid: UID) -> Option<&Body> {
+    fn find_body(&self, uid: UID) -> Option<&RigidBody> {
         self.registry.get(&uid)
     }
 
@@ -80,7 +80,7 @@ impl Collisions for SimpleCollisions {
         self.static_registry.get(&uid)
     }
 
-    fn find_body_mut(&mut self, uid: UID) -> Option<&mut Body> {
+    fn find_body_mut(&mut self, uid: UID) -> Option<&mut RigidBody> {
         self.registry.get_mut(&uid)
     }
 
@@ -88,7 +88,7 @@ impl Collisions for SimpleCollisions {
         self.static_registry.get_mut(&uid)
     }
 
-    fn bodies_iter<'a>(&'a self) -> Box<Iterator<Item=&Body> + 'a> {
+    fn bodies_iter<'a>(&'a self) -> Box<Iterator<Item=&RigidBody> + 'a> {
         Box::new(self.registry.values())
     }
 
@@ -96,7 +96,7 @@ impl Collisions for SimpleCollisions {
         Box::new(self.static_registry.values())
     }
 
-    fn bodies_iter_mut<'a>(&'a mut self) -> Box<Iterator<Item=&mut Body> + 'a> {
+    fn bodies_iter_mut<'a>(&'a mut self) -> Box<Iterator<Item=&mut RigidBody> + 'a> {
         Box::new(self.registry.iter_mut().map(|(_, body)| body))
     }
 

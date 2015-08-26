@@ -1,11 +1,11 @@
 extern crate mach;
 
-use mach::core::{ Body, UID, State, StaticBody, Transform };
+use mach::core::{ RigidBody, UID, State, StaticBody, Transform };
 use mach::shapes::Shape;
 use mach::materials::Material;
 use mach::collisions::{ Contact, Collisions };
 
-fn verbose_format_body(body: &Body) -> String {
+fn verbose_format_body(body: &RigidBody) -> String {
     format!("{}, Shape={}", body, body.shape())
 }
 
@@ -39,7 +39,7 @@ impl<C: Collisions> Collisions for CollisionsMonitor<C> {
         return uid;
     }
 
-    fn find_body(&self, uid: UID) -> Option<&Body> {
+    fn find_body(&self, uid: UID) -> Option<&RigidBody> {
         self.0.find_body(uid)
     }
 
@@ -47,7 +47,7 @@ impl<C: Collisions> Collisions for CollisionsMonitor<C> {
         self.0.find_static_body(uid)
     }
 
-    fn find_body_mut(&mut self, uid: UID) -> Option<&mut Body> {
+    fn find_body_mut(&mut self, uid: UID) -> Option<&mut RigidBody> {
         self.0.find_body_mut(uid)
     }
 
@@ -55,7 +55,7 @@ impl<C: Collisions> Collisions for CollisionsMonitor<C> {
         self.0.find_static_body_mut(uid)
     }
 
-    fn bodies_iter<'a>(&'a self) -> Box<Iterator<Item=&Body> + 'a>{
+    fn bodies_iter<'a>(&'a self) -> Box<Iterator<Item=&RigidBody> + 'a>{
         self.0.bodies_iter()
     }
 
@@ -63,7 +63,7 @@ impl<C: Collisions> Collisions for CollisionsMonitor<C> {
         self.0.static_bodies_iter()
     }
 
-    fn bodies_iter_mut<'a>(&'a mut self) -> Box<Iterator<Item=&mut Body> + 'a>{
+    fn bodies_iter_mut<'a>(&'a mut self) -> Box<Iterator<Item=&mut RigidBody> + 'a>{
         self.0.bodies_iter_mut()
     }
 

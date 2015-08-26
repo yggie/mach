@@ -1,4 +1,4 @@
-use core::Body;
+use core::RigidBody;
 use maths::{ Vector, Quaternion };
 use dynamics::Dynamics;
 use collisions::{ Contact, Constraint, Collisions };
@@ -17,7 +17,7 @@ impl SimpleDynamics {
     }
 
     #[allow(non_snake_case)]
-    fn solve_for_contact(&mut self, body_0: &Body, body_1: &Body, contact: &Contact) -> ((Vector, Vector), (Vector, Vector)) {
+    fn solve_for_contact(&mut self, body_0: &RigidBody, body_1: &RigidBody, contact: &Contact) -> ((Vector, Vector), (Vector, Vector)) {
         // TODO compute dynamically
         let epsilon = 0.9;
         // body masses
@@ -54,7 +54,7 @@ impl SimpleDynamics {
     }
 
     #[allow(non_snake_case)]
-    fn solve_for_contact_with_static(&mut self, body_0: &Body, contact: &Contact) -> (Vector, Vector) {
+    fn solve_for_contact_with_static(&mut self, body_0: &RigidBody, contact: &Contact) -> (Vector, Vector) {
         // TODO compute dynamically
         let epsilon = 0.9;
         // relative vector from position to contact center

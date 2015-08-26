@@ -18,9 +18,11 @@ pub trait Dynamics {
     /// Steps the simulation forward in time by the specified amount.
     fn update<C: Collisions>(&mut self, &mut C, f32);
 
-    /// Returns the global gravitational force acting on the `Body` objects.
+    /// Returns the global gravitational force acting on the `RigidBody`
+    /// objects.
     fn gravity(&self) -> Vector;
 
-    /// Adjusts the global gravitational force acting on the `Body` objects.
+    /// Adjusts the global gravitational force acting on the `RigidBody`
+    /// objects.
     fn set_gravity(&mut self, Vector);
 }
