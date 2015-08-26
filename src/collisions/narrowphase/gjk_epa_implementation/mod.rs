@@ -62,6 +62,7 @@ impl GjkEpaImplementation {
 
             match GjkEpaImplementation::infer_contact_type(mapped_indices) {
                 ContactType::Vertex(vertex_index) => {
+                    println!("CONTACT VERTEX");
                     if i == 1 {
                         let correction = contact_normal * depth / 2.0;
                         contact_center = entities[1].vertex(vertex_index) + correction;

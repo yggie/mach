@@ -26,7 +26,7 @@ pub trait Shape: fmt::Display + 'static {
     fn volume(&self) -> f32;
 
     /// Returns the normalized inertia tensor for the shape.
-    fn inertia_tensor(&self) -> Matrix;
+    fn inertia(&self) -> Matrix;
 
     /// Obtains the vertex with the index specified.
     fn vertex(&self, usize) -> Vector;

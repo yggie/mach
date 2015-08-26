@@ -81,7 +81,7 @@ impl Shape for Cube {
         self.width * self.height * self.depth
     }
 
-    fn inertia_tensor(&self) -> Matrix {
+    fn inertia(&self) -> Matrix {
         let w2 = self.width*self.width;
         let h2 = self.height*self.height;
         let d2 = self.depth*self.depth;

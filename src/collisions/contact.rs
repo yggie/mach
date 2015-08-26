@@ -1,28 +1,28 @@
-use core::Handle;
+use core::UID;
 use maths::Vector;
 
-/// `ContactPair` holds information about the identities of the intersecting
-/// bodies.
+/// `Constraint` contains information regarding a constraint in a physical
+/// system.
 #[derive(Clone, Copy)]
-pub enum ContactPair<H: Handle> {
+pub enum Constraint {
     /// Represents a pair of bodies which both act as rigid bodies.
-    RigidRigid(H, H),
+    RigidRigid(UID, UID),
     /// Represents a pair of bodies in which one of them acts as a rigid body,
     /// and the other acts as a static body.
     RigidStatic {
-        /// The `ID` for the rigid body.
-        rigid_id: H,
-        /// The `ID` for the static body.
-        static_id: H
+        /// The `UID` for the rigid body.
+        rigid_id: UID,
+        /// The `UID` for the static body.
+        static_id: UID
     },
 }
 
 /// `Contact` holds contact information for two intersecting bodies.
 #[derive(Clone, Copy)]
-pub struct Contact<H: Handle> {
+pub struct Contact {
     /// The pair of identifiers along with type information associated with the
     /// contact.
-    pub ids: ContactPair<H>,
+    pub constraint: Constraint,
     /// The center of the contact.
     pub center: Vector,
     /// The surface normal of the contact.

@@ -1,21 +1,21 @@
 use std::fmt;
 
-use core::{ Handle, State, Transform };
+use core::{ UID, State, Transform };
 use maths::{ Matrix, Vector, Quaternion };
 use shapes::{ Shape, ShapeEntity };
 use materials::Material;
 
 /// Represents a physical entity in the world.
-pub struct Body<H: Handle> {
-    id: H,
+pub struct Body {
+    id: UID,
     shape: Box<Shape>,
     material: Box<Material>,
     state: State,
 }
 
-impl<H: Handle> Body<H> {
+impl Body {
     /// Creates a new instance of a Body object
-    pub fn new_with_id(id: H, shape: Box<Shape>, material: Box<Material>, state: State) -> Body<H> {
+    pub fn new_with_id(id: UID, shape: Box<Shape>, material: Box<Material>, state: State) -> Body {
         Body {
             id: id,
             shape: shape,
@@ -26,7 +26,7 @@ impl<H: Handle> Body<H> {
 
     /// Returns the handle associated with the `Body`.
     #[inline]
-    pub fn id(&self) -> H {
+    pub fn id(&self) -> UID {
         self.id
     }
 
@@ -120,10 +120,10 @@ impl<H: Handle> Body<H> {
     }
 }
 
-impl<H: Handle> ShapeEntity for Body<H> {
+impl ShapeEntity for Body {
     #[inline(always)]
     fn shape(&self) -> &Shape {
-        (self as &Body<H>).shape()
+        (self as &Body).shape()
     }
 
     fn transform(&self) -> Transform {
@@ -131,7 +131,7 @@ impl<H: Handle> ShapeEntity for Body<H> {
     }
 }
 
-impl<H: Handle> fmt::Display for Body<H> {
+impl fmt::Display for Body {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f,
             "Body[{}]: Pos={}, Rot={}, Vel={}, AngVel={}",

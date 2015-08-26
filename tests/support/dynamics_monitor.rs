@@ -33,9 +33,7 @@ impl<D: Dynamics> DynamicsMonitor<D> {
 }
 
 impl<D: Dynamics> Dynamics for DynamicsMonitor<D> {
-    type Identifier = D::Identifier;
-
-    fn update<C: Collisions<Identifier=Self::Identifier>>(&mut self, collisions: &mut C, time_step: f32) {
+    fn update<C: Collisions>(&mut self, collisions: &mut C, time_step: f32) {
         println!("[UPDATE] START step={}", time_step);
         self.dynamics.update(collisions, time_step);
 

@@ -13,7 +13,7 @@ fn assert_approximately_equal(a: Vector, b: Vector) {
     assert!(a.distance_to(b) < 0.01, format!("Expected {} to be approximately equal to {}", a, b));
 }
 
-pub fn defining_gravity<D: Dynamics<Identifier=usize>, F: FnOnce() -> D>(new_dynamics: F) {
+pub fn defining_gravity<D: Dynamics, F: FnOnce() -> D>(new_dynamics: F) {
     // SETUP
     let mut dynamics = new_dynamics();
 
@@ -24,7 +24,7 @@ pub fn defining_gravity<D: Dynamics<Identifier=usize>, F: FnOnce() -> D>(new_dyn
     assert_eq!(dynamics.gravity(), Vector::new(2.5, -2.5, 3.3));
 }
 
-pub fn moving_at_constant_velocity<D: Dynamics<Identifier=usize>, F: FnOnce() -> D>(new_dynamics: F) {
+pub fn moving_at_constant_velocity<D: Dynamics, F: FnOnce() -> D>(new_dynamics: F) {
     // SETUP
     let mut dynamics = DynamicsMonitor::new(new_dynamics());
     let mut space = &mut CollisionsMonitor::new(SimpleCollisions::new());
@@ -43,7 +43,7 @@ pub fn moving_at_constant_velocity<D: Dynamics<Identifier=usize>, F: FnOnce() ->
     assert_eq!(body.velocity(), Vector::new(1.0, -1.0, 0.5));
 }
 
-pub fn moving_at_constant_velocity_with_gravity<D: Dynamics<Identifier=usize>, F: FnOnce() -> D>(new_dynamics: F) {
+pub fn moving_at_constant_velocity_with_gravity<D: Dynamics, F: FnOnce() -> D>(new_dynamics: F) {
     // SETUP
     let mut dynamics = DynamicsMonitor::new(new_dynamics());
     let mut space = &mut CollisionsMonitor::new(SimpleCollisions::new());
@@ -62,7 +62,7 @@ pub fn moving_at_constant_velocity_with_gravity<D: Dynamics<Identifier=usize>, F
     assert_approximately_equal(body.velocity(), Vector::new(1.6, -1.4, 1.3));
 }
 
-pub fn moving_after_a_collision_without_rotation<D: Dynamics<Identifier=usize>, F: FnOnce() -> D>(new_dynamics: F) {
+pub fn moving_after_a_collision_without_rotation<D: Dynamics, F: FnOnce() -> D>(new_dynamics: F) {
     // SETUP
     let mut dynamics = DynamicsMonitor::new(new_dynamics());
     let mut space = &mut CollisionsMonitor::new(SimpleCollisions::new());

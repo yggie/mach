@@ -1,20 +1,20 @@
 use std::collections::HashMap;
 
-use core::{ Body, Handle, State, StaticBody, Transform };
+use core::{ Body, UID, State, StaticBody, Transform };
 use shapes::Shape;
 use materials::Material;
-use collisions::{ Collisions, Contact, ContactPair };
+use collisions::{ Collisions, Contact, Constraint };
 use collisions::narrowphase::GjkEpaImplementation;
 
-struct Detector<H: Handle> {
-    ids: [H; 2],
+struct Detector {
+    ids: [UID; 2],
     narrowphase: GjkEpaImplementation,
 }
 
-impl<H: Handle> Detector<H> {
-    fn new(handle_0: H, handle_1: H) -> Detector<H> {
+impl Detector {
+    fn new(uid_0: UID, uid_1: UID) -> Detector {
         Detector {
-            ids: [handle_0, handle_1],
+            ids: [uid_0, uid_1],
             narrowphase: GjkEpaImplementation,
         }
     }
@@ -22,11 +22,11 @@ impl<H: Handle> Detector<H> {
 
 /// A simple implementation for representing space in the simulation.
 pub struct SimpleCollisions {
-    registry: HashMap<usize, Body<usize>>,
-    static_registry: HashMap<usize, StaticBody<usize>>,
-    detectors: Vec<Detector<usize>>,
-    static_detectors: Vec<Detector<usize>>,
-    counter: usize,
+    registry: HashMap<UID, Body>,
+    static_registry: HashMap<UID, StaticBody>,
+    detectors: Vec<Detector>,
+    static_detectors: Vec<Detector>,
+    counter: UID,
 }
 
 impl SimpleCollisions {
@@ -41,16 +41,14 @@ impl SimpleCollisions {
         }
     }
 
-    fn generate_uid(&mut self) -> usize {
+    fn generate_uid(&mut self) -> UID {
         self.counter = self.counter + 1;
         self.counter
     }
 }
 
 impl Collisions for SimpleCollisions {
-    type Identifier = usize;
-
-    fn create_body<S: Shape, M: Material>(&mut self, shape: S, material: M, state: State) -> Self::Identifier {
+    fn create_body<S: Shape, M: Material>(&mut self, shape: S, material: M, state: State) -> UID {
         let new_uid = self.generate_uid();
         let new_body = Body::new_with_id(new_uid, Box::new(shape), Box::new(material), state);
 
@@ -62,7 +60,7 @@ impl Collisions for SimpleCollisions {
         return new_uid;
     }
 
-    fn create_static_body<S: Shape, M: Material>(&mut self, shape: S, material: M, transform: Transform) -> Self::Identifier {
+    fn create_static_body<S: Shape, M: Material>(&mut self, shape: S, material: M, transform: Transform) -> UID {
         let new_uid = self.generate_uid();
         let new_static_body = StaticBody::new_with_id(new_uid, Box::new(shape), Box::new(material), transform);
 
@@ -74,31 +72,35 @@ impl Collisions for SimpleCollisions {
         return new_uid;
     }
 
-    fn find_body(&self, uid: Self::Identifier) -> Option<&Body<Self::Identifier>> {
+    fn find_body(&self, uid: UID) -> Option<&Body> {
         self.registry.get(&uid)
     }
 
-    fn find_static_body(&self, uid: Self::Identifier) -> Option<&StaticBody<Self::Identifier>> {
+    fn find_static_body(&self, uid: UID) -> Option<&StaticBody> {
         self.static_registry.get(&uid)
     }
 
-    fn find_body_mut(&mut self, uid: Self::Identifier) -> Option<&mut Body<Self::Identifier>> {
+    fn find_body_mut(&mut self, uid: UID) -> Option<&mut Body> {
         self.registry.get_mut(&uid)
     }
 
-    fn bodies_iter<'a>(&'a self) -> Box<Iterator<Item=&Body<Self::Identifier>> + 'a> {
+    fn find_static_body_mut(&mut self, uid: UID) -> Option<&mut StaticBody> {
+        self.static_registry.get_mut(&uid)
+    }
+
+    fn bodies_iter<'a>(&'a self) -> Box<Iterator<Item=&Body> + 'a> {
         Box::new(self.registry.values())
     }
 
-    fn static_bodies_iter<'a>(&'a self) -> Box<Iterator<Item=&StaticBody<Self::Identifier>> + 'a> {
+    fn static_bodies_iter<'a>(&'a self) -> Box<Iterator<Item=&StaticBody> + 'a> {
         Box::new(self.static_registry.values())
     }
 
-    fn bodies_iter_mut<'a>(&'a mut self) -> Box<Iterator<Item=&mut Body<Self::Identifier>> + 'a> {
+    fn bodies_iter_mut<'a>(&'a mut self) -> Box<Iterator<Item=&mut Body> + 'a> {
         Box::new(self.registry.iter_mut().map(|(_, body)| body))
     }
 
-    fn find_contacts(&self) -> Vec<Contact<Self::Identifier>> {
+    fn find_contacts(&self) -> Option<Vec<Contact>> {
         let mut contacts = Vec::new();
 
         for detector in self.detectors.iter() {
@@ -108,7 +110,7 @@ impl Collisions for SimpleCollisions {
             if let Some(intersection) = detector.narrowphase.find_intersection(body_0, body_1) {
                 contacts.push(
                     Contact {
-                        ids: ContactPair::RigidRigid(body_0.id(), body_1.id()),
+                        constraint: Constraint::RigidRigid(body_0.id(), body_1.id()),
                         center: intersection.point(),
                         normal: intersection.normal(),
                     }
@@ -123,7 +125,7 @@ impl Collisions for SimpleCollisions {
             if let Some(intersection) = detector.narrowphase.find_intersection(rigid_body, static_body) {
                 contacts.push(
                     Contact {
-                        ids: ContactPair::RigidStatic {
+                        constraint: Constraint::RigidStatic {
                             rigid_id: rigid_body.id(),
                             static_id: static_body.id(),
                         },
@@ -134,6 +136,10 @@ impl Collisions for SimpleCollisions {
             }
         }
 
-        return contacts;
+        if contacts.len() > 0 {
+            return Some(contacts);
+        } else {
+            return None;
+        }
     }
 }

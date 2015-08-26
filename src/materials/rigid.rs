@@ -41,7 +41,7 @@ impl Material for Rigid {
     }
 
     fn inertia_for(&self, shape: &Shape) -> Matrix {
-        shape.inertia_tensor() * self.mass_of(shape)
+        shape.inertia() * self.mass_of(shape)
     }
 
     /// Returns the pre-defined density.

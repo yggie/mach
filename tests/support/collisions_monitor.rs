@@ -1,15 +1,15 @@
 extern crate mach;
 
-use mach::core::{ Body, Handle, State, StaticBody, Transform };
+use mach::core::{ Body, UID, State, StaticBody, Transform };
 use mach::shapes::Shape;
 use mach::materials::Material;
 use mach::collisions::{ Contact, Collisions };
 
-fn verbose_format_body<H: Handle>(body: &Body<H>) -> String {
+fn verbose_format_body(body: &Body) -> String {
     format!("{}, Shape={}", body, body.shape())
 }
 
-fn verbose_format_static_body<H: Handle>(static_body: &StaticBody<H>) -> String {
+fn verbose_format_static_body(static_body: &StaticBody) -> String {
     format!("{}, Shape={}", static_body, static_body.shape())
 }
 
@@ -25,47 +25,49 @@ impl<C: Collisions> CollisionsMonitor<C> {
 }
 
 impl<C: Collisions> Collisions for CollisionsMonitor<C> {
-    type Identifier = C::Identifier;
-
-    fn create_body<S: Shape, M: Material>(&mut self, shape: S, material: M, state: State) -> Self::Identifier {
+    fn create_body<S: Shape, M: Material>(&mut self, shape: S, material: M, state: State) -> UID {
         let uid = self.0.create_body(shape, material, state);
         let body = self.0.find_body(uid).unwrap();
         println!("[CREATE] {}", verbose_format_body(body));
         return uid;
     }
 
-    fn create_static_body<S: Shape, M: Material>(&mut self, shape: S, material: M, transform: Transform) -> Self::Identifier {
+    fn create_static_body<S: Shape, M: Material>(&mut self, shape: S, material: M, transform: Transform) -> UID {
         let uid = self.0.create_static_body(shape, material, transform);
         let static_body = self.0.find_static_body(uid).unwrap();
         println!("[CREATE] {}", verbose_format_static_body(static_body));
         return uid;
     }
 
-    fn find_body(&self, uid: Self::Identifier) -> Option<&Body<Self::Identifier>> {
+    fn find_body(&self, uid: UID) -> Option<&Body> {
         self.0.find_body(uid)
     }
 
-    fn find_static_body(&self, uid: Self::Identifier) -> Option<&StaticBody<Self::Identifier>> {
+    fn find_static_body(&self, uid: UID) -> Option<&StaticBody> {
         self.0.find_static_body(uid)
     }
 
-    fn find_body_mut(&mut self, uid: Self::Identifier) -> Option<&mut Body<Self::Identifier>> {
+    fn find_body_mut(&mut self, uid: UID) -> Option<&mut Body> {
         self.0.find_body_mut(uid)
     }
 
-    fn bodies_iter<'a>(&'a self) -> Box<Iterator<Item=&Body<Self::Identifier>> + 'a>{
+    fn find_static_body_mut(&mut self, uid: UID) -> Option<&mut StaticBody> {
+        self.0.find_static_body_mut(uid)
+    }
+
+    fn bodies_iter<'a>(&'a self) -> Box<Iterator<Item=&Body> + 'a>{
         self.0.bodies_iter()
     }
 
-    fn static_bodies_iter<'a>(&'a self) -> Box<Iterator<Item=&StaticBody<Self::Identifier>> + 'a>{
+    fn static_bodies_iter<'a>(&'a self) -> Box<Iterator<Item=&StaticBody> + 'a>{
         self.0.static_bodies_iter()
     }
 
-    fn bodies_iter_mut<'a>(&'a mut self) -> Box<Iterator<Item=&mut Body<Self::Identifier>> + 'a>{
+    fn bodies_iter_mut<'a>(&'a mut self) -> Box<Iterator<Item=&mut Body> + 'a>{
         self.0.bodies_iter_mut()
     }
 
-    fn find_contacts(&self) -> Vec<Contact<Self::Identifier>> {
+    fn find_contacts(&self) -> Option<Vec<Contact>> {
         self.0.find_contacts()
     }
 }

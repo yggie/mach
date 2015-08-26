@@ -1,23 +1,23 @@
 use std::fmt::{ Display, Formatter, Result };
 
-use core::{ Handle, Transform };
+use core::{ UID, Transform };
 use maths::{ Vector, Quaternion };
 use shapes::{ Shape, ShapeEntity };
 use materials::Material;
 
 /// Represents a physical entity which cannot move. Within the engine, the
 /// object is simply treated as if it has infinite mass.
-pub struct StaticBody<H: Handle> {
-    id: H,
+pub struct StaticBody {
+    id: UID,
     shape: Box<Shape>,
     material: Box<Material>,
     transform: Transform,
 }
 
-impl<H: Handle> StaticBody<H> {
+impl StaticBody {
     /// Creates a new `StaticBody` instance using the components provided to
     /// construct the entity.
-    pub fn new_with_id(id: H, shape: Box<Shape>, material: Box<Material>, transform: Transform) -> StaticBody<H> {
+    pub fn new_with_id(id: UID, shape: Box<Shape>, material: Box<Material>, transform: Transform) -> StaticBody {
         StaticBody {
             id: id,
             shape: shape,
@@ -28,7 +28,7 @@ impl<H: Handle> StaticBody<H> {
 
     /// Returns the identifier for the `StaticBody` instance.
     #[inline]
-    pub fn id(&self) -> H {
+    pub fn id(&self) -> UID {
         self.id
     }
 
@@ -57,18 +57,18 @@ impl<H: Handle> StaticBody<H> {
     }
 }
 
-impl<H: Handle> ShapeEntity for StaticBody<H> {
+impl ShapeEntity for StaticBody {
     #[inline(always)]
     fn shape(&self) -> &Shape {
-        (self as &StaticBody<H>).shape()
+        (self as &StaticBody).shape()
     }
 
     fn transform(&self) -> Transform {
-        *(self as &StaticBody<H>).transform()
+        *(self as &StaticBody).transform()
     }
 }
 
-impl<H: Handle> Display for StaticBody<H> {
+impl Display for StaticBody {
     fn fmt(&self, f: &mut Formatter) -> Result {
         write!(f,
             "StaticBody[{}]: Pos={}, Rot={}",

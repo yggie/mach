@@ -1,9 +1,9 @@
-use mach::core::State;
+use mach::core::{ State, UID };
 use mach::shapes::Cube;
 use mach::materials::Rigid;
 use mach::collisions::Collisions;
 
-pub fn creating_a_rigid_body<C: Collisions<Identifier=usize>, F: FnOnce() -> C>(new_collisions: F) {
+pub fn creating_a_rigid_body<C: Collisions, F: FnOnce() -> C>(new_collisions: F) {
     let mut collisions = new_collisions();
     let shape = Cube::new(1.0, 1.0, 1.0);
     let material = Rigid::new(3.0);
@@ -13,7 +13,7 @@ pub fn creating_a_rigid_body<C: Collisions<Identifier=usize>, F: FnOnce() -> C>(
     assert!(collisions.find_body(uid).is_some());
 }
 
-pub fn finding_a_body_with_a_handle<C: Collisions<Identifier=usize>, F: FnOnce() -> C>(new_collisions: F) {
+pub fn finding_a_body_with_a_handle<C: Collisions, F: FnOnce() -> C>(new_collisions: F) {
     let mut collisions = new_collisions();
     let shape = Cube::new(1.0, 1.0, 1.0);
     let material = Rigid::new(3.0);
@@ -26,7 +26,7 @@ pub fn finding_a_body_with_a_handle<C: Collisions<Identifier=usize>, F: FnOnce()
     assert_eq!(body.unwrap().id(), uid);
 }
 
-pub fn mutably_finding_a_body_with_a_handle<C: Collisions<Identifier=usize>, F: FnOnce() -> C>(new_collisions: F) {
+pub fn mutably_finding_a_body_with_a_handle<C: Collisions, F: FnOnce() -> C>(new_collisions: F) {
     let mut collisions = new_collisions();
     let shape = Cube::new(1.0, 1.0, 1.0);
     let material = Rigid::new(3.0);
@@ -39,7 +39,7 @@ pub fn mutably_finding_a_body_with_a_handle<C: Collisions<Identifier=usize>, F: 
     assert_eq!(body.unwrap().id(), uid);
 }
 
-pub fn iterating_over_bodies<C: Collisions<Identifier=usize>, F: FnOnce() -> C>(new_collisions: F) {
+pub fn iterating_over_bodies<C: Collisions, F: FnOnce() -> C>(new_collisions: F) {
     let mut collisions = new_collisions();
     let shape = Cube::new(1.0, 1.0, 1.0);
     let material = Rigid::new(3.0);
@@ -49,7 +49,7 @@ pub fn iterating_over_bodies<C: Collisions<Identifier=usize>, F: FnOnce() -> C>(
         collisions.create_body(shape.clone(), material, State::new_stationary()),
     );
 
-    let mut iterated_uids: Vec<usize> = collisions.bodies_iter()
+    let mut iterated_uids: Vec<UID> = collisions.bodies_iter()
         .map(|body| body.id())
         .collect();
 
@@ -60,7 +60,7 @@ pub fn iterating_over_bodies<C: Collisions<Identifier=usize>, F: FnOnce() -> C>(
     }
 }
 
-pub fn mutably_iterating_over_bodies<C: Collisions<Identifier=usize>, F: FnOnce() -> C>(new_collisions: F) {
+pub fn mutably_iterating_over_bodies<C: Collisions, F: FnOnce() -> C>(new_collisions: F) {
     let mut collisions = new_collisions();
     let shape = Cube::new(1.0, 1.0, 1.0);
     let material = Rigid::new(3.0);
@@ -70,7 +70,7 @@ pub fn mutably_iterating_over_bodies<C: Collisions<Identifier=usize>, F: FnOnce(
         collisions.create_body(shape.clone(), material, State::new_stationary()),
     );
 
-    let mut iterated_uids: Vec<usize> = collisions.bodies_iter_mut()
+    let mut iterated_uids: Vec<UID> = collisions.bodies_iter_mut()
         .map(|body| body.id())
         .collect();
 
