@@ -1,3 +1,5 @@
+use std::rc::Rc;
+use std::cell::{ Ref, RefCell, RefMut };
 use std::collections::HashMap;
 
 use core::{ RigidBody, UID, State, StaticBody, Transform };
@@ -22,8 +24,8 @@ impl Detector {
 
 /// A simple implementation for representing space in the simulation.
 pub struct SimpleCollisions {
-    registry: HashMap<UID, RigidBody>,
-    static_registry: HashMap<UID, StaticBody>,
+    registry: HashMap<UID, Rc<RefCell<RigidBody>>>,
+    static_registry: HashMap<UID, Rc<RefCell<StaticBody>>>,
     detectors: Vec<Detector>,
     static_detectors: Vec<Detector>,
     counter: UID,
@@ -56,7 +58,7 @@ impl Collisions for SimpleCollisions {
             self.detectors.push(Detector::new(uid, new_uid));
         }
 
-        self.registry.insert(new_uid, new_body);
+        self.registry.insert(new_uid, Rc::new(RefCell::new(new_body)));
         return new_uid;
     }
 
@@ -68,44 +70,44 @@ impl Collisions for SimpleCollisions {
             self.static_detectors.push(Detector::new(uid, new_uid));
         }
 
-        self.static_registry.insert(new_uid, new_static_body);
+        self.static_registry.insert(new_uid, Rc::new(RefCell::new(new_static_body)));
         return new_uid;
     }
 
-    fn find_body(&self, uid: UID) -> Option<&RigidBody> {
-        self.registry.get(&uid)
+    fn find_body(&self, uid: UID) -> Option<Ref<RigidBody>> {
+        self.registry.get(&uid).map(|cell| cell.borrow())
     }
 
-    fn find_static_body(&self, uid: UID) -> Option<&StaticBody> {
-        self.static_registry.get(&uid)
+    fn find_static_body(&self, uid: UID) -> Option<Ref<StaticBody>> {
+        self.static_registry.get(&uid).map(|cell| cell.borrow())
     }
 
-    fn find_body_mut(&mut self, uid: UID) -> Option<&mut RigidBody> {
-        self.registry.get_mut(&uid)
+    fn find_body_mut(&mut self, uid: UID) -> Option<RefMut<RigidBody>> {
+        self.registry.get_mut(&uid).map(|cell| cell.borrow_mut())
     }
 
-    fn find_static_body_mut(&mut self, uid: UID) -> Option<&mut StaticBody> {
-        self.static_registry.get_mut(&uid)
+    fn find_static_body_mut(&mut self, uid: UID) -> Option<RefMut<StaticBody>> {
+        self.static_registry.get_mut(&uid).map(|cell| cell.borrow_mut())
     }
 
-    fn bodies_iter<'a>(&'a self) -> Box<Iterator<Item=&RigidBody> + 'a> {
-        Box::new(self.registry.values())
+    fn bodies_iter<'a>(&'a self) -> Box<Iterator<Item=Ref<RigidBody>> + 'a> {
+        Box::new(self.registry.values().map(|cell| cell.borrow()))
     }
 
-    fn static_bodies_iter<'a>(&'a self) -> Box<Iterator<Item=&StaticBody> + 'a> {
-        Box::new(self.static_registry.values())
+    fn static_bodies_iter<'a>(&'a self) -> Box<Iterator<Item=Ref<StaticBody>> + 'a> {
+        Box::new(self.static_registry.values().map(|cell| cell.borrow()))
     }
 
-    fn bodies_iter_mut<'a>(&'a mut self) -> Box<Iterator<Item=&mut RigidBody> + 'a> {
-        Box::new(self.registry.iter_mut().map(|(_, body)| body))
+    fn bodies_iter_mut<'a>(&'a mut self) -> Box<Iterator<Item=RefMut<RigidBody>> + 'a> {
+        Box::new(self.registry.iter_mut().map(|(_, cell)| cell.borrow_mut()))
     }
 
     fn find_contacts(&self) -> Option<Vec<Contact>> {
         let mut contacts = Vec::new();
 
         for detector in self.detectors.iter() {
-            let body_0 = self.find_body(detector.ids[0]).unwrap();
-            let body_1 = self.find_body(detector.ids[1]).unwrap();
+            let body_0 = &*self.find_body(detector.ids[0]).unwrap();
+            let body_1 = &*self.find_body(detector.ids[1]).unwrap();
 
             if let Some(intersection) = detector.narrowphase.find_intersection(body_0, body_1) {
                 contacts.push(
@@ -119,8 +121,8 @@ impl Collisions for SimpleCollisions {
         }
 
         for detector in self.static_detectors.iter() {
-            let rigid_body = self.find_body(detector.ids[0]).unwrap();
-            let static_body = self.find_static_body(detector.ids[1]).unwrap();
+            let rigid_body = &*self.find_body(detector.ids[0]).unwrap();
+            let static_body = &*self.find_static_body(detector.ids[1]).unwrap();
 
             if let Some(intersection) = detector.narrowphase.find_intersection(rigid_body, static_body) {
                 contacts.push(

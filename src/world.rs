@@ -1,3 +1,5 @@
+use std::cell::Ref;
+
 use core::{ RigidBody, UID, State, Transform };
 use maths::Vector;
 use shapes::Shape;
@@ -40,13 +42,13 @@ impl<C: Collisions, D: Dynamics> World<C, D> {
     /// identifier specified and returns a reference to the `RigidBody` if
     /// found.
     #[inline(always)]
-    pub fn find_body(&mut self, uid: UID) -> Option<&RigidBody> {
+    pub fn find_body(&mut self, uid: UID) -> Option<Ref<RigidBody>> {
         self.collisions.find_body(uid)
     }
 
     /// Returns an iterator over unique `RigidBody` instances in the `World`.
     #[inline(always)]
-    pub fn bodies_iter<'a>(&'a self) -> Box<Iterator<Item=&RigidBody> + 'a> {
+    pub fn bodies_iter<'a>(&'a self) -> Box<Iterator<Item=Ref<RigidBody>> + 'a> {
         self.collisions.bodies_iter()
     }
 

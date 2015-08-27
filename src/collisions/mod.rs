@@ -2,6 +2,8 @@
 //! physics engine. It contains subcomponents to handle storage, retrieval and
 //! queries for physical bodies.
 
+use std::cell::{ Ref, RefMut };
+
 use shapes::Shape;
 use materials::Material;
 use core::{ RigidBody, UID, State, StaticBody, Transform };
@@ -25,33 +27,33 @@ pub trait Collisions {
 
     /// Searches the data structure for a matching `RigidBody` instance with the
     /// identifier specified and returns a reference to the `RigidBody` if found.
-    fn find_body(&self, UID) -> Option<&RigidBody>;
+    fn find_body(&self, UID) -> Option<Ref<RigidBody>>;
 
     /// Returns the `StaticBody` instance associated with the identifier
     /// provided.
-    fn find_static_body(&self, UID) -> Option<&StaticBody>;
+    fn find_static_body(&self, UID) -> Option<Ref<StaticBody>>;
 
     /// Searches the data structure for a matching `RigidBody` instance with the
     /// identifier specified and returns a mutable reference to the `RigidBody`
     /// if found.
-    fn find_body_mut(&mut self, UID) -> Option<&mut RigidBody>;
+    fn find_body_mut(&mut self, UID) -> Option<RefMut<RigidBody>>;
 
     /// Searches the data structure for a matching `StaticBody` instance with
     /// the identifier specified and returns a mutable reference to the
     /// `StaticBody` if found.
-    fn find_static_body_mut(&mut self, UID) -> Option<&mut StaticBody>;
+    fn find_static_body_mut(&mut self, UID) -> Option<RefMut<StaticBody>>;
 
     /// Returns an iterator over unique `RigidBody` instances managed by this
     /// object.
-    fn bodies_iter<'a>(&'a self) -> Box<Iterator<Item=&RigidBody> + 'a>;
+    fn bodies_iter<'a>(&'a self) -> Box<Iterator<Item=Ref<RigidBody>> + 'a>;
 
     /// Returns an iterator over unique `StaticBody` instances managed by this
     /// object.
-    fn static_bodies_iter<'a>(&'a self) -> Box<Iterator<Item=&StaticBody> + 'a>;
+    fn static_bodies_iter<'a>(&'a self) -> Box<Iterator<Item=Ref<StaticBody>> + 'a>;
 
     /// Returns an iterator over unique `RigidBody` instances managed by this
     /// object.  This iterator allows mutation of the `RigidBody` objects.
-    fn bodies_iter_mut<'a>(&'a mut self) -> Box<Iterator<Item=&mut RigidBody> + 'a>;
+    fn bodies_iter_mut<'a>(&'a mut self) -> Box<Iterator<Item=RefMut<RigidBody>> + 'a>;
 
     /// Computes all the contacts between bodies managed by this object.
     fn find_contacts(&self) -> Option<Vec<Contact>>;

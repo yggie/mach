@@ -38,7 +38,8 @@ impl<D: Dynamics> Dynamics for DynamicsMonitor<D> {
         self.dynamics.update(collisions, time_step);
 
         let total_energy = collisions.bodies_iter()
-            .fold(0.0, |cumulative_energy, body| {
+            .fold(0.0, |cumulative_energy, cell| {
+                let body = &*cell;
                 let kinetic_energy = 0.5 * body.mass() * body.velocity().length_sq();
                 let potential_energy = body.mass() * body.position().dot(self.gravity());
 
@@ -47,7 +48,7 @@ impl<D: Dynamics> Dynamics for DynamicsMonitor<D> {
             });
 
         for static_body in collisions.static_bodies_iter() {
-            println!("[UPDATE] {}", static_body);
+            println!("[UPDATE] {}", &*static_body);
         }
 
         if total_energy > self.previous_total_energy {

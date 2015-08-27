@@ -1,4 +1,4 @@
-use core::RigidBody;
+use core::UID;
 use maths::{ Vector, Quaternion };
 use dynamics::Dynamics;
 use collisions::{ Contact, Constraint, Collisions };
@@ -17,7 +17,10 @@ impl SimpleDynamics {
     }
 
     #[allow(non_snake_case)]
-    fn solve_for_contact(&mut self, body_0: &RigidBody, body_1: &RigidBody, contact: &Contact) -> ((Vector, Vector), (Vector, Vector)) {
+    fn solve_for_contact<C: Collisions>(&mut self, collisions: &C, uid_0: UID, uid_1: UID, contact: &Contact) -> ((Vector, Vector), (Vector, Vector)) {
+        let body_0 = collisions.find_body(uid_0).expect("A RigidBody went missing!");
+        let body_1 = collisions.find_body(uid_1).expect("A RigidBody went missing!");
+
         // TODO compute dynamically
         let epsilon = 1.0;
         // body masses
@@ -54,27 +57,37 @@ impl SimpleDynamics {
     }
 
     #[allow(non_snake_case)]
-    fn solve_for_contact_with_static(&mut self, body_0: &RigidBody, contact: &Contact) -> (Vector, Vector) {
+    fn solve_for_contact_with_static<C: Collisions>(&mut self, collisions: &C, rigid_body_uid: UID, contact: &Contact) -> (Vector, Vector) {
+        let rigid_body = collisions.find_body(rigid_body_uid).expect("A RigidBody went missing!");
+
         // TODO compute dynamically
         let epsilon = 1.0;
         // relative vector from position to contact center
-        let to_contact_center = contact.center - body_0.position();
+        let to_contact_center = contact.center - rigid_body.position();
         // axis of rotation for the impulse introduced by the contact. The axis
         // has been scaled by the distance to the contact.
         let k_scaled = to_contact_center.cross(contact.normal);
 
-        let v = body_0.velocity();
-        let w = body_0.angular_velocity();
-        let Jinv = body_0.inertia().inverse();
+        let v = rigid_body.velocity();
+        let w = rigid_body.angular_velocity();
+        let Jinv = rigid_body.inertia().inverse();
 
         let impulse = - (1.0 + epsilon) *
             (contact.normal.dot(v) + w.dot(k_scaled)) /
-            (1.0/body_0.mass() + k_scaled.dot(Jinv*k_scaled));
+            (1.0/rigid_body.mass() + k_scaled.dot(Jinv*k_scaled));
 
         let velocity_change = contact.normal * impulse;
         let angular_velocity_change = Jinv*to_contact_center.cross(velocity_change);
 
         return (velocity_change, angular_velocity_change);
+    }
+
+    fn update_rigid_body<C: Collisions>(&self, collisions: &mut C, uid: UID, change: (Vector, Vector)) {
+        let mut rigid_body = collisions.find_body_mut(uid).unwrap();
+        let v = rigid_body.velocity();
+        let w = rigid_body.angular_velocity();
+        rigid_body.set_velocity_with_vector(v + change.0);
+        rigid_body.set_angular_velocity_with_vector(w + change.1);
     }
 }
 
@@ -87,65 +100,24 @@ impl Dynamics for SimpleDynamics {
             let contact = contacts[0];
 
             match contact.constraint {
-                Constraint::RigidRigid(id_0, id_1) => {
-                    let dv_0: Vector;
-                    let dw_0: Vector;
-                    let dv_1: Vector;
-                    let dw_1: Vector;
+                Constraint::RigidRigid(uid_0, uid_1) => {
+                    let (change_0, change_1) = self.solve_for_contact(collisions, uid_0, uid_1, &contact);
 
-                    {
-                        let body_0 = collisions.find_body(id_0).expect("A RigidBody went missing!");
-                        let body_1 = collisions.find_body(id_1).expect("A RigidBody went missing!");
-
-                        let tup = self.solve_for_contact(body_0, body_1, &contact);
-
-                        dv_0 = (tup.0).0;
-                        dw_0 = (tup.0).1;
-                        dv_1 = (tup.1).0;
-                        dw_1 = (tup.1).1;
-                    }
-
-                    {
-                        let body_0 = collisions.find_body_mut(id_0).unwrap();
-                        let v = body_0.velocity();
-                        let w = body_0.angular_velocity();
-                        body_0.set_velocity_with_vector(v + dv_0);
-                        body_0.set_angular_velocity_with_vector(w + dw_0);
-                    }
-
-                    {
-                        let body_1 = collisions.find_body_mut(id_1).unwrap();
-                        let v = body_1.velocity();
-                        let w = body_1.angular_velocity();
-                        body_1.set_velocity_with_vector(v + dv_1);
-                        body_1.set_angular_velocity_with_vector(w + dw_1);
-                    }
+                    self.update_rigid_body(collisions, uid_0, change_0);
+                    self.update_rigid_body(collisions, uid_1, change_1);
                 },
 
                 Constraint::RigidStatic { rigid_id, static_id: _ } => {
-                    let dv: Vector;
-                    let dw: Vector;
+                    let change = self.solve_for_contact_with_static(collisions, rigid_id, &contact);
 
-                    {
-                        let rigid_body = collisions.find_body(rigid_id).expect("A RigidBody went missing!");
-
-                        let tup = self.solve_for_contact_with_static(rigid_body, &contact);
-                        dv = tup.0;
-                        dw = tup.1;
-                    }
-
-                    let rigid_body = collisions.find_body_mut(rigid_id).expect("A RigidBody went missing!");
-                    let v = rigid_body.velocity();
-                    let w = rigid_body.angular_velocity();
-                    rigid_body.set_velocity_with_vector(v + dv);
-                    rigid_body.set_angular_velocity_with_vector(w + dw);
+                    self.update_rigid_body(collisions, rigid_id, change);
                 },
             }
         }
 
 
         let scaled_gravity = self.gravity * time_step;
-        for body in collisions.bodies_iter_mut() {
+        for mut body in collisions.bodies_iter_mut() {
             // TODO deal with temporaries
             let t = time_step;
             let p = body.position();
