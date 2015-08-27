@@ -19,7 +19,7 @@ impl SimpleDynamics {
     #[allow(non_snake_case)]
     fn solve_for_contact(&mut self, body_0: &RigidBody, body_1: &RigidBody, contact: &Contact) -> ((Vector, Vector), (Vector, Vector)) {
         // TODO compute dynamically
-        let epsilon = 0.9;
+        let epsilon = 1.0;
         // body masses
         let M = [body_0.mass(), body_1.mass()];
         let Jinv = [body_0.inertia().inverse(), body_1.inertia().inverse()];
@@ -56,7 +56,7 @@ impl SimpleDynamics {
     #[allow(non_snake_case)]
     fn solve_for_contact_with_static(&mut self, body_0: &RigidBody, contact: &Contact) -> (Vector, Vector) {
         // TODO compute dynamically
-        let epsilon = 0.9;
+        let epsilon = 1.0;
         // relative vector from position to contact center
         let to_contact_center = contact.center - body_0.position();
         // axis of rotation for the impulse introduced by the contact. The axis
@@ -150,8 +150,9 @@ impl Dynamics for SimpleDynamics {
             let t = time_step;
             let p = body.position();
             let v = body.velocity();
-            body.set_position_with_vector(p + v * t);
-            body.set_velocity_with_vector(v + scaled_gravity);
+            let new_velocity = v + scaled_gravity;
+            body.set_velocity_with_vector(new_velocity);
+            body.set_position_with_vector(p + new_velocity * t);
 
             let w = body.angular_velocity();
             let w_as_quat = Quaternion::new(0.0, w[0] * t, w[1] * t, w[2] * t);
