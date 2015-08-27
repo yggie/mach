@@ -5,7 +5,7 @@ use std::collections::HashMap;
 use core::{ RigidBody, UID, State, StaticBody, Transform };
 use shapes::Shape;
 use materials::Material;
-use collisions::{ Collisions, Contact, Constraint };
+use collisions::{ Collisions, Constraint };
 use collisions::narrowphase::GjkEpaImplementation;
 
 struct Detector {
@@ -102,19 +102,19 @@ impl Collisions for SimpleCollisions {
         Box::new(self.registry.iter_mut().map(|(_, cell)| cell.borrow_mut()))
     }
 
-    fn find_contacts(&self) -> Option<Vec<Contact>> {
-        let mut contacts = Vec::new();
+    fn find_constraints(&self) -> Option<Vec<Constraint>> {
+        let mut constraints = Vec::new();
 
         for detector in self.detectors.iter() {
             let body_0 = &*self.find_body(detector.ids[0]).unwrap();
             let body_1 = &*self.find_body(detector.ids[1]).unwrap();
 
             if let Some(intersection) = detector.narrowphase.find_intersection(body_0, body_1) {
-                contacts.push(
-                    Contact {
-                        constraint: Constraint::RigidRigid(body_0.id(), body_1.id()),
-                        center: intersection.point(),
-                        normal: intersection.normal(),
+                constraints.push(
+                    Constraint::RigidRigid {
+                        uids: (body_0.id(), body_1.id()),
+                        contact_center: intersection.point(),
+                        contact_normal: intersection.normal(),
                     }
                 );
             }
@@ -125,21 +125,19 @@ impl Collisions for SimpleCollisions {
             let static_body = &*self.find_static_body(detector.ids[1]).unwrap();
 
             if let Some(intersection) = detector.narrowphase.find_intersection(rigid_body, static_body) {
-                contacts.push(
-                    Contact {
-                        constraint: Constraint::RigidStatic {
-                            rigid_id: rigid_body.id(),
-                            static_id: static_body.id(),
-                        },
-                        center: intersection.point(),
-                        normal: intersection.normal(),
+                constraints.push(
+                    Constraint::RigidStatic {
+                        rigid_uid: rigid_body.id(),
+                        static_uid: static_body.id(),
+                        contact_center: intersection.point(),
+                        contact_normal: intersection.normal(),
                     }
                 );
             }
         }
 
-        if contacts.len() > 0 {
-            return Some(contacts);
+        if constraints.len() > 0 {
+            return Some(constraints);
         } else {
             return None;
         }
