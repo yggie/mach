@@ -1,4 +1,4 @@
-use core::UID;
+use core::RigidBody;
 use maths::{ Vector, Quaternion };
 use dynamics::Dynamics;
 use collisions::{ Constraint, Collisions };
@@ -17,10 +17,7 @@ impl SimpleDynamics {
     }
 
     #[allow(non_snake_case)]
-    fn solve_for_contact<C: Collisions>(&mut self, collisions: &C, uids: (UID, UID), contact_center: Vector, contact_normal: Vector) -> ((Vector, Vector), (Vector, Vector)) {
-        let body_0 = collisions.find_body(uids.0).expect("A RigidBody went missing!");
-        let body_1 = collisions.find_body(uids.1).expect("A RigidBody went missing!");
-
+    fn solve_for_contact(&mut self, body_0: &RigidBody, body_1: &RigidBody, contact_center: Vector, contact_normal: Vector) -> ((Vector, Vector), (Vector, Vector)) {
         // TODO compute dynamically
         let epsilon = 1.0;
         // body masses
@@ -57,9 +54,7 @@ impl SimpleDynamics {
     }
 
     #[allow(non_snake_case)]
-    fn solve_for_contact_with_static<C: Collisions>(&mut self, collisions: &C, rigid_body_uid: UID, contact_center: Vector, contact_normal: Vector) -> (Vector, Vector) {
-        let rigid_body = collisions.find_body(rigid_body_uid).expect("A RigidBody went missing!");
-
+    fn solve_for_contact_with_static(&mut self, rigid_body: &RigidBody, contact_center: Vector, contact_normal: Vector) -> (Vector, Vector) {
         // TODO compute dynamically
         let epsilon = 1.0;
         // relative vector from position to contact center
@@ -82,8 +77,7 @@ impl SimpleDynamics {
         return (velocity_change, angular_velocity_change);
     }
 
-    fn update_rigid_body<C: Collisions>(&self, collisions: &mut C, uid: UID, change: (Vector, Vector)) {
-        let mut rigid_body = collisions.find_body_mut(uid).unwrap();
+    fn update_rigid_body(&self, rigid_body: &mut RigidBody, change: (Vector, Vector)) {
         let v = rigid_body.velocity();
         let w = rigid_body.angular_velocity();
         rigid_body.set_velocity_with_vector(v + change.0);
@@ -96,22 +90,35 @@ impl Dynamics for SimpleDynamics {
         if let Some(constraints) = collisions.find_constraints() {
             println!("CONSTRAINTS FOUND ({})", constraints.len());
 
-            let constraints: Vec<Constraint> = constraints.iter().map(|a| a.clone()).collect();
-            let constraint = constraints[0];
+            for constraint in constraints.iter().take(1) {
+                match *constraint {
+                    Constraint::RigidRigid {
+                        ref rigid_body_cells,
+                        contact_center,
+                        contact_normal
+                    } => {
+                        let rigid_body_0 = &mut rigid_body_cells.0.borrow_mut();
+                        let rigid_body_1 = &mut rigid_body_cells.1.borrow_mut();
 
-            match constraint {
-                Constraint::RigidRigid { uids, contact_center, contact_normal } => {
-                    let changes = self.solve_for_contact(collisions, uids, contact_center, contact_normal);
+                        let changes = self.solve_for_contact(rigid_body_0, rigid_body_1, contact_center, contact_normal);
 
-                    self.update_rigid_body(collisions, uids.0, changes.0);
-                    self.update_rigid_body(collisions, uids.1, changes.1);
-                },
+                        self.update_rigid_body(rigid_body_0, changes.0);
+                        self.update_rigid_body(rigid_body_1, changes.1);
+                    },
 
-                Constraint::RigidStatic { rigid_uid, static_uid: _, contact_center, contact_normal } => {
-                    let change = self.solve_for_contact_with_static(collisions, rigid_uid, contact_center, contact_normal);
+                    Constraint::RigidStatic {
+                        ref rigid_body_cell,
+                        static_body_cell: _,
+                        contact_center,
+                        contact_normal
+                    } => {
+                        let rigid_body = &mut rigid_body_cell.borrow_mut();
 
-                    self.update_rigid_body(collisions, rigid_uid, change);
-                },
+                        let change = self.solve_for_contact_with_static(rigid_body, contact_center, contact_normal);
+
+                        self.update_rigid_body(rigid_body, change);
+                    },
+                }
             }
         }
 

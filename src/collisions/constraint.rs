@@ -1,30 +1,28 @@
-use core::UID;
+use core::{ RigidBody, SharedCell, StaticBody };
 use maths::Vector;
 
 /// `Constraint` contains information regarding a constraint in a physical
 /// system.
-#[derive(Clone, Copy)]
 pub enum Constraint {
-    /// Represents a pair of bodies which both act as rigid bodies.
+    /// A contact constraint between two `RigidBody` instances.
     RigidRigid {
-        /// The `UID`s for the contacting rigid bodies.
-        uids: (UID, UID),
+        /// The shared reference to the contacting bodies.
+        rigid_body_cells: (SharedCell<RigidBody>, SharedCell<RigidBody>),
         /// The center of the contact.
         contact_center: Vector,
         /// The surface normal of the contact.
-        contact_normal: Vector
+        contact_normal: Vector,
     },
 
-    /// Represents a pair of bodies in which one of them acts as a rigid body,
-    /// and the other acts as a static body.
+    /// A contact constraint between a `RigidBody` and a `StaticBody`.
     RigidStatic {
-        /// The `UID` for the rigid body.
-        rigid_uid: UID,
-        /// The `UID` for the static body.
-        static_uid: UID,
+        /// A shared reference to the `RigidBody`.
+        rigid_body_cell: SharedCell<RigidBody>,
+        /// A shared reference to the `StaticBody`.
+        static_body_cell: SharedCell<StaticBody>,
         /// The center of the contact.
         contact_center: Vector,
         /// The surface normal of the contact.
-        contact_normal: Vector
+        contact_normal: Vector,
     },
 }

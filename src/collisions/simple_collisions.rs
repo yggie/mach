@@ -2,32 +2,18 @@ use std::rc::Rc;
 use std::cell::{ Ref, RefCell, RefMut };
 use std::collections::HashMap;
 
-use core::{ RigidBody, UID, State, StaticBody, Transform };
+use core::{ RigidBody, UID, SharedCell, State, StaticBody, Transform };
 use shapes::Shape;
 use materials::Material;
 use collisions::{ Collisions, Constraint };
 use collisions::narrowphase::GjkEpaImplementation;
 
-struct Detector {
-    ids: [UID; 2],
-    narrowphase: GjkEpaImplementation,
-}
-
-impl Detector {
-    fn new(uid_0: UID, uid_1: UID) -> Detector {
-        Detector {
-            ids: [uid_0, uid_1],
-            narrowphase: GjkEpaImplementation,
-        }
-    }
-}
-
 /// A simple implementation for representing space in the simulation.
 pub struct SimpleCollisions {
-    registry: HashMap<UID, Rc<RefCell<RigidBody>>>,
-    static_registry: HashMap<UID, Rc<RefCell<StaticBody>>>,
-    detectors: Vec<Detector>,
-    static_detectors: Vec<Detector>,
+    registry: HashMap<UID, SharedCell<RigidBody>>,
+    static_registry: HashMap<UID, SharedCell<StaticBody>>,
+    rigid_body_pairs: Vec<(SharedCell<RigidBody>, SharedCell<RigidBody>)>,
+    rigid_static_body_pairs: Vec<(SharedCell<RigidBody>, SharedCell<StaticBody>)>,
     counter: UID,
 }
 
@@ -37,8 +23,8 @@ impl SimpleCollisions {
         SimpleCollisions {
             registry: HashMap::new(),
             static_registry: HashMap::new(),
-            detectors: Vec::new(),
-            static_detectors: Vec::new(),
+            rigid_body_pairs: Vec::new(),
+            rigid_static_body_pairs: Vec::new(),
             counter: 0,
         }
     }
@@ -53,24 +39,26 @@ impl Collisions for SimpleCollisions {
     fn create_body<S: Shape, M: Material>(&mut self, shape: S, material: M, state: State) -> UID {
         let new_uid = self.generate_uid();
         let new_body = RigidBody::new_with_id(new_uid, Box::new(shape), Box::new(material), state);
+        let new_shared_cell = Rc::new(RefCell::new(new_body));
 
-        for &uid in self.registry.keys() {
-            self.detectors.push(Detector::new(uid, new_uid));
+        for shared_cell in self.registry.values() {
+            self.rigid_body_pairs.push((shared_cell.clone(), new_shared_cell.clone()));
         }
 
-        self.registry.insert(new_uid, Rc::new(RefCell::new(new_body)));
+        self.registry.insert(new_uid, new_shared_cell);
         return new_uid;
     }
 
     fn create_static_body<S: Shape, M: Material>(&mut self, shape: S, material: M, transform: Transform) -> UID {
         let new_uid = self.generate_uid();
         let new_static_body = StaticBody::new_with_id(new_uid, Box::new(shape), Box::new(material), transform);
+        let new_rc_cell = Rc::new(RefCell::new(new_static_body));
 
-        for &uid in self.registry.keys() {
-            self.static_detectors.push(Detector::new(uid, new_uid));
+        for shared_cell in self.registry.values() {
+            self.rigid_static_body_pairs.push((shared_cell.clone(), new_rc_cell.clone()));
         }
 
-        self.static_registry.insert(new_uid, Rc::new(RefCell::new(new_static_body)));
+        self.static_registry.insert(new_uid, new_rc_cell);
         return new_uid;
     }
 
@@ -105,14 +93,14 @@ impl Collisions for SimpleCollisions {
     fn find_constraints(&self) -> Option<Vec<Constraint>> {
         let mut constraints = Vec::new();
 
-        for detector in self.detectors.iter() {
-            let body_0 = &*self.find_body(detector.ids[0]).unwrap();
-            let body_1 = &*self.find_body(detector.ids[1]).unwrap();
+        for &(ref rc_cell_0, ref rc_cell_1) in self.rigid_body_pairs.iter() {
+            let body_0 = &*rc_cell_0.borrow();
+            let body_1 = &*rc_cell_1.borrow();
 
-            if let Some(intersection) = detector.narrowphase.find_intersection(body_0, body_1) {
+            if let Some(intersection) = GjkEpaImplementation.find_intersection(body_0, body_1) {
                 constraints.push(
                     Constraint::RigidRigid {
-                        uids: (body_0.id(), body_1.id()),
+                        rigid_body_cells: (rc_cell_0.clone(), rc_cell_1.clone()),
                         contact_center: intersection.point(),
                         contact_normal: intersection.normal(),
                     }
@@ -120,15 +108,15 @@ impl Collisions for SimpleCollisions {
             }
         }
 
-        for detector in self.static_detectors.iter() {
-            let rigid_body = &*self.find_body(detector.ids[0]).unwrap();
-            let static_body = &*self.find_static_body(detector.ids[1]).unwrap();
+        for &(ref rigid_body_rc_cell, ref static_body_rc_cell) in self.rigid_static_body_pairs.iter() {
+            let rigid_body = &*rigid_body_rc_cell.borrow();
+            let static_body = &*static_body_rc_cell.borrow();
 
-            if let Some(intersection) = detector.narrowphase.find_intersection(rigid_body, static_body) {
+            if let Some(intersection) = GjkEpaImplementation.find_intersection(rigid_body, static_body) {
                 constraints.push(
                     Constraint::RigidStatic {
-                        rigid_uid: rigid_body.id(),
-                        static_uid: static_body.id(),
+                        rigid_body_cell: rigid_body_rc_cell.clone(),
+                        static_body_cell: static_body_rc_cell.clone(),
                         contact_center: intersection.point(),
                         contact_normal: intersection.normal(),
                     }
