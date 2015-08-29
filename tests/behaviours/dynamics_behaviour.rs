@@ -5,7 +5,7 @@ use mach::maths::Vector;
 use mach::shapes::Cube;
 use mach::dynamics::Dynamics;
 use mach::materials::Rigid;
-use mach::collisions::{ Collisions, SimpleCollisions };
+use mach::collisions::{ CollisionSpace, SimpleCollisions };
 
 
 fn assert_approximately_equal(a: Vector, b: Vector) {

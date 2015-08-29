@@ -1,6 +1,6 @@
 #[macro_use]
 #[cfg(test)]
-pub mod collisions_behaviour;
+pub mod collision_space_behaviour;
 
 #[macro_use]
 #[cfg(test)]

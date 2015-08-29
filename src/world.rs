@@ -5,17 +5,17 @@ use maths::Vector;
 use shapes::Shape;
 use dynamics::Dynamics;
 use materials::Material;
-use collisions::Collisions;
+use collisions::CollisionSpace;
 
 /// A `World` is a physical world in mach, it contains physical bodies and a set
 /// of rules dictating how the bodies interact with the environment.
-pub struct World<C: Collisions, D: Dynamics> {
+pub struct World<C: CollisionSpace, D: Dynamics> {
     collisions: C,
     dynamics: D,
 }
 
-impl<C: Collisions, D: Dynamics> World<C, D> {
-    /// Creates a new instance of a `World` with the given `Collisions` and
+impl<C: CollisionSpace, D: Dynamics> World<C, D> {
+    /// Creates a new instance of a `World` with the given `CollisionSpace` and
     /// `Dynamics` components.
     pub fn new(collisions: C, dynamics: D) -> World<C, D> {
         World{
@@ -70,15 +70,15 @@ impl<C: Collisions, D: Dynamics> World<C, D> {
         self.dynamics.set_gravity(gravity);
     }
 
-    /// Returns an immutable reference to the `Collisions` object associated
+    /// Returns an immutable reference to the `CollisionSpace` object associated
     /// with the instance.
     #[inline(always)]
     pub fn collisions_component(&self) -> &C {
         &self.collisions
     }
 
-    /// Returns a mutable reference to the `Collisions` object associated with
-    /// the instance.
+    /// Returns a mutable reference to the `CollisionSpace` object associated
+    /// with the instance.
     #[inline(always)]
     pub fn collisions_component_mut(&mut self) -> &mut C {
         &mut self.collisions

@@ -5,7 +5,7 @@ use std::collections::HashMap;
 use core::{ RigidBody, UID, SharedCell, State, StaticBody, Transform };
 use shapes::Shape;
 use materials::Material;
-use collisions::{ Collisions, Constraint };
+use collisions::{ CollisionSpace, Constraint };
 use collisions::narrowphase::GjkEpaImplementation;
 
 /// A simple implementation for representing space in the simulation.
@@ -35,7 +35,7 @@ impl SimpleCollisions {
     }
 }
 
-impl Collisions for SimpleCollisions {
+impl CollisionSpace for SimpleCollisions {
     fn create_body<S: Shape, M: Material>(&mut self, shape: S, material: M, state: State) -> UID {
         let new_uid = self.generate_uid();
         let new_body = RigidBody::new_with_id(new_uid, Box::new(shape), Box::new(material), state);

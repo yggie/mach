@@ -5,7 +5,7 @@ use std::cell::{ Ref, RefMut };
 use mach::core::{ RigidBody, UID, State, StaticBody, Transform };
 use mach::shapes::Shape;
 use mach::materials::Material;
-use mach::collisions::{ Collisions, Constraint };
+use mach::collisions::{ CollisionSpace, Constraint };
 
 fn verbose_format_body(body: &RigidBody) -> String {
     format!("{}, Shape={}", body, body.shape())
@@ -15,18 +15,19 @@ fn verbose_format_static_body(static_body: &StaticBody) -> String {
     format!("{}, Shape={}", static_body, static_body.shape())
 }
 
-/// A utility class which wraps around a `Collisions` component and produces
+/// A utility class which wraps around a `CollisionSpace` component and produces
 /// parseable output for debugging.
-pub struct CollisionsMonitor<C: Collisions>(C);
+pub struct CollisionsMonitor<C: CollisionSpace>(C);
 
-impl<C: Collisions> CollisionsMonitor<C> {
-    /// Returns a new `CollisionsMonitor` wrapped around a `Collisions` instance.
+impl<C: CollisionSpace> CollisionsMonitor<C> {
+    /// Returns a new `CollisionsMonitor` wrapped around a `CollisionSpace`
+    /// instance.
     pub fn new(collisions: C) -> CollisionsMonitor<C> {
         CollisionsMonitor(collisions)
     }
 }
 
-impl<C: Collisions> Collisions for CollisionsMonitor<C> {
+impl<C: CollisionSpace> CollisionSpace for CollisionsMonitor<C> {
     fn create_body<S: Shape, M: Material>(&mut self, shape: S, material: M, state: State) -> UID {
         let uid = self.0.create_body(shape, material, state);
         let body = self.0.find_body(uid).unwrap();

@@ -1,7 +1,7 @@
 use core::RigidBody;
 use maths::{ Vector, Quaternion };
 use dynamics::Dynamics;
-use collisions::{ Constraint, Collisions };
+use collisions::{ Constraint, CollisionSpace };
 
 /// Contains the simplest implementation for a time marching scheme.
 pub struct SimpleDynamics {
@@ -86,7 +86,7 @@ impl SimpleDynamics {
 }
 
 impl Dynamics for SimpleDynamics {
-    fn update<C: Collisions>(&mut self, collisions: &mut C, time_step: f32) {
+    fn update<C: CollisionSpace>(&mut self, collisions: &mut C, time_step: f32) {
         if let Some(constraints) = collisions.find_constraints() {
             println!("CONSTRAINTS FOUND ({})", constraints.len());
 

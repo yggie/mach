@@ -1,15 +1,15 @@
 use mach::World;
 use mach::dynamics::{ Dynamics, SimpleDynamics };
-use mach::collisions::{ Collisions, SimpleCollisions };
+use mach::collisions::{ CollisionSpace, SimpleCollisions };
 
 use support::{ CollisionsMonitor, DynamicsMonitor };
 
-pub struct Simulation<C: Collisions, D: Dynamics> {
+pub struct Simulation<C: CollisionSpace, D: Dynamics> {
     world: World<CollisionsMonitor<C>, DynamicsMonitor<D>>,
     did_assert: bool
 }
 
-impl<C: Collisions, D: Dynamics> Simulation<C, D> {
+impl<C: CollisionSpace, D: Dynamics> Simulation<C, D> {
     pub fn new_default() -> Simulation<SimpleCollisions, SimpleDynamics> {
         let collisions = SimpleCollisions::new();
         let dynamics = SimpleDynamics::new();

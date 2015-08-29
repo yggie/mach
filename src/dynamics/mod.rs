@@ -6,7 +6,7 @@ mod force_accumulator;
 mod simple_dynamics;
 
 use maths::Vector;
-use collisions::Collisions;
+use collisions::CollisionSpace;
 
 pub use self::simple_dynamics::SimpleDynamics;
 pub use self::force_accumulator::ForceAccumulator;
@@ -16,7 +16,7 @@ pub use self::force_accumulator::ForceAccumulator;
 /// managing environmental effects on bodies.
 pub trait Dynamics {
     /// Steps the simulation forward in time by the specified amount.
-    fn update<C: Collisions>(&mut self, &mut C, f32);
+    fn update<C: CollisionSpace>(&mut self, &mut C, f32);
 
     /// Returns the global gravitational force acting on the `RigidBody`
     /// objects.

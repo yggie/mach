@@ -4,7 +4,7 @@ use std::f32;
 
 use mach::maths::Vector;
 use mach::dynamics::Dynamics;
-use mach::collisions::Collisions;
+use mach::collisions::CollisionSpace;
 
 /// A utility class which wraps around `Dynamics` components. It produces
 /// parseable output for debugging and stores useful information regarding the
@@ -33,7 +33,7 @@ impl<D: Dynamics> DynamicsMonitor<D> {
 }
 
 impl<D: Dynamics> Dynamics for DynamicsMonitor<D> {
-    fn update<C: Collisions>(&mut self, collisions: &mut C, time_step: f32) {
+    fn update<C: CollisionSpace>(&mut self, collisions: &mut C, time_step: f32) {
         println!("[UPDATE] START step={}", time_step);
         self.dynamics.update(collisions, time_step);
 
