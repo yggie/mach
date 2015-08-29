@@ -1,7 +1,6 @@
 //! The `shapes` module defines the shared traits for all geometric models.
 
-/// TODO temporary workaround for the issue of rexporting traits, see
-/// https://github.com/rust-lang/rust/issues/16264
+/// TODO temporary workaround for the issue of rexporting traits, see https://github.com/rust-lang/rust/issues/16264
 pub mod shape_entity;
 
 mod primitives {

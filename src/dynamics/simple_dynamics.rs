@@ -125,7 +125,7 @@ impl Dynamics for SimpleDynamics {
 
         let scaled_gravity = self.gravity * time_step;
         for mut body in collisions.bodies_iter_mut() {
-            // TODO deal with temporaries
+            // TODO deal with temporaries once language limitation is resolved, see https://github.com/rust-lang/rfcs/pull/396
             let t = time_step;
             let p = body.position();
             let v = body.velocity();
