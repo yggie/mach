@@ -2,7 +2,6 @@
 //! engine. It contains subcomponents to handle time updates and collision
 //! resolution.
 
-mod force_accumulator;
 mod simple_dynamics;
 mod integrators;
 
@@ -15,7 +14,6 @@ use collisions::CollisionSpace;
 pub use self::integrator::Integrator;
 pub use self::integrators::semi_implicit_euler::SemiImplicitEuler;
 pub use self::simple_dynamics::SimpleDynamics;
-pub use self::force_accumulator::ForceAccumulator;
 
 /// The `Dynamics` component is responsible for handling the dynamic component
 /// of the simulation, including stepping the simulation forward in time and
