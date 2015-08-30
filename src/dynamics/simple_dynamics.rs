@@ -1,7 +1,7 @@
 use core::RigidBody;
 use maths::Vector;
 use dynamics::{ Dynamics, SemiImplicitEuler };
-use collisions::{ Constraint, CollisionSpace };
+use collisions::{ ContactPair, CollisionSpace };
 
 /// Contains the simplest implementation for a time marching scheme.
 pub struct SimpleDynamics {
@@ -89,34 +89,25 @@ impl SimpleDynamics {
 
 impl Dynamics for SimpleDynamics {
     fn update<C: CollisionSpace>(&mut self, collisions: &mut C, time_step: f32) {
-        if let Some(constraints) = collisions.find_constraints() {
-            println!("CONSTRAINTS FOUND ({})", constraints.len());
+        if let Some(contacts) = collisions.find_contacts() {
+            println!("CONTACTS FOUND ({})", contacts.len());
 
-            for constraint in constraints.iter().take(1) {
-                match *constraint {
-                    Constraint::RigidRigid {
-                        ref rigid_body_cells,
-                        contact_center,
-                        contact_normal
-                    } => {
-                        let rigid_body_0 = &mut rigid_body_cells.0.borrow_mut();
-                        let rigid_body_1 = &mut rigid_body_cells.1.borrow_mut();
+            for contact in contacts.iter().take(1) {
+                match contact.pair {
+                    ContactPair::RigidRigid(ref cell_0, ref cell_1) => {
+                        let rigid_body_0 = &mut cell_0.borrow_mut();
+                        let rigid_body_1 = &mut cell_1.borrow_mut();
 
-                        let changes = self.solve_for_contact(rigid_body_0, rigid_body_1, contact_center, contact_normal);
+                        let changes = self.solve_for_contact(rigid_body_0, rigid_body_1, contact.center, contact.normal);
 
                         self.update_rigid_body(rigid_body_0, changes.0);
                         self.update_rigid_body(rigid_body_1, changes.1);
                     },
 
-                    Constraint::RigidStatic {
-                        ref rigid_body_cell,
-                        static_body_cell: _,
-                        contact_center,
-                        contact_normal
-                    } => {
-                        let rigid_body = &mut rigid_body_cell.borrow_mut();
+                    ContactPair::RigidStatic(ref cell_0, _) => {
+                        let rigid_body = &mut cell_0.borrow_mut();
 
-                        let change = self.solve_for_contact_with_static(rigid_body, contact_center, contact_normal);
+                        let change = self.solve_for_contact_with_static(rigid_body, contact.center, contact.normal);
 
                         self.update_rigid_body(rigid_body, change);
                     },

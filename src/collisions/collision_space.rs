@@ -3,7 +3,7 @@ use std::cell::{ Ref, RefMut };
 use core::{ RigidBody, UID, State, StaticBody, Transform };
 use shapes::Shape;
 use materials::Material;
-use collisions::Constraint;
+use collisions::Contact;
 
 /// A `CollisionSpace` component is responsible for the storage, retrieval and
 /// querying of physical bodies in the simulation.
@@ -48,6 +48,6 @@ pub trait CollisionSpace {
     /// object.  This iterator allows mutation of the `RigidBody` objects.
     fn bodies_iter_mut<'a>(&'a mut self) -> Box<Iterator<Item=RefMut<RigidBody>> + 'a>;
 
-    /// Computes all the constraints between bodies managed by this object.
-    fn find_constraints(&self) -> Option<Vec<Constraint>>;
+    /// Finds all contacts between bodies.
+    fn find_contacts(&self) -> Option<Vec<Contact>>;
 }

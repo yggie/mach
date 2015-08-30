@@ -5,7 +5,7 @@ use std::cell::{ Ref, RefMut };
 use mach::core::{ RigidBody, UID, State, StaticBody, Transform };
 use mach::shapes::Shape;
 use mach::materials::Material;
-use mach::collisions::{ CollisionSpace, Constraint };
+use mach::collisions::{ CollisionSpace, Contact };
 
 fn verbose_format_body(body: &RigidBody) -> String {
     format!("{}, Shape={}", body, body.shape())
@@ -70,7 +70,7 @@ impl<C: CollisionSpace> CollisionSpace for CollisionsMonitor<C> {
         self.0.bodies_iter_mut()
     }
 
-    fn find_constraints(&self) -> Option<Vec<Constraint>> {
-        self.0.find_constraints()
+    fn find_contacts(&self) -> Option<Vec<Contact>> {
+        self.0.find_contacts()
     }
 }

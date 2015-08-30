@@ -5,7 +5,7 @@ use std::collections::HashMap;
 use core::{ RigidBody, UID, SharedCell, State, StaticBody, Transform };
 use shapes::Shape;
 use materials::Material;
-use collisions::{ CollisionSpace, Constraint };
+use collisions::{ CollisionSpace, Contact, ContactPair };
 use collisions::narrowphase::GjkEpaImplementation;
 
 /// A simple implementation for representing space in the simulation.
@@ -90,19 +90,19 @@ impl CollisionSpace for SimpleCollisions {
         Box::new(self.registry.iter_mut().map(|(_, cell)| cell.borrow_mut()))
     }
 
-    fn find_constraints(&self) -> Option<Vec<Constraint>> {
-        let mut constraints = Vec::new();
+    fn find_contacts(&self) -> Option<Vec<Contact>> {
+        let mut contacts = Vec::new();
 
         for &(ref rc_cell_0, ref rc_cell_1) in self.rigid_body_pairs.iter() {
             let body_0 = &*rc_cell_0.borrow();
             let body_1 = &*rc_cell_1.borrow();
 
             if let Some(intersection) = GjkEpaImplementation.find_intersection(body_0, body_1) {
-                constraints.push(
-                    Constraint::RigidRigid {
-                        rigid_body_cells: (rc_cell_0.clone(), rc_cell_1.clone()),
-                        contact_center: intersection.point(),
-                        contact_normal: intersection.normal(),
+                contacts.push(
+                    Contact {
+                        pair: ContactPair::RigidRigid(rc_cell_0.clone(), rc_cell_1.clone()),
+                        center: intersection.point(),
+                        normal: intersection.normal(),
                     }
                 );
             }
@@ -113,19 +113,18 @@ impl CollisionSpace for SimpleCollisions {
             let static_body = &*static_body_rc_cell.borrow();
 
             if let Some(intersection) = GjkEpaImplementation.find_intersection(rigid_body, static_body) {
-                constraints.push(
-                    Constraint::RigidStatic {
-                        rigid_body_cell: rigid_body_rc_cell.clone(),
-                        static_body_cell: static_body_rc_cell.clone(),
-                        contact_center: intersection.point(),
-                        contact_normal: intersection.normal(),
+                contacts.push(
+                    Contact {
+                        pair: ContactPair::RigidStatic(rigid_body_rc_cell.clone(), static_body_rc_cell.clone()),
+                        center: intersection.point(),
+                        normal: intersection.normal(),
                     }
                 );
             }
         }
 
-        if constraints.len() > 0 {
-            return Some(constraints);
+        if contacts.len() > 0 {
+            return Some(contacts);
         } else {
             return None;
         }
