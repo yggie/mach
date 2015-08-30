@@ -1,9 +1,10 @@
 use std::cell::{ Ref, RefMut };
 
-use core::{ RigidBody, UID, State, StaticBody, Transform };
+use core::{ RigidBody, UID, State, StaticBody, Transform, VolumetricBody };
 use shapes::Shape;
 use materials::Material;
 use collisions::Contact;
+use collisions::narrowphase::Intersection;
 
 /// A `CollisionSpace` component is responsible for the storage, retrieval and
 /// querying of physical bodies in the simulation.
@@ -47,6 +48,9 @@ pub trait CollisionSpace {
     /// Returns an iterator over unique `RigidBody` instances managed by this
     /// object.  This iterator allows mutation of the `RigidBody` objects.
     fn bodies_iter_mut<'a>(&'a mut self) -> Box<Iterator<Item=RefMut<RigidBody>> + 'a>;
+
+    /// TODO: needs refactoring: Finds the intersection between two volumetric bodies.
+    fn find_intersection(&self, &VolumetricBody, &VolumetricBody) -> Option<Intersection>;
 
     /// Finds all contacts between bodies.
     fn find_contacts(&self) -> Option<Vec<Contact>>;

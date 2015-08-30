@@ -2,11 +2,11 @@ use std::rc::Rc;
 use std::cell::{ Ref, RefCell, RefMut };
 use std::collections::HashMap;
 
-use core::{ RigidBody, UID, SharedCell, State, StaticBody, Transform };
+use core::{ RigidBody, UID, SharedCell, State, StaticBody, Transform, VolumetricBody };
 use shapes::Shape;
 use materials::Material;
 use collisions::{ CollisionSpace, Contact, ContactPair };
-use collisions::narrowphase::GjkEpaImplementation;
+use collisions::narrowphase::{ GjkEpaImplementation, Intersection };
 
 /// A simple implementation for representing space in the simulation.
 pub struct SimpleCollisionSpace {
@@ -88,6 +88,10 @@ impl CollisionSpace for SimpleCollisionSpace {
 
     fn bodies_iter_mut<'a>(&'a mut self) -> Box<Iterator<Item=RefMut<RigidBody>> + 'a> {
         Box::new(self.registry.iter_mut().map(|(_, cell)| cell.borrow_mut()))
+    }
+
+    fn find_intersection(&self, body_0: &VolumetricBody, body_1: &VolumetricBody) -> Option<Intersection> {
+        GjkEpaImplementation.find_intersection(body_0, body_1)
     }
 
     fn find_contacts(&self) -> Option<Vec<Contact>> {

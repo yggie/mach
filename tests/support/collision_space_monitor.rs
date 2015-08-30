@@ -2,10 +2,11 @@ extern crate mach;
 
 use std::cell::{ Ref, RefMut };
 
-use mach::core::{ RigidBody, UID, State, StaticBody, Transform };
+use mach::core::{ RigidBody, UID, State, StaticBody, Transform, VolumetricBody };
 use mach::shapes::Shape;
 use mach::materials::Material;
 use mach::collisions::{ CollisionSpace, Contact };
+use mach::collisions::narrowphase::Intersection;
 
 fn verbose_format_body(body: &RigidBody) -> String {
     format!("{}, Shape={}", body, body.shape())
@@ -68,6 +69,10 @@ impl<C: CollisionSpace> CollisionSpace for CollisionSpaceMonitor<C> {
 
     fn bodies_iter_mut<'a>(&'a mut self) -> Box<Iterator<Item=RefMut<RigidBody>> + 'a>{
         self.0.bodies_iter_mut()
+    }
+
+    fn find_intersection(&self, body_0: &VolumetricBody, body_1: &VolumetricBody) -> Option<Intersection> {
+        self.0.find_intersection(body_0, body_1)
     }
 
     fn find_contacts(&self) -> Option<Vec<Contact>> {

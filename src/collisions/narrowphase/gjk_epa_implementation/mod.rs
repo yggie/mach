@@ -62,7 +62,6 @@ impl GjkEpaImplementation {
 
             match GjkEpaImplementation::infer_contact_type(mapped_indices) {
                 IntersectionType::Vertex(vertex_index) => {
-                    println!("CONTACT VERTEX");
                     if i == 1 {
                         let correction = contact_normal * depth / 2.0;
                         contact_center = entities[1].vertex(vertex_index) + correction;
@@ -75,13 +74,13 @@ impl GjkEpaImplementation {
 
                 IntersectionType::Edge(_) => {
                     // TODO implement this
-                    println!("CONTACT EDGE");
+                    println!("!!!CONTACT EDGE!!!");
                     // unimplemented!();
                 },
 
                 IntersectionType::Face => {
                     // TODO implement this
-                    println!("CONTACT FACE");
+                    println!("!!!CONTACT FACE!!!");
                     // unimplemented!();
                 },
             }
