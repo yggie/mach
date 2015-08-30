@@ -30,8 +30,8 @@ impl State {
 
     /// Creates a new `State` with a non-zero rotation.
     #[inline]
-    pub fn new_with_rotation(axis: Vector, angle_in_radians: f32) -> State {
-        State::new_stationary().with_rotation(axis, angle_in_radians)
+    pub fn new_with_axis_angle(axis: Vector, angle_in_radians: f32) -> State {
+        State::new_stationary().with_axis_angle(axis, angle_in_radians)
     }
 
     /// Returns the position of the `State`.
@@ -80,25 +80,25 @@ impl State {
         self.position.set(position[0], position[1], position[2]);
     }
 
-    /// Sets the rotation with the provided axis and angle of rotation.
-    #[inline]
-    pub fn set_rotation(&mut self, axis: Vector, angle_in_radians: f32) {
-        let q = Quaternion::new_from_axis_angle(axis, angle_in_radians);
-        self.rotation.set(q[0], q[1], q[2], q[3]);
-    }
-
     /// Sets the rotation using a quaternion.
     #[inline]
-    pub fn set_rotation_with_quaternion(&mut self, rotation: Quaternion) {
+    pub fn set_rotation(&mut self, rotation: Quaternion) {
         self.rotation = rotation;
+    }
+
+    /// Sets the rotation with the provided axis and angle of rotation.
+    #[inline]
+    pub fn set_axis_angle(&mut self, axis: Vector, angle_in_radians: f32) {
+        let q = Quaternion::new_from_axis_angle(axis, angle_in_radians);
+        self.rotation.set(q[0], q[1], q[2], q[3]);
     }
 
     /// Returns a copy of the `State` using the specified angle and axis of
     /// rotation to initialize the rotation. This function can be chained.
     #[inline]
-    pub fn with_rotation(&self, axis: Vector, angle_in_radians: f32) -> State {
+    pub fn with_axis_angle(&self, axis: Vector, angle_in_radians: f32) -> State {
         let mut state = self.clone();
-        state.set_rotation(axis, angle_in_radians);
+        state.set_axis_angle(axis, angle_in_radians);
         return state;
     }
 

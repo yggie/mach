@@ -20,7 +20,7 @@ fn colliding_two_cubes() {
 
             let state_1 =  State::new_stationary()
                 .with_position(0.0, -3.0, 0.0)
-                .with_rotation(Vector::new(1.0, 1.0, 0.0), 1.0)
+                .with_axis_angle(Vector::new(1.0, 1.0, 0.0), 1.0)
                 .with_velocity(0.0,  1.0, 0.0);
             world.create_body(shape.clone(), Rigid::new(2.0), state_1);
         })

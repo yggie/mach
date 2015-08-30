@@ -75,7 +75,7 @@ pub fn moving_after_a_collision_without_rotation<D: Dynamics, F: FnOnce() -> D>(
     let final_axis = Vector::new(1.0, 0.0, 0.0);
     let rotation = initial_axis.cross(final_axis);
     let state_1 = State::new_with_position((0.98 + 3.0f32.sqrt())/2.0, 0.0, 0.0)
-        .with_rotation(rotation, rotation.length().asin())
+        .with_axis_angle(rotation, rotation.length().asin())
         .with_velocity(-1.0, 0.0, 0.0);
     let uid_1 = space.create_body(
         Cube::new(1.0, 1.0, 1.0),

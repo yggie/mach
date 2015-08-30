@@ -116,7 +116,7 @@ fn almost_colliding_edge_to_face() {
         State::new_stationary(),
         Cube::new(1.0, 1.0, 1.0),
         State::new_with_position(0.51 + 0.5*2.0f32.sqrt(), 0.00, 0.00)
-            .with_rotation(Vector::new(0.0, 1.0, 0.0), PI/4.0),
+            .with_axis_angle(Vector::new(0.0, 1.0, 0.0), PI/4.0),
     );
 
     let intersection = narrowphase.find_intersection(&bodies[0], &bodies[1]);
@@ -131,7 +131,7 @@ fn colliding_edge_to_face() {
         State::new_stationary(),
         Cube::new(1.0, 1.0, 1.0),
         State::new_with_position(0.49 + 0.5*2.0f32.sqrt(), 0.00, 0.00)
-            .with_rotation(Vector::new(0.0, 0.0, 1.0), PI/4.0),
+            .with_axis_angle(Vector::new(0.0, 0.0, 1.0), PI/4.0),
     );
 
     let option = narrowphase.find_intersection(&bodies[0], &bodies[1]);
@@ -151,7 +151,7 @@ fn almost_colliding_vertex_to_face() {
     let final_axis = Vector::new(1.0, 0.0, 0.0);
     let rotation = initial_axis.cross(final_axis);
     let state_1 = State::new_with_position((1.01 + 3.0f32.sqrt())/2.0, 0.0, 0.0)
-        .with_rotation(rotation, rotation.length().asin());
+        .with_axis_angle(rotation, rotation.length().asin());
     let (narrowphase, bodies) = setup_cubes(
         Cube::new(1.0, 1.0, 1.0),
         State::new_stationary(),
@@ -173,7 +173,7 @@ fn colliding_vertex_to_face() {
     let final_axis = Vector::new(1.0, 0.0, 0.0);
     let rotation = initial_axis.cross(final_axis);
     let state_1 = State::new_with_position((0.98 + 3.0f32.sqrt())/2.0, 0.1, 0.0)
-        .with_rotation(rotation, rotation.length().asin());
+        .with_axis_angle(rotation, rotation.length().asin());
     let (narrowphase, bodies) = setup_cubes(
         Cube::new(1.0, 1.0, 1.0),
         State::new_stationary(),

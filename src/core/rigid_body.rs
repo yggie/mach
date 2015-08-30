@@ -81,7 +81,7 @@ impl RigidBody {
 
     /// Returns the rotation of the `RigidBody` expressed as a `Quaternion`.
     #[inline]
-    pub fn rotation_quaternion(&self) -> Quaternion {
+    pub fn rotation(&self) -> Quaternion {
         self.state.rotation()
     }
 
@@ -110,8 +110,8 @@ impl RigidBody {
 
     /// Sets the `RigidBody`’s rotation using the `Quaternion` provided.
     #[inline]
-    pub fn set_rotation_with_quaternion(&mut self, rotation: Quaternion) {
-        self.state.set_rotation_with_quaternion(rotation);
+    pub fn set_rotation(&mut self, rotation: Quaternion) {
+        self.state.set_rotation(rotation);
     }
 
     /// Sets the `RigidBody`’s velocity using the `Vector` provided.
@@ -134,7 +134,7 @@ impl ShapeEntity for RigidBody {
     }
 
     fn transform(&self) -> Transform {
-        Transform::new(self.position(), self.rotation_quaternion())
+        Transform::new(self.position(), self.rotation())
     }
 }
 
@@ -144,7 +144,7 @@ impl fmt::Display for RigidBody {
             "RigidBody[{}]: Pos={}, Rot={}, Vel={}, AngVel={}",
             self.id(),
             self.position(),
-            self.rotation_quaternion(),
+            self.rotation(),
             self.velocity(),
             self.angular_velocity(),
         )

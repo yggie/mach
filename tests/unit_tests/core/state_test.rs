@@ -22,8 +22,8 @@ fn instantiating_with_position() {
 }
 
 #[test]
-fn instantiating_with_rotation() {
-    let s = State::new_with_rotation(Vector::new(20.0, 12.0, -9.0), PI);
+fn instantiating_with_axis_angle() {
+    let s = State::new_with_axis_angle(Vector::new(20.0, 12.0, -9.0), PI);
 
     assert_eq!(s.position(), Vector::new(0.0, 0.0, 0.0));
     assert_eq!(s.rotation(), Quaternion::new(0.0, 0.80, 0.48, -0.36));
@@ -82,17 +82,17 @@ fn chaining_with_velocity() {
 }
 
 #[test]
-fn setting_the_rotation_with_scalar_components() {
+fn setting_the_rotation_with_axis_angle() {
     let mut s = State::new_stationary();
-    s.set_rotation(Vector::new(11.0, -9.0, 20.0), 0.0);
+    s.set_axis_angle(Vector::new(11.0, -9.0, 20.0), 0.0);
 
     assert_eq!(s.rotation(), Quaternion::new(1.0, 0.0, 0.0, 0.0));
 }
 
 #[test]
-fn chaining_with_rotation() {
+fn chaining_with_axis_angle() {
     let original_state = State::new_stationary();
-    let state = original_state.with_rotation(Vector::new(20.0, 12.0, -9.0), 3.0*PI);
+    let state = original_state.with_axis_angle(Vector::new(20.0, 12.0, -9.0), 3.0*PI);
 
     assert_eq!(state.rotation(), Quaternion::new(0.0, -0.80, -0.48, 0.36));
 }
@@ -124,7 +124,7 @@ fn transforming_a_point_with_only_translation() {
 
 #[test]
 fn transforming_a_point_with_only_rotation() {
-    let state = State::new_with_rotation(Vector::new(1.0, 1.0, 1.0), PI/2.0);
+    let state = State::new_with_axis_angle(Vector::new(1.0, 1.0, 1.0), PI/2.0);
 
     let v = state.transform_point(Vector::new(4.0, 5.0, 6.0));
 
@@ -133,7 +133,7 @@ fn transforming_a_point_with_only_rotation() {
 
 #[test]
 fn transforming_a_point_with_both_translation_and_rotation() {
-    let state = State::new_with_rotation(Vector::new(1.0, 2.0, -1.0), PI/3.0)
+    let state = State::new_with_axis_angle(Vector::new(1.0, 2.0, -1.0), PI/3.0)
         .with_position(1.0, -1.0, 2.0);
 
     let v = state.transform_point(Vector::new(3.0, 2.0, 1.0));
@@ -152,7 +152,7 @@ fn transforming_a_direction_with_only_translation() {
 
 #[test]
 fn transforming_a_direction_with_only_rotation() {
-    let state = State::new_with_rotation(Vector::new(1.0, 1.0, 1.0), PI/2.0);
+    let state = State::new_with_axis_angle(Vector::new(1.0, 1.0, 1.0), PI/2.0);
 
     let v = state.transform_direction(Vector::new(4.0, 5.0, 6.0));
 
@@ -161,7 +161,7 @@ fn transforming_a_direction_with_only_rotation() {
 
 #[test]
 fn transforming_a_direction_with_translation_and_rotation() {
-    let state = State::new_with_rotation(Vector::new(1.0, 1.0, 1.0), PI/2.0)
+    let state = State::new_with_axis_angle(Vector::new(1.0, 1.0, 1.0), PI/2.0)
         .with_position(1.0, -1.0, 2.0);
 
     let v = state.transform_direction(Vector::new(4.0, 5.0, 6.0));

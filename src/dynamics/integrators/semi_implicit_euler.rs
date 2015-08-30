@@ -22,7 +22,7 @@ impl SemiImplicitEuler {
         let q = state.rotation();
         let new_rotation = q + w_as_quat * q * 0.5;
 
-        state.set_rotation_with_quaternion(new_rotation.normalize());
+        state.set_rotation(new_rotation.normalize());
     }
 }
 
