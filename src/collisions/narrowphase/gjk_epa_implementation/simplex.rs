@@ -1,7 +1,8 @@
 use rand::random;
 
+use core::VolumetricBody;
 use maths::{ Vector, TOLERANCE };
-use shapes::{ Shape, ShapeEntity };
+use shapes::Shape;
 
 #[derive(Clone, Copy, Debug)]
 pub struct SupportPoint {
@@ -15,7 +16,7 @@ pub struct Simplex {
 }
 
 impl Simplex {
-    fn new(entities: [&ShapeEntity; 2]) -> Simplex {
+    fn new(bodies: [&VolumetricBody; 2]) -> Simplex {
         let mut support_points: Vec<SupportPoint> = Vec::new();
         while support_points.len() < 4 {
             let vector = Vector::new(
@@ -23,7 +24,7 @@ impl Simplex {
                 random::<f32>() - 0.5,
                 random::<f32>() - 0.5,
             );
-            let candidate_support_point = Simplex::generate_support_points(vector.normalize(), entities)[0];
+            let candidate_support_point = Simplex::generate_support_points(vector.normalize(), bodies)[0];
 
             if support_points.iter().find(|p| { p.indices == candidate_support_point.indices }).is_none() {
                 support_points.push(candidate_support_point);
@@ -40,9 +41,9 @@ impl Simplex {
         };
     }
 
-    pub fn new_containing_origin(entities: [&ShapeEntity; 2]) -> Option<Simplex> {
-        let mut simplex = Simplex::new(entities);
-        let surface_radius = entities[0].shape().surface_radius() + entities[1].shape().surface_radius();
+    pub fn new_containing_origin(bodies: [&VolumetricBody; 2]) -> Option<Simplex> {
+        let mut simplex = Simplex::new(bodies);
+        let surface_radius = bodies[0].shape().surface_radius() + bodies[1].shape().surface_radius();
 
         for _ in (0..1000) {
             let mut next_guess: Option<(Vector, usize, usize)> = None;
@@ -59,7 +60,7 @@ impl Simplex {
 
             match next_guess {
                 Some((direction, index_on_surface, index_to_replace)) => {
-                    let new_support_points = Simplex::generate_support_points(direction, entities);
+                    let new_support_points = Simplex::generate_support_points(direction, bodies);
 
                     let new_support_point = new_support_points.iter().find(|point| {
                         !simplex.has_matching_support_point(&point)
@@ -120,9 +121,9 @@ impl Simplex {
         }));
     }
 
-    pub fn generate_support_points(direction: Vector, entities: [&ShapeEntity; 2]) -> Vec<SupportPoint> {
-        let shapes = [entities[0].shape(), entities[1].shape()];
-        let transforms = [entities[0].transform(), entities[1].transform()];
+    pub fn generate_support_points(direction: Vector, bodies: [&VolumetricBody; 2]) -> Vec<SupportPoint> {
+        let shapes = [bodies[0].shape(), bodies[1].shape()];
+        let transforms = [bodies[0].transform(), bodies[1].transform()];
 
         let dirs = [
             transforms[0].apply_inverse_to_direction(direction),

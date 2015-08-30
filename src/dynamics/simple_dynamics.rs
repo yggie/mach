@@ -89,10 +89,14 @@ impl SimpleDynamics {
 
 impl Dynamics for SimpleDynamics {
     fn update<C: CollisionSpace>(&mut self, collisions: &mut C, time_step: f32) {
+        for mut body in collisions.bodies_iter_mut() {
+            self.integrator.integrate_in_place(body.state_mut(), time_step, self.gravity);
+        }
+
         if let Some(contacts) = collisions.find_contacts() {
             println!("CONTACTS FOUND ({})", contacts.len());
 
-            for contact in contacts.iter().take(1) {
+            for contact in contacts.iter() {
                 match contact.pair {
                     ContactPair::RigidRigid(ref cell_0, ref cell_1) => {
                         let rigid_body_0 = &mut cell_0.borrow_mut();
@@ -113,10 +117,6 @@ impl Dynamics for SimpleDynamics {
                     },
                 }
             }
-        }
-
-        for mut body in collisions.bodies_iter_mut() {
-            self.integrator.integrate_in_place(body.state_mut(), time_step, self.gravity);
         }
     }
 

@@ -1,8 +1,8 @@
 use std::fmt;
 
-use core::{ UID, State, Transform };
+use core::{ UID, State, Transform, VolumetricBody };
 use maths::{ Matrix, Vector, Quaternion };
-use shapes::{ Shape, ShapeEntity };
+use shapes::Shape;
 use materials::Material;
 
 /// Represents a physical entity in the world.
@@ -127,7 +127,7 @@ impl RigidBody {
     }
 }
 
-impl ShapeEntity for RigidBody {
+impl VolumetricBody for RigidBody {
     #[inline(always)]
     fn shape(&self) -> &Shape {
         (self as &RigidBody).shape()

@@ -4,12 +4,12 @@ mod polytope;
 use self::simplex::Simplex;
 use self::polytope::Polytope;
 
+use core::VolumetricBody;
 use maths::Vector;
-use shapes::ShapeEntity;
 use collisions::NarrowPhase;
 use collisions::narrowphase::Intersection;
 
-enum ContactType {
+enum IntersectionType {
     Vertex(usize),
     Edge(usize),
     Face,
@@ -22,7 +22,7 @@ pub struct GjkEpaImplementation;
 impl GjkEpaImplementation {
     /// Returns the intersection information, if any, between two shape
     /// entities.
-    pub fn find_intersection(&self, entity_0: &ShapeEntity, entity_1: &ShapeEntity) -> Option<Intersection> {
+    pub fn find_intersection(&self, entity_0: &VolumetricBody, entity_1: &VolumetricBody) -> Option<Intersection> {
         Simplex::new_containing_origin([entity_0, entity_1]).map(|simplex| {
             let mut polytope = Polytope::new(&simplex);
             polytope.expand_fully([entity_0, entity_1]);
@@ -32,7 +32,7 @@ impl GjkEpaImplementation {
         })
     }
 
-    fn contact_for_polytope(polytope: &Polytope, entities: [&ShapeEntity; 2]) -> Intersection {
+    fn contact_for_polytope(polytope: &Polytope, entities: [&VolumetricBody; 2]) -> Intersection {
         let mut closest_surface: Option<(f32, Vector, [usize; 3])> = None;
         for &(surface_normal, indices) in polytope.surfaces.iter() {
             let current_depth = surface_normal.dot(polytope.vertices[indices[0]].position);
@@ -61,7 +61,7 @@ impl GjkEpaImplementation {
             ];
 
             match GjkEpaImplementation::infer_contact_type(mapped_indices) {
-                ContactType::Vertex(vertex_index) => {
+                IntersectionType::Vertex(vertex_index) => {
                     println!("CONTACT VERTEX");
                     if i == 1 {
                         let correction = contact_normal * depth / 2.0;
@@ -73,13 +73,13 @@ impl GjkEpaImplementation {
                     break;
                 },
 
-                ContactType::Edge(_) => {
+                IntersectionType::Edge(_) => {
                     // TODO implement this
                     println!("CONTACT EDGE");
                     // unimplemented!();
                 },
 
-                ContactType::Face => {
+                IntersectionType::Face => {
                     // TODO implement this
                     println!("CONTACT FACE");
                     // unimplemented!();
@@ -90,20 +90,20 @@ impl GjkEpaImplementation {
         return Intersection::new(contact_center, contact_normal);
     }
 
-    fn infer_contact_type(indices: [usize; 3]) -> ContactType {
+    fn infer_contact_type(indices: [usize; 3]) -> IntersectionType {
         if indices[0] == indices[1] && indices[1] == indices[2] {
-            return ContactType::Vertex(indices[0]);
+            return IntersectionType::Vertex(indices[0]);
         } else if indices[0] == indices[1] || indices[0] == indices[2] || indices[1] == indices[2] {
-            return ContactType::Edge(0);
+            return IntersectionType::Edge(0);
         } else {
-            return ContactType::Face;
+            return IntersectionType::Face;
         }
     }
 }
 
 impl NarrowPhase for GjkEpaImplementation {
     #[inline(always)]
-    fn find_intersection(&self, entity_0: &ShapeEntity, entity_1: &ShapeEntity) -> Option<Intersection> {
+    fn find_intersection(&self, entity_0: &VolumetricBody, entity_1: &VolumetricBody) -> Option<Intersection> {
         (self as &GjkEpaImplementation).find_intersection(entity_0, entity_1)
     }
 }

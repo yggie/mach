@@ -1,8 +1,8 @@
 use std::fmt::{ Display, Formatter, Result };
 
-use core::{ UID, Transform };
+use core::{ UID, Transform, VolumetricBody };
 use maths::{ Vector, Quaternion };
-use shapes::{ Shape, ShapeEntity };
+use shapes::Shape;
 use materials::Material;
 
 /// Represents a physical entity which cannot move. Within the engine, the
@@ -57,7 +57,7 @@ impl StaticBody {
     }
 }
 
-impl ShapeEntity for StaticBody {
+impl VolumetricBody for StaticBody {
     #[inline(always)]
     fn shape(&self) -> &Shape {
         (self as &StaticBody).shape()

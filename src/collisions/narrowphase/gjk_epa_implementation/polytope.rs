@@ -1,6 +1,6 @@
 use super::simplex::{ SupportPoint, Simplex };
 
-use shapes::ShapeEntity;
+use core::VolumetricBody;
 use maths::{ Vector, TOLERANCE };
 use utils::compute_surfaces_for_convex_hull;
 
@@ -23,18 +23,18 @@ impl Polytope {
         }).is_some();
     }
 
-    pub fn expand_fully(&mut self, entities: [&ShapeEntity; 2]) {
+    pub fn expand_fully(&mut self, bodies: [&VolumetricBody; 2]) {
         for _ in (0..1000) {
-            if !self.expand(entities) { return }
+            if !self.expand(bodies) { return }
         }
 
         unreachable!();
     }
 
-    fn expand(&mut self, entities: [&ShapeEntity; 2]) -> bool {
+    fn expand(&mut self, bodies: [&VolumetricBody; 2]) -> bool {
         let new_point: Vec<SupportPoint> = self.surfaces.iter()
             .filter_map(|&(surface_normal, surface_indices)| {
-                let new_support_points = Simplex::generate_support_points(surface_normal, entities);
+                let new_support_points = Simplex::generate_support_points(surface_normal, bodies);
 
                 let candidate_support_point = new_support_points.iter()
                     .find(|point| {

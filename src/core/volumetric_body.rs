@@ -1,10 +1,10 @@
-use maths::Vector;
 use core::Transform;
+use maths::Vector;
 use shapes::Shape;
 
 /// This trait describes a physical entity which has both geometric and spatial
 /// configurations.
-pub trait ShapeEntity {
+pub trait VolumetricBody {
     /// Returns the `Shape` associated with the entity.
     fn shape(&self) -> &Shape;
 

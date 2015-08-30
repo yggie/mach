@@ -1,8 +1,5 @@
 //! The `shapes` module defines the shared traits for all geometric models.
 
-/// TODO temporary workaround for the issue of rexporting traits, see https://github.com/rust-lang/rust/issues/16264
-pub mod shape_entity;
-
 mod primitives {
     // TODO re-enable Sphere once GJK-EPA has stabilized
     // pub use self::sphere::Sphere;
@@ -13,7 +10,6 @@ mod primitives {
 }
 
 pub use self::primitives::Cube;
-pub use self::shape_entity::ShapeEntity;
 
 use std::fmt;
 
