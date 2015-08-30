@@ -3,18 +3,11 @@ extern crate mach;
 use std::cell::{ Ref, RefMut };
 
 use mach::core::{ RigidBody, UID, State, StaticBody, Transform, VolumetricBody };
+use mach::utils::debug::renderevent;
 use mach::shapes::Shape;
 use mach::materials::Material;
 use mach::collisions::{ CollisionSpace, Contact };
 use mach::collisions::narrowphase::Intersection;
-
-fn verbose_format_body(body: &RigidBody) -> String {
-    format!("{}, Shape={}", body, body.shape())
-}
-
-fn verbose_format_static_body(static_body: &StaticBody) -> String {
-    format!("{}, Shape={}", static_body, static_body.shape())
-}
 
 /// A utility class which wraps around a `CollisionSpace` component and produces
 /// parseable output for debugging.
@@ -32,14 +25,14 @@ impl<C: CollisionSpace> CollisionSpace for CollisionSpaceMonitor<C> {
     fn create_body<S: Shape, M: Material>(&mut self, shape: S, material: M, state: State) -> UID {
         let uid = self.0.create_body(shape, material, state);
         let body = self.0.find_body(uid).unwrap();
-        println!("[CREATE] {}", verbose_format_body(&*body));
+        renderevent::create_rigid_body(&*body);
         return uid;
     }
 
     fn create_static_body<S: Shape, M: Material>(&mut self, shape: S, material: M, transform: Transform) -> UID {
         let uid = self.0.create_static_body(shape, material, transform);
         let static_body = self.0.find_static_body(uid).unwrap();
-        println!("[CREATE] {}", verbose_format_static_body(&*static_body));
+        renderevent::create_static_body(&*static_body);
         return uid;
     }
 

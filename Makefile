@@ -10,7 +10,7 @@ build:
 # TODO differentiate compile error from test assertion failure so that the
 # output will not be rendered if it is empty
 debug: $(TARGET) $(VIZ_GENERATOR)
-	-RUST_TEST_THREADS=1 cargo test -- --nocapture > $(DEBUG_OUTPUT)
+	-RUST_TEST_THREADS=1 cargo test --features debug_renderevent -- --nocapture > $(DEBUG_OUTPUT)
 	$(VIZ_GENERATOR) $(DEBUG_OUTPUT) | xargs open
 
 $(TARGET):
