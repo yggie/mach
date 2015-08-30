@@ -1,11 +1,12 @@
 use core::RigidBody;
-use maths::{ Vector, Quaternion };
-use dynamics::Dynamics;
+use maths::Vector;
+use dynamics::{ Dynamics, SemiImplicitEuler };
 use collisions::{ Constraint, CollisionSpace };
 
 /// Contains the simplest implementation for a time marching scheme.
 pub struct SimpleDynamics {
     gravity: Vector,
+    integrator: SemiImplicitEuler,
 }
 
 impl SimpleDynamics {
@@ -13,6 +14,7 @@ impl SimpleDynamics {
     pub fn new() -> SimpleDynamics {
         SimpleDynamics {
             gravity: Vector::new_zero(),
+            integrator: SemiImplicitEuler,
         }
     }
 
@@ -122,23 +124,8 @@ impl Dynamics for SimpleDynamics {
             }
         }
 
-
-        let scaled_gravity = self.gravity * time_step;
         for mut body in collisions.bodies_iter_mut() {
-            // TODO deal with temporaries once language limitation is resolved, see https://github.com/rust-lang/rfcs/pull/396
-            let t = time_step;
-            let p = body.position();
-            let v = body.velocity();
-            let new_velocity = v + scaled_gravity;
-            body.set_velocity_with_vector(new_velocity);
-            body.set_position_with_vector(p + new_velocity * t);
-
-            let w = body.angular_velocity();
-            let w_as_quat = Quaternion::new(0.0, w[0] * t, w[1] * t, w[2] * t);
-            let q = body.rotation_quaternion();
-            let new_rotation = q + w_as_quat * q * 0.5;
-
-            body.set_rotation_with_quaternion(new_rotation.normalize());
+            self.integrator.integrate_in_place(body.state_mut(), time_step, self.gravity);
         }
     }
 

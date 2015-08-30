@@ -4,10 +4,16 @@
 
 mod force_accumulator;
 mod simple_dynamics;
+mod integrators;
+
+/// TODO temporary workaround for the issue of rexporting traits, see https://github.com/rust-lang/rust/issues/16264
+pub mod integrator;
 
 use maths::Vector;
 use collisions::CollisionSpace;
 
+pub use self::integrator::Integrator;
+pub use self::integrators::semi_implicit_euler::SemiImplicitEuler;
 pub use self::simple_dynamics::SimpleDynamics;
 pub use self::force_accumulator::ForceAccumulator;
 

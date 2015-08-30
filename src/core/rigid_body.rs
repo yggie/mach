@@ -48,6 +48,13 @@ impl RigidBody {
         &self.state
     }
 
+    /// Returns the `State` associated with the `RigidBody` as a mutable
+    /// reference.
+    #[inline]
+    pub fn state_mut(&mut self) -> &mut State {
+        &mut self.state
+    }
+
     /// Returns the mass of the `RigidBody`.
     #[inline]
     pub fn mass(&self) -> f32 {
