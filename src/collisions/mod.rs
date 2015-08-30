@@ -3,7 +3,7 @@
 //! queries for physical bodies.
 
 mod contact;
-mod simple_collisions;
+mod simple_collision_space;
 
 pub mod narrowphase;
 /// TODO temporary workaround for the issue of rexporting traits, see https://github.com/rust-lang/rust/issues/16264
@@ -12,4 +12,4 @@ pub mod collision_space;
 pub use self::contact::{ Contact, ContactPair };
 pub use self::narrowphase::NarrowPhase;
 pub use self::collision_space::CollisionSpace;
-pub use self::simple_collisions::SimpleCollisions;
+pub use self::simple_collision_space::SimpleCollisionSpace;

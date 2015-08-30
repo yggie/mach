@@ -1,11 +1,11 @@
-use support::{ CollisionsMonitor, DynamicsMonitor };
+use support::{ CollisionSpaceMonitor, DynamicsMonitor };
 
 use mach::core::State;
 use mach::maths::Vector;
 use mach::shapes::Cube;
 use mach::dynamics::Dynamics;
 use mach::materials::Rigid;
-use mach::collisions::{ CollisionSpace, SimpleCollisions };
+use mach::collisions::{ CollisionSpace, SimpleCollisionSpace };
 
 
 fn assert_approximately_equal(a: Vector, b: Vector) {
@@ -27,7 +27,7 @@ pub fn defining_gravity<D: Dynamics, F: FnOnce() -> D>(new_dynamics: F) {
 pub fn moving_at_constant_velocity<D: Dynamics, F: FnOnce() -> D>(new_dynamics: F) {
     // SETUP
     let mut dynamics = DynamicsMonitor::new(new_dynamics());
-    let mut space = &mut CollisionsMonitor::new(SimpleCollisions::new());
+    let mut space = &mut CollisionSpaceMonitor::new(SimpleCollisionSpace::new());
     let uid = space.create_body(
         Cube::new(1.0, 1.0, 1.0),
         Rigid::new(1.0),
@@ -46,7 +46,7 @@ pub fn moving_at_constant_velocity<D: Dynamics, F: FnOnce() -> D>(new_dynamics: 
 pub fn moving_at_constant_velocity_with_gravity<D: Dynamics, F: FnOnce() -> D>(new_dynamics: F) {
     // SETUP
     let mut dynamics = DynamicsMonitor::new(new_dynamics());
-    let mut space = &mut CollisionsMonitor::new(SimpleCollisions::new());
+    let mut space = &mut CollisionSpaceMonitor::new(SimpleCollisionSpace::new());
     let uid = space.create_body(
         Cube::new(1.0, 1.0, 1.0),
         Rigid::new(1.0),
@@ -65,7 +65,7 @@ pub fn moving_at_constant_velocity_with_gravity<D: Dynamics, F: FnOnce() -> D>(n
 pub fn moving_after_a_collision_without_rotation<D: Dynamics, F: FnOnce() -> D>(new_dynamics: F) {
     // SETUP
     let mut dynamics = DynamicsMonitor::new(new_dynamics());
-    let mut space = &mut CollisionsMonitor::new(SimpleCollisions::new());
+    let mut space = &mut CollisionSpaceMonitor::new(SimpleCollisionSpace::new());
     let uid_0 = space.create_body(
         Cube::new(1.0, 1.0, 1.0),
         Rigid::new(1.0),

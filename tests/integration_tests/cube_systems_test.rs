@@ -5,11 +5,11 @@ use mach::maths::Vector;
 use mach::shapes::Cube;
 use mach::materials::Rigid;
 use mach::dynamics::SimpleDynamics;
-use mach::collisions::SimpleCollisions;
+use mach::collisions::SimpleCollisionSpace;
 
 #[test]
 fn colliding_two_cubes() {
-    Simulation::<SimpleCollisions, SimpleDynamics>::new_default()
+    Simulation::<SimpleCollisionSpace, SimpleDynamics>::new_default()
         .configure(|world| {
             let shape = Cube::new(1.0, 1.0, 1.0);
 
@@ -30,7 +30,7 @@ fn colliding_two_cubes() {
 
 #[test]
 fn dropping_a_cube_on_a_platform() {
-    Simulation::<SimpleCollisions, SimpleDynamics>::new_default()
+    Simulation::<SimpleCollisionSpace, SimpleDynamics>::new_default()
         .configure(|world| {
             // world.set_gravity(Vector::new(0.0, -4.0, 0.0));
             world.set_gravity(Vector::new(0.0, -0.5, 0.0));

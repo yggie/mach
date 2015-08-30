@@ -9,7 +9,7 @@ use collisions::{ CollisionSpace, Contact, ContactPair };
 use collisions::narrowphase::GjkEpaImplementation;
 
 /// A simple implementation for representing space in the simulation.
-pub struct SimpleCollisions {
+pub struct SimpleCollisionSpace {
     registry: HashMap<UID, SharedCell<RigidBody>>,
     static_registry: HashMap<UID, SharedCell<StaticBody>>,
     rigid_body_pairs: Vec<(SharedCell<RigidBody>, SharedCell<RigidBody>)>,
@@ -17,10 +17,10 @@ pub struct SimpleCollisions {
     counter: UID,
 }
 
-impl SimpleCollisions {
-    /// Instantiates a new `SimpleCollisions` object.
-    pub fn new() -> SimpleCollisions {
-        SimpleCollisions {
+impl SimpleCollisionSpace {
+    /// Instantiates a new `SimpleCollisionSpace` object.
+    pub fn new() -> SimpleCollisionSpace {
+        SimpleCollisionSpace {
             registry: HashMap::new(),
             static_registry: HashMap::new(),
             rigid_body_pairs: Vec::new(),
@@ -35,7 +35,7 @@ impl SimpleCollisions {
     }
 }
 
-impl CollisionSpace for SimpleCollisions {
+impl CollisionSpace for SimpleCollisionSpace {
     fn create_body<S: Shape, M: Material>(&mut self, shape: S, material: M, state: State) -> UID {
         let new_uid = self.generate_uid();
         let new_body = RigidBody::new_with_id(new_uid, Box::new(shape), Box::new(material), state);

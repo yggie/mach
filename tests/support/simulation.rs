@@ -1,20 +1,20 @@
 use mach::World;
 use mach::dynamics::{ Dynamics, SimpleDynamics };
-use mach::collisions::{ CollisionSpace, SimpleCollisions };
+use mach::collisions::{ CollisionSpace, SimpleCollisionSpace };
 
-use support::{ CollisionsMonitor, DynamicsMonitor };
+use support::{ CollisionSpaceMonitor, DynamicsMonitor };
 
 pub struct Simulation<C: CollisionSpace, D: Dynamics> {
-    world: World<CollisionsMonitor<C>, DynamicsMonitor<D>>,
+    world: World<CollisionSpaceMonitor<C>, DynamicsMonitor<D>>,
     did_assert: bool
 }
 
 impl<C: CollisionSpace, D: Dynamics> Simulation<C, D> {
-    pub fn new_default() -> Simulation<SimpleCollisions, SimpleDynamics> {
-        let collisions = SimpleCollisions::new();
+    pub fn new_default() -> Simulation<SimpleCollisionSpace, SimpleDynamics> {
+        let collisions = SimpleCollisionSpace::new();
         let dynamics = SimpleDynamics::new();
         let world = World::new(
-            CollisionsMonitor::new(collisions),
+            CollisionSpaceMonitor::new(collisions),
             DynamicsMonitor::new(dynamics)
         );
 
@@ -26,7 +26,7 @@ impl<C: CollisionSpace, D: Dynamics> Simulation<C, D> {
         };
     }
 
-    pub fn configure<F: FnOnce(&mut World<CollisionsMonitor<C>, DynamicsMonitor<D>>)>(&mut self, func: F) -> &mut Simulation<C, D> {
+    pub fn configure<F: FnOnce(&mut World<CollisionSpaceMonitor<C>, DynamicsMonitor<D>>)>(&mut self, func: F) -> &mut Simulation<C, D> {
         self.did_assert = false;
 
         func(&mut self.world);

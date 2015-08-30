@@ -17,17 +17,17 @@ fn verbose_format_static_body(static_body: &StaticBody) -> String {
 
 /// A utility class which wraps around a `CollisionSpace` component and produces
 /// parseable output for debugging.
-pub struct CollisionsMonitor<C: CollisionSpace>(C);
+pub struct CollisionSpaceMonitor<C: CollisionSpace>(C);
 
-impl<C: CollisionSpace> CollisionsMonitor<C> {
-    /// Returns a new `CollisionsMonitor` wrapped around a `CollisionSpace`
+impl<C: CollisionSpace> CollisionSpaceMonitor<C> {
+    /// Returns a new `CollisionSpaceMonitor` wrapped around a `CollisionSpace`
     /// instance.
-    pub fn new(collisions: C) -> CollisionsMonitor<C> {
-        CollisionsMonitor(collisions)
+    pub fn new(collisions: C) -> CollisionSpaceMonitor<C> {
+        CollisionSpaceMonitor(collisions)
     }
 }
 
-impl<C: CollisionSpace> CollisionSpace for CollisionsMonitor<C> {
+impl<C: CollisionSpace> CollisionSpace for CollisionSpaceMonitor<C> {
     fn create_body<S: Shape, M: Material>(&mut self, shape: S, material: M, state: State) -> UID {
         let uid = self.0.create_body(shape, material, state);
         let body = self.0.find_body(uid).unwrap();
