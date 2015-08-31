@@ -57,8 +57,6 @@ impl<D: Dynamics> Dynamics for DynamicsMonitor<D> {
             self.total_energy_violation_count += 1;
         }
         self.previous_total_energy = total_energy;
-
-        renderevent::update_end();
     }
 
     fn gravity(&self) -> Vector {

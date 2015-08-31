@@ -2,46 +2,43 @@
 //! rendering of information. This was primarily developed to aid debugging.
 
 use core::{ RigidBody, StaticBody };
+use maths::Vector;
 
 /// Logs an event for the creation of a `RigidBody`
 pub fn create_rigid_body(rigid_body: &RigidBody) {
     if cfg!(feature="debug_renderevent") {
-        println!("[CREATE] {}, Shape={}", rigid_body, rigid_body.shape());
+        println!("[NEW] {}, Shape={}", rigid_body, rigid_body.shape());
     }
 }
 
 /// Logs an event for the creation of a `StaticBody`
 pub fn create_static_body(static_body: &StaticBody) {
     if cfg!(feature="debug_renderevent") {
-        println!("[CREATE] {}, Shape={}", static_body, static_body.shape());
+        println!("[NEW] {}, Shape={}", static_body, static_body.shape());
     }
 }
 
 /// Logs an event indicating the start of the update step
 pub fn update_start(time_step: f32) {
     if cfg!(feature="debug_renderevent") {
-        println!("[UPDATE] START step={}", time_step);
+        println!("[FRAME] NEW step={}", time_step);
     }
 }
 
 /// Logs an event indicating the end of the update step
-pub fn update_end() {
-    if cfg!(feature="debug_renderevent") {
-        println!("[UPDATE] END");
-    }
-}
+pub fn update_end() { }
 
 /// Logs an event which shows the current state of a `RigidBody` during the update step
 pub fn update_rigid_body(rigid_body: &RigidBody) {
     if cfg!(feature="debug_renderevent") {
-        println!("[UPDATE] {}", rigid_body);
+        println!("[FRAME] {}", rigid_body);
     }
 }
 
 /// Logs an event which shows the current state of a `StaticBody` during the update step
 pub fn update_static_body(static_body: &StaticBody) {
     if cfg!(feature="debug_renderevent") {
-        println!("[UPDATE] {}", static_body);
+        println!("[FRAME] {}", static_body);
     }
 }
 
@@ -51,5 +48,34 @@ pub fn update_static_body(static_body: &StaticBody) {
 pub fn violation(kind: &str, message: &str) {
     if cfg!(feature="debug_renderevent") {
         println!("[VIOLATION] <{}>: {}", kind, message);
+    }
+}
+
+/// Serializes a point cloud to be rendered in the current frame. An ID should
+/// be specified to help the test browser identify the same point cloud between
+/// frames.
+pub fn point_cloud(id: usize, points: &Vec<Vector>) {
+    if cfg!(feature="debug_renderevent") {
+        for point in points.iter() {
+            println!("[FRAME] PointCloud[{}]: {}", id, point);
+        }
+    }
+}
+
+// TODO not yet supported in the test browser
+// pub fn arrow(id: usize, points: (Vector, Vector)) {
+//     if cfg!(feature="debug_renderevent") {
+//         println!("[FRAME] Arrow[{}]: {} -> {}", id, points.0, points.1);
+//     }
+// }
+
+/// Serializes a triangle mesh to be rendered in the current frame. An ID should
+/// be specified to help the test browser identify the same triangle mesh
+/// between frames.
+pub fn triangle_mesh(id: usize, triangle_mesh: &Vec<(Vector, Vector, Vector)>) {
+    if cfg!(feature="debug_renderevent") {
+        for &(point_0, point_1, point_2) in triangle_mesh.iter() {
+            println!("[FRAME] TriangleMesh[{}]: {} -> {} -> {}", id, point_0, point_1, point_2);
+        }
     }
 }

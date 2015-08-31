@@ -51,45 +51,78 @@ impl GjkEpaImplementation {
         }
 
         let (depth, contact_normal, indices) = closest_surface.unwrap();
-        let mut contact_center = Vector::new_zero();
 
-        for i in (0..2) {
-            let mapped_indices = [
-                polytope.vertices[indices[0]].indices[i],
-                polytope.vertices[indices[1]].indices[i],
-                polytope.vertices[indices[2]].indices[i],
-            ];
+        let contact_type_0 = GjkEpaImplementation::infer_contact_type(0, polytope, indices);
+        let contact_type_1 = GjkEpaImplementation::infer_contact_type(1, polytope, indices);
 
-            match GjkEpaImplementation::infer_contact_type(mapped_indices) {
-                IntersectionType::Vertex(vertex_index) => {
-                    if i == 1 {
-                        let correction = contact_normal * depth / 2.0;
-                        contact_center = entities[1].vertex(vertex_index) + correction;
-                    } else {
-                        let correction = contact_normal * depth / -2.0;
-                        contact_center = entities[0].vertex(vertex_index) + correction;
-                    }
-                    break;
-                },
+        let contact_center = match (contact_type_0, contact_type_1) {
+            (IntersectionType::Vertex(vertex_index), _) => {
+                let correction = contact_normal * depth / -2.0;
+                entities[0].vertex(vertex_index) + correction
+            },
 
-                IntersectionType::Edge(_) => {
-                    // TODO implement this
-                    println!("!!!CONTACT EDGE!!!");
-                    // unimplemented!();
-                },
+            (_, IntersectionType::Vertex(vertex_index)) => {
+                let correction = contact_normal * depth / 2.0;
+                entities[1].vertex(vertex_index) + correction
+            },
 
-                IntersectionType::Face => {
-                    // TODO implement this
-                    println!("!!!CONTACT FACE!!!");
-                    // unimplemented!();
-                },
-            }
-        }
+            (IntersectionType::Edge(_), IntersectionType::Edge(_)) => {
+                println!("UNHANDLED CONTACT TYPE [EDGE|EDGE]");
+                Vector::new_zero()
+            },
+
+            (IntersectionType::Face, IntersectionType::Edge(_)) => {
+                println!("UNHANDLED CONTACT TYPE [FACE|EDGE]");
+                Vector::new_zero()
+            },
+
+            (IntersectionType::Edge(_), IntersectionType::Face) => {
+                println!("UNHANDLED CONTACT TYPE [EDGE|FACE]");
+                Vector::new_zero()
+            },
+
+            (IntersectionType::Face, IntersectionType::Face) => {
+                println!("UNHANDLED CONTACT TYPE [FACE|FACE]");
+                Vector::new_zero()
+            },
+        };
+
+        // for i in (0..2) {
+        //     let mapped_indices = [
+        //         polytope.vertices[indices[0]].indices[i],
+        //         polytope.vertices[indices[1]].indices[i],
+        //         polytope.vertices[indices[2]].indices[i],
+        //     ];
+        //
+        //     match GjkEpaImplementation::infer_contact_type(mapped_indices) {
+        //         IntersectionType::Edge(_) => {
+        //             // TODO implement this
+        //             println!("!!!CONTACT EDGE!!!");
+        //             // unimplemented!();
+        //         },
+        //
+        //         IntersectionType::Face => {
+        //             // TODO implement this
+        //             println!("!!!CONTACT FACE!!!");
+        //             // unimplemented!();
+        //         },
+        //     }
+        // }
 
         return Intersection::new(contact_center, contact_normal);
     }
 
-    fn infer_contact_type(indices: [usize; 3]) -> IntersectionType {
+    fn infer_contact_type(entity_number: usize, polytope: &Polytope, indices: [usize; 3]) -> IntersectionType {
+        let mapped_indices = [
+            polytope.vertices[indices[0]].indices[entity_number],
+            polytope.vertices[indices[1]].indices[entity_number],
+            polytope.vertices[indices[2]].indices[entity_number],
+        ];
+
+        return GjkEpaImplementation::infer_contact_type_with_indices(mapped_indices);
+    }
+
+    fn infer_contact_type_with_indices(indices: [usize; 3]) -> IntersectionType {
         if indices[0] == indices[1] && indices[1] == indices[2] {
             return IntersectionType::Vertex(indices[0]);
         } else if indices[0] == indices[1] || indices[0] == indices[2] || indices[1] == indices[2] {

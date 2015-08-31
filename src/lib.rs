@@ -6,8 +6,6 @@
 
 #![warn(missing_docs)]
 
-extern crate rand;
-
 pub use self::world::World;
 
 mod world;

@@ -80,10 +80,8 @@ impl SimpleDynamics {
         return (velocity_change, angular_velocity_change);
     }
 
-    fn revert_to_time_of_contact<C: CollisionSpace>(&self, collision_space: &mut C, rigid_body_0: &mut RigidBody, rigid_body_1: &mut RigidBody, time_window: f32) -> (Intersection, f32) {
-        let intersection_option = collision_space.find_intersection(rigid_body_0, rigid_body_1);
-        assert!(intersection_option.is_some());
-        let mut last_intersection: (Intersection, f32, State, State) = (intersection_option.unwrap(), 0.0, rigid_body_0.state().clone(), rigid_body_1.state().clone());
+    fn revert_to_time_of_contact<C: CollisionSpace>(&self, collision_space: &mut C, current_intersection: Intersection, rigid_body_0: &mut RigidBody, rigid_body_1: &mut RigidBody, time_window: f32) -> (Intersection, f32) {
+        let mut last_intersection: (Intersection, f32, State, State) = (current_intersection, 0.0, rigid_body_0.state().clone(), rigid_body_1.state().clone());
         let mut did_intersect_last_step = true;
         let mut current_time = time_window;
 
@@ -111,10 +109,10 @@ impl SimpleDynamics {
         return (last_intersection.0, last_intersection.1);
     }
 
-    fn revert_to_time_of_contact_with_static<C: CollisionSpace>(&self, collision_space: &mut C, rigid_body: &mut RigidBody, static_body: &StaticBody, time_window: f32) -> (Intersection, f32) {
-        let intersection_option = collision_space.find_intersection(rigid_body, static_body);
-        assert!(intersection_option.is_some());
-        let mut last_intersection: (Intersection, f32, State) = (intersection_option.unwrap(), 0.0, rigid_body.state().clone());
+    fn revert_to_time_of_contact_with_static<C: CollisionSpace>(&self, collision_space: &mut C, current_intersection: Intersection, rigid_body: &mut RigidBody, static_body: &StaticBody, time_window: f32) -> (Intersection, f32) {
+        // let intersection_option = collision_space.find_intersection(rigid_body, static_body);
+        // assert!(intersection_option.is_some(), "find_intersection returned false when there was a contact!");
+        let mut last_intersection: (Intersection, f32, State) = (current_intersection, 0.0, rigid_body.state().clone());
         let mut did_intersect_last_step = true;
         let mut current_time = time_window;
 
@@ -165,11 +163,11 @@ impl Dynamics for SimpleDynamics {
                     ContactPair::RigidRigid(ref cell_0, ref cell_1) => {
                         let rigid_body_0 = &mut cell_0.borrow_mut();
                         let rigid_body_1 = &mut cell_1.borrow_mut();
+                        let current_intersection = Intersection::new(contact.center, contact.normal);
 
-                        let (intersection, remaining_time) = self.revert_to_time_of_contact(collision_space, rigid_body_0, rigid_body_1, time_step);
+                        let (intersection, remaining_time) = self.revert_to_time_of_contact(collision_space, current_intersection, rigid_body_0, rigid_body_1, time_step);
                         let changes = self.solve_for_contact(rigid_body_0, rigid_body_1, intersection.point(), intersection.normal());
 
-                        println!("FELL BACK AND NEED TO MOVE {}", remaining_time);
                         self.update_rigid_body(rigid_body_0, changes.0, remaining_time);
                         self.update_rigid_body(rigid_body_1, changes.1, remaining_time);
                     },
@@ -177,11 +175,11 @@ impl Dynamics for SimpleDynamics {
                     ContactPair::RigidStatic(ref cell_0, ref cell_1) => {
                         let rigid_body = &mut cell_0.borrow_mut();
                         let static_body = &mut cell_1.borrow();
+                        let current_intersection = Intersection::new(contact.center, contact.normal);
 
-                        let (intersection, remaining_time) = self.revert_to_time_of_contact_with_static(collision_space, rigid_body, static_body, time_step);
+                        let (intersection, remaining_time) = self.revert_to_time_of_contact_with_static(collision_space, current_intersection, rigid_body, static_body, time_step);
                         let change = self.solve_for_contact_with_static(rigid_body, intersection.point(), intersection.normal());
 
-                        println!("FELL BACK AND NEED TO MOVE {}", remaining_time);
                         self.update_rigid_body(rigid_body, change, remaining_time);
                     },
                 }

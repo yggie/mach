@@ -1,5 +1,3 @@
-use rand::random;
-
 use core::VolumetricBody;
 use maths::{ Vector, TOLERANCE };
 use shapes::Shape;
@@ -17,27 +15,48 @@ pub struct Simplex {
 
 impl Simplex {
     fn new(bodies: [&VolumetricBody; 2]) -> Simplex {
-        let mut support_points: Vec<SupportPoint> = Vec::new();
-        while support_points.len() < 4 {
-            let vector = Vector::new(
-                random::<f32>() - 0.5,
-                random::<f32>() - 0.5,
-                random::<f32>() - 0.5,
-            );
-            let candidate_support_point = Simplex::generate_support_points(vector.normalize(), bodies)[0];
+        let relative_position = bodies[1].transform().translation() - bodies[0].transform().translation();
 
-            if support_points.iter().find(|p| { p.indices == candidate_support_point.indices }).is_none() {
-                support_points.push(candidate_support_point);
-            }
-        }
+        assert!(relative_position.length_sq() > 0.001, "relative position is almost zero!");
+
+        let support_point_0 = Simplex::generate_support_points(relative_position, bodies)[0];
+        let support_point_1 = Simplex::generate_support_points(-relative_position, bodies)[0];
+
+        let support_point_2 = {
+            let a = support_point_0.position - relative_position;
+            let b = support_point_1.position - relative_position;
+            let norm = a.cross(b).normalize();
+
+            [1.0, -1.0].iter()
+                .flat_map(|&multiplier| {
+                    Simplex::generate_support_points(norm * multiplier, bodies)
+                }).find(|support_point| {
+                    support_point.indices != support_point_0.indices &&
+                        support_point.indices != support_point_1.indices
+                }).expect("should have found a match here")
+        };
+
+        let support_point_3 = {
+            let a = support_point_2.position - support_point_0.position;
+            let b = support_point_1.position - support_point_0.position;
+            let norm = a.cross(b).normalize();
+
+            [1.0, -1.0].iter()
+                .flat_map(|&multiplier| {
+                    Simplex::generate_support_points(norm * multiplier, bodies)
+                }).find(|support_point| {
+                    support_point.indices != support_point_0.indices &&
+                        support_point.indices != support_point_1.indices
+                }).expect("should have found a match here")
+        };
 
         return Simplex {
             vertices: [
-                support_points[0],
-                support_points[1],
-                support_points[2],
-                support_points[3],
-            ],
+                support_point_0,
+                support_point_1,
+                support_point_2,
+                support_point_3,
+            ]
         };
     }
 
@@ -46,17 +65,17 @@ impl Simplex {
         let surface_radius = bodies[0].shape().surface_radius() + bodies[1].shape().surface_radius();
 
         for _ in (0..1000) {
-            let mut next_guess: Option<(Vector, usize, usize)> = None;
             // find any surface facing the origin
-            for (normal, indices, not_in_index) in simplex.surfaces_iter() {
-                let vertex_to_origin = -simplex.vertices[indices[0]].position;
-                let distance_to_origin = vertex_to_origin.dot(normal);
+            let next_guess = simplex.surfaces_iter()
+                .map(|(normal, indices, not_in_index)| {
+                    (normal, indices[0], not_in_index)
+                })
+                .find(|&(normal, index, _): &(Vector, usize, usize)| {
+                    let vertex_to_origin = -simplex.vertices[index].position;
+                    let distance_to_origin = vertex_to_origin.dot(normal);
 
-                if distance_to_origin > surface_radius {
-                    next_guess = Some((normal, indices[0], not_in_index));
-                    break;
-                }
-            }
+                    return distance_to_origin > surface_radius;
+                });
 
             match next_guess {
                 Some((direction, index_on_surface, index_to_replace)) => {

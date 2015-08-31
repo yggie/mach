@@ -45,22 +45,31 @@ directory, and can be run using the command:
 make test
 ```
 
-To visualize the test results, you can use:
+Some tests can be visualized using the
+[mach-test-browser-standalone](https://github.com/yggie/mach-test-browser-standalone).
+To visualize the results, the test browser must first be running. Do that with
+the command:
+
+```
+make debug-server
+```
+
+This starts the debugging server on http://localhost:8888. Test visualization is
+disabled by default, therefore to run the visualization, you will need a special
+command:
 
 ```
 make debug
 ```
 
-Which opens the
-[mach-ci-offline](https://github.com/yggie/mach-ci-offline) on a browser
-window with the test output.
+This will re-compile the tests with the visualization flag active. Once
+complete, the task automatically opens the browser with the visualization.
 
 # Dependencies
 
-This library currently has no dependencies.
+This library has no dependencies.
 
 
 # License
 
-This software is distributed under the
-[MIT License](LICENSE).
+This software is distributed under the [MIT License](LICENSE).
