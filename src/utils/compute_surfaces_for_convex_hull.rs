@@ -59,9 +59,7 @@ pub fn compute_surfaces_for_convex_hull(vertices: &Vec<Vector>) -> Vec<Surface> 
                 }
             }
 
-            None => {
-                free_edge_list.insert(0, current_edge);
-            },
+            None => free_edge_list.insert(0, current_edge),
         }
     }
 
@@ -254,7 +252,6 @@ fn new_surface_from_edge(vertices: &Vec<Vector>, edge: DirectedEdge, vertex_inde
         new_edges.push(new_edge);
     }
 
-    // TODO investigate why sometimes new edges list only has one entry, this is
-    // likely due to a repeated node in the surface
+    debug_assert!(new_edges.len() == 2, "the indices provided to generate the surface were not unique!");
     return (new_surface, [new_edges.remove(0), new_edges.remove(0)]);
 }

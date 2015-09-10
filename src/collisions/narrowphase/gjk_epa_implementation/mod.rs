@@ -87,28 +87,6 @@ impl GjkEpaImplementation {
             },
         };
 
-        // for i in (0..2) {
-        //     let mapped_indices = [
-        //         polytope.vertices[indices[0]].indices[i],
-        //         polytope.vertices[indices[1]].indices[i],
-        //         polytope.vertices[indices[2]].indices[i],
-        //     ];
-        //
-        //     match GjkEpaImplementation::infer_contact_type(mapped_indices) {
-        //         IntersectionType::Edge(_) => {
-        //             // TODO implement this
-        //             println!("!!!CONTACT EDGE!!!");
-        //             // unimplemented!();
-        //         },
-        //
-        //         IntersectionType::Face => {
-        //             // TODO implement this
-        //             println!("!!!CONTACT FACE!!!");
-        //             // unimplemented!();
-        //         },
-        //     }
-        // }
-
         return Intersection::new(contact_center, contact_normal);
     }
 

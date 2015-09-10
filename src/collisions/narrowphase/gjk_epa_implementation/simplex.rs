@@ -17,7 +17,7 @@ impl Simplex {
     fn new(bodies: [&VolumetricBody; 2]) -> Simplex {
         let relative_position = bodies[1].transform().translation() - bodies[0].transform().translation();
 
-        assert!(relative_position.length_sq() > 0.001, "relative position is almost zero!");
+        debug_assert!(relative_position.length_sq() > TOLERANCE, "relative position is almost zero!");
 
         let support_point_0 = Simplex::generate_support_points(relative_position, bodies)[0];
         let support_point_1 = Simplex::generate_support_points(-relative_position, bodies)[0];

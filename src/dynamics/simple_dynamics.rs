@@ -111,7 +111,7 @@ impl SimpleDynamics {
 
     fn revert_to_time_of_contact_with_static<C: CollisionSpace>(&self, collision_space: &mut C, current_intersection: Intersection, rigid_body: &mut RigidBody, static_body: &StaticBody, time_window: f32) -> (Intersection, f32) {
         // let intersection_option = collision_space.find_intersection(rigid_body, static_body);
-        // assert!(intersection_option.is_some(), "find_intersection returned false when there was a contact!");
+        // debug_assert!(intersection_option.is_some(), "find_intersection returned false when there was a contact!");
         let mut last_intersection: (Intersection, f32, State) = (current_intersection, 0.0, rigid_body.state().clone());
         let mut did_intersect_last_step = true;
         let mut current_time = time_window;

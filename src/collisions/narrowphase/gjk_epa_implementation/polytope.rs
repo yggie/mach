@@ -32,7 +32,7 @@ impl Polytope {
     }
 
     fn expand(&mut self, bodies: [&VolumetricBody; 2]) -> bool {
-        let new_point: Vec<SupportPoint> = self.surfaces.iter()
+        let new_point = self.surfaces.iter()
             .filter_map(|&(surface_normal, surface_indices)| {
                 let new_support_points = Simplex::generate_support_points(surface_normal, bodies);
 
@@ -52,11 +52,10 @@ impl Polytope {
                     None => return None,
                 }
             })
-            .take(1)
-            .collect();
+            .next();
 
-        match new_point.get(0) {
-            Some(&support_point) => {
+        match new_point {
+            Some(support_point) => {
                 self.vertices.push(support_point);
                 let vertex_positions: Vec<Vector> = self.vertices.iter()
                     .map(|vertex| vertex.position)
@@ -66,6 +65,7 @@ impl Polytope {
                 self.surfaces = surfaces.iter()
                     .map(|surface| (surface.normal, surface.nodes))
                     .collect();
+
                 return true;
             },
 
