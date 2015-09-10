@@ -2,7 +2,7 @@ use support::Simulation;
 
 use mach::core::{ State, Transform };
 use mach::maths::Vector;
-use mach::shapes::Cube;
+use mach::shapes::Cuboid;
 use mach::entities::Material;
 use mach::dynamics::SimpleDynamics;
 use mach::collisions::SimpleCollisionSpace;
@@ -11,7 +11,7 @@ use mach::collisions::SimpleCollisionSpace;
 fn colliding_two_cubes() {
     Simulation::<SimpleCollisionSpace, SimpleDynamics>::new_default()
         .configure(|world| {
-            let shape = Cube::new(1.0, 1.0, 1.0);
+            let shape = Cuboid::new_cube(1.0);
 
             let state_0 =  State::new_stationary()
                 .with_position(0.0,  3.0, 0.0)
@@ -41,12 +41,10 @@ fn dropping_a_cube_on_a_platform() {
                 .with_position(0.0, 0.0,  3.0)
                 .with_velocity(0.0, 0.0, -1.0)
                 .with_angular_velocity(0.3, 0.4, 0.5);
-            world.create_body(Cube::new(1.0, 1.0, 1.0), &material, state_0);
+            world.create_body(Cuboid::new_cube(1.0), &material, state_0);
 
             let transform_1 = Transform::new_identity();
-            // TODO investigate why this causes a crash
-            // world.create_static_body(Cube::new(100.0, 0.1, 100.0), material.clone(), transform_1);
-            world.create_static_body(Cube::new(10.0, 10.0, 0.1), &material, transform_1);
+            world.create_static_body(Cuboid::new(10.0, 10.0, 0.1), &material, transform_1);
         })
         .execute_multiple_steps(200, 0.1)
         .assert_compliance();

@@ -1,14 +1,14 @@
 use mach::core::State;
 use mach::maths::{ PI, Vector };
-use mach::shapes::Cube;
+use mach::shapes::Cuboid;
 use mach::entities::{ Material, RigidBody };
 use mach::collisions::narrowphase::GjkEpaImplementation;
 
-fn setup_cubes(cube_0: Cube, state_0: State, cube_1: Cube, state_1: State) -> (GjkEpaImplementation, [RigidBody; 2]) {
+fn setup_cubes(cuboid_0: Cuboid, state_0: State, cuboid_1: Cuboid, state_1: State) -> (GjkEpaImplementation, [RigidBody; 2]) {
     let material = &Material::new_with_density(3.0);
 
-    let body_0 = RigidBody::new_with_id(0, Box::new(cube_0), material, state_0);
-    let body_1 = RigidBody::new_with_id(1, Box::new(cube_1), material, state_1);
+    let body_0 = RigidBody::new_with_id(0, Box::new(cuboid_0), material, state_0);
+    let body_1 = RigidBody::new_with_id(1, Box::new(cuboid_1), material, state_1);
 
     return (GjkEpaImplementation, [body_0, body_1]);
 }
@@ -16,9 +16,9 @@ fn setup_cubes(cube_0: Cube, state_0: State, cube_1: Cube, state_1: State) -> (G
 #[test]
 fn almost_colliding_vertex_to_vertex() {
     let (narrowphase, bodies) = setup_cubes(
-        Cube::new(1.0, 2.0, 1.0),
+        Cuboid::new(1.0, 2.0, 1.0),
         State::new_stationary(),
-        Cube::new(2.0, 1.0, 1.0),
+        Cuboid::new(2.0, 1.0, 1.0),
         State::new_with_position(1.51, 1.51, 1.01),
     );
 
@@ -30,9 +30,9 @@ fn almost_colliding_vertex_to_vertex() {
 #[test]
 fn colliding_vertex_to_vertex() {
     let (narrowphase, bodies) = setup_cubes(
-        Cube::new(1.0, 2.0, 1.0),
+        Cuboid::new(1.0, 2.0, 1.0),
         State::new_stationary(),
-        Cube::new(2.0, 1.0, 1.0),
+        Cuboid::new(2.0, 1.0, 1.0),
         State::new_with_position(1.49, 1.49, 0.99),
     );
 
@@ -48,9 +48,9 @@ fn colliding_vertex_to_vertex() {
 #[test]
 fn almost_colliding_edge_to_edge() {
     let (narrowphase, bodies) = setup_cubes(
-        Cube::new(1.0, 2.0, 3.0),
+        Cuboid::new(1.0, 2.0, 3.0),
         State::new_stationary(),
-        Cube::new(1.0, 2.0, 3.0),
+        Cuboid::new(1.0, 2.0, 3.0),
         State::new_with_position(1.01, 1.51, 0.00),
     );
 
@@ -62,9 +62,9 @@ fn almost_colliding_edge_to_edge() {
 #[test]
 fn colliding_edge_to_edge() {
     let (narrowphase, bodies) = setup_cubes(
-        Cube::new(1.0, 2.0, 3.0),
+        Cuboid::new(1.0, 2.0, 3.0),
         State::new_stationary(),
-        Cube::new(1.0, 2.0, 3.0),
+        Cuboid::new(1.0, 2.0, 3.0),
         State::new_with_position(0.99, 1.49, 0.00),
     );
 
@@ -80,9 +80,9 @@ fn colliding_edge_to_edge() {
 #[test]
 fn almost_colliding_face_to_face() {
     let (narrowphase, bodies) = setup_cubes(
-        Cube::new(1.0, 1.0, 1.0),
+        Cuboid::new(1.0, 1.0, 1.0),
         State::new_stationary(),
-        Cube::new(1.0, 1.0, 1.0),
+        Cuboid::new(1.0, 1.0, 1.0),
         State::new_with_position(1.01, 0.5, 0.5),
     );
 
@@ -94,9 +94,9 @@ fn almost_colliding_face_to_face() {
 #[test]
 fn colliding_face_to_face() {
     let (narrowphase, bodies) = setup_cubes(
-        Cube::new(1.0, 1.0, 1.0),
+        Cuboid::new(1.0, 1.0, 1.0),
         State::new_stationary(),
-        Cube::new(1.0, 1.0, 1.0),
+        Cuboid::new(1.0, 1.0, 1.0),
         State::new_with_position(0.99, 0.5, 0.5),
     );
 
@@ -112,9 +112,9 @@ fn colliding_face_to_face() {
 #[test]
 fn almost_colliding_edge_to_face() {
     let (narrowphase, bodies) = setup_cubes(
-        Cube::new(1.0, 1.0, 1.0),
+        Cuboid::new(1.0, 1.0, 1.0),
         State::new_stationary(),
-        Cube::new(1.0, 1.0, 1.0),
+        Cuboid::new(1.0, 1.0, 1.0),
         State::new_with_position(0.51 + 0.5*2.0f32.sqrt(), 0.00, 0.00)
             .with_axis_angle(Vector::new(0.0, 1.0, 0.0), PI/4.0),
     );
@@ -127,9 +127,9 @@ fn almost_colliding_edge_to_face() {
 #[test]
 fn colliding_edge_to_face() {
     let (narrowphase, bodies) = setup_cubes(
-        Cube::new(1.0, 1.0, 1.0),
+        Cuboid::new(1.0, 1.0, 1.0),
         State::new_stationary(),
-        Cube::new(1.0, 1.0, 1.0),
+        Cuboid::new(1.0, 1.0, 1.0),
         State::new_with_position(0.49 + 0.5*2.0f32.sqrt(), 0.00, 0.00)
             .with_axis_angle(Vector::new(0.0, 0.0, 1.0), PI/4.0),
     );
@@ -153,9 +153,9 @@ fn almost_colliding_vertex_to_face() {
     let state_1 = State::new_with_position((1.01 + 3.0f32.sqrt())/2.0, 0.0, 0.0)
         .with_axis_angle(rotation, rotation.length().asin());
     let (narrowphase, bodies) = setup_cubes(
-        Cube::new(1.0, 1.0, 1.0),
+        Cuboid::new(1.0, 1.0, 1.0),
         State::new_stationary(),
-        Cube::new(1.0, 1.0, 1.0),
+        Cuboid::new(1.0, 1.0, 1.0),
         state_1,
     );
 
@@ -175,9 +175,9 @@ fn colliding_vertex_to_face() {
     let state_1 = State::new_with_position((0.98 + 3.0f32.sqrt())/2.0, 0.1, 0.0)
         .with_axis_angle(rotation, rotation.length().asin());
     let (narrowphase, bodies) = setup_cubes(
-        Cube::new(1.0, 1.0, 1.0),
+        Cuboid::new(1.0, 1.0, 1.0),
         State::new_stationary(),
-        Cube::new(1.0, 1.0, 1.0),
+        Cuboid::new(1.0, 1.0, 1.0),
         state_1,
     );
 

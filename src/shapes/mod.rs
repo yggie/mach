@@ -1,15 +1,8 @@
 //! The `shapes` module defines the shared traits for all geometric models.
 
-mod primitives {
-    // TODO re-enable Sphere once GJK-EPA has stabilized
-    // pub use self::sphere::Sphere;
-    pub use self::cube::Cube;
+mod cuboid;
 
-    // mod sphere;
-    mod cube;
-}
-
-pub use self::primitives::Cube;
+pub use self::cuboid::Cuboid;
 
 use std::fmt;
 

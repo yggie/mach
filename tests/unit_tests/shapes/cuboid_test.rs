@@ -1,23 +1,23 @@
 use mach::maths::Vector;
-use mach::shapes::{ Shape, Cube };
+use mach::shapes::{ Shape, Cuboid };
 
 #[test]
 fn instantiating_with_dimensions() {
-    let c = Cube::new(5.0, 3.0, 7.5);
+    let c = Cuboid::new(5.0, 3.0, 7.5);
 
     assert_eq!((c.width(), c.height(), c.depth()), (5.0, 3.0, 7.5));
 }
 
 #[test]
 fn computing_the_number_of_vertices() {
-    let c = Cube::new(3.0, 2.0, 1.0);
+    let c = Cuboid::new(3.0, 2.0, 1.0);
 
     assert_eq!(c.vertices_len(), 8);
 }
 
 #[test]
 fn computing_the_support_indices() {
-    let c = Cube::new(2.0, 3.0, 1.0);
+    let c = Cuboid::new(2.0, 3.0, 1.0);
     let dir = Vector::new(-0.1, 1.0, 0.1);
 
     let indices = c.support_indices_for(dir);
@@ -44,15 +44,15 @@ fn computing_the_support_indices() {
 
 #[test]
 fn determining_equality() {
-    let a = Cube::new(1.0, 2.0, 3.0);
-    let b = Cube::new(1.0, 2.0, 3.0);
+    let a = Cuboid::new(1.0, 2.0, 3.0);
+    let b = Cuboid::new(1.0, 2.0, 3.0);
 
     assert_eq!(a, b);
 }
 
 #[test]
 fn computing_the_volume() {
-    let c = Cube::new(2.0, 3.0, 4.0);
+    let c = Cuboid::new(2.0, 3.0, 4.0);
 
     assert_eq!(c.volume(), 24.0);
 }

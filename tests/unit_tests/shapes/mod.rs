@@ -1,3 +1,1 @@
-mod primitives {
-    mod cube_test;
-}
+mod cuboid_test;

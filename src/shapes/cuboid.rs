@@ -5,16 +5,16 @@ use shapes::Shape;
 
 /// A representation of a cube in 3 dimensions.
 #[derive(Clone, Debug)]
-pub struct Cube {
+pub struct Cuboid {
     width: f32,
     height: f32,
     depth: f32,
     vertices: Vec<Vector>,
 }
 
-impl Cube {
-    /// Constructs a new Cube given the width, height and depth dimensions.
-    pub fn new(width: f32, height: f32, depth: f32) -> Cube {
+impl Cuboid {
+    /// Constructs a new `Cuboid` given the width, height and depth dimensions.
+    pub fn new(width: f32, height: f32, depth: f32) -> Cuboid {
         let half_width = width / 2.0;
         let half_height = height / 2.0;
         let half_depth = depth / 2.0;
@@ -31,7 +31,7 @@ impl Cube {
         vertices.push(Vector::new(-half_width, -half_height, -half_depth));
         vertices.push(Vector::new( half_width, -half_height, -half_depth));
 
-        Cube {
+        Cuboid {
             width: width,
             height: height,
             depth: depth,
@@ -39,49 +39,49 @@ impl Cube {
         }
     }
 
-    /// Constructs a new `Cube` with equally sized edges.
-    pub fn new_cube(size: f32) -> Cube {
-        Cube::new(size, size, size)
+    /// Constructs a new `Cuboid` with equally sized edges.
+    pub fn new_cube(size: f32) -> Cuboid {
+        Cuboid::new(size, size, size)
     }
 
-    /// Returns the width of the `Cube`.
+    /// Returns the width of the `Cuboid`.
     pub fn width(&self) -> f32 {
         self.width
     }
 
-    /// Returns the height of the `Cube`.
+    /// Returns the height of the `Cuboid`.
     pub fn height(&self) -> f32 {
         self.height
     }
 
-    /// Returns the depth of the `Cube`.
+    /// Returns the depth of the `Cuboid`.
     pub fn depth(&self) -> f32 {
         self.depth
     }
 }
 
-impl fmt::Display for Cube {
+impl fmt::Display for Cuboid {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "Cube{{ w={}, h={}, d={} }}", self.width, self.height, self.depth)
+        write!(f, "Cuboid{{ w={}, h={}, d={} }}", self.width, self.height, self.depth)
     }
 }
 
-/// Implements the `Eq` trait for the Cube to specify that equality is an
+/// Implements the `Eq` trait for the Cuboid to specify that equality is an
 /// equivalence relation.
-impl Eq for Cube {}
+impl Eq for Cuboid {}
 
-impl PartialEq for Cube {
-    /// Implements the `==` operator for the `Cube` class. Compares the
-    /// dimensions of the `Cube` to be within reasonable tolerance.
-    fn eq(&self, other: &Cube) -> bool {
+impl PartialEq for Cuboid {
+    /// Implements the `==` operator for the `Cuboid` class. Compares the
+    /// dimensions of the `Cuboid` to be within reasonable tolerance.
+    fn eq(&self, other: &Cuboid) -> bool {
         approx_eq(self.width, other.width) &&
             approx_eq(self.height, other.height) &&
             approx_eq(self.depth, other.depth)
     }
 }
 
-impl Shape for Cube {
-    /// Calculates the volume of the `Cube`.
+impl Shape for Cuboid {
+    /// Calculates the volume of the `Cuboid`.
     fn volume(&self) -> f32 {
         self.width * self.height * self.depth
     }
