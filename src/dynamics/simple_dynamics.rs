@@ -1,6 +1,7 @@
-use core::{ RigidBody, State, StaticBody };
+use core::State;
 use maths::Vector;
 use dynamics::{ Dynamics, SemiImplicitEuler };
+use entities::{ RigidBody, StaticBody };
 use collisions::{ ContactPair, CollisionSpace };
 use collisions::narrowphase::Intersection;
 

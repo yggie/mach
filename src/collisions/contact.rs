@@ -1,5 +1,6 @@
-use core::{ RigidBody, SharedCell, StaticBody };
+use core::SharedCell;
 use maths::Vector;
+use entities::{ RigidBody, StaticBody };
 
 /// Encapsulates the different possible pairs of physical bodies.
 pub enum ContactPair {

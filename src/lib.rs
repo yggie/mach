@@ -10,10 +10,11 @@ pub use self::world::World;
 
 mod world;
 
+pub mod core;
+pub mod utils;
 pub mod maths;
 pub mod shapes;
-pub mod materials;
-pub mod core;
-pub mod collisions;
 pub mod dynamics;
-pub mod utils;
+pub mod entities;
+pub mod materials;
+pub mod collisions;

@@ -1,4 +1,4 @@
-use core::RigidBody;
+use entities::RigidBody;
 
 /// Computes the total kinetic energy for the `RigidBody`.
 pub fn kinetic_energy_for(body: &RigidBody) -> f32 {

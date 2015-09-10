@@ -1,8 +1,9 @@
 use std::cell::Ref;
 
-use core::{ RigidBody, UID, State, Transform };
+use core::{ UID, State, Transform };
 use maths::Vector;
 use shapes::Shape;
+use entities::RigidBody;
 use dynamics::Dynamics;
 use materials::Material;
 use collisions::CollisionSpace;

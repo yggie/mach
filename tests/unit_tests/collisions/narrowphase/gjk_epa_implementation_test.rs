@@ -1,6 +1,7 @@
-use mach::core::{ RigidBody, State };
+use mach::core::State;
 use mach::maths::{ PI, Vector };
 use mach::shapes::Cube;
+use mach::entities::RigidBody;
 use mach::materials::Rigid;
 use mach::collisions::narrowphase::GjkEpaImplementation;
 

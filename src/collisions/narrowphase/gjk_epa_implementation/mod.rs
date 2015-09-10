@@ -4,8 +4,8 @@ mod polytope;
 use self::simplex::Simplex;
 use self::polytope::Polytope;
 
-use core::VolumetricBody;
 use maths::Vector;
+use entities::VolumetricBody;
 use collisions::NarrowPhase;
 use collisions::narrowphase::Intersection;
 

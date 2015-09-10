@@ -2,9 +2,10 @@ extern crate mach;
 
 use std::cell::{ Ref, RefMut };
 
-use mach::core::{ RigidBody, UID, State, StaticBody, Transform, VolumetricBody };
+use mach::core::{ UID, State, Transform };
 use mach::utils::debug::renderevent;
 use mach::shapes::Shape;
+use mach::entities::{ RigidBody, StaticBody, VolumetricBody };
 use mach::materials::Material;
 use mach::collisions::{ CollisionSpace, Contact };
 use mach::collisions::narrowphase::Intersection;

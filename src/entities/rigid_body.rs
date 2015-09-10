@@ -1,8 +1,9 @@
 use std::fmt;
 
-use core::{ UID, State, Transform, VolumetricBody };
+use core::{ UID, State, Transform };
 use maths::{ Matrix, Vector, Quaternion };
 use shapes::Shape;
+use entities::VolumetricBody;
 use materials::Material;
 
 /// Represents a physical entity in the world.

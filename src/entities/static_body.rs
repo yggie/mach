@@ -1,8 +1,9 @@
 use std::fmt::{ Display, Formatter, Result };
 
-use core::{ UID, Transform, VolumetricBody };
+use core::{ UID, Transform };
 use maths::{ Vector, Quaternion };
 use shapes::Shape;
+use entities::VolumetricBody;
 use materials::Material;
 
 /// Represents a physical entity which cannot move. Within the engine, the

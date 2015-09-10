@@ -1,6 +1,6 @@
-use core::VolumetricBody;
 use maths::{ Vector, TOLERANCE };
 use shapes::Shape;
+use entities::VolumetricBody;
 
 #[derive(Clone, Copy, Debug)]
 pub struct SupportPoint {

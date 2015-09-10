@@ -8,7 +8,7 @@ mod gjk_epa_implementation;
 pub use self::intersection::Intersection;
 pub use self::gjk_epa_implementation::GjkEpaImplementation;
 
-use core::VolumetricBody;
+use entities::VolumetricBody;
 
 /// The `NarrowPhase` trait should be implemented by objects that are capable of
 /// computing the intersection information between two shape entities. It is the

@@ -1,8 +1,8 @@
 //! The `render` module is the interface with the mach browser debugger to allow
 //! rendering of information. This was primarily developed to aid debugging.
 
-use core::{ RigidBody, StaticBody };
 use maths::Vector;
+use entities::{ RigidBody, StaticBody };
 
 /// Logs an event for the creation of a `RigidBody`
 pub fn create_rigid_body(rigid_body: &RigidBody) {

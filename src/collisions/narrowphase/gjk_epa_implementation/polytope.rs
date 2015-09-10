@@ -1,8 +1,8 @@
 use super::simplex::{ SupportPoint, Simplex };
 
-use core::VolumetricBody;
 use maths::{ Vector, TOLERANCE };
 use utils::compute_surfaces_for_convex_hull;
+use entities::VolumetricBody;
 
 pub struct Polytope {
     pub vertices: Vec<SupportPoint>,

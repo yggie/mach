@@ -2,8 +2,9 @@ use std::rc::Rc;
 use std::cell::{ Ref, RefCell, RefMut };
 use std::collections::HashMap;
 
-use core::{ RigidBody, UID, SharedCell, State, StaticBody, Transform, VolumetricBody };
+use core::{ UID, SharedCell, State, Transform };
 use shapes::Shape;
+use entities::{ RigidBody, StaticBody, VolumetricBody };
 use materials::Material;
 use collisions::{ CollisionSpace, Contact, ContactPair };
 use collisions::narrowphase::{ GjkEpaImplementation, Intersection };
