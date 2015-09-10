@@ -2,10 +2,17 @@ use mach::shapes::Cube;
 use mach::materials::{ Material, Rigid };
 
 #[test]
-fn instantiating_with_parameters() {
+fn instantiating_with_density() {
     let r = Rigid::new(1.5);
 
-    assert_eq!(r.density, 1.5);
+    assert_eq!(r.density(), 1.5);
+}
+
+#[test]
+fn instantiating_with_coefficient_of_restitution() {
+    let r = Rigid::new(1.5).with_coefficient_of_restitution(0.75);
+
+    assert_eq!(r.coefficient_of_restitution(), 0.75);
 }
 
 #[test]

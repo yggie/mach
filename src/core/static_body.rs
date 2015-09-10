@@ -38,6 +38,12 @@ impl StaticBody {
         &*self.shape
     }
 
+    /// Returns the coefficient of restitution associated with the `RigidBody`.
+    #[inline]
+    pub fn coefficient_of_restitution(&self) -> f32 {
+        self.material.coefficient_of_restitution()
+    }
+
     /// Returns the associated `Transform` object for the entity.
     #[inline]
     pub fn transform(&self) -> &Transform {

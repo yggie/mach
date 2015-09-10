@@ -68,7 +68,7 @@ pub fn moving_after_a_collision_without_rotation<D: Dynamics, F: FnOnce() -> D>(
     let mut space = &mut CollisionSpaceMonitor::new(SimpleCollisionSpace::new());
     let uid_0 = space.create_body(
         Cube::new(1.0, 1.0, 1.0),
-        Rigid::new(1.0),
+        Rigid::new(1.0).with_coefficient_of_restitution(1.0),
         State::new_stationary(),
     );
     let initial_axis = Vector::new(1.0, 1.0, 1.0).normalize();
@@ -79,7 +79,7 @@ pub fn moving_after_a_collision_without_rotation<D: Dynamics, F: FnOnce() -> D>(
         .with_velocity(-1.0, 0.0, 0.0);
     let uid_1 = space.create_body(
         Cube::new(1.0, 1.0, 1.0),
-        Rigid::new(1.0),
+        Rigid::new(1.0).with_coefficient_of_restitution(1.0),
         state_1,
     );
 

@@ -61,6 +61,12 @@ impl RigidBody {
         self.material.mass_of(&*self.shape)
     }
 
+    /// Returns the coefficient of restitution associated with the `RigidBody`.
+    #[inline]
+    pub fn coefficient_of_restitution(&self) -> f32 {
+        self.material.coefficient_of_restitution()
+    }
+
     /// Returns the inertia tensor of the `RigidBody`.
     #[inline]
     pub fn inertia(&self) -> Matrix {

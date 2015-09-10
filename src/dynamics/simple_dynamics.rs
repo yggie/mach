@@ -20,20 +20,19 @@ impl SimpleDynamics {
     }
 
     #[allow(non_snake_case)]
-    fn solve_for_contact(&mut self, body_0: &RigidBody, body_1: &RigidBody, contact_center: Vector, contact_normal: Vector) -> ((Vector, Vector), (Vector, Vector)) {
-        // TODO compute dynamically
-        let epsilon = 1.0;
+    fn solve_for_contact(&mut self, rigid_body_0: &RigidBody, rigid_body_1: &RigidBody, contact_center: Vector, contact_normal: Vector) -> ((Vector, Vector), (Vector, Vector)) {
+        let epsilon = rigid_body_0.coefficient_of_restitution() * rigid_body_1.coefficient_of_restitution();
         // body masses
-        let M = [body_0.mass(), body_1.mass()];
-        let Jinv = [body_0.inertia().inverse(), body_1.inertia().inverse()];
+        let M = [rigid_body_0.mass(), rigid_body_1.mass()];
+        let Jinv = [rigid_body_0.inertia().inverse(), rigid_body_1.inertia().inverse()];
         // body velocities
-        let v = [body_0.velocity(), body_1.velocity()];
+        let v = [rigid_body_0.velocity(), rigid_body_1.velocity()];
         // body angular velocities
-        let w = [body_0.angular_velocity(), body_1.angular_velocity()];
+        let w = [rigid_body_0.angular_velocity(), rigid_body_1.angular_velocity()];
         // relative vector from position to contact center
         let to_contact_center = [
-            contact_center - body_0.position(),
-            contact_center - body_1.position(),
+            contact_center - rigid_body_0.position(),
+            contact_center - rigid_body_1.position(),
         ];
         // axis of rotation for the impulse introduced by the contact. The axis
         // has been scaled by the distance to the contact.
@@ -51,15 +50,11 @@ impl SimpleDynamics {
         let angular_velocity_change_1 = Jinv[1]*to_contact_center[1].cross(-velocity_change);
 
         return ((velocity_change, angular_velocity_change_0), (-velocity_change, angular_velocity_change_1));
-
-        // self.accumulator.add_impulse(body_0,  impulse_vector, contact.center);
-        // self.accumulator.add_impulse(body_1, -impulse_vector, contact.center);
     }
 
     #[allow(non_snake_case)]
-    fn solve_for_contact_with_static(&mut self, rigid_body: &RigidBody, contact_center: Vector, contact_normal: Vector) -> (Vector, Vector) {
-        // TODO compute dynamically
-        let epsilon = 1.0;
+    fn solve_for_contact_with_static(&mut self, rigid_body: &RigidBody, static_body: &StaticBody, contact_center: Vector, contact_normal: Vector) -> (Vector, Vector) {
+        let epsilon = rigid_body.coefficient_of_restitution() * static_body.coefficient_of_restitution();
         // relative vector from position to contact center
         let to_contact_center = contact_center - rigid_body.position();
         // axis of rotation for the impulse introduced by the contact. The axis
@@ -178,7 +173,7 @@ impl Dynamics for SimpleDynamics {
                         let current_intersection = Intersection::new(contact.center, contact.normal);
 
                         let (intersection, remaining_time) = self.revert_to_time_of_contact_with_static(collision_space, current_intersection, rigid_body, static_body, time_step);
-                        let change = self.solve_for_contact_with_static(rigid_body, intersection.point(), intersection.normal());
+                        let change = self.solve_for_contact_with_static(rigid_body, static_body, intersection.point(), intersection.normal());
 
                         self.update_rigid_body(rigid_body, change, remaining_time);
                     },

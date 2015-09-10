@@ -7,14 +7,33 @@ use std::fmt;
 /// Represents a rigid body with a fixed density.
 #[derive(Clone, Copy, Debug)]
 pub struct Rigid {
-    /// The density in M/L^3 units.
-    pub density: f32,
+    density: f32,
+    cor: f32,
 }
 
 impl Rigid {
-    /// Creates a new rigid material object with the given density.
+    /// Creates a new rigid material object with the given density and
+    /// coefficient of restitution.
     pub fn new(density: f32) -> Rigid {
-        Rigid{ density: density }
+        Rigid{
+            density: density,
+            cor: 0.9,
+        }
+    }
+
+    /// Returns a new `Rigid` instance inheriting properties from the original
+    /// instance but with the coefficient of restitution set to the specified
+    /// value. This method can be chained.
+    pub fn with_coefficient_of_restitution(&self, cor: f32) -> Rigid {
+        Rigid {
+            density: self.density,
+            cor: cor,
+        }
+    }
+
+    /// The density of the `Rigid` material in M/L^3 units.
+    pub fn density(&self) -> f32 {
+        self.density
     }
 }
 
@@ -47,5 +66,9 @@ impl Material for Rigid {
     /// Returns the pre-defined density.
     fn density_of(&self, _: &Shape) -> f32 {
         self.density
+    }
+
+    fn coefficient_of_restitution(&self) -> f32 {
+        self.cor
     }
 }

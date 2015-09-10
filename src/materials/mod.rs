@@ -19,4 +19,7 @@ pub trait Material: 'static {
 
     /// Computes the density when applied to a shape.
     fn density_of(&self, &Shape) -> f32;
+
+    /// Returns the coefficient of restitution associated with the material.
+    fn coefficient_of_restitution(&self) -> f32;
 }
