@@ -3,9 +3,8 @@ use std::cell::Ref;
 use core::{ UID, State, Transform };
 use maths::Vector;
 use shapes::Shape;
-use entities::RigidBody;
+use entities::{ Material, RigidBody };
 use dynamics::Dynamics;
-use materials::Material;
 use collisions::CollisionSpace;
 
 /// A `World` is a physical world in mach, it contains physical bodies and a set
@@ -28,14 +27,14 @@ impl<C: CollisionSpace, D: Dynamics> World<C, D> {
     /// Creates an instance of a `RigidBody` from the given components, returns
     /// a handle which can later be used to retrieve the `RigidBody`.
     #[inline(always)]
-    pub fn create_body<S: Shape, M: Material>(&mut self, shape: S, material: M, state: State) -> UID {
+    pub fn create_body<S: Shape>(&mut self, shape: S, material: &Material, state: State) -> UID {
         self.collisions.create_body(shape, material, state)
     }
 
     /// Creates an instance of a `StaticBody` from the given components and
     /// returns an identifier which can be later used to retrieve the
     /// `StaticBody`.
-    pub fn create_static_body<S: Shape, M: Material>(&mut self, shape: S, material: M, transform: Transform) -> UID {
+    pub fn create_static_body<S: Shape>(&mut self, shape: S, material: &Material, transform: Transform) -> UID {
         self.collisions.create_static_body(shape, material, transform)
     }
 

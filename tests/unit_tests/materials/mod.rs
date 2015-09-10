@@ -1,1 +1,0 @@
-mod rigid_test;

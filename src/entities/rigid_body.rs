@@ -3,25 +3,26 @@ use std::fmt;
 use core::{ UID, State, Transform };
 use maths::{ Matrix, Vector, Quaternion };
 use shapes::Shape;
-use entities::VolumetricBody;
-use materials::Material;
+use entities::{ Material, VolumetricBody };
 
 /// Represents a physical entity in the world.
 pub struct RigidBody {
     id: UID,
+    mass: f32,
     shape: Box<Shape>,
-    material: Box<Material>,
     state: State,
+    coefficient_of_restitution: f32,
 }
 
 impl RigidBody {
     /// Creates a new instance of a `RigidBody` object
-    pub fn new_with_id(id: UID, shape: Box<Shape>, material: Box<Material>, state: State) -> RigidBody {
+    pub fn new_with_id(id: UID, shape: Box<Shape>, material: &Material, state: State) -> RigidBody {
         RigidBody {
             id: id,
+            mass: material.mass_of(&*shape),
             shape: shape,
-            material: material,
             state: state,
+            coefficient_of_restitution: material.coefficient_of_restitution(),
         }
     }
 
@@ -35,12 +36,6 @@ impl RigidBody {
     #[inline]
     pub fn shape(&self) -> &Shape {
         &*self.shape
-    }
-
-    /// Returns the `Material` object associated with the `RigidBody`.
-    #[inline]
-    pub fn material(&self) -> &Material {
-        &*self.material
     }
 
     /// Returns the `State` associated with the `RigidBody`.
@@ -59,19 +54,19 @@ impl RigidBody {
     /// Returns the mass of the `RigidBody`.
     #[inline]
     pub fn mass(&self) -> f32 {
-        self.material.mass_of(&*self.shape)
+        self.mass
     }
 
     /// Returns the coefficient of restitution associated with the `RigidBody`.
     #[inline]
     pub fn coefficient_of_restitution(&self) -> f32 {
-        self.material.coefficient_of_restitution()
+        self.coefficient_of_restitution
     }
 
     /// Returns the inertia tensor of the `RigidBody`.
     #[inline]
     pub fn inertia(&self) -> Matrix {
-        self.material.inertia_for(&*self.shape)
+        self.shape.inertia() * self.mass
     }
 
     /// Returns the position of the `RigidBody`.

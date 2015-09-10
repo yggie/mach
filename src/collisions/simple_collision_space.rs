@@ -4,8 +4,7 @@ use std::collections::HashMap;
 
 use core::{ UID, SharedCell, State, Transform };
 use shapes::Shape;
-use entities::{ RigidBody, StaticBody, VolumetricBody };
-use materials::Material;
+use entities::{ Material, RigidBody, StaticBody, VolumetricBody };
 use collisions::{ CollisionSpace, Contact, ContactPair };
 use collisions::narrowphase::{ GjkEpaImplementation, Intersection };
 
@@ -37,9 +36,9 @@ impl SimpleCollisionSpace {
 }
 
 impl CollisionSpace for SimpleCollisionSpace {
-    fn create_body<S: Shape, M: Material>(&mut self, shape: S, material: M, state: State) -> UID {
+    fn create_body<S: Shape>(&mut self, shape: S, material: &Material, state: State) -> UID {
         let new_uid = self.generate_uid();
-        let new_body = RigidBody::new_with_id(new_uid, Box::new(shape), Box::new(material), state);
+        let new_body = RigidBody::new_with_id(new_uid, Box::new(shape), material, state);
         let new_shared_cell = Rc::new(RefCell::new(new_body));
 
         for shared_cell in self.registry.values() {
@@ -50,9 +49,9 @@ impl CollisionSpace for SimpleCollisionSpace {
         return new_uid;
     }
 
-    fn create_static_body<S: Shape, M: Material>(&mut self, shape: S, material: M, transform: Transform) -> UID {
+    fn create_static_body<S: Shape>(&mut self, shape: S, material: &Material, transform: Transform) -> UID {
         let new_uid = self.generate_uid();
-        let new_static_body = StaticBody::new_with_id(new_uid, Box::new(shape), Box::new(material), transform);
+        let new_static_body = StaticBody::new_with_id(new_uid, Box::new(shape), material, transform);
         let new_rc_cell = Rc::new(RefCell::new(new_static_body));
 
         for shared_cell in self.registry.values() {

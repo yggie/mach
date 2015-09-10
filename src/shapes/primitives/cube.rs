@@ -39,6 +39,11 @@ impl Cube {
         }
     }
 
+    /// Constructs a new `Cube` with equally sized edges.
+    pub fn new_cube(size: f32) -> Cube {
+        Cube::new(size, size, size)
+    }
+
     /// Returns the width of the `Cube`.
     pub fn width(&self) -> f32 {
         self.width

@@ -1,15 +1,14 @@
 use mach::core::State;
 use mach::maths::{ PI, Vector };
 use mach::shapes::Cube;
-use mach::entities::RigidBody;
-use mach::materials::Rigid;
+use mach::entities::{ Material, RigidBody };
 use mach::collisions::narrowphase::GjkEpaImplementation;
 
 fn setup_cubes(cube_0: Cube, state_0: State, cube_1: Cube, state_1: State) -> (GjkEpaImplementation, [RigidBody; 2]) {
-    let material = Rigid::new(3.0);
+    let material = &Material::new_with_density(3.0);
 
-    let body_0 = RigidBody::new_with_id(0, Box::new(cube_0), Box::new(material), state_0);
-    let body_1 = RigidBody::new_with_id(1, Box::new(cube_1), Box::new(material), state_1);
+    let body_0 = RigidBody::new_with_id(0, Box::new(cube_0), material, state_0);
+    let body_1 = RigidBody::new_with_id(1, Box::new(cube_1), material, state_1);
 
     return (GjkEpaImplementation, [body_0, body_1]);
 }

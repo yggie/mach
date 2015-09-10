@@ -5,8 +5,7 @@ use std::cell::{ Ref, RefMut };
 use mach::core::{ UID, State, Transform };
 use mach::utils::debug::renderevent;
 use mach::shapes::Shape;
-use mach::entities::{ RigidBody, StaticBody, VolumetricBody };
-use mach::materials::Material;
+use mach::entities::{ Material, RigidBody, StaticBody, VolumetricBody };
 use mach::collisions::{ CollisionSpace, Contact };
 use mach::collisions::narrowphase::Intersection;
 
@@ -23,14 +22,14 @@ impl<C: CollisionSpace> CollisionSpaceMonitor<C> {
 }
 
 impl<C: CollisionSpace> CollisionSpace for CollisionSpaceMonitor<C> {
-    fn create_body<S: Shape, M: Material>(&mut self, shape: S, material: M, state: State) -> UID {
+    fn create_body<S: Shape>(&mut self, shape: S, material: &Material, state: State) -> UID {
         let uid = self.0.create_body(shape, material, state);
         let body = self.0.find_body(uid).unwrap();
         renderevent::create_rigid_body(&*body);
         return uid;
     }
 
-    fn create_static_body<S: Shape, M: Material>(&mut self, shape: S, material: M, transform: Transform) -> UID {
+    fn create_static_body<S: Shape>(&mut self, shape: S, material: &Material, transform: Transform) -> UID {
         let uid = self.0.create_static_body(shape, material, transform);
         let static_body = self.0.find_static_body(uid).unwrap();
         renderevent::create_static_body(&*static_body);

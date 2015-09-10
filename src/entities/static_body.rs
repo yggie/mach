@@ -3,27 +3,26 @@ use std::fmt::{ Display, Formatter, Result };
 use core::{ UID, Transform };
 use maths::{ Vector, Quaternion };
 use shapes::Shape;
-use entities::VolumetricBody;
-use materials::Material;
+use entities::{ Material, VolumetricBody };
 
 /// Represents a physical entity which cannot move. Within the engine, the
 /// object is simply treated as if it has infinite mass.
 pub struct StaticBody {
     id: UID,
     shape: Box<Shape>,
-    material: Box<Material>,
     transform: Transform,
+    coefficient_of_restitution: f32,
 }
 
 impl StaticBody {
     /// Creates a new `StaticBody` instance using the components provided to
     /// construct the entity.
-    pub fn new_with_id(id: UID, shape: Box<Shape>, material: Box<Material>, transform: Transform) -> StaticBody {
+    pub fn new_with_id(id: UID, shape: Box<Shape>, material: &Material, transform: Transform) -> StaticBody {
         StaticBody {
             id: id,
             shape: shape,
-            material: material,
             transform: transform,
+            coefficient_of_restitution: material.coefficient_of_restitution(),
         }
     }
 
@@ -42,7 +41,7 @@ impl StaticBody {
     /// Returns the coefficient of restitution associated with the `RigidBody`.
     #[inline]
     pub fn coefficient_of_restitution(&self) -> f32 {
-        self.material.coefficient_of_restitution()
+        self.coefficient_of_restitution
     }
 
     /// Returns the associated `Transform` object for the entity.

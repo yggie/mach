@@ -1,7 +1,7 @@
 mod core;
-mod math;
-mod materials;
-mod dynamics;
-mod shapes;
-mod collisions;
+mod maths;
 mod utils;
+mod shapes;
+mod entities;
+mod dynamics;
+mod collisions;

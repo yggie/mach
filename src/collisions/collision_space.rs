@@ -2,8 +2,7 @@ use std::cell::{ Ref, RefMut };
 
 use core::{ UID, State, Transform };
 use shapes::Shape;
-use entities::{ RigidBody, StaticBody, VolumetricBody };
-use materials::Material;
+use entities::{ Material, RigidBody, StaticBody, VolumetricBody };
 use collisions::Contact;
 use collisions::narrowphase::Intersection;
 
@@ -13,12 +12,12 @@ pub trait CollisionSpace {
     /// Creates an instance of a `RigidBody` from the given properties, returns
     /// an identifier which can be used to retrieve the `RigidBody` at a later
     /// time.
-    fn create_body<S: Shape, M: Material>(&mut self, S, M, State) -> UID;
+    fn create_body<S: Shape>(&mut self, S, &Material, State) -> UID;
 
     /// Creates an instance of a `StaticBody` from the given properties, returns
     /// an identifier which can be used to retrieve the `StaticBody` at a later
     /// time.
-    fn create_static_body<S: Shape, M: Material>(&mut self, S, M, Transform) -> UID;
+    fn create_static_body<S: Shape>(&mut self, S, &Material, Transform) -> UID;
 
     /// Searches the data structure for a matching `RigidBody` instance with the
     /// identifier specified and returns a reference to the `RigidBody` if found.

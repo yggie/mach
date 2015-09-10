@@ -16,5 +16,4 @@ pub mod maths;
 pub mod shapes;
 pub mod dynamics;
 pub mod entities;
-pub mod materials;
 pub mod collisions;

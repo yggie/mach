@@ -1,12 +1,12 @@
 use mach::core::{ State, UID };
 use mach::shapes::Cube;
-use mach::materials::Rigid;
+use mach::entities::Material;
 use mach::collisions::CollisionSpace;
 
 pub fn creating_a_rigid_body<C: CollisionSpace, F: FnOnce() -> C>(new_collisions: F) {
     let mut collisions = new_collisions();
     let shape = Cube::new(1.0, 1.0, 1.0);
-    let material = Rigid::new(3.0);
+    let material = &Material::new_with_density(3.0);
 
     let uid = collisions.create_body(shape.clone(), material, State::new_stationary());
 
@@ -16,7 +16,7 @@ pub fn creating_a_rigid_body<C: CollisionSpace, F: FnOnce() -> C>(new_collisions
 pub fn finding_a_body_with_a_handle<C: CollisionSpace, F: FnOnce() -> C>(new_collisions: F) {
     let mut collisions = new_collisions();
     let shape = Cube::new(1.0, 1.0, 1.0);
-    let material = Rigid::new(3.0);
+    let material = &Material::new_with_mass(3.0);
     collisions.create_body(shape.clone(), material, State::new_stationary());
     let uid = collisions.create_body(shape.clone(), material, State::new_stationary());
     collisions.create_body(shape.clone(), material, State::new_stationary());
@@ -29,7 +29,7 @@ pub fn finding_a_body_with_a_handle<C: CollisionSpace, F: FnOnce() -> C>(new_col
 pub fn mutably_finding_a_body_with_a_handle<C: CollisionSpace, F: FnOnce() -> C>(new_collisions: F) {
     let mut collisions = new_collisions();
     let shape = Cube::new(1.0, 1.0, 1.0);
-    let material = Rigid::new(3.0);
+    let material = &Material::new_with_density(3.0);
     let uid = collisions.create_body(shape.clone(), material, State::new_stationary());
     collisions.create_body(shape.clone(), material, State::new_stationary());
     collisions.create_body(shape.clone(), material, State::new_stationary());
@@ -42,7 +42,7 @@ pub fn mutably_finding_a_body_with_a_handle<C: CollisionSpace, F: FnOnce() -> C>
 pub fn iterating_over_bodies<C: CollisionSpace, F: FnOnce() -> C>(new_collisions: F) {
     let mut collisions = new_collisions();
     let shape = Cube::new(1.0, 1.0, 1.0);
-    let material = Rigid::new(3.0);
+    let material = &Material::new_with_mass(3.0);
     let mut uids = vec!(
         collisions.create_body(shape.clone(), material, State::new_stationary()),
         collisions.create_body(shape.clone(), material, State::new_stationary()),
@@ -63,7 +63,7 @@ pub fn iterating_over_bodies<C: CollisionSpace, F: FnOnce() -> C>(new_collisions
 pub fn mutably_iterating_over_bodies<C: CollisionSpace, F: FnOnce() -> C>(new_collisions: F) {
     let mut collisions = new_collisions();
     let shape = Cube::new(1.0, 1.0, 1.0);
-    let material = Rigid::new(3.0);
+    let material = &Material::new_with_density(3.0);
     let mut uids = vec!(
         collisions.create_body(shape.clone(), material, State::new_stationary()),
         collisions.create_body(shape.clone(), material, State::new_stationary()),
