@@ -1,14 +1,52 @@
 extern crate mach;
 
+#[macro_use]
 #[cfg(test)]
 mod support;
 
-#[macro_use]
 #[cfg(test)]
-mod behaviours;
+mod integration_tests {
+    mod cube_systems_test;
+}
 
 #[cfg(test)]
-mod unit_tests;
+mod collisions {
+    mod simple_collision_space_test;
+
+    mod narrowphase {
+        mod gjk_epa_implementation_test;
+    }
+}
 
 #[cfg(test)]
-mod integration_tests;
+mod core {
+    mod state_test;
+    mod transform_test;
+}
+
+#[cfg(test)]
+mod dynamics {
+    mod simple_dynamics_test;
+}
+
+#[cfg(test)]
+mod entities {
+    mod material_test;
+}
+
+#[cfg(test)]
+mod maths {
+    mod matrix_test;
+    mod quaternion_test;
+    mod vector_test;
+}
+
+#[cfg(test)]
+mod shapes {
+    mod cuboid_test;
+}
+
+#[cfg(test)]
+mod utils {
+    mod compute_surfaces_for_convex_hull_test;
+}
