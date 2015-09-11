@@ -1,111 +1,114 @@
-use mach::core::{ State, UID };
-use mach::shapes::Cuboid;
-use mach::entities::Material;
-use mach::collisions::CollisionSpace;
-
-pub fn creating_a_rigid_body<C: CollisionSpace, F: FnOnce() -> C>(new_collisions: F) {
-    let mut collisions = new_collisions();
-    let shape = Cuboid::new_cube(1.0);
-    let material = &Material::new_with_density(3.0);
-
-    let uid = collisions.create_body(shape.clone(), material, State::new_stationary());
-
-    assert!(collisions.find_body(uid).is_some());
-}
-
-pub fn finding_a_body_with_a_handle<C: CollisionSpace, F: FnOnce() -> C>(new_collisions: F) {
-    let mut collisions = new_collisions();
-    let shape = Cuboid::new_cube(1.0);
-    let material = &Material::new_with_mass(3.0);
-    collisions.create_body(shape.clone(), material, State::new_stationary());
-    let uid = collisions.create_body(shape.clone(), material, State::new_stationary());
-    collisions.create_body(shape.clone(), material, State::new_stationary());
-
-    let body = collisions.find_body(uid);
-
-    assert_eq!(body.unwrap().id(), uid);
-}
-
-pub fn mutably_finding_a_body_with_a_handle<C: CollisionSpace, F: FnOnce() -> C>(new_collisions: F) {
-    let mut collisions = new_collisions();
-    let shape = Cuboid::new_cube(1.0);
-    let material = &Material::new_with_density(3.0);
-    let uid = collisions.create_body(shape.clone(), material, State::new_stationary());
-    collisions.create_body(shape.clone(), material, State::new_stationary());
-    collisions.create_body(shape.clone(), material, State::new_stationary());
-
-    let body = collisions.find_body_mut(uid);
-
-    assert_eq!(body.unwrap().id(), uid);
-}
-
-pub fn iterating_over_bodies<C: CollisionSpace, F: FnOnce() -> C>(new_collisions: F) {
-    let mut collisions = new_collisions();
-    let shape = Cuboid::new_cube(1.0);
-    let material = &Material::new_with_mass(3.0);
-    let mut uids = vec!(
-        collisions.create_body(shape.clone(), material, State::new_stationary()),
-        collisions.create_body(shape.clone(), material, State::new_stationary()),
-        collisions.create_body(shape.clone(), material, State::new_stationary()),
-    );
-
-    let mut iterated_uids: Vec<UID> = collisions.bodies_iter()
-        .map(|body| body.id())
-        .collect();
-
-    uids.sort_by(|a, b| a.cmp(&b));
-    iterated_uids.sort_by(|a, b| a.cmp(&b));
-    for (uid, expected_uid) in iterated_uids.iter().zip(uids.iter()) {
-        assert_eq!(uid, expected_uid);
-    }
-}
-
-pub fn mutably_iterating_over_bodies<C: CollisionSpace, F: FnOnce() -> C>(new_collisions: F) {
-    let mut collisions = new_collisions();
-    let shape = Cuboid::new_cube(1.0);
-    let material = &Material::new_with_density(3.0);
-    let mut uids = vec!(
-        collisions.create_body(shape.clone(), material, State::new_stationary()),
-        collisions.create_body(shape.clone(), material, State::new_stationary()),
-        collisions.create_body(shape.clone(), material, State::new_stationary()),
-    );
-
-    let mut iterated_uids: Vec<UID> = collisions.bodies_iter_mut()
-        .map(|body| body.id())
-        .collect();
-
-    uids.sort_by(|a, b| a.cmp(&b));
-    iterated_uids.sort_by(|a, b| a.cmp(&b));
-    for (uid, expected_uid) in iterated_uids.iter().zip(uids.iter()) {
-        assert_eq!(uid, expected_uid);
-    }
-}
-
 macro_rules! assert_collision_space_behaviour(
-    ($new_collisions:expr) => (
-        #[test]
-        fn creating_a_rigid_body() {
-            behaviours::collision_space_behaviour::creating_a_rigid_body($new_collisions);
-        }
+    { $( $lines:item )+ } => (
 
-        #[test]
-        fn finding_a_body_with_a_handle() {
-            behaviours::collision_space_behaviour::finding_a_body_with_a_handle($new_collisions);
-        }
+        $( $lines )+
 
-        #[test]
-        fn mutably_finding_a_body_with_a_handle() {
-            behaviours::collision_space_behaviour::mutably_finding_a_body_with_a_handle($new_collisions);
-        }
+        mod collision_space_behaviour {
+            use super::test_subject;
 
-        #[test]
-        fn iterating_over_bodies() {
-            behaviours::collision_space_behaviour::iterating_over_bodies($new_collisions);
-        }
+            use mach::core::{ State, UID };
+            use mach::shapes::Cuboid;
+            use mach::entities::{ Material, RigidBody };
+            use mach::collisions::CollisionSpace;
 
-        #[test]
-        fn mutably_iterating_over_bodies() {
-            behaviours::collision_space_behaviour::mutably_iterating_over_bodies($new_collisions);
+            fn validate<C: CollisionSpace>(input: C) -> C {
+                input
+            }
+
+            #[test]
+            pub fn it_can_create_rigid_bodies() {
+                let mut collision_space = validate(test_subject());
+                let shape = Cuboid::new_cube(1.0);
+                let material = &Material::new_with_density(3.0);
+
+                let uid = collision_space.create_body(shape.clone(), material, State::new_stationary());
+
+                // TODO assertions about rigid bodies count?
+
+                let rigid_body = collision_space.find_body(uid)
+                    .expect("expected to find the rigid body recently created but got nothing");
+
+                // TODO assertions about shape?
+                assert_eq!(rigid_body.mass(), material.mass_of(&shape));
+                assert_eq!(rigid_body.coefficient_of_restitution(), material.coefficient_of_restitution());
+            }
+
+            #[test]
+            pub fn it_can_find_a_rigid_body_by_id() {
+                let mut collision_space = validate(test_subject());
+                let shape = Cuboid::new_cube(1.0);
+                let material = &Material::new_with_mass(3.0);
+                let state = State::new_stationary();
+                collision_space.create_body(shape.clone(), material, state);
+                let uid = collision_space.create_body(shape.clone(), material, state);
+                collision_space.create_body(shape.clone(), material, state);
+
+                let body: &RigidBody = &collision_space.find_body(uid)
+                    .expect("expected to find the rigid body recently created but got nothing");
+
+                assert_eq!(body.id(), uid);
+            }
+
+            #[test]
+            pub fn it_can_modify_a_rigid_body_by_id() {
+                let mut collision_space = validate(test_subject());
+                let shape = Cuboid::new_cube(1.0);
+                let material = &Material::new_with_density(3.0);
+                let state = State::new_stationary();
+                let uid = collision_space.create_body(shape.clone(), material, state);
+                collision_space.create_body(shape.clone(), material, state);
+                collision_space.create_body(shape.clone(), material, state);
+
+                let body: &mut RigidBody = &mut collision_space.find_body_mut(uid)
+                    .expect("expected to find the rigid body recently created but got nothing");
+
+                assert_eq!(body.id(), uid);
+            }
+
+            #[test]
+            pub fn it_can_iterate_over_all_rigid_bodies() {
+                let mut collision_space = validate(test_subject());
+                let shape = Cuboid::new_cube(1.0);
+                let material = &Material::new_with_mass(3.0);
+                let mut uids = vec!(
+                    collision_space.create_body(shape.clone(), material, State::new_stationary()),
+                    collision_space.create_body(shape.clone(), material, State::new_stationary()),
+                    collision_space.create_body(shape.clone(), material, State::new_stationary()),
+                );
+
+                let mut iterated_uids: Vec<UID> = collision_space.bodies_iter()
+                    .map(|body| body.id())
+                    .collect();
+
+                uids.sort_by(|a, b| a.cmp(&b));
+                iterated_uids.sort_by(|a, b| a.cmp(&b));
+                for (uid, expected_uid) in iterated_uids.iter().zip(uids.iter()) {
+                    assert_eq!(uid, expected_uid);
+                }
+            }
+
+            #[test]
+            pub fn it_can_mutate_all_bodies() {
+                let mut collision_space = validate(test_subject());
+                let shape = Cuboid::new_cube(1.0);
+                let material = &Material::new_with_density(3.0);
+                let mut uids = vec!(
+                    collision_space.create_body(shape.clone(), material, State::new_stationary()),
+                    collision_space.create_body(shape.clone(), material, State::new_stationary()),
+                    collision_space.create_body(shape.clone(), material, State::new_stationary()),
+                );
+
+                let mut iterated_uids: Vec<UID> = collision_space.bodies_iter_mut()
+                    .map(|mut body| (&mut body as &mut RigidBody).id())
+                    .collect();
+
+                uids.sort_by(|a, b| a.cmp(&b));
+                iterated_uids.sort_by(|a, b| a.cmp(&b));
+
+                for (uid, expected_uid) in iterated_uids.iter().zip(uids.iter()) {
+                    assert_eq!(uid, expected_uid);
+                }
+            }
         }
     );
 );

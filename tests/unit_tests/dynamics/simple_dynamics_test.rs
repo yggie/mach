@@ -1,4 +1,7 @@
-use behaviours;
-use mach::dynamics::SimpleDynamics;
+assert_dynamics_behaviour! {
+    use mach::dynamics::SimpleDynamics;
 
-assert_dynamics_behaviour!(|| SimpleDynamics::new());
+    pub fn test_subject() -> SimpleDynamics {
+        SimpleDynamics::new()
+    }
+}

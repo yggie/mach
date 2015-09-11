@@ -49,9 +49,11 @@ pub trait CollisionSpace {
     /// object.  This iterator allows mutation of the `RigidBody` objects.
     fn bodies_iter_mut<'a>(&'a mut self) -> Box<Iterator<Item=RefMut<RigidBody>> + 'a>;
 
-    /// TODO: needs refactoring: Finds the intersection between two volumetric bodies.
+    /// Finds the intersection between two volumetric bodies.
+    // TODO: needs refactoring: are there alternatives to not exposing this function?
     fn find_intersection(&self, &VolumetricBody, &VolumetricBody) -> Option<Intersection>;
 
     /// Finds all contacts between bodies.
+    // TODO test it?
     fn find_contacts(&self) -> Option<Vec<Contact>>;
 }
