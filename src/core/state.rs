@@ -1,11 +1,12 @@
 use maths::{ Vector, Quaternion };
 
+use core::Transform;
+
 /// Represents a physical state. The state contains information regarding the
 /// current position, rotation, velocity and rotational velocity.
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug)]
 pub struct State {
-    position: Vector,
-    rotation: Quaternion,
+    transform: Transform,
     velocity: Vector,
     angular_velocity: Vector,
 }
@@ -15,8 +16,7 @@ impl State {
     /// velocity.
     pub fn new_stationary() -> State {
         State {
-            position: Vector::new_zero(),
-            rotation: Quaternion::new_identity(),
+            transform: Transform::new_identity(),
             velocity: Vector::new_zero(),
             angular_velocity: Vector::new_zero(),
         }
@@ -35,15 +35,15 @@ impl State {
     }
 
     /// Returns the position of the `State`.
-    #[inline]
+    #[inline(always)]
     pub fn position(&self) -> Vector {
-        self.position
+        self.transform.translation()
     }
 
     /// Returns the rotation of the `State` expressed as a `Quaternion`.
-    #[inline]
+    #[inline(always)]
     pub fn rotation(&self) -> Quaternion {
-        self.rotation
+        self.transform.rotation()
     }
 
     /// Returns the velocity of the `State`.
@@ -58,11 +58,23 @@ impl State {
         self.angular_velocity
     }
 
+    /// Returns the associated `Transform` object.
+    #[inline]
+    pub fn transform(&self) -> Transform {
+        self.transform
+    }
+
     /// Sets the position using the specified values as components of a
     /// `Vector`.
     #[inline]
     pub fn set_position(&mut self, x: f32, y: f32, z: f32) {
-        self.position.set(x, y, z);
+        self.transform.translation_mut().set(x, y, z);
+    }
+
+    /// Sets the position to the `Vector` provided.
+    #[inline]
+    pub fn set_position_with_vector(&mut self, position: Vector) {
+        self.set_position(position[0], position[1], position[2]);
     }
 
     /// Returns a copy of the `State` using the inputs as components of the
@@ -74,23 +86,17 @@ impl State {
         return state;
     }
 
-    /// Sets the position to the `Vector` provided.
-    #[inline]
-    pub fn set_position_with_vector(&mut self, position: Vector) {
-        self.position.set(position[0], position[1], position[2]);
-    }
-
     /// Sets the rotation using a quaternion.
     #[inline]
     pub fn set_rotation(&mut self, rotation: Quaternion) {
-        self.rotation = rotation;
+        self.transform.rotation_mut().copy(rotation);
     }
 
     /// Sets the rotation with the provided axis and angle of rotation.
     #[inline]
     pub fn set_axis_angle(&mut self, axis: Vector, angle_in_radians: f32) {
         let q = Quaternion::new_from_axis_angle(axis, angle_in_radians);
-        self.rotation.set(q[0], q[1], q[2], q[3]);
+        self.set_rotation(q);
     }
 
     /// Returns a copy of the `State` using the specified angle and axis of
@@ -142,18 +148,18 @@ impl State {
     /// Applies the `State` transformations to a `Vector`, treating the `Vector`
     /// as a point.
     pub fn transform_point(&self, point: Vector) -> Vector {
-        point.rotate_by_quaternion(self.rotation) + self.position
+        point.rotate_by_quaternion(self.rotation()) + self.position()
     }
 
     /// Applies the `State` transformation to a `Vector`, treating the `Vector`
     /// as a direction.
     pub fn transform_direction(&self, direction: Vector) -> Vector {
-        direction.rotate_by_quaternion(self.rotation)
+        direction.rotate_by_quaternion(self.rotation())
     }
 
     /// Applies the inverse `State` transformation to a `Vector`, treating the
     /// `Vector` as a direction.
     pub fn inverse_transform_direction(&self, direction: Vector) -> Vector {
-        direction.rotate_by_quaternion(self.rotation.inverse())
+        direction.rotate_by_quaternion(self.rotation().inverse())
     }
 }

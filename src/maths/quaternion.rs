@@ -74,6 +74,12 @@ impl Quaternion {
         self[3] = k;
     }
 
+    /// Copies the contents of the provided `Quaternion`.
+    #[inline]
+    pub fn copy(&mut self, q: Quaternion) {
+        self.set(q[0], q[1], q[2], q[3]);
+    }
+
     /// Computes the sum between the `Quaternion` and the input scalars treated
     /// as components of a `Quaternion`.
     #[inline]

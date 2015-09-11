@@ -1,7 +1,7 @@
 use maths::{ Vector, Quaternion };
 
 /// The `Transform` object represents a spatial transformation in 3D space.
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug)]
 pub struct Transform {
     translation: Vector,
     rotation: Quaternion,
@@ -29,15 +29,32 @@ impl Transform {
         self.translation
     }
 
+    /// Returns a mutable reference to the translation `Vector`.
+    #[inline(always)]
+    pub fn translation_mut(&mut self) -> &mut Vector {
+        &mut self.translation
+    }
+
     /// The rotational component of the transform.
     #[inline(always)]
     pub fn rotation(&self) -> Quaternion {
         self.rotation
     }
 
+    /// Returns a mutable reference to the rotation `Quaternion`.
+    #[inline(always)]
+    pub fn rotation_mut(&mut self) -> &mut Quaternion {
+        &mut self.rotation
+    }
+
     /// Applies the transform to a point.
     pub fn apply_to_point(&self, point: Vector) -> Vector {
         point.rotate_by_quaternion(self.rotation()) + self.translation()
+    }
+
+    /// Applies the `Transform` on the `Vector` treating it as a direction.
+    pub fn apply_to_direction(&self, direction: Vector) -> Vector {
+        direction.rotate_by_quaternion(self.rotation())
     }
 
     /// Applies the inverse of the transform to a direction.

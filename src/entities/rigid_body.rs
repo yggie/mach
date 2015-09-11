@@ -40,8 +40,8 @@ impl RigidBody {
 
     /// Returns the `State` associated with the `RigidBody`.
     #[inline]
-    pub fn state(&self) -> &State {
-        &self.state
+    pub fn state(&self) -> State {
+        self.state
     }
 
     /// Returns the `State` associated with the `RigidBody` as a mutable
@@ -49,6 +49,12 @@ impl RigidBody {
     #[inline]
     pub fn state_mut(&mut self) -> &mut State {
         &mut self.state
+    }
+
+    /// Returns the associated `Transform` object.
+    #[inline]
+    pub fn transform(&self) -> Transform {
+        self.state.transform()
     }
 
     /// Returns the mass of the `RigidBody`.
@@ -135,8 +141,9 @@ impl VolumetricBody for RigidBody {
         (self as &RigidBody).shape()
     }
 
+    #[inline(always)]
     fn transform(&self) -> Transform {
-        Transform::new(self.position(), self.rotation())
+        (self as &RigidBody).transform()
     }
 }
 
