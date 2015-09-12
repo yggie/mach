@@ -11,7 +11,7 @@ pub struct Cuboid {
     width: Float,
     height: Float,
     depth: Float,
-    vertices: Vec<Vector>,
+    vertices: [Vector; 8],
 }
 
 impl Cuboid {
@@ -21,23 +21,21 @@ impl Cuboid {
         let half_height = height / 2.0;
         let half_depth = depth / 2.0;
 
-        // TODO refactor this to something else (z = height??)
-        let mut vertices = Vec::new();
-        vertices.push(Vector::new( half_width,  half_height,  half_depth));
-        vertices.push(Vector::new(-half_width,  half_height,  half_depth));
-        vertices.push(Vector::new(-half_width, -half_height,  half_depth));
-        vertices.push(Vector::new( half_width, -half_height,  half_depth));
-
-        vertices.push(Vector::new( half_width,  half_height, -half_depth));
-        vertices.push(Vector::new(-half_width,  half_height, -half_depth));
-        vertices.push(Vector::new(-half_width, -half_height, -half_depth));
-        vertices.push(Vector::new( half_width, -half_height, -half_depth));
-
         Cuboid {
             width: width,
             height: height,
             depth: depth,
-            vertices: vertices,
+            vertices: [
+                // TODO refactor this to something else (z = height??)
+                Vector::new( half_width,  half_height,  half_depth),
+                Vector::new(-half_width,  half_height,  half_depth),
+                Vector::new(-half_width, -half_height,  half_depth),
+                Vector::new( half_width, -half_height,  half_depth),
+                Vector::new( half_width,  half_height, -half_depth),
+                Vector::new(-half_width,  half_height, -half_depth),
+                Vector::new(-half_width, -half_height, -half_depth),
+                Vector::new( half_width, -half_height, -half_depth),
+            ],
         }
     }
 
