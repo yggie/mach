@@ -1,4 +1,4 @@
-use core::Float;
+use core::{ Float, TOLERANCE };
 use maths::{ Vector, State };
 use dynamics::{ Dynamics, SemiImplicitEuler };
 use entities::{ RigidBody, StaticBody };
@@ -46,6 +46,13 @@ impl SimpleDynamics {
             (contact_normal.dot(v[0] - v[1]) + w[0].dot(k_scaled[0]) - w[1].dot(k_scaled[1])) /
             (1.0/M[0] + 1.0/M[1] + k_scaled[0].dot(Jinv[0]*k_scaled[0]) + k_scaled[1].dot(Jinv[1]*k_scaled[1]));
 
+        let impulse = if impulse > TOLERANCE {
+            println!("[WARNING] NON-SEPARATING IMPULSE! = {}", impulse);
+            0.0
+        } else {
+            impulse
+        };
+
         let velocity_change = contact_normal * impulse;
         let angular_velocity_change_0 = Jinv[0]*to_contact_center[0].cross( velocity_change);
         let angular_velocity_change_1 = Jinv[1]*to_contact_center[1].cross(-velocity_change);
@@ -70,6 +77,13 @@ impl SimpleDynamics {
         let impulse = - (1.0 + epsilon) *
             (contact_normal.dot(v) + w.dot(k_scaled)) /
             (1.0/m + k_scaled.dot(Jinv*k_scaled));
+
+        let impulse = if impulse > TOLERANCE {
+            println!("[WARNING] NON-SEPARATING IMPULSE! = {}", impulse);
+            0.0
+        } else {
+            impulse
+        };
 
         let velocity_change = contact_normal * impulse;
         let angular_velocity_change = Jinv*to_contact_center.cross(velocity_change);
