@@ -1,4 +1,5 @@
-use mach::maths::{ PI, Vector, Quaternion };
+use mach::core::PI;
+use mach::maths::{ Vector, Quaternion };
 
 #[test]
 fn instantiating_with_components() {

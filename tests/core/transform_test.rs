@@ -1,6 +1,4 @@
-use std::f32::consts::PI;
-
-use mach::core::Transform;
+use mach::core::{ PI, Transform };
 use mach::maths::{ Vector, Quaternion };
 
 #[test]

@@ -3,6 +3,8 @@
 mod state;
 mod transform;
 
+use std::f32;
+
 use std::rc::Rc;
 use std::cell::RefCell;
 
@@ -14,3 +16,6 @@ pub type UID = u64;
 
 /// A shared pointer which gives access to the contained type instance.
 pub type SharedCell<T> = Rc<RefCell<T>>;
+
+/// The PI constant.
+pub static PI: f32 = f32::consts::PI;

@@ -50,7 +50,7 @@ impl SimpleDynamics {
         let angular_velocity_change_0 = Jinv[0]*to_contact_center[0].cross( velocity_change);
         let angular_velocity_change_1 = Jinv[1]*to_contact_center[1].cross(-velocity_change);
 
-        return ((velocity_change, angular_velocity_change_0), (-velocity_change, angular_velocity_change_1));
+        return ((velocity_change / M[0], angular_velocity_change_0), (-velocity_change / M[1], angular_velocity_change_1));
     }
 
     #[allow(non_snake_case)]
@@ -62,18 +62,19 @@ impl SimpleDynamics {
         // has been scaled by the distance to the contact.
         let k_scaled = to_contact_center.cross(contact_normal);
 
+        let m = rigid_body.mass();
         let v = rigid_body.velocity();
         let w = rigid_body.angular_velocity();
         let Jinv = rigid_body.inertia().inverse();
 
         let impulse = - (1.0 + epsilon) *
             (contact_normal.dot(v) + w.dot(k_scaled)) /
-            (1.0/rigid_body.mass() + k_scaled.dot(Jinv*k_scaled));
+            (1.0/m + k_scaled.dot(Jinv*k_scaled));
 
         let velocity_change = contact_normal * impulse;
         let angular_velocity_change = Jinv*to_contact_center.cross(velocity_change);
 
-        return (velocity_change, angular_velocity_change);
+        return (velocity_change / m, angular_velocity_change);
     }
 
     fn revert_to_time_of_contact<C: CollisionSpace>(&self, collision_space: &mut C, current_intersection: Intersection, rigid_body_0: &mut RigidBody, rigid_body_1: &mut RigidBody, time_window: f32) -> (Intersection, f32) {
@@ -155,6 +156,8 @@ impl Dynamics for SimpleDynamics {
             println!("CONTACTS FOUND ({})", contacts.len());
 
             for contact in contacts.iter().take(1) {
+                println!("HANDLING CONTACT {} FACING {}", contact.center, contact.normal);
+
                 match contact.pair {
                     ContactPair::RigidRigid(ref cell_0, ref cell_1) => {
                         let rigid_body_0 = &mut cell_0.borrow_mut();

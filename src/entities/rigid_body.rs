@@ -107,7 +107,7 @@ impl RigidBody {
     /// Returns an `Iterator` over the vertices of the `RigidBody`.
     pub fn vertices_iter<'a>(&'a self) -> Box<Iterator<Item=Vector> + 'a> {
         let s = self.state.clone();
-        Box::new(self.shape.vertices_iter().map(move |&v| s.transform_point(v)))
+        Box::new(self.shape.vertices_iter().map(move |v| s.transform_point(v)))
     }
 
     /// Sets the `RigidBody`’s position using the `Vector` provided.

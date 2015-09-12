@@ -1,5 +1,5 @@
-use mach::core::State;
-use mach::maths::{ PI, Vector };
+use mach::core::{ PI, State };
+use mach::maths::Vector;
 use mach::shapes::Cuboid;
 use mach::entities::{ Material, RigidBody };
 use mach::collisions::narrowphase::GjkEpaImplementation;

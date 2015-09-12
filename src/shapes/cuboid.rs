@@ -3,7 +3,7 @@ use std::fmt;
 use maths::{ approx_eq, Matrix, Vector, TOLERANCE };
 use shapes::Shape;
 
-/// A representation of a cube in 3 dimensions.
+/// A representation of a cuboid in 3 dimensions.
 #[derive(Clone, Debug)]
 pub struct Cuboid {
     width: f32,
@@ -106,8 +106,8 @@ impl Shape for Cuboid {
         8
     }
 
-    fn vertices_iter<'a>(&'a self) -> Box<Iterator<Item=&Vector> + 'a> {
-        Box::new(self.vertices.iter())
+    fn vertices_iter<'a>(&'a self) -> Box<Iterator<Item=Vector> + 'a> {
+        Box::new(self.vertices.iter().map(|&a| a))
     }
 
     fn support_indices_for(&self, direction: Vector) -> Vec<usize> {
