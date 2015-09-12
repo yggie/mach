@@ -1,7 +1,7 @@
 use std::fmt::{ Display, Formatter, Result };
 
-use core::{ UID, Transform };
-use maths::{ Vector, Quaternion };
+use core::{ Float, UID };
+use maths::{ Transform, Quaternion, Vector };
 use shapes::Shape;
 use entities::{ Material, VolumetricBody };
 
@@ -11,7 +11,7 @@ pub struct StaticBody {
     id: UID,
     shape: Box<Shape>,
     transform: Transform,
-    coefficient_of_restitution: f32,
+    coefficient_of_restitution: Float,
 }
 
 impl StaticBody {
@@ -40,7 +40,7 @@ impl StaticBody {
 
     /// Returns the coefficient of restitution associated with the `RigidBody`.
     #[inline]
-    pub fn coefficient_of_restitution(&self) -> f32 {
+    pub fn coefficient_of_restitution(&self) -> Float {
         self.coefficient_of_restitution
     }
 

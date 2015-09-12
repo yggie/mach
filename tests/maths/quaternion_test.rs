@@ -1,3 +1,4 @@
+use mach::core::Float;
 use mach::maths::{ Quaternion, Vector };
 
 #[test]
@@ -45,7 +46,7 @@ fn computing_the_squared_length() {
 fn computing_the_length() {
     let q = Quaternion::new(-3.0, 4.0, 2.0, -1.0);
 
-    assert_eq!(q.length(), 30.0f32.sqrt());
+    assert_eq!(q.length(), (30.0 as Float).sqrt());
 }
 
 #[test]

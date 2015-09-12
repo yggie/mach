@@ -1,5 +1,5 @@
-use mach::core::{ PI, State };
-use mach::maths::{ Vector, Quaternion };
+use mach::core::PI;
+use mach::maths::{ State, Vector, Quaternion };
 
 #[test]
 fn instantiating_as_stationary() {

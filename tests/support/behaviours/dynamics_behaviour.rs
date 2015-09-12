@@ -8,8 +8,8 @@ macro_rules! assert_dynamics_behaviour(
 
             use support::{ CollisionSpaceMonitor, DynamicsMonitor };
 
-            use mach::core::State;
-            use mach::maths::Vector;
+            use mach::core::Float;
+            use mach::maths::{ State, Vector };
             use mach::shapes::Cuboid;
             use mach::dynamics::Dynamics;
             use mach::entities::Material;
@@ -80,7 +80,7 @@ macro_rules! assert_dynamics_behaviour(
                 let initial_axis = Vector::new(1.0, 1.0, 1.0).normalize();
                 let final_axis = Vector::new(1.0, 0.0, 0.0);
                 let rotation = initial_axis.cross(final_axis);
-                let state_1 = State::new_with_position((0.98 + 3.0f32.sqrt())/2.0, 0.0, 0.0)
+                let state_1 = State::new_with_position((0.98 + (3.0 as Float).sqrt())/2.0, 0.0, 0.0)
                     .with_axis_angle(rotation, rotation.length().asin())
                     .with_velocity(-1.0, 0.0, 0.0);
                 let uid_1 = space.create_body(

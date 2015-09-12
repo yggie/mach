@@ -1,7 +1,6 @@
 use support::Simulation;
 
-use mach::core::{ State, Transform };
-use mach::maths::Vector;
+use mach::maths::{ State, Transform, Vector };
 use mach::shapes::{ Cuboid, Sphere };
 use mach::entities::Material;
 use mach::dynamics::SimpleDynamics;

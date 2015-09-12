@@ -1,19 +1,20 @@
-use maths::{ TOLERANCE, Matrix, Quaternion };
-
 use std::fmt;
 use std::ops::{ Add, Div, Index, IndexMut, Mul, Neg, Sub };
+
+use core::{ Float, TOLERANCE };
+use maths::{ Matrix, Quaternion };
 
 /// A representation of a 3-dimensional column vector.
 #[derive(Clone, Copy, Debug)]
 pub struct Vector {
-    elements: [f32; 3]
+    elements: [Float; 3]
 }
 
 /// Static methods for the Vector struct.
 impl Vector {
     /// A simple constructor which builds a column vector given three elements.
     #[inline(always)]
-    pub fn new(x: f32, y: f32, z: f32) -> Vector {
+    pub fn new(x: Float, y: Float, z: Float) -> Vector {
         Vector{ elements: [x, y, z] }
     }
 
@@ -24,7 +25,7 @@ impl Vector {
 
     /// Set the components of the `Vector` to the specified values.
     #[inline]
-    pub fn set(&mut self, x: f32, y: f32, z: f32) {
+    pub fn set(&mut self, x: Float, y: Float, z: Float) {
         self[0] = x;
         self[1] = y;
         self[2] = z;
@@ -33,7 +34,7 @@ impl Vector {
     /// Computes the sum of the `Vector` and three scalars treated as components
     /// of a `Vector`.
     #[inline]
-    pub fn add(self, x: f32, y: f32, z: f32) -> Vector {
+    pub fn add(self, x: Float, y: Float, z: Float) -> Vector {
         Vector{ elements: [
             self[0] + x,
             self[1] + y,
@@ -44,7 +45,7 @@ impl Vector {
     /// Computes the difference between a `Vector` and three scalars treated as
     /// components of a `Vector`.
     #[inline]
-    pub fn sub(self, x: f32, y: f32, z: f32) -> Vector {
+    pub fn sub(self, x: Float, y: Float, z: Float) -> Vector {
         Vector{ elements: [
             self[0] - x,
             self[1] - y,
@@ -54,7 +55,7 @@ impl Vector {
 
     /// Computes the dot product between two vectors.
     #[inline(always)]
-    pub fn dot(&self, other: Vector) -> f32 {
+    pub fn dot(&self, other: Vector) -> Float {
         self[0]*other[0] + self[1]*other[1] + self[2]*other[2]
     }
 
@@ -76,13 +77,13 @@ impl Vector {
 
     /// Computes the squared length of a Vector.
     #[inline(always)]
-    pub fn length_sq(&self) -> f32 {
+    pub fn length_sq(&self) -> Float {
         self[0]*self[0] + self[1]*self[1] + self[2]*self[2]
     }
 
     /// Computes the length of a Vector.
     #[inline(always)]
-    pub fn length(&self) -> f32 {
+    pub fn length(&self) -> Float {
         self.length_sq().sqrt()
     }
 
@@ -96,7 +97,7 @@ impl Vector {
     }
 
     /// Computes the distance to the `Vector` specified.
-    pub fn distance_to(&self, other: Vector) -> f32 {
+    pub fn distance_to(&self, other: Vector) -> Float {
         (*self - other).length()
     }
 
@@ -134,11 +135,11 @@ impl PartialEq for Vector {
 
 /// Implement the index operator.
 impl Index<usize> for Vector {
-    type Output = f32;
+    type Output = Float;
 
     /// Obtain the vector's elements by index. Uses zero-based indexing.
     #[inline(always)]
-    fn index<'a>(&'a self, index: usize) -> &'a f32 {
+    fn index<'a>(&'a self, index: usize) -> &'a Float {
         &self.elements[index]
     }
 }
@@ -147,7 +148,7 @@ impl Index<usize> for Vector {
 impl IndexMut<usize> for Vector {
     /// Allows setting a vector's element using index notation.
     #[inline(always)]
-    fn index_mut<'a>(&'a mut self, index: usize) -> &'a mut f32 {
+    fn index_mut<'a>(&'a mut self, index: usize) -> &'a mut Float {
         &mut self.elements[index]
     }
 }
@@ -186,23 +187,23 @@ impl Sub<Vector> for Vector {
 }
 
 /// Implements the multiplication operator between a `Vector` and a scalar.
-impl Mul<f32> for Vector {
+impl Mul<Float> for Vector {
     type Output = Vector;
 
     /// Multiplies a `Vector` by a scalar.
     #[inline]
-    fn mul(self, s: f32) -> Vector {
+    fn mul(self, s: Float) -> Vector {
         Vector::new(self[0]*s, self[1]*s, self[2]*s)
     }
 }
 
 /// Implements the division operator between a `Vector` and a scalar.
-impl Div<f32> for Vector {
+impl Div<Float> for Vector {
     type Output = Vector;
 
     /// Divides the `Vector` by a scalar.
     #[inline]
-    fn div(self, s: f32) -> Vector {
+    fn div(self, s: Float) -> Vector {
         Vector::new(self[0]/s, self[1]/s, self[2]/s)
     }
 }

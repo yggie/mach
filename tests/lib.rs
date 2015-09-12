@@ -19,12 +19,6 @@ mod collisions {
 }
 
 #[cfg(test)]
-mod core {
-    mod state_test;
-    mod transform_test;
-}
-
-#[cfg(test)]
 mod dynamics {
     mod simple_dynamics_test;
 }
@@ -39,6 +33,8 @@ mod maths {
     mod matrix_test;
     mod quaternion_test;
     mod vector_test;
+    mod state_test;
+    mod transform_test;
 }
 
 #[cfg(test)]

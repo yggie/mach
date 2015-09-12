@@ -1,6 +1,7 @@
 use super::simplex::{ SupportPoint, Simplex };
 
-use maths::{ Vector, TOLERANCE };
+use core::TOLERANCE;
+use maths::Vector;
 use utils::compute_surfaces_for_convex_hull;
 use entities::VolumetricBody;
 

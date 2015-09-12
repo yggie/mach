@@ -6,7 +6,8 @@ macro_rules! assert_collision_space_behaviour(
         mod collision_space_behaviour {
             use super::test_subject;
 
-            use mach::core::{ State, UID };
+            use mach::core::UID;
+            use mach::maths::State;
             use mach::shapes::Cuboid;
             use mach::entities::{ Material, RigidBody };
             use mach::collisions::CollisionSpace;

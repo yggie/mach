@@ -4,6 +4,7 @@ mod polytope;
 use self::simplex::Simplex;
 use self::polytope::Polytope;
 
+use core::Float;
 use maths::Vector;
 use entities::VolumetricBody;
 use collisions::NarrowPhase;
@@ -33,7 +34,7 @@ impl GjkEpaImplementation {
     }
 
     fn contact_for_polytope(polytope: &Polytope, entities: [&VolumetricBody; 2]) -> Intersection {
-        let mut closest_surface: Option<(f32, Vector, [usize; 3])> = None;
+        let mut closest_surface: Option<(Float, Vector, [usize; 3])> = None;
         for &(surface_normal, indices) in polytope.surfaces.iter() {
             let current_depth = surface_normal.dot(polytope.vertices[indices[0]].position);
 

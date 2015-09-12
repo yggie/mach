@@ -1,20 +1,22 @@
 use std::fmt;
 
-use maths::{ approx_eq, Matrix, Vector, TOLERANCE };
+use core::{ Float, TOLERANCE };
+use maths::{ Matrix, Vector };
+use utils::approx_eq;
 use shapes::Shape;
 
 /// A representation of a cuboid in 3 dimensions.
 #[derive(Clone, Debug)]
 pub struct Cuboid {
-    width: f32,
-    height: f32,
-    depth: f32,
+    width: Float,
+    height: Float,
+    depth: Float,
     vertices: Vec<Vector>,
 }
 
 impl Cuboid {
     /// Constructs a new `Cuboid` given the width, height and depth dimensions.
-    pub fn new(width: f32, height: f32, depth: f32) -> Cuboid {
+    pub fn new(width: Float, height: Float, depth: Float) -> Cuboid {
         let half_width = width / 2.0;
         let half_height = height / 2.0;
         let half_depth = depth / 2.0;
@@ -40,22 +42,22 @@ impl Cuboid {
     }
 
     /// Constructs a new `Cuboid` with equally sized edges.
-    pub fn new_cube(size: f32) -> Cuboid {
+    pub fn new_cube(size: Float) -> Cuboid {
         Cuboid::new(size, size, size)
     }
 
     /// Returns the width of the `Cuboid`.
-    pub fn width(&self) -> f32 {
+    pub fn width(&self) -> Float {
         self.width
     }
 
     /// Returns the height of the `Cuboid`.
-    pub fn height(&self) -> f32 {
+    pub fn height(&self) -> Float {
         self.height
     }
 
     /// Returns the depth of the `Cuboid`.
-    pub fn depth(&self) -> f32 {
+    pub fn depth(&self) -> Float {
         self.depth
     }
 }
@@ -82,7 +84,7 @@ impl PartialEq for Cuboid {
 
 impl Shape for Cuboid {
     /// Calculates the volume of the `Cuboid`.
-    fn volume(&self) -> f32 {
+    fn volume(&self) -> Float {
         self.width * self.height * self.depth
     }
 

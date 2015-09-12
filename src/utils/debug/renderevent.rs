@@ -1,6 +1,7 @@
 //! The `render` module is the interface with the mach browser debugger to allow
 //! rendering of information. This was primarily developed to aid debugging.
 
+use core::Float;
 use maths::Vector;
 use entities::{ RigidBody, StaticBody };
 
@@ -19,7 +20,7 @@ pub fn create_static_body(static_body: &StaticBody) {
 }
 
 /// Logs an event indicating the start of the update step
-pub fn update_start(time_step: f32) {
+pub fn update_start(time_step: Float) {
     if cfg!(feature="debug_renderevent") {
         println!("[FRAME] NEW step={}", time_step);
     }

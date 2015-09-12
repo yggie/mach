@@ -1,18 +1,19 @@
-use maths::{ TOLERANCE, Vector };
-
 use std::fmt;
 use std::ops::{ Add, Div, Index, IndexMut, Mul, Neg, Sub };
+
+use core::{ Float, TOLERANCE };
+use maths::Vector;
 
 /// A representation of a quaternion.
 #[derive(Clone, Copy, Debug)]
 pub struct Quaternion {
-    elements: [f32; 4]
+    elements: [Float; 4]
 }
 
 impl Quaternion {
     /// Creates a new `Quaternion` with the coordinates provided.
     #[inline(always)]
-    pub fn new(r: f32, i: f32, j: f32, k: f32) -> Quaternion {
+    pub fn new(r: Float, i: Float, j: Float, k: Float) -> Quaternion {
         Quaternion { elements: [r, i, j, k] }
     }
 
@@ -30,7 +31,7 @@ impl Quaternion {
     }
 
     /// Creates a new `Quaternion` representing a rotation about an axis.
-    pub fn new_from_axis_angle(axis: Vector, angle_in_radians: f32) -> Quaternion {
+    pub fn new_from_axis_angle(axis: Vector, angle_in_radians: Float) -> Quaternion {
         let length = axis.length();
         let half_radians = angle_in_radians / 2.0;
         let sl = half_radians.sin() / length;
@@ -41,13 +42,13 @@ impl Quaternion {
 
     /// Computes the squared length of the `Quaternion`.
     #[inline(always)]
-    pub fn length_sq(&self) -> f32 {
+    pub fn length_sq(&self) -> Float {
         self[0]*self[0] + self[1]*self[1] + self[2]*self[2] + self[3]*self[3]
     }
 
     /// Computes the length of the `Quaternion`.
     #[inline]
-    pub fn length(&self) -> f32 {
+    pub fn length(&self) -> Float {
         self.length_sq().sqrt()
     }
 
@@ -67,7 +68,7 @@ impl Quaternion {
 
     /// Sets the components of the `Quaternion` to the specified values.
     #[inline]
-    pub fn set(&mut self, r: f32, i: f32, j: f32, k: f32) {
+    pub fn set(&mut self, r: Float, i: Float, j: Float, k: Float) {
         self[0] = r;
         self[1] = i;
         self[2] = j;
@@ -83,7 +84,7 @@ impl Quaternion {
     /// Computes the sum between the `Quaternion` and the input scalars treated
     /// as components of a `Quaternion`.
     #[inline]
-    pub fn add(self, r: f32, i: f32, j: f32, k: f32) -> Quaternion {
+    pub fn add(self, r: Float, i: Float, j: Float, k: Float) -> Quaternion {
         Quaternion{ elements: [
             self[0] + r,
             self[1] + i,
@@ -96,7 +97,7 @@ impl Quaternion {
     /// Computes the difference between the `Quaternion` and the input scalars
     /// treated as components of a `Quaternion`.
     #[inline]
-    pub fn sub(self, r: f32, i: f32, j: f32, k: f32) -> Quaternion {
+    pub fn sub(self, r: Float, i: Float, j: Float, k: Float) -> Quaternion {
         Quaternion{ elements: [
             self[0] - r,
             self[1] - i,
@@ -108,7 +109,7 @@ impl Quaternion {
     /// Computes the `Quaternion` multiplication with the input scalars as
     /// components of a `Quaternion`.
     #[inline]
-    pub fn mult(&self, r: f32, i: f32, j: f32, k: f32) -> Quaternion {
+    pub fn mult(&self, r: Float, i: Float, j: Float, k: Float) -> Quaternion {
         Quaternion{ elements: [
             self[0]*r - self[1]*i - self[2]*j - self[3]*k,
             self[0]*i + self[1]*r + self[2]*k - self[3]*j,
@@ -147,11 +148,11 @@ impl PartialEq for Quaternion {
 
 /// Implements the index operator.
 impl Index<usize> for Quaternion {
-    type Output = f32;
+    type Output = Float;
 
     /// Obtains a component from the `Quaternion` by index.
     #[inline(always)]
-    fn index<'a>(&'a self, index: usize) -> &'a f32 {
+    fn index<'a>(&'a self, index: usize) -> &'a Float {
         &self.elements[index]
     }
 }
@@ -161,7 +162,7 @@ impl IndexMut<usize> for Quaternion {
     /// Obtains a mutable reference to a component from the `Quaternion` by
     /// index.
     #[inline(always)]
-    fn index_mut<'a>(&'a mut self, index: usize) -> &'a mut f32 {
+    fn index_mut<'a>(&'a mut self, index: usize) -> &'a mut Float {
         &mut self.elements[index]
     }
 }
@@ -200,11 +201,11 @@ impl Sub<Quaternion> for Quaternion {
 }
 
 /// Implements the multiplication operator between a `Quaternion` and a scalar.
-impl Mul<f32> for Quaternion {
+impl Mul<Float> for Quaternion {
     type Output = Quaternion;
 
     /// Computes the result of multiplying a `Quaternion` by a scalar.
-    fn mul(self, s: f32) -> Quaternion {
+    fn mul(self, s: Float) -> Quaternion {
         Quaternion::new(self[0]*s, self[1]*s, self[2]*s, self[3]*s)
     }
 }
@@ -221,12 +222,12 @@ impl Mul<Quaternion> for Quaternion {
 }
 
 /// Implements the division operator between a `Quaternion` and a scalar.
-impl Div<f32> for Quaternion {
+impl Div<Float> for Quaternion {
     type Output = Quaternion;
 
     /// Divides the `Quaternion` by a scalar.
     #[inline]
-    fn div(self, s: f32) -> Quaternion {
+    fn div(self, s: Float) -> Quaternion {
         Quaternion::new(self[0]/s, self[1]/s, self[2]/s, self[3]/s)
     }
 }

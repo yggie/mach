@@ -1,6 +1,7 @@
 use std::cell::{ Ref, RefMut };
 
-use core::{ UID, State, Transform };
+use core::UID;
+use maths::{ State, Transform };
 use shapes::Shape;
 use entities::{ Material, RigidBody, StaticBody, VolumetricBody };
 use collisions::Contact;

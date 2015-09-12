@@ -1,17 +1,17 @@
 use std::fmt;
 
-use core::{ UID, State, Transform };
-use maths::{ Matrix, Vector, Quaternion };
+use core::{ Float, UID };
+use maths::{ Matrix, State, Transform, Quaternion, Vector };
 use shapes::Shape;
 use entities::{ Material, VolumetricBody };
 
 /// Represents a physical entity in the world.
 pub struct RigidBody {
     id: UID,
-    mass: f32,
+    mass: Float,
     shape: Box<Shape>,
     state: State,
-    coefficient_of_restitution: f32,
+    coefficient_of_restitution: Float,
 }
 
 impl RigidBody {
@@ -59,13 +59,13 @@ impl RigidBody {
 
     /// Returns the mass of the `RigidBody`.
     #[inline]
-    pub fn mass(&self) -> f32 {
+    pub fn mass(&self) -> Float {
         self.mass
     }
 
     /// Returns the coefficient of restitution associated with the `RigidBody`.
     #[inline]
-    pub fn coefficient_of_restitution(&self) -> f32 {
+    pub fn coefficient_of_restitution(&self) -> Float {
         self.coefficient_of_restitution
     }
 

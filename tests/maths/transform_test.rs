@@ -1,5 +1,5 @@
-use mach::core::{ PI, Transform };
-use mach::maths::{ Vector, Quaternion };
+use mach::core::PI;
+use mach::maths::{ Transform, Quaternion, Vector };
 
 #[test]
 fn it_can_be_instantiated_as_the_identity_transform() {

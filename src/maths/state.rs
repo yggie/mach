@@ -1,6 +1,5 @@
-use maths::{ Vector, Quaternion };
-
-use core::Transform;
+use core::Float;
+use maths::{ Transform, Quaternion, Vector };
 
 /// Represents a physical state. The state contains information regarding the
 /// current position, rotation, velocity and rotational velocity.
@@ -24,13 +23,13 @@ impl State {
 
     /// Creates a new `State` with a non-zero position.
     #[inline]
-    pub fn new_with_position(x: f32, y: f32, z: f32) -> State {
+    pub fn new_with_position(x: Float, y: Float, z: Float) -> State {
         State::new_stationary().with_position(x, y, z)
     }
 
     /// Creates a new `State` with a non-zero rotation.
     #[inline]
-    pub fn new_with_axis_angle(axis: Vector, angle_in_radians: f32) -> State {
+    pub fn new_with_axis_angle(axis: Vector, angle_in_radians: Float) -> State {
         State::new_stationary().with_axis_angle(axis, angle_in_radians)
     }
 
@@ -67,7 +66,7 @@ impl State {
     /// Sets the position using the specified values as components of a
     /// `Vector`.
     #[inline]
-    pub fn set_position(&mut self, x: f32, y: f32, z: f32) {
+    pub fn set_position(&mut self, x: Float, y: Float, z: Float) {
         self.transform.translation_mut().set(x, y, z);
     }
 
@@ -80,7 +79,7 @@ impl State {
     /// Returns a copy of the `State` using the inputs as components of the
     /// position `Vector`. This function can be chained.
     #[inline]
-    pub fn with_position(&self, x: f32, y: f32, z: f32) -> State {
+    pub fn with_position(&self, x: Float, y: Float, z: Float) -> State {
         let mut state = self.clone();
         state.set_position(x, y, z);
         return state;
@@ -94,7 +93,7 @@ impl State {
 
     /// Sets the rotation with the provided axis and angle of rotation.
     #[inline]
-    pub fn set_axis_angle(&mut self, axis: Vector, angle_in_radians: f32) {
+    pub fn set_axis_angle(&mut self, axis: Vector, angle_in_radians: Float) {
         let q = Quaternion::new_from_axis_angle(axis, angle_in_radians);
         self.set_rotation(q);
     }
@@ -102,7 +101,7 @@ impl State {
     /// Returns a copy of the `State` using the specified angle and axis of
     /// rotation to initialize the rotation. This function can be chained.
     #[inline]
-    pub fn with_axis_angle(&self, axis: Vector, angle_in_radians: f32) -> State {
+    pub fn with_axis_angle(&self, axis: Vector, angle_in_radians: Float) -> State {
         let mut state = self.clone();
         state.set_axis_angle(axis, angle_in_radians);
         return state;
@@ -111,13 +110,13 @@ impl State {
     /// Sets the velocity using the specified values as components of a
     /// `Vector`.
     #[inline]
-    pub fn set_velocity(&mut self, u: f32, v: f32, w: f32) {
+    pub fn set_velocity(&mut self, u: Float, v: Float, w: Float) {
         self.velocity.set(u, v, w);
     }
 
     /// Returns a copy of the `State` using the inputs as the components of the
     /// velocity `Vector`. This function can be chained.
-    pub fn with_velocity(&self, u: f32, v: f32, w: f32) -> State {
+    pub fn with_velocity(&self, u: Float, v: Float, w: Float) -> State {
         let mut state = self.clone();
         state.set_velocity(u, v, w);
         return state;
@@ -132,14 +131,14 @@ impl State {
     /// Sets the angular velocity using the specified values as components of a
     /// `Vector`.
     #[inline]
-    pub fn set_angular_velocity(&mut self, u: f32, v: f32, w: f32) {
+    pub fn set_angular_velocity(&mut self, u: Float, v: Float, w: Float) {
         self.angular_velocity.set(u, v, w);
     }
 
     /// Returns a copy of the `State` using the inputs as components of the
     /// angular velocity `Vector`. This function can be chained.
     #[inline]
-    pub fn with_angular_velocity(&self, u: f32, v: f32, w: f32) -> State {
+    pub fn with_angular_velocity(&self, u: Float, v: Float, w: Float) -> State {
         let mut state = self.clone();
         state.set_angular_velocity(u, v, w);
         return state;

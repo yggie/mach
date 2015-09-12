@@ -1,25 +1,25 @@
 use std::fmt;
 
-use core::PI;
-use maths::{ Matrix, Vector, TOLERANCE };
+use core::{ Float, PI, TOLERANCE };
+use maths::{ Matrix, Vector };
 use shapes::Shape;
 
 /// A representation of a sphere in 3 dimensions.
 #[derive(Clone, Copy, Debug)]
 pub struct Sphere {
-    _radius: f32,
+    _radius: Float,
 }
 
 impl Sphere {
     /// Constructs a new `Sphere` with the radius provided.
-    pub fn new(radius: f32) -> Sphere {
+    pub fn new(radius: Float) -> Sphere {
         Sphere {
             _radius: radius,
         }
     }
 
     /// Returns the radius of the `Sphere`.
-    pub fn radius(&self) -> f32 {
+    pub fn radius(&self) -> Float {
         self._radius
     }
 }
@@ -31,7 +31,7 @@ impl fmt::Display for Sphere {
 }
 
 impl Shape for Sphere {
-    fn volume(&self) -> f32 {
+    fn volume(&self) -> Float {
         PI * self.radius() * self.radius() * self.radius() * 4.0 / 3.0
     }
 
@@ -58,7 +58,7 @@ impl Shape for Sphere {
     }
 
     #[inline]
-    fn surface_radius(&self) -> f32 {
+    fn surface_radius(&self) -> Float {
         self.radius() + TOLERANCE
     }
 }

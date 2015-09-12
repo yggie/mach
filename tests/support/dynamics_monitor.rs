@@ -1,7 +1,6 @@
 extern crate mach;
 
-use std::f32;
-
+use mach::core::{ Float, INFINITY };
 use mach::maths::Vector;
 use mach::utils::debug::renderevent;
 use mach::dynamics::Dynamics;
@@ -12,7 +11,7 @@ use mach::collisions::CollisionSpace;
 /// behaviour of the component.
 pub struct DynamicsMonitor<D: Dynamics> {
     dynamics: D,
-    previous_total_energy: f32,
+    previous_total_energy: Float,
     total_energy_violation_count: u32,
 }
 
@@ -21,7 +20,7 @@ impl<D: Dynamics> DynamicsMonitor<D> {
     pub fn new(dynamics: D) -> DynamicsMonitor<D> {
         DynamicsMonitor {
             dynamics: dynamics,
-            previous_total_energy: f32::INFINITY,
+            previous_total_energy: INFINITY,
             total_energy_violation_count: 0,
         }
     }
@@ -34,7 +33,7 @@ impl<D: Dynamics> DynamicsMonitor<D> {
 }
 
 impl<D: Dynamics> Dynamics for DynamicsMonitor<D> {
-    fn update<C: CollisionSpace>(&mut self, collisions: &mut C, time_step: f32) {
+    fn update<C: CollisionSpace>(&mut self, collisions: &mut C, time_step: Float) {
         renderevent::update_start(time_step);
         self.dynamics.update(collisions, time_step);
 

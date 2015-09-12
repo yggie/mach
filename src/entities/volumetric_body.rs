@@ -1,5 +1,4 @@
-use core::Transform;
-use maths::Vector;
+use maths::{ Transform, Vector };
 use shapes::Shape;
 
 /// This trait describes a physical entity which has both geometric and spatial

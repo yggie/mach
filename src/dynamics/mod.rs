@@ -8,6 +8,7 @@ mod integrators;
 /// TODO temporary workaround for the issue of rexporting traits, see https://github.com/rust-lang/rust/issues/16264
 pub mod integrator;
 
+use core::Float;
 use maths::Vector;
 use collisions::CollisionSpace;
 
@@ -20,7 +21,7 @@ pub use self::simple_dynamics::SimpleDynamics;
 /// managing environmental effects on bodies.
 pub trait Dynamics {
     /// Steps the simulation forward in time by the specified amount.
-    fn update<C: CollisionSpace>(&mut self, &mut C, f32);
+    fn update<C: CollisionSpace>(&mut self, &mut C, Float);
 
     /// Returns the global gravitational force acting on the `RigidBody`
     /// objects.

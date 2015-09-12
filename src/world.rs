@@ -1,7 +1,7 @@
 use std::cell::Ref;
 
-use core::{ UID, State, Transform };
-use maths::Vector;
+use core::{ Float, UID };
+use maths::{ State, Transform, Vector };
 use shapes::Shape;
 use entities::{ Material, RigidBody };
 use dynamics::Dynamics;
@@ -54,7 +54,7 @@ impl<C: CollisionSpace, D: Dynamics> World<C, D> {
 
     /// Steps the `World` forward in time by the specified amount.
     #[inline(always)]
-    pub fn update(&mut self, time_step: f32) {
+    pub fn update(&mut self, time_step: Float) {
         self.dynamics.update(&mut self.collisions, time_step);
     }
 

@@ -1,5 +1,5 @@
-use core::State;
-use maths::Vector;
+use core::Float;
+use maths::{ Vector, State };
 use dynamics::{ Dynamics, SemiImplicitEuler };
 use entities::{ RigidBody, StaticBody };
 use collisions::{ ContactPair, CollisionSpace };
@@ -77,8 +77,8 @@ impl SimpleDynamics {
         return (velocity_change / m, angular_velocity_change);
     }
 
-    fn revert_to_time_of_contact<C: CollisionSpace>(&self, collision_space: &mut C, current_intersection: Intersection, rigid_body_0: &mut RigidBody, rigid_body_1: &mut RigidBody, time_window: f32) -> (Intersection, f32) {
-        let mut last_intersection: (Intersection, f32, State, State) = (current_intersection, 0.0, rigid_body_0.state().clone(), rigid_body_1.state().clone());
+    fn revert_to_time_of_contact<C: CollisionSpace>(&self, collision_space: &mut C, current_intersection: Intersection, rigid_body_0: &mut RigidBody, rigid_body_1: &mut RigidBody, time_window: Float) -> (Intersection, Float) {
+        let mut last_intersection: (Intersection, Float, State, State) = (current_intersection, 0.0, rigid_body_0.state().clone(), rigid_body_1.state().clone());
         let mut did_intersect_last_step = true;
         let mut current_time = time_window;
 
@@ -89,7 +89,7 @@ impl SimpleDynamics {
                 1.0
             };
 
-            let step = multiplier * time_window / ((2usize << i) as f32);
+            let step = multiplier * time_window / ((2usize << i) as Float);
             current_time = current_time + step;
 
             self.integrator.integrate_in_place(rigid_body_0.state_mut(), step, self.gravity);
@@ -106,10 +106,10 @@ impl SimpleDynamics {
         return (last_intersection.0, last_intersection.1);
     }
 
-    fn revert_to_time_of_contact_with_static<C: CollisionSpace>(&self, collision_space: &mut C, current_intersection: Intersection, rigid_body: &mut RigidBody, static_body: &StaticBody, time_window: f32) -> (Intersection, f32) {
+    fn revert_to_time_of_contact_with_static<C: CollisionSpace>(&self, collision_space: &mut C, current_intersection: Intersection, rigid_body: &mut RigidBody, static_body: &StaticBody, time_window: Float) -> (Intersection, Float) {
         // let intersection_option = collision_space.find_intersection(rigid_body, static_body);
         // debug_assert!(intersection_option.is_some(), "find_intersection returned false when there was a contact!");
-        let mut last_intersection: (Intersection, f32, State) = (current_intersection, 0.0, rigid_body.state().clone());
+        let mut last_intersection: (Intersection, Float, State) = (current_intersection, 0.0, rigid_body.state().clone());
         let mut did_intersect_last_step = true;
         let mut current_time = time_window;
 
@@ -120,7 +120,7 @@ impl SimpleDynamics {
                 1.0
             };
 
-            let step = multiplier * time_window / ((2usize << i) as f32);
+            let step = multiplier * time_window / ((2usize << i) as Float);
             current_time = current_time + step;
 
             self.integrator.integrate_in_place(rigid_body.state_mut(), step, self.gravity);
@@ -136,7 +136,7 @@ impl SimpleDynamics {
         return (last_intersection.0, last_intersection.1);
     }
 
-    fn update_rigid_body(&self, rigid_body: &mut RigidBody, change: (Vector, Vector), remaining_time: f32) {
+    fn update_rigid_body(&self, rigid_body: &mut RigidBody, change: (Vector, Vector), remaining_time: Float) {
         let v = rigid_body.velocity();
         let w = rigid_body.angular_velocity();
         rigid_body.set_velocity_with_vector(v + change.0);
@@ -147,7 +147,7 @@ impl SimpleDynamics {
 }
 
 impl Dynamics for SimpleDynamics {
-    fn update<C: CollisionSpace>(&mut self, collision_space: &mut C, time_step: f32) {
+    fn update<C: CollisionSpace>(&mut self, collision_space: &mut C, time_step: Float) {
         for mut body in collision_space.bodies_iter_mut() {
             self.integrator.integrate_in_place(body.state_mut(), time_step, self.gravity);
         }

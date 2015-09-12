@@ -1,4 +1,5 @@
-use maths::{ Vector, TOLERANCE };
+use core::TOLERANCE;
+use maths::Vector;
 use shapes::Shape;
 use entities::VolumetricBody;
 

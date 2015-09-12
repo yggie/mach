@@ -2,7 +2,8 @@ use std::rc::Rc;
 use std::cell::{ Ref, RefCell, RefMut };
 use std::collections::HashMap;
 
-use core::{ UID, SharedCell, State, Transform };
+use core::{ UID, SharedCell };
+use maths::{ State, Transform };
 use shapes::Shape;
 use entities::{ Material, RigidBody, StaticBody, VolumetricBody };
 use collisions::{ CollisionSpace, Contact, ContactPair };

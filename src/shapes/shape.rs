@@ -1,11 +1,12 @@
 use std::fmt;
 
-use maths::{ Matrix, TOLERANCE, Vector };
+use core::{ Float, TOLERANCE };
+use maths::{ Matrix, Vector };
 
 /// Defines the traits for all geometric property descriptions.
 pub trait Shape: fmt::Display + 'static {
     /// Computes the volume for the shape.
-    fn volume(&self) -> f32;
+    fn volume(&self) -> Float;
 
     /// Returns the normalized inertia tensor for the shape.
     fn inertia(&self) -> Matrix;
@@ -29,7 +30,7 @@ pub trait Shape: fmt::Display + 'static {
     /// default it returns the Engine’s tolerance, _i.e._
     /// `mach::maths::TOLERANCE`.
     #[inline]
-    fn surface_radius(&self) -> f32 {
+    fn surface_radius(&self) -> Float {
         TOLERANCE
     }
 }
