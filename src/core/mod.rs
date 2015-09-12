@@ -18,5 +18,7 @@ pub type Float = f32;
 pub static PI: f32 = f32::consts::PI;
 /// Infinity.
 pub static INFINITY: f32 = f32::INFINITY;
+/// Negative Infinity.
+pub static NEG_INFINITY: f32 = f32::NEG_INFINITY;
 /// The tolerance used to resolve floating point differences.
 pub static TOLERANCE: f32 = 1e-4;

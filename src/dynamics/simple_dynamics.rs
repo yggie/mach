@@ -155,7 +155,7 @@ impl Dynamics for SimpleDynamics {
         if let Some(contacts) = collision_space.find_contacts() {
             println!("CONTACTS FOUND ({})", contacts.len());
 
-            for contact in contacts.iter().take(1) {
+            for contact in contacts.iter() {
                 println!("HANDLING CONTACT {} FACING {}", contact.center, contact.normal);
 
                 match contact.pair {
