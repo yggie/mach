@@ -1,5 +1,6 @@
 use core::{ Float, TOLERANCE };
 use maths::{ Vector, State };
+use utils::debug::renderevent;
 use dynamics::{ Dynamics, SemiImplicitEuler };
 use entities::{ RigidBody, StaticBody };
 use collisions::{ ContactPair, CollisionSpace };
@@ -170,7 +171,7 @@ impl Dynamics for SimpleDynamics {
             println!("CONTACTS FOUND ({})", contacts.len());
 
             for contact in contacts.iter() {
-                println!("HANDLING CONTACT {} FACING {}", contact.center, contact.normal);
+                renderevent::contact_found(contact);
 
                 match contact.pair {
                     ContactPair::RigidRigid(ref cell_0, ref cell_1) => {

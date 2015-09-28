@@ -91,7 +91,7 @@ impl Shape for TriangleMesh {
         // TODO iterate by face really
         self.vertices_iter()
             .enumerate()
-            .fold(vec!((-1, NEG_INFINITY)), |best_matches, (index, vertex)| {
+            .fold(vec!((0, NEG_INFINITY)), |best_matches, (index, vertex)| {
                 let max_dot_product = best_matches[0].1;
                 let dot_product = vertex.dot(direction);
 

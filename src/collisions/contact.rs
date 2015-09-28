@@ -1,3 +1,5 @@
+use std::fmt;
+
 use core::SharedCell;
 use maths::Vector;
 use entities::{ RigidBody, StaticBody };
@@ -19,4 +21,14 @@ pub struct Contact {
     pub center: Vector,
     /// The surface normal of the contact.
     pub normal: Vector,
+}
+
+impl fmt::Display for Contact {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f,
+            "Contact: Center={}, Normal={}",
+            self.center,
+            self.normal,
+        )
+    }
 }

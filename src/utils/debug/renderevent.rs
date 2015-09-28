@@ -4,6 +4,7 @@
 use core::Float;
 use maths::Vector;
 use entities::{ RigidBody, StaticBody };
+use collisions::Contact;
 
 /// Logs an event for the creation of a `RigidBody`
 pub fn create_rigid_body(rigid_body: &RigidBody) {
@@ -40,6 +41,13 @@ pub fn update_rigid_body(rigid_body: &RigidBody) {
 pub fn update_static_body(static_body: &StaticBody) {
     if cfg!(feature="debug_renderevent") {
         println!("[FRAME] {}", static_body);
+    }
+}
+
+/// Logs an event which shows the `Contact` found.
+pub fn contact_found(contact: &Contact) {
+    if cfg!(feature="debug_renderevent") {
+        println!("[FRAME] {}", contact);
     }
 }
 

@@ -12,6 +12,7 @@ pub struct RigidBody {
     shape: Box<Shape>,
     state: State,
     coefficient_of_restitution: Float,
+    _friction_coefficient: Float,
 }
 
 impl RigidBody {
@@ -23,6 +24,7 @@ impl RigidBody {
             shape: shape,
             state: state,
             coefficient_of_restitution: material.coefficient_of_restitution(),
+            _friction_coefficient: material.friction_coefficient(),
         }
     }
 
@@ -67,6 +69,12 @@ impl RigidBody {
     #[inline]
     pub fn coefficient_of_restitution(&self) -> Float {
         self.coefficient_of_restitution
+    }
+
+    /// Returns the friction coefficient associated with the `RigidBody`.
+    #[inline]
+    pub fn friction_coefficient(&self) -> Float {
+        self._friction_coefficient
     }
 
     /// Returns the inertia tensor of the `RigidBody`.

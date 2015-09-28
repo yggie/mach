@@ -1,6 +1,7 @@
 use core::{ Float, TOLERANCE };
 use maths::Vector;
 use utils::Surface;
+use utils::debug::renderevent;
 
 /// Computes a set of `Surfaces` for the point cloud provided. The computation
 /// assumes that all points are on the convex hull of the point cloud.
@@ -9,7 +10,13 @@ pub fn compute_surfaces_for_convex_hull(vertices: &Vec<Vector>) -> Vec<Surface> 
     let (initial_surface, mut available_nodes, mut free_edge_list) = initialize_surface(vertices);
     surfaces.push(initial_surface);
 
+    let mut counter = 0;
     while let Some(current_edge) = free_edge_list.pop() {
+        counter = counter + 1;
+        if counter > 1000 {
+            renderevent::point_cloud(101, vertices);
+            panic!("This should never happen, hit over 1000 iterations in surface computation");
+        }
         let selection = select_best_node_for_edge(&available_nodes, &free_edge_list, current_edge);
 
         match selection {

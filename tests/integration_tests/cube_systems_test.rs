@@ -37,7 +37,8 @@ fn dropping_a_cube_on_a_platform() {
         .configure(|world| {
             world.set_gravity(Vector::new(0.0, 0.0, -0.5));
 
-            let material = Material::new_with_density(1.0);
+            let material = Material::new_with_density(1.0)
+                .with_coefficient_of_restitution(1.0);
 
             let state_0 = State::new_stationary()
                 .with_position(0.0, 0.0,  3.0)

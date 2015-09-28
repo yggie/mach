@@ -12,6 +12,7 @@ pub struct StaticBody {
     shape: Box<Shape>,
     transform: Transform,
     coefficient_of_restitution: Float,
+    _friction_coefficient: Float,
 }
 
 impl StaticBody {
@@ -23,6 +24,7 @@ impl StaticBody {
             shape: shape,
             transform: transform,
             coefficient_of_restitution: material.coefficient_of_restitution(),
+            _friction_coefficient: material.friction_coefficient(),
         }
     }
 
@@ -42,6 +44,12 @@ impl StaticBody {
     #[inline]
     pub fn coefficient_of_restitution(&self) -> Float {
         self.coefficient_of_restitution
+    }
+
+    /// Returns the friction coefficient associated with the `RigidBody`.
+    #[inline]
+    pub fn friction_coefficient(&self) -> Float {
+        self._friction_coefficient
     }
 
     /// Returns the associated `Transform` object for the entity.

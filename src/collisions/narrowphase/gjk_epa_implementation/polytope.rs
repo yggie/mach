@@ -33,6 +33,8 @@ impl Polytope {
     }
 
     fn expand(&mut self, bodies: [&VolumetricBody; 2]) -> bool {
+        // TODO This sometimes generates support points which are not on the
+        // convex hull, why??
         let new_point = self.surfaces.iter()
             .filter_map(|&(surface_normal, surface_indices)| {
                 let new_support_points = Simplex::generate_support_points(surface_normal, bodies);

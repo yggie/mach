@@ -1,3 +1,4 @@
+use core::Float;
 use maths::{ Vector, Quaternion };
 
 /// The `Transform` object represents a spatial transformation in 3D space.
@@ -15,6 +16,12 @@ impl Transform {
             translation: translation,
             rotation: rotation,
         }
+    }
+
+    /// Creates a new `Transform` instance with the given translation and no
+    /// rotation.
+    pub fn new_with_translation(x: Float, y: Float, z: Float) -> Transform {
+        Transform::new(Vector::new(x, y, z), Quaternion::new_identity())
     }
 
     /// Creates a new `Transform` instance representing the identity
