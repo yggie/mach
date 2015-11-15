@@ -31,7 +31,7 @@ mod entities {
 #[cfg(test)]
 mod maths {
     mod matrix_test;
-    mod quaternion_test;
+    mod quat_test;
     mod vector_test;
     mod state_test;
     mod transform_test;

@@ -1,12 +1,12 @@
 use mach::PI;
-use mach::maths::{ State, Vector, Quaternion };
+use mach::maths::{ State, Vector, Quat };
 
 #[test]
 fn instantiating_as_stationary() {
     let s = State::new_stationary();
 
     assert_eq!(s.position(), Vector::new(0.0, 0.0, 0.0));
-    assert_eq!(s.rotation(), Quaternion::new(1.0, 0.0, 0.0, 0.0));
+    assert_eq!(s.rotation(), Quat::new(1.0, 0.0, 0.0, 0.0));
     assert_eq!(s.velocity(), Vector::new(0.0, 0.0, 0.0));
     assert_eq!(s.angular_velocity(), Vector::new(0.0, 0.0, 0.0));
 }
@@ -16,7 +16,7 @@ fn instantiating_with_position() {
     let s = State::new_with_position(1.0, 0.0, -1.0);
 
     assert_eq!(s.position(), Vector::new(1.0, 0.0, -1.0));
-    assert_eq!(s.rotation(), Quaternion::new(1.0, 0.0, 0.0, 0.0));
+    assert_eq!(s.rotation(), Quat::new(1.0, 0.0, 0.0, 0.0));
     assert_eq!(s.velocity(), Vector::new(0.0, 0.0, 0.0));
     assert_eq!(s.angular_velocity(), Vector::new(0.0, 0.0, 0.0));
 }
@@ -26,7 +26,7 @@ fn instantiating_with_axis_angle() {
     let s = State::new_with_axis_angle(Vector::new(20.0, 12.0, -9.0), PI);
 
     assert_eq!(s.position(), Vector::new(0.0, 0.0, 0.0));
-    assert_eq!(s.rotation(), Quaternion::new(0.0, 0.80, 0.48, -0.36));
+    assert_eq!(s.rotation(), Quat::new(0.0, 0.80, 0.48, -0.36));
     assert_eq!(s.velocity(), Vector::new(0.0, 0.0, 0.0));
     assert_eq!(s.angular_velocity(), Vector::new(0.0, 0.0, 0.0));
 }
@@ -86,7 +86,7 @@ fn setting_the_rotation_with_axis_angle() {
     let mut s = State::new_stationary();
     s.set_axis_angle(Vector::new(11.0, -9.0, 20.0), 0.0);
 
-    assert_eq!(s.rotation(), Quaternion::new(1.0, 0.0, 0.0, 0.0));
+    assert_eq!(s.rotation(), Quat::new(1.0, 0.0, 0.0, 0.0));
 }
 
 #[test]
@@ -94,7 +94,7 @@ fn chaining_with_axis_angle() {
     let original_state = State::new_stationary();
     let state = original_state.with_axis_angle(Vector::new(20.0, 12.0, -9.0), 3.0*PI);
 
-    assert_eq!(state.rotation(), Quaternion::new(0.0, -0.80, -0.48, 0.36));
+    assert_eq!(state.rotation(), Quat::new(0.0, -0.80, -0.48, 0.36));
 }
 
 #[test]

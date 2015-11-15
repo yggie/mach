@@ -1,5 +1,5 @@
 use mach::PI;
-use mach::maths::{ Vector, Quaternion };
+use mach::maths::{ Vector, Quat };
 
 #[test]
 fn instantiating_with_components() {
@@ -110,7 +110,7 @@ fn computing_distance_between_vectors() {
 #[test]
 fn rotating_by_a_quaternion() {
     let v = Vector::new(1.0, 0.0, 0.0);
-    let q = Quaternion::new_from_axis_angle(Vector::new(1.0, 0.5, 0.5), PI/3.0);
+    let q = Quat::new_from_axis_angle(Vector::new(1.0, 0.5, 0.5), PI/3.0);
 
     let res = v.rotate_by_quaternion(q);
 

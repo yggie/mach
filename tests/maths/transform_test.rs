@@ -1,18 +1,18 @@
 use mach::PI;
-use mach::maths::{ Transform, Quaternion, Vector };
+use mach::maths::{ Transform, Quat, Vector };
 
 #[test]
 fn it_can_be_instantiated_as_the_identity_transform() {
     let transform = Transform::new_identity();
 
     assert_eq!(transform.translation(), Vector::new_zero());
-    assert_eq!(transform.rotation(), Quaternion::new_identity());
+    assert_eq!(transform.rotation(), Quat::new_identity());
 }
 
 #[test]
 fn it_can_be_instantiated_with_translation_and_rotation() {
     let translation = Vector::new(1.0, 2.0, 3.0);
-    let rotation = Quaternion::new_from_axis_angle(Vector::new(1.0, 0.3, 0.5), 0.3 * PI);
+    let rotation = Quat::new_from_axis_angle(Vector::new(1.0, 0.3, 0.5), 0.3 * PI);
 
     let transform = Transform::new(translation, rotation);
 
@@ -23,7 +23,7 @@ fn it_can_be_instantiated_with_translation_and_rotation() {
 #[test]
 fn it_can_be_apply_itself_to_a_point() {
     let translation = Vector::new(1.0, 2.0, 3.0);
-    let rotation = Quaternion::new_from_axis_angle(Vector::new(1.0, 0.0, 0.0), 0.5 * PI);
+    let rotation = Quat::new_from_axis_angle(Vector::new(1.0, 0.0, 0.0), 0.5 * PI);
     let transform = Transform::new(translation, rotation);
     let point = Vector::new(0.0, 1.0, 0.0);
 
@@ -33,7 +33,7 @@ fn it_can_be_apply_itself_to_a_point() {
 #[test]
 fn it_can_be_apply_itself_to_a_direction() {
     let translation = Vector::new(1.0, 2.0, 3.0);
-    let rotation = Quaternion::new_from_axis_angle(Vector::new(1.0, 0.0, 0.0), 0.5 * PI);
+    let rotation = Quat::new_from_axis_angle(Vector::new(1.0, 0.0, 0.0), 0.5 * PI);
     let transform = Transform::new(translation, rotation);
     let direction = Vector::new(0.0, 1.0, 0.0);
 
@@ -43,7 +43,7 @@ fn it_can_be_apply_itself_to_a_direction() {
 #[test]
 fn it_can_be_apply_its_inverse_to_a_direction() {
     let translation = Vector::new(1.0, 2.0, 3.0);
-    let rotation = Quaternion::new_from_axis_angle(Vector::new(1.0, 0.0, 0.0), 0.5 * PI);
+    let rotation = Quat::new_from_axis_angle(Vector::new(1.0, 0.0, 0.0), 0.5 * PI);
     let transform = Transform::new(translation, rotation);
     let direction = Vector::new(0.0, 1.0, 0.0);
 

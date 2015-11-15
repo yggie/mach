@@ -1,5 +1,5 @@
 use Float;
-use maths::{ State, Quaternion, Vector };
+use maths::{ State, Quat, Vector };
 use dynamics::Integrator;
 
 /// An implementation of the Semi-Implicit Euler integration strategy.
@@ -18,7 +18,7 @@ impl SemiImplicitEuler {
         state.set_position_with_vector(p + new_velocity * t);
 
         let w = state.angular_velocity();
-        let w_as_quat = Quaternion::new(0.0, w[0] * t, w[1] * t, w[2] * t);
+        let w_as_quat = Quat::new(0.0, w[0] * t, w[1] * t, w[2] * t);
         let q = state.rotation();
         let new_rotation = q + w_as_quat * q * 0.5;
 

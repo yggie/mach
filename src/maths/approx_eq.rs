@@ -1,5 +1,5 @@
 use { Float, TOLERANCE };
-use maths::Quaternion;
+use maths::Quat;
 
 /// This trait is implemented by types without infinite precision.
 pub trait ApproxEq {
@@ -13,7 +13,7 @@ impl ApproxEq for Float {
     }
 }
 
-impl ApproxEq for Quaternion {
+impl ApproxEq for Quat {
     fn approx_eq(&self, other: &Self) -> bool {
         (*self - *other).length_sq() < TOLERANCE*TOLERANCE
     }

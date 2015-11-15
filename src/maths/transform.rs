@@ -1,17 +1,17 @@
 use Float;
-use maths::{ Vector, Quaternion };
+use maths::{ Vector, Quat };
 
 /// The `Transform` object represents a spatial transformation in 3D space.
 #[derive(Clone, Copy, Debug)]
 pub struct Transform {
     translation: Vector,
-    rotation: Quaternion,
+    rotation: Quat,
 }
 
 impl Transform {
     /// Creates a new `Transform` instance with the given translation and
     /// rotation.
-    pub fn new(translation: Vector, rotation: Quaternion) -> Transform {
+    pub fn new(translation: Vector, rotation: Quat) -> Transform {
         Transform {
             translation: translation,
             rotation: rotation,
@@ -21,13 +21,13 @@ impl Transform {
     /// Creates a new `Transform` instance with the given translation and no
     /// rotation.
     pub fn new_with_translation(x: Float, y: Float, z: Float) -> Transform {
-        Transform::new(Vector::new(x, y, z), Quaternion::new_identity())
+        Transform::new(Vector::new(x, y, z), Quat::new_identity())
     }
 
     /// Creates a new `Transform` instance representing the identity
     /// transformation.
     pub fn new_identity() -> Transform {
-        Transform::new(Vector::new_zero(), Quaternion::new_identity())
+        Transform::new(Vector::new_zero(), Quat::new_identity())
     }
 
     /// The positional translation component of the transform.
@@ -44,13 +44,13 @@ impl Transform {
 
     /// The rotational component of the transform.
     #[inline(always)]
-    pub fn rotation(&self) -> Quaternion {
+    pub fn rotation(&self) -> Quat {
         self.rotation
     }
 
-    /// Returns a mutable reference to the rotation `Quaternion`.
+    /// Returns a mutable reference to the rotation `Quat`.
     #[inline(always)]
-    pub fn rotation_mut(&mut self) -> &mut Quaternion {
+    pub fn rotation_mut(&mut self) -> &mut Quat {
         &mut self.rotation
     }
 

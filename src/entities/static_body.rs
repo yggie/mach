@@ -1,7 +1,7 @@
 use std::fmt::{ Display, Formatter, Result };
 
 use { ID, Float };
-use maths::{ Transform, Quaternion, Vector };
+use maths::{ Transform, Quat, Vector };
 use shapes::Shape;
 use entities::{ Material, VolumetricBody };
 
@@ -64,9 +64,9 @@ impl StaticBody {
         self.transform.translation()
     }
 
-    /// Returns the rotation of the `StaticBody` expressed as a `Quaternion`.
+    /// Returns the rotation of the `StaticBody` expressed as a `Quat`.
     #[inline]
-    pub fn rotation(&self) -> Quaternion {
+    pub fn rotation(&self) -> Quat {
         self.transform.rotation()
     }
 }

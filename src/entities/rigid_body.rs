@@ -1,7 +1,7 @@
 use std::fmt;
 
 use { ID, Float };
-use maths::{ Matrix, State, Transform, Quaternion, Vector };
+use maths::{ Matrix, State, Transform, Quat, Vector };
 use shapes::Shape;
 use entities::{ Material, VolumetricBody };
 
@@ -95,9 +95,9 @@ impl RigidBody {
         self.state.velocity()
     }
 
-    /// Returns the rotation of the `RigidBody` expressed as a `Quaternion`.
+    /// Returns the rotation of the `RigidBody` expressed as a `Quat`.
     #[inline]
-    pub fn rotation(&self) -> Quaternion {
+    pub fn rotation(&self) -> Quat {
         self.state.rotation()
     }
 
@@ -124,9 +124,9 @@ impl RigidBody {
         self.state.set_position_with_vector(position);
     }
 
-    /// Sets the `RigidBody`’s rotation using the `Quaternion` provided.
+    /// Sets the `RigidBody`’s rotation using the `Quat` provided.
     #[inline]
-    pub fn set_rotation(&mut self, rotation: Quaternion) {
+    pub fn set_rotation(&mut self, rotation: Quat) {
         self.state.set_rotation(rotation);
     }
 

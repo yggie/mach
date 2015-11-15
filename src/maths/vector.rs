@@ -2,7 +2,7 @@ use std::fmt;
 use std::ops::{ Add, Div, Index, IndexMut, Mul, Neg, Sub };
 
 use { Float, TOLERANCE };
-use maths::{ Matrix, Quaternion };
+use maths::{ Matrix, Quat };
 
 /// A representation of a 3-dimensional column vector.
 #[derive(Clone, Copy, Debug)]
@@ -102,9 +102,9 @@ impl Vector {
     }
 
     /// Computes the `Vector` that is the result of being rotated by the input
-    /// `Quaternion`.
-    pub fn rotate_by_quaternion(&self, q: Quaternion) -> Vector {
-        let result = q * Quaternion::new(0.0, self[0], self[1], self[2]) * q.inverse();
+    /// `Quat`.
+    pub fn rotate_by_quaternion(&self, q: Quat) -> Vector {
+        let result = q * Quat::new(0.0, self[0], self[1], self[2]) * q.inverse();
         return Vector::new(result[1], result[2], result[3]);
     }
 }

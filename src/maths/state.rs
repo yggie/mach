@@ -1,5 +1,5 @@
 use Float;
-use maths::{ Transform, Quaternion, Vector };
+use maths::{ Transform, Quat, Vector };
 
 /// Represents a physical state. The state contains information regarding the
 /// current position, rotation, velocity and rotational velocity.
@@ -39,9 +39,9 @@ impl State {
         self.transform.translation()
     }
 
-    /// Returns the rotation of the `State` expressed as a `Quaternion`.
+    /// Returns the rotation of the `State` expressed as a `Quat`.
     #[inline(always)]
-    pub fn rotation(&self) -> Quaternion {
+    pub fn rotation(&self) -> Quat {
         self.transform.rotation()
     }
 
@@ -87,14 +87,14 @@ impl State {
 
     /// Sets the rotation using a quaternion.
     #[inline]
-    pub fn set_rotation(&mut self, rotation: Quaternion) {
+    pub fn set_rotation(&mut self, rotation: Quat) {
         self.transform.rotation_mut().copy(rotation);
     }
 
     /// Sets the rotation with the provided axis and angle of rotation.
     #[inline]
     pub fn set_axis_angle(&mut self, axis: Vector, angle_in_radians: Float) {
-        let q = Quaternion::new_from_axis_angle(axis, angle_in_radians);
+        let q = Quat::new_from_axis_angle(axis, angle_in_radians);
         self.set_rotation(q);
     }
 
