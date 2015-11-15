@@ -1,7 +1,7 @@
 //! The `render` module is the interface with the mach browser debugger to allow
 //! rendering of information. This was primarily developed to aid debugging.
 
-use core::Float;
+use Float;
 use maths::Vector;
 use entities::{ RigidBody, StaticBody };
 use collisions::Contact;

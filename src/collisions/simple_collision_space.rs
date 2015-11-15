@@ -2,8 +2,7 @@ use std::rc::Rc;
 use std::cell::{ Ref, RefCell, RefMut };
 use std::collections::HashMap;
 
-use ID;
-use core::SharedCell;
+use { ID, SharedCell };
 use maths::{ State, Transform };
 use shapes::Shape;
 use entities::{ Material, RigidBody, StaticBody, VolumetricBody };

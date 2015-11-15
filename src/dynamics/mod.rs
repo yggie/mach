@@ -8,7 +8,7 @@ mod integrators;
 /// TODO temporary workaround for the issue of rexporting traits, see https://github.com/rust-lang/rust/issues/16264
 pub mod integrator;
 
-use core::Float;
+use Float;
 use maths::Vector;
 use collisions::CollisionSpace;
 

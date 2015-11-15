@@ -2,7 +2,7 @@ use std::rc::Rc;
 use std::fmt;
 use std::collections::HashMap;
 
-use core::{ Float, NEG_INFINITY, TOLERANCE };
+use { Float, NEG_INFINITY, TOLERANCE };
 use maths::{ Matrix, Vector };
 use shapes::Shape;
 

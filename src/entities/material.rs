@@ -1,4 +1,4 @@
-use core::Float;
+use Float;
 use maths::Matrix;
 use shapes::Shape;
 

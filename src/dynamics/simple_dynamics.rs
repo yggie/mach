@@ -1,4 +1,4 @@
-use core::{ Float, TOLERANCE };
+use { Float, TOLERANCE };
 use maths::{ Vector, State };
 use utils::debug::renderevent;
 use dynamics::{ Dynamics, SemiImplicitEuler };

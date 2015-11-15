@@ -1,6 +1,6 @@
 extern crate mach;
 
-use mach::core::{ Float, INFINITY };
+use mach::{ Float, INFINITY };
 use mach::maths::Vector;
 use mach::utils::debug::renderevent;
 use mach::dynamics::Dynamics;

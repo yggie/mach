@@ -1,4 +1,4 @@
-use core::Float;
+use Float;
 use maths::{ State, Vector };
 
 /// This trait should be implemented by objects with the ability to integrate a

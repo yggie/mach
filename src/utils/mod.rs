@@ -10,7 +10,7 @@ pub use self::surface::Surface;
 pub use self::energy::*;
 pub use self::compute_surfaces_for_convex_hull::compute_surfaces_for_convex_hull;
 
-use core::{ Float, TOLERANCE };
+use { Float, TOLERANCE };
 
 /// Determines if the difference between two floating point numbers are within
 /// reasonable tolerance. The tolerance is set to `1e-6`.

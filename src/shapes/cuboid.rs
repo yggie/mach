@@ -1,6 +1,6 @@
 use std::fmt;
 
-use core::{ Float, TOLERANCE };
+use { Float, TOLERANCE };
 use maths::{ Matrix, Vector };
 use utils::approx_eq;
 use shapes::Shape;

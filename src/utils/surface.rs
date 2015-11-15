@@ -1,4 +1,4 @@
-use core::{ Float, TOLERANCE };
+use { Float, TOLERANCE };
 use maths::Vector;
 
 /// Represents a `Surface` for a given set of points.

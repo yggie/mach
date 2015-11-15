@@ -1,7 +1,6 @@
 use std::cell::Ref;
 
-use ID;
-use core::Float;
+use { ID, Float };
 use maths::{ State, Transform, Vector };
 use shapes::Shape;
 use entities::{ Material, RigidBody };

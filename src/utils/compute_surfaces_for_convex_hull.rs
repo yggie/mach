@@ -1,4 +1,4 @@
-use core::{ Float, TOLERANCE };
+use { Float, TOLERANCE };
 use maths::Vector;
 use utils::Surface;
 use utils::debug::renderevent;

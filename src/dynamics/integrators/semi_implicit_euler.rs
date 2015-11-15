@@ -1,4 +1,4 @@
-use core::Float;
+use Float;
 use maths::{ State, Quaternion, Vector };
 use dynamics::Integrator;
 

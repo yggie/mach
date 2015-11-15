@@ -1,6 +1,6 @@
 use std::mem;
 
-use mach::core::{ Float, PI };
+use mach::{ Float, PI };
 use mach::maths::{ State, Vector };
 use mach::shapes::Cuboid;
 use mach::entities::{ Material, RigidBody };

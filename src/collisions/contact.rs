@@ -1,6 +1,6 @@
 use std::fmt;
 
-use core::SharedCell;
+use SharedCell;
 use maths::Vector;
 use entities::{ RigidBody, StaticBody };
 

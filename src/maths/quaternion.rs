@@ -1,7 +1,7 @@
 use std::fmt;
 use std::ops::{ Add, Div, Index, IndexMut, Mul, Neg, Sub };
 
-use core::{ Float, TOLERANCE };
+use { Float, TOLERANCE };
 use maths::Vector;
 
 /// A representation of a quaternion.

@@ -1,7 +1,6 @@
 use std::fmt::{ Display, Formatter, Result };
 
-use ID;
-use core::Float;
+use { ID, Float };
 use maths::{ Transform, Quaternion, Vector };
 use shapes::Shape;
 use entities::{ Material, VolumetricBody };

@@ -1,4 +1,4 @@
-use core::Float;
+use Float;
 use maths::{ Vector, Quaternion };
 
 /// The `Transform` object represents a spatial transformation in 3D space.

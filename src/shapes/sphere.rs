@@ -1,6 +1,6 @@
 use std::fmt;
 
-use core::{ Float, PI, TOLERANCE };
+use { Float, PI, TOLERANCE };
 use maths::{ Matrix, Vector };
 use shapes::Shape;
 

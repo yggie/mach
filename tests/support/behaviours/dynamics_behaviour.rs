@@ -8,8 +8,7 @@ macro_rules! assert_dynamics_behaviour(
 
             use support::{ CollisionSpaceMonitor, DynamicsMonitor };
 
-            use mach::World;
-            use mach::core::{ Float, PI };
+            use mach::{ Float, PI, World };
             use mach::maths::{ State, Transform, Vector };
             use mach::shapes::Cuboid;
             use mach::dynamics::Dynamics;

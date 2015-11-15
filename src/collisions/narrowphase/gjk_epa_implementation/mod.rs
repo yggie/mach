@@ -4,7 +4,7 @@ mod polytope;
 use self::simplex::Simplex;
 use self::polytope::Polytope;
 
-use core::Float;
+use Float;
 use maths::Vector;
 use entities::VolumetricBody;
 use collisions::NarrowPhase;

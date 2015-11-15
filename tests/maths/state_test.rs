@@ -1,4 +1,4 @@
-use mach::core::PI;
+use mach::PI;
 use mach::maths::{ State, Vector, Quaternion };
 
 #[test]

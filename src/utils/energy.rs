@@ -1,4 +1,4 @@
-use core::Float;
+use Float;
 use entities::RigidBody;
 
 /// Computes the total kinetic energy for the `RigidBody`.

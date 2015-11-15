@@ -1,4 +1,4 @@
-use mach::core::Float;
+use mach::Float;
 use mach::maths::{ Vector, Matrix };
 
 #[test]

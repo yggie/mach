@@ -1,4 +1,4 @@
-use core::Float;
+use Float;
 use maths::{ Transform, Quaternion, Vector };
 
 /// Represents a physical state. The state contains information regarding the

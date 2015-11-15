@@ -1,5 +1,4 @@
-use mach::World;
-use mach::core::Float;
+use mach::{ World, Float };
 use mach::dynamics::{ Dynamics, SimpleDynamics };
 use mach::collisions::{ CollisionSpace, SimpleCollisionSpace };
 
