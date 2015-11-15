@@ -13,4 +13,6 @@ name = "mach"
 path = "src/lib.rs"
 
 [features]
+high_precision = [ ]
+
 debug_renderevent = [ ]

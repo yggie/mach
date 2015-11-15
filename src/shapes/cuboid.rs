@@ -1,8 +1,7 @@
 use std::fmt;
 
 use { Float, TOLERANCE };
-use maths::{ Matrix, Vector };
-use utils::approx_eq;
+use maths::{ ApproxEq, Matrix, Vector };
 use shapes::Shape;
 
 /// A representation of a cuboid in 3 dimensions.
@@ -74,9 +73,9 @@ impl PartialEq for Cuboid {
     /// Implements the `==` operator for the `Cuboid` class. Compares the
     /// dimensions of the `Cuboid` to be within reasonable tolerance.
     fn eq(&self, other: &Cuboid) -> bool {
-        approx_eq(self.width, other.width) &&
-            approx_eq(self.height, other.height) &&
-            approx_eq(self.depth, other.depth)
+        ApproxEq::approx_eq(&self.width, &other.width) &&
+            ApproxEq::approx_eq(&self.height, &other.height) &&
+            ApproxEq::approx_eq(&self.depth, &other.depth)
     }
 }
 
