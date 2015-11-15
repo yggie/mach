@@ -1,6 +1,6 @@
 use std::cell::{ Ref, RefMut };
 
-use core::UID;
+use ID;
 use maths::{ State, Transform };
 use shapes::Shape;
 use entities::{ Material, RigidBody, StaticBody, VolumetricBody };
@@ -13,30 +13,30 @@ pub trait CollisionSpace {
     /// Creates an instance of a `RigidBody` from the given properties, returns
     /// an identifier which can be used to retrieve the `RigidBody` at a later
     /// time.
-    fn create_body<S: Shape>(&mut self, S, &Material, State) -> UID;
+    fn create_body<S: Shape>(&mut self, S, &Material, State) -> ID;
 
     /// Creates an instance of a `StaticBody` from the given properties, returns
     /// an identifier which can be used to retrieve the `StaticBody` at a later
     /// time.
-    fn create_static_body<S: Shape>(&mut self, S, &Material, Transform) -> UID;
+    fn create_static_body<S: Shape>(&mut self, S, &Material, Transform) -> ID;
 
     /// Searches the data structure for a matching `RigidBody` instance with the
     /// identifier specified and returns a reference to the `RigidBody` if found.
-    fn find_body(&self, UID) -> Option<Ref<RigidBody>>;
+    fn find_body(&self, ID) -> Option<Ref<RigidBody>>;
 
     /// Returns the `StaticBody` instance associated with the identifier
     /// provided.
-    fn find_static_body(&self, UID) -> Option<Ref<StaticBody>>;
+    fn find_static_body(&self, ID) -> Option<Ref<StaticBody>>;
 
     /// Searches the data structure for a matching `RigidBody` instance with the
     /// identifier specified and returns a mutable reference to the `RigidBody`
     /// if found.
-    fn find_body_mut(&mut self, UID) -> Option<RefMut<RigidBody>>;
+    fn find_body_mut(&mut self, ID) -> Option<RefMut<RigidBody>>;
 
     /// Searches the data structure for a matching `StaticBody` instance with
     /// the identifier specified and returns a mutable reference to the
     /// `StaticBody` if found.
-    fn find_static_body_mut(&mut self, UID) -> Option<RefMut<StaticBody>>;
+    fn find_static_body_mut(&mut self, ID) -> Option<RefMut<StaticBody>>;
 
     /// Returns an iterator over unique `RigidBody` instances managed by this
     /// object.

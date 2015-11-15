@@ -1,3 +1,5 @@
+use std::mem;
+
 use mach::core::{ Float, PI };
 use mach::maths::{ State, Vector };
 use mach::shapes::Cuboid;
@@ -7,8 +9,13 @@ use mach::collisions::narrowphase::GjkEpaImplementation;
 fn setup_cubes(cuboid_0: Cuboid, state_0: State, cuboid_1: Cuboid, state_1: State) -> (GjkEpaImplementation, [RigidBody; 2]) {
     let material = &Material::new_with_density(3.0);
 
-    let body_0 = RigidBody::new_with_id(0, Box::new(cuboid_0), material, state_0);
-    let body_1 = RigidBody::new_with_id(1, Box::new(cuboid_1), material, state_1);
+    // TODO remove this once the ID has been extracted from the body
+    let body_0 = unsafe {
+        RigidBody::new_with_id(mem::transmute(0), Box::new(cuboid_0), material, state_0)
+    };
+    let body_1 = unsafe {
+        RigidBody::new_with_id(mem::transmute(1), Box::new(cuboid_1), material, state_1)
+    };
 
     return (GjkEpaImplementation, [body_0, body_1]);
 }

@@ -6,7 +6,7 @@ macro_rules! assert_collision_space_behaviour(
         mod collision_space_behaviour {
             use super::test_subject;
 
-            use mach::core::UID;
+            use mach::ID;
             use mach::maths::State;
             use mach::shapes::Cuboid;
             use mach::entities::{ Material, RigidBody };
@@ -22,11 +22,11 @@ macro_rules! assert_collision_space_behaviour(
                 let shape = Cuboid::new_cube(1.0);
                 let material = &Material::new_with_density(3.0);
 
-                let uid = collision_space.create_body(shape.clone(), material, State::new_stationary());
+                let id = collision_space.create_body(shape.clone(), material, State::new_stationary());
 
                 // TODO assertions about rigid bodies count?
 
-                let rigid_body = collision_space.find_body(uid)
+                let rigid_body = collision_space.find_body(id)
                     .expect("expected to find the rigid body recently created but got nothing");
 
                 // TODO assertions about shape?
@@ -41,13 +41,13 @@ macro_rules! assert_collision_space_behaviour(
                 let material = &Material::new_with_mass(3.0);
                 let state = State::new_stationary();
                 collision_space.create_body(shape.clone(), material, state);
-                let uid = collision_space.create_body(shape.clone(), material, state);
+                let id = collision_space.create_body(shape.clone(), material, state);
                 collision_space.create_body(shape.clone(), material, state);
 
-                let body: &RigidBody = &collision_space.find_body(uid)
+                let body: &RigidBody = &collision_space.find_body(id)
                     .expect("expected to find the rigid body recently created but got nothing");
 
-                assert_eq!(body.id(), uid);
+                assert_eq!(body.id(), id);
             }
 
             #[test]
@@ -56,14 +56,14 @@ macro_rules! assert_collision_space_behaviour(
                 let shape = Cuboid::new_cube(1.0);
                 let material = &Material::new_with_density(3.0);
                 let state = State::new_stationary();
-                let uid = collision_space.create_body(shape.clone(), material, state);
+                let id = collision_space.create_body(shape.clone(), material, state);
                 collision_space.create_body(shape.clone(), material, state);
                 collision_space.create_body(shape.clone(), material, state);
 
-                let body: &mut RigidBody = &mut collision_space.find_body_mut(uid)
+                let body: &mut RigidBody = &mut collision_space.find_body_mut(id)
                     .expect("expected to find the rigid body recently created but got nothing");
 
-                assert_eq!(body.id(), uid);
+                assert_eq!(body.id(), id);
             }
 
             #[test]
@@ -71,20 +71,20 @@ macro_rules! assert_collision_space_behaviour(
                 let mut collision_space = validate(test_subject());
                 let shape = Cuboid::new_cube(1.0);
                 let material = &Material::new_with_mass(3.0);
-                let mut uids = vec!(
+                let mut ids = vec!(
                     collision_space.create_body(shape.clone(), material, State::new_stationary()),
                     collision_space.create_body(shape.clone(), material, State::new_stationary()),
                     collision_space.create_body(shape.clone(), material, State::new_stationary()),
                 );
 
-                let mut iterated_uids: Vec<UID> = collision_space.bodies_iter()
+                let mut iterated_ids: Vec<ID> = collision_space.bodies_iter()
                     .map(|body| body.id())
                     .collect();
 
-                uids.sort_by(|a, b| a.cmp(&b));
-                iterated_uids.sort_by(|a, b| a.cmp(&b));
-                for (uid, expected_uid) in iterated_uids.iter().zip(uids.iter()) {
-                    assert_eq!(uid, expected_uid);
+                ids.sort_by(|a, b| a.cmp(&b));
+                iterated_ids.sort_by(|a, b| a.cmp(&b));
+                for (id, expected_id) in iterated_ids.iter().zip(ids.iter()) {
+                    assert_eq!(id, expected_id);
                 }
             }
 
@@ -93,21 +93,21 @@ macro_rules! assert_collision_space_behaviour(
                 let mut collision_space = validate(test_subject());
                 let shape = Cuboid::new_cube(1.0);
                 let material = &Material::new_with_density(3.0);
-                let mut uids = vec!(
+                let mut ids = vec!(
                     collision_space.create_body(shape.clone(), material, State::new_stationary()),
                     collision_space.create_body(shape.clone(), material, State::new_stationary()),
                     collision_space.create_body(shape.clone(), material, State::new_stationary()),
                 );
 
-                let mut iterated_uids: Vec<UID> = collision_space.bodies_iter_mut()
+                let mut iterated_ids: Vec<ID> = collision_space.bodies_iter_mut()
                     .map(|mut body| (&mut body as &mut RigidBody).id())
                     .collect();
 
-                uids.sort_by(|a, b| a.cmp(&b));
-                iterated_uids.sort_by(|a, b| a.cmp(&b));
+                ids.sort_by(|a, b| a.cmp(&b));
+                iterated_ids.sort_by(|a, b| a.cmp(&b));
 
-                for (uid, expected_uid) in iterated_uids.iter().zip(uids.iter()) {
-                    assert_eq!(uid, expected_uid);
+                for (id, expected_id) in iterated_ids.iter().zip(ids.iter()) {
+                    assert_eq!(id, expected_id);
                 }
             }
         }

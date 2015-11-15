@@ -1,6 +1,7 @@
 use std::fmt::{ Display, Formatter, Result };
 
-use core::{ Float, UID };
+use ID;
+use core::Float;
 use maths::{ Transform, Quaternion, Vector };
 use shapes::Shape;
 use entities::{ Material, VolumetricBody };
@@ -8,7 +9,7 @@ use entities::{ Material, VolumetricBody };
 /// Represents a physical entity which cannot move. Within the engine, the
 /// object is simply treated as if it has infinite mass.
 pub struct StaticBody {
-    id: UID,
+    id: ID,
     shape: Box<Shape>,
     transform: Transform,
     coefficient_of_restitution: Float,
@@ -18,7 +19,7 @@ pub struct StaticBody {
 impl StaticBody {
     /// Creates a new `StaticBody` instance using the components provided to
     /// construct the entity.
-    pub fn new_with_id(id: UID, shape: Box<Shape>, material: &Material, transform: Transform) -> StaticBody {
+    pub fn new_with_id(id: ID, shape: Box<Shape>, material: &Material, transform: Transform) -> StaticBody {
         StaticBody {
             id: id,
             shape: shape,
@@ -30,7 +31,7 @@ impl StaticBody {
 
     /// Returns the identifier for the `StaticBody` instance.
     #[inline]
-    pub fn id(&self) -> UID {
+    pub fn id(&self) -> ID {
         self.id
     }
 

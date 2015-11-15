@@ -1,6 +1,7 @@
 use std::cell::Ref;
 
-use core::{ Float, UID };
+use ID;
+use core::Float;
 use maths::{ State, Transform, Vector };
 use shapes::Shape;
 use entities::{ Material, RigidBody };
@@ -27,14 +28,14 @@ impl<C: CollisionSpace, D: Dynamics> World<C, D> {
     /// Creates an instance of a `RigidBody` from the given components, returns
     /// a handle which can later be used to retrieve the `RigidBody`.
     #[inline(always)]
-    pub fn create_body<S: Shape>(&mut self, shape: S, material: &Material, state: State) -> UID {
+    pub fn create_body<S: Shape>(&mut self, shape: S, material: &Material, state: State) -> ID {
         self._collision_space.create_body(shape, material, state)
     }
 
     /// Creates an instance of a `StaticBody` from the given components and
     /// returns an identifier which can be later used to retrieve the
     /// `StaticBody`.
-    pub fn create_static_body<S: Shape>(&mut self, shape: S, material: &Material, transform: Transform) -> UID {
+    pub fn create_static_body<S: Shape>(&mut self, shape: S, material: &Material, transform: Transform) -> ID {
         self._collision_space.create_static_body(shape, material, transform)
     }
 
@@ -42,8 +43,8 @@ impl<C: CollisionSpace, D: Dynamics> World<C, D> {
     /// identifier specified and returns a reference to the `RigidBody` if
     /// found.
     #[inline(always)]
-    pub fn find_body(&self, uid: UID) -> Option<Ref<RigidBody>> {
-        self._collision_space.find_body(uid)
+    pub fn find_body(&self, id: ID) -> Option<Ref<RigidBody>> {
+        self._collision_space.find_body(id)
     }
 
     /// Returns an iterator over unique `RigidBody` instances in the `World`.

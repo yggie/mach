@@ -2,7 +2,7 @@ extern crate mach;
 
 use std::cell::{ Ref, RefMut };
 
-use mach::core::UID;
+use mach::ID;
 use mach::maths::{ State, Transform };
 use mach::utils::debug::renderevent;
 use mach::shapes::Shape;
@@ -23,34 +23,34 @@ impl<C: CollisionSpace> CollisionSpaceMonitor<C> {
 }
 
 impl<C: CollisionSpace> CollisionSpace for CollisionSpaceMonitor<C> {
-    fn create_body<S: Shape>(&mut self, shape: S, material: &Material, state: State) -> UID {
-        let uid = self.0.create_body(shape, material, state);
-        let body = self.0.find_body(uid).unwrap();
+    fn create_body<S: Shape>(&mut self, shape: S, material: &Material, state: State) -> ID {
+        let id = self.0.create_body(shape, material, state);
+        let body = self.0.find_body(id).unwrap();
         renderevent::create_rigid_body(&*body);
-        return uid;
+        return id;
     }
 
-    fn create_static_body<S: Shape>(&mut self, shape: S, material: &Material, transform: Transform) -> UID {
-        let uid = self.0.create_static_body(shape, material, transform);
-        let static_body = self.0.find_static_body(uid).unwrap();
+    fn create_static_body<S: Shape>(&mut self, shape: S, material: &Material, transform: Transform) -> ID {
+        let id = self.0.create_static_body(shape, material, transform);
+        let static_body = self.0.find_static_body(id).unwrap();
         renderevent::create_static_body(&*static_body);
-        return uid;
+        return id;
     }
 
-    fn find_body(&self, uid: UID) -> Option<Ref<RigidBody>> {
-        self.0.find_body(uid)
+    fn find_body(&self, id: ID) -> Option<Ref<RigidBody>> {
+        self.0.find_body(id)
     }
 
-    fn find_static_body(&self, uid: UID) -> Option<Ref<StaticBody>> {
-        self.0.find_static_body(uid)
+    fn find_static_body(&self, id: ID) -> Option<Ref<StaticBody>> {
+        self.0.find_static_body(id)
     }
 
-    fn find_body_mut(&mut self, uid: UID) -> Option<RefMut<RigidBody>> {
-        self.0.find_body_mut(uid)
+    fn find_body_mut(&mut self, id: ID) -> Option<RefMut<RigidBody>> {
+        self.0.find_body_mut(id)
     }
 
-    fn find_static_body_mut(&mut self, uid: UID) -> Option<RefMut<StaticBody>> {
-        self.0.find_static_body_mut(uid)
+    fn find_static_body_mut(&mut self, id: ID) -> Option<RefMut<StaticBody>> {
+        self.0.find_static_body_mut(id)
     }
 
     fn bodies_iter<'a>(&'a self) -> Box<Iterator<Item=Ref<RigidBody>> + 'a>{

@@ -1,13 +1,14 @@
 use std::fmt;
 
-use core::{ Float, UID };
+use ID;
+use core::Float;
 use maths::{ Matrix, State, Transform, Quaternion, Vector };
 use shapes::Shape;
 use entities::{ Material, VolumetricBody };
 
 /// Represents a physical entity in the world.
 pub struct RigidBody {
-    id: UID,
+    id: ID,
     mass: Float,
     shape: Box<Shape>,
     state: State,
@@ -17,7 +18,7 @@ pub struct RigidBody {
 
 impl RigidBody {
     /// Creates a new instance of a `RigidBody` object
-    pub fn new_with_id(id: UID, shape: Box<Shape>, material: &Material, state: State) -> RigidBody {
+    pub fn new_with_id(id: ID, shape: Box<Shape>, material: &Material, state: State) -> RigidBody {
         RigidBody {
             id: id,
             mass: material.mass_of(&*shape),
@@ -30,7 +31,7 @@ impl RigidBody {
 
     /// Returns the handle associated with the `RigidBody`.
     #[inline]
-    pub fn id(&self) -> UID {
+    pub fn id(&self) -> ID {
         self.id
     }
 
