@@ -28,18 +28,13 @@ macro_rules! assert_dynamics_behaviour(
                     .with_friction_coefficient(0.0)
             }
 
-            fn assert_approximately_equal(a: Vector, b: Vector) {
-                // uses a larger tolerance to accommodate different algorithms
-                assert!(a.distance_to(b) < 0.01, format!("Expected {} to be approximately equal to {}", a, b));
-            }
-
             #[test]
             pub fn it_can_define_gravity() {
                 let mut world = new_world(test_subject());
 
                 world.set_gravity(Vector::new(2.5, -2.5, 3.3));
 
-                assert_eq!(world.gravity(), Vector::new(2.5, -2.5, 3.3));
+                assert_approx_eq!(world.gravity(), Vector::new(2.5, -2.5, 3.3));
             }
 
             #[test]
@@ -54,8 +49,8 @@ macro_rules! assert_dynamics_behaviour(
                 world.update(0.3);
 
                 let body = world.find_body(id).unwrap();
-                assert_eq!(body.position(), Vector::new(0.30, -0.30, 0.15));
-                assert_eq!(body.velocity(), Vector::new(1.0, -1.0, 0.5));
+                assert_approx_eq!(body.position(), Vector::new(0.30, -0.30, 0.15));
+                assert_approx_eq!(body.velocity(), Vector::new(1.0, -1.0, 0.5));
             }
 
             #[test]
@@ -71,8 +66,8 @@ macro_rules! assert_dynamics_behaviour(
                 world.update(0.2);
 
                 let body = world.find_body(id).unwrap();
-                assert_approximately_equal(body.position(), Vector::new(0.32, -0.28, 0.26));
-                assert_approximately_equal(body.velocity(), Vector::new(1.6, -1.4, 1.3));
+                assert_approx_eq!(body.position(), Vector::new(0.32, -0.28, 0.26));
+                assert_approx_eq!(body.velocity(), Vector::new(1.6, -1.4, 1.3));
             }
 
             #[test]
@@ -99,10 +94,10 @@ macro_rules! assert_dynamics_behaviour(
 
                 let body_0 = world.find_body(id_0).unwrap();
                 let body_1 = world.find_body(id_1).unwrap();
-                assert_eq!(body_0.velocity(), Vector::new(-1.0, 0.0, 0.0));
-                assert_eq!(body_0.angular_velocity(), Vector::new(0.0, 0.0, 0.0));
-                assert_eq!(body_1.velocity(), Vector::new( 0.0, 0.0, 0.0));
-                assert_eq!(body_1.angular_velocity(), Vector::new(0.0, 0.0, 0.0));
+                assert_approx_eq!(body_0.velocity(), Vector::new(-1.0, 0.0, 0.0));
+                assert_approx_eq!(body_0.angular_velocity(), Vector::new(0.0, 0.0, 0.0));
+                assert_approx_eq!(body_1.velocity(), Vector::new( 0.0, 0.0, 0.0));
+                assert_approx_eq!(body_1.angular_velocity(), Vector::new(0.0, 0.0, 0.0));
             }
 
             #[test]

@@ -1,11 +1,12 @@
 use std::fmt;
-use std::ops::{ Add, Div, Mul, Neg, Sub };
+use std::mem;
+use std::ops::{ Add, Deref, DerefMut, Div, Mul, Neg, Sub };
 
 use { Float, TOLERANCE };
-use maths::{ Matrix, Quat };
+use maths::{ ApproxEq, Matrix, Quat };
 
 /// A representation of a 3-dimensional column vector.
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Vector {
     /// The x component of the vector.
     pub x: Float,
@@ -34,23 +35,23 @@ impl Vector {
 
     /// Set the components of the `Vector` to the specified values.
     #[inline]
-    pub fn set(&mut self, x: Float, y: Float, z: Float) {
-        self.x = x;
-        self.y = y;
-        self.z = z;
+    pub fn set(&mut self, other: &(Float, Float, Float)) {
+        self.x = other.0;
+        self.y = other.1;
+        self.z = other.2;
     }
 
     /// Computes the sum of the `Vector` and three scalars treated as components
     /// of a `Vector`.
     #[inline]
-    pub fn add(self, x: Float, y: Float, z: Float) -> Vector {
+    pub fn add(&self, x: Float, y: Float, z: Float) -> Vector {
         Vector::new(self.x + x, self.y + y, self.z + z)
     }
 
     /// Computes the difference between a `Vector` and three scalars treated as
     /// components of a `Vector`.
     #[inline]
-    pub fn sub(self, x: Float, y: Float, z: Float) -> Vector {
+    pub fn sub(&self, x: Float, y: Float, z: Float) -> Vector {
         Vector::new(self.x - x, self.y - y, self.z - z)
     }
 
@@ -106,85 +107,229 @@ impl Vector {
     /// `Quat`.
     pub fn rotate_by_quaternion(&self, q: Quat) -> Vector {
         let result = q * Quat::new(0.0, self.x, self.y, self.z) * q.inverse();
-        return Vector::new(result[1], result[2], result[3]);
+        return Vector::new(result.i, result.j, result.k);
     }
 }
 
-/// Implements the `std::fmt` operations to allow using `println!` on Vectors.
+/// Implements the `Display` trait to allow using `println!` on Vectors. The
+/// resulting format is equivalent to:
+///
+/// ```rust
+/// extern crate mach;
+///
+/// let vec = mach::Vector::new(0.1, 0.2, 0.3);
+/// println!("[{}, {}, {}]", vec.x, vec.y, vec.z);
+/// ```
 impl fmt::Display for Vector {
-    /// Implements the fmt operation for `Vector`s. The resulting format is
-    /// equivalent to:
-    ///
-    /// ```rust,ignore
-    /// println!("[{}, {}, {}]", vec.x, vec.y, vec.z);
-    /// ```
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "[{}, {}, {}]", self.x, self.y, self.z)
     }
 }
 
-/// Implementation for the equality operations, allows the use of `==` and `!=`
-/// operators on `Vector`s.
-impl PartialEq for Vector {
-    /// Implements the equality operator for Vectors. Returns true if the
-    /// Euclidean distance between the two vectors is below an allowed
-    /// tolerance.
-    fn eq(&self, other: &Vector) -> bool {
-        (*self - *other).length_sq() < TOLERANCE*TOLERANCE
-    }
-}
-
-/// Implement the unary negation operator.
-impl Neg for Vector {
+/// Implement the `Neg` trait to allow using the unary `-` operator for
+/// `Vector`s.
+impl<'a> Neg for &'a Vector {
     type Output = Vector;
 
-    /// Reverses the direction of the vector.
     #[inline]
     fn neg(self) -> Vector {
         Vector::new(-self.x, -self.y, -self.z)
     }
 }
 
-/// Implement the addition operator between Vectors.
+/// Implement the `Neg` trait to allow using the unary `-` operator for
+/// `Vector`s.
+impl Neg for Vector {
+    type Output = Vector;
+
+    #[inline]
+    fn neg(self) -> Vector {
+        Vector::new(-self.x, -self.y, -self.z)
+    }
+}
+
+/// Implements the `ApproxEq` trait to approximate the equality of two
+/// `Vector`s. The implementation uses the Euclidean distance between the two
+/// `Vector`s to perform the comparison.
+impl<'a> ApproxEq<&'a Vector> for &'a Vector {
+    fn approx_eq(self, other: &'a Vector) -> bool {
+        (self - other).length_sq() < TOLERANCE*TOLERANCE
+    }
+}
+
+/// Reuses the implementation `ApproxEq<&Vector> for &Vector`.
+impl<'a> ApproxEq<Vector> for &'a Vector {
+    fn approx_eq(self, other: Vector) -> bool {
+        self.approx_eq(&other)
+    }
+}
+
+/// Reuses the implementation `ApproxEq<&Vector> for &Vector`.
+impl<'a> ApproxEq<&'a Vector> for Vector {
+    fn approx_eq(self, other: &'a Vector) -> bool {
+        (&self).approx_eq(other)
+    }
+}
+
+/// Reuses the implementation `ApproxEq<&Vector> for &Vector`.
+impl ApproxEq<Vector> for Vector {
+    fn approx_eq(self, other: Vector) -> bool {
+        (&self).approx_eq(&other)
+    }
+}
+
+/// Implement the `Add` trait to allow using the `+` operator between `Vector`s.
+impl<'a, 'b> Add<&'a Vector> for &'b Vector {
+    type Output = Vector;
+
+    #[inline]
+    fn add(self, other: &'a Vector) -> Vector {
+        Vector::add(self, other.x, other.y, other.z)
+    }
+}
+
+/// Implement the `Add` trait to allow using the `+` operator between `Vector`s.
+impl<'a> Add<Vector> for &'a Vector {
+    type Output = Vector;
+
+    #[inline]
+    fn add(self, other: Vector) -> Vector {
+        self + &other
+    }
+}
+
+/// Implement the `Add` trait to allow using the `+` operator between `Vector`s.
+impl<'a> Add<&'a Vector> for Vector {
+    type Output = Vector;
+
+    #[inline]
+    fn add(self, other: &'a Vector) -> Vector {
+        &self + other
+    }
+}
+
+/// Implement the `Add` trait to allow using the `+` operator between `Vector`s.
 impl Add<Vector> for Vector {
     type Output = Vector;
 
-    /// Calculates the sum of two vectors.
     #[inline]
     fn add(self, other: Vector) -> Vector {
-        self.add(other.x, other.y, other.z)
+        &self + &other
     }
 }
 
-/// Implement the subtraction operator between Vectors.
+/// Implement the `Sub` trait to allow using the `-` operator between `Vector`s.
+impl<'a, 'b> Sub<&'b Vector> for &'a Vector {
+    type Output = Vector;
+
+    #[inline]
+    fn sub(self, other: &'b Vector) -> Self::Output {
+        Vector::sub(self, other.x, other.y, other.z)
+    }
+}
+
+/// Implement the `Sub` trait to allow using the `-` operator between `Vector`s.
+impl<'a> Sub<&'a Vector> for Vector {
+    type Output = Vector;
+
+    #[inline]
+    fn sub(self, other: &'a Vector) -> Self::Output {
+        &self - other
+    }
+}
+
+/// Implement the `Sub` trait to allow using the `-` operator between `Vector`s.
+impl<'a> Sub<Vector> for &'a Vector {
+    type Output = Vector;
+
+    #[inline]
+    fn sub(self, other: Vector) -> Self::Output {
+        self - &other
+    }
+}
+
+/// Implement the `Sub` trait to allow using the `-` operator between `Vector`s.
 impl Sub<Vector> for Vector {
     type Output = Vector;
 
-    /// Calculates the difference between two vectors.
     #[inline]
-    fn sub(self, other: Vector) -> Vector {
-        self.sub(other.x, other.y, other.z)
+    fn sub(self, other: Vector) -> Self::Output {
+        &self - &other
     }
 }
 
-/// Implements the multiplication operator between a `Vector` and a scalar.
-impl Mul<Float> for Vector {
+/// Implement the `Mul` trait to allow using the `*` operator for a `Vector`
+/// with a `Float`.
+impl<'a> Mul<Float> for &'a Vector {
     type Output = Vector;
 
-    /// Multiplies a `Vector` by a scalar.
     #[inline]
     fn mul(self, s: Float) -> Vector {
         Vector::new(self.x*s, self.y*s, self.z*s)
     }
 }
 
-/// Implements the division operator between a `Vector` and a scalar.
-impl Div<Float> for Vector {
+/// Implement the `Mul` trait to allow using the `*` operator for a `Vector`
+/// with a `Float`.
+impl Mul<Float> for Vector {
     type Output = Vector;
 
-    /// Divides the `Vector` by a scalar.
+    #[inline]
+    fn mul(self, s: Float) -> Vector {
+        &self * s
+    }
+}
+
+/// Implement the `Div` trait to allow using the `/` operator for a `Vector`
+/// with a `Float`.
+impl<'a> Div<Float> for &'a Vector {
+    type Output = Vector;
+
     #[inline]
     fn div(self, s: Float) -> Vector {
         Vector::new(self.x/s, self.y/s, self.z/s)
+    }
+}
+
+/// Implement the `Div` trait to allow using the `/` operator for a `Vector`
+/// with a `Float`.
+impl Div<Float> for Vector {
+    type Output = Vector;
+
+    #[inline]
+    fn div(self, s: Float) -> Vector {
+        Vector::new(self.x/s, self.y/s, self.z/s)
+    }
+}
+
+/// Implements the `AsRef` trait to allow conversion between a `Vector` and a
+/// `[Float; 3]`.
+impl AsRef<[Float; 3]> for Vector {
+    #[inline]
+    fn as_ref(&self) -> &[Float; 3] {
+        unsafe { mem::transmute(self) }
+    }
+}
+
+/// Implements the `AsRef` trait to allow conversion between a `Vector` and a
+/// `(Float, Float, Float)`.
+impl AsRef<(Float, Float, Float)> for Vector {
+    #[inline]
+    fn as_ref(&self) -> &(Float, Float, Float) {
+        unsafe { mem::transmute(self) }
+    }
+}
+
+impl Deref for Vector {
+    type Target = (Float, Float, Float);
+
+    fn deref(&self) -> &Self::Target {
+        unsafe { mem::transmute(self) }
+    }
+}
+
+impl DerefMut for Vector {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        unsafe { mem::transmute(self) }
     }
 }

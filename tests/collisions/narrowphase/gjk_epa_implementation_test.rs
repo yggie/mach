@@ -193,6 +193,6 @@ fn colliding_vertex_to_face() {
     assert!(option.is_some());
 
     let intersection = option.unwrap();
-    assert_eq!(intersection.normal(), Vector::new(1.0, 0.0, 0.0));
-    assert_eq!(intersection.point(), Vector::new(0.495, 0.1, 0.0));
+    assert_approx_eq!(intersection.normal(), Vector::new(1.0, 0.0, 0.0));
+    assert_approx_eq!(intersection.point(), Vector::new(0.495, 0.1, 0.0));
 }

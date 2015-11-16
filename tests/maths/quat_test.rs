@@ -2,28 +2,28 @@ use mach::Float;
 use mach::maths::{ Quat, Vector };
 
 #[test]
-fn instantiating_with_components() {
+fn it_can_be_instantiated_with_scalars() {
     let q = Quat::new(0.3, -1.0, 0.1, 3.0);
 
-    assert_eq!((q[0], q[1], q[2], q[3]), (0.3, -1.0, 0.1, 3.0));
+    assert_approx_eq!(q, Quat::new(0.3, -1.0, 0.1, 3.0));
 }
 
 #[test]
-fn instantiating_as_the_identity_rotation() {
+fn it_can_be_instantiated_as_the_identity_quaternion() {
     let q = Quat::new_identity();
 
-    assert_eq!((q[0], q[1], q[2], q[3]), (1.0, 0.0, 0.0, 0.0));
+    assert_approx_eq!(q, Quat::new(1.0, 0.0, 0.0, 0.0));
 }
 
 #[test]
-fn instantiating_from_a_vector() {
+fn it_can_be_instantiated_from_a_vector() {
     let q = Quat::new_from_vector(Vector::new(0.1, 0.5, 0.6));
 
-    assert_eq!((q[0], q[1], q[2], q[3]), (0.0, 0.1, 0.5, 0.6));
+    assert_approx_eq!(q, Quat::new(0.0, 0.1, 0.5, 0.6));
 }
 
 #[test]
-fn instantiating_from_axis_angle() {
+fn it_can_be_instantiated_using_the_axis_angle_formulation() {
     let radians = 2.5;
     let hr = radians / 2.0;
 
@@ -31,107 +31,121 @@ fn instantiating_from_axis_angle() {
 
     let chr = hr.cos();
     let shr = hr.sin();
-    let diff = (q - Quat::new(chr, 2.0*shr/7.0, 3.0*shr/7.0, 6.0*shr/7.0)).length();
-    assert!(diff < 0.001);
+    assert_approx_eq!(q, Quat::new(chr, 2.0*shr/7.0, 3.0*shr/7.0, 6.0*shr/7.0));
 }
 
 #[test]
-fn computing_the_squared_length() {
+fn it_can_compute_the_squared_length() {
     let q = Quat::new(1.0, 2.0, 3.0, -4.0);
 
-    assert_eq!(q.length_sq(), 30.0);
+    assert_approx_eq!(q.length_sq(), 30.0);
 }
 
 #[test]
-fn computing_the_length() {
+fn it_can_compute_the_length() {
     let q = Quat::new(-3.0, 4.0, 2.0, -1.0);
 
-    assert_eq!(q.length(), (30.0 as Float).sqrt());
+    assert_approx_eq!(q.length(), (30.0 as Float).sqrt());
 }
 
 #[test]
-fn computing_the_normalized_quaternion() {
-    let q = Quat::new(12.0, 0.0, -9.0, 20.0).normalize();
+fn it_can_be_normalized() {
+    let q = Quat::new(12.0, 0.0, -9.0, 20.0);
 
-    assert_eq!((q[0], q[1], q[2], q[3]), (0.48, 0.0, -0.36, 0.80));
+    assert_approx_eq!(q.normalize(), Quat::new(0.48, 0.0, -0.36, 0.80));
 }
 
 #[test]
-fn computing_the_inverse() {
+fn it_can_compute_the_inverse() {
     let q = Quat::new(1.0, 0.0, 1.0, 0.0).inverse();
 
-    assert_eq!((q[0], q[1], q[2], q[3]), (0.5, 0.0, -0.5, 0.0));
+    assert_approx_eq!(q, Quat::new(0.5, 0.0, -0.5, 0.0));
 }
 
 #[test]
-fn adding_with_scalar_components() {
+fn it_supports_addition_of_scalars() {
     let q = Quat::new(1.0, 3.0, 4.0, -1.0).add(1.0, 3.0, -4.0, 1.0);
 
-    assert_eq!((q[0], q[1], q[2], q[3]), (2.0, 6.0, 0.0, 0.0));
+    assert_approx_eq!(q, Quat::new(2.0, 6.0, 0.0, 0.0));
 }
 
 #[test]
-fn subtracting_by_scalar_components() {
+fn it_can_subtract_with_scalars() {
     let q = Quat::new(1.0, 3.0, 4.0, -1.0).sub(1.0, 3.0, -4.0, 1.0);
 
-    assert_eq!((q[0], q[1], q[2], q[3]), (0.0, 0.0, 8.0, -2.0));
+    assert_approx_eq!(q, Quat::new(0.0, 0.0, 8.0, -2.0));
 }
 
 #[test]
-fn subtracting_by_a_quaternion() {
-    let q = Quat::new(1.0, 2.2, -2.6, -4.4) - Quat::new(1.0, -1.0, -2.6, -2.4);
+fn it_supports_the_subtraction_operator_with_quaternions() {
+    let p = Quat::new(1.0, 2.2, -2.6, -4.4);
+    let q = Quat::new(1.0, -1.0, -2.6, -2.4);
 
-    assert_eq!((q[0], q[1], q[2], q[3]), (0.0, 3.2, 0.0, -2.0));
+    let expectation = Quat::new(0.0, 3.2, 0.0, -2.0);
+
+    assert_approx_eq!(p - q, expectation);
+    assert_approx_eq!(&p - q, expectation);
+    assert_approx_eq!(p - &q, expectation);
+    assert_approx_eq!(&p - &q, expectation);
 }
 
 #[test]
-fn multiplication_with_scalar_components() {
-    let q = Quat::new(3.0, 2.0, 1.0, -2.0).mult(-2.0, 2.0, -4.0, -3.0);
+fn it_can_be_cloned() {
+    let q = Quat::new(1.0, 3.0, 4.0, 5.0);
 
-    assert_eq!((q[0], q[1], q[2], q[3]), (-12.0, -9.0, -12.0, -15.0));
+    assert_approx_eq!(Clone::clone(&q), q);
 }
 
 #[test]
-fn cloning() {
-    let q = Quat::new(1.0, 3.0, 4.0, 5.0).clone();
-
-    assert_eq!((q[0], q[1], q[2], q[3]), (1.0, 3.0, 4.0, 5.0));
-}
-
-#[test]
-fn setting_by_index() {
-    let mut q = Quat::new(1.0, 3.0, 4.0, 5.0);
-
-    q[0] = -1.1;
-    q[2] = 3.0;
-
-    assert_eq!((q[0], q[1], q[2], q[3]), (-1.1, 3.0, 3.0, 5.0));
-}
-
-#[test]
-fn negating() {
+fn it_supports_the_unary_negation_operator() {
     let q = -Quat::new(2.0, -3.3, 4.5, -1.2);
 
-    assert_eq!((q[0], q[1], q[2], q[3]), (-2.0, 3.3, -4.5, 1.2));
+    assert_approx_eq!(q, Quat::new(-2.0, 3.3, -4.5, 1.2));
 }
 
 #[test]
-fn multiplying_by_a_scalar() {
-    let q = Quat::new(3.0, 2.0, -1.0, 0.0) * 2.0;
+fn it_supports_quaternion_multiplication_with_a_scalar() {
+    let q = Quat::new(3.0, 2.0, 1.0, -2.0);
 
-    assert_eq!((q[0], q[1], q[2], q[3]), (6.0, 4.0, -2.0, 0.0));
+    assert_approx_eq!(q.mult_scalar(-1.0), Quat::new(-3.0, -2.0, -1.0, 2.0));
 }
 
 #[test]
-fn multiplying_with_a_quaternion() {
-    let q = Quat::new(3.0, 2.0, 1.0, -2.0) * Quat::new(-2.0, 2.0, -4.0, -3.0);
+fn it_supports_scalar_multiplication_using_the_multiplication_operator() {
+    let q = Quat::new(3.0, 2.0, -1.0, 0.0);
 
-    assert_eq!((q[0], q[1], q[2], q[3]), (-12.0, -9.0, -12.0, -15.0));
+    let expectation = Quat::new(6.0, 4.0, -2.0, 0.0);
+
+    assert_approx_eq!(q * 2.0, expectation);
+    assert_approx_eq!(&q * 2.0, expectation);
 }
 
 #[test]
-fn dividing_by_a_scalar() {
-    let q = Quat::new(3.0, 9.0, 15.0, -30.0) / 3.0;
+fn it_supports_quaternion_multiplication_with_scalars() {
+    let q = Quat::new(3.0, 2.0, 1.0, -2.0);
 
-    assert_eq!((q[0], q[1], q[2], q[3]), (1.0, 3.0, 5.0, -10.0));
+    assert_approx_eq!(q.mult_quat(-2.0, 2.0, -4.0, -3.0), Quat::new(-12.0, -9.0, -12.0, -15.0));
+}
+
+#[test]
+fn it_supports_quaternion_multiplication_using_the_multiplication_operator() {
+    let a = Quat::new(3.0, 2.0, 1.0, -2.0);
+    let b = Quat::new(-2.0, 2.0, -4.0, -3.0);
+
+    let expectation = Quat::new(-12.0, -9.0, -12.0, -15.0);
+
+    assert_approx_eq!(a * b, expectation);
+    assert_approx_eq!(&a * b, expectation);
+    assert_approx_eq!(a * &b, expectation);
+    assert_approx_eq!(&a * &b, expectation);
+}
+
+#[test]
+fn it_supports_the_division_operator_with_scalars() {
+    let q = Quat::new(3.0, 9.0, 15.0, -30.0);
+
+    let expectation = Quat::new(1.0, 3.0, 5.0, -10.0);
+
+    assert_approx_eq!(q / 3.0, expectation);
+    assert_approx_eq!(&q / 3.0, expectation);
 }

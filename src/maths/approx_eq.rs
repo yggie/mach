@@ -1,20 +1,19 @@
 use { Float, TOLERANCE };
-use maths::Quat;
 
 /// This trait is implemented by types without infinite precision.
-pub trait ApproxEq {
+pub trait ApproxEq<T = Self> {
     /// Returns true if the other value is approximately equal.
-    fn approx_eq(&self, &Self) -> bool;
+    fn approx_eq(self, T) -> bool;
 }
 
-impl ApproxEq for Float {
-    fn approx_eq(&self, other: &Self) -> bool {
+impl<'a> ApproxEq<&'a Float> for &'a Float {
+    fn approx_eq(self, other: &'a Float) -> bool {
         (self - other).abs() < TOLERANCE
     }
 }
 
-impl ApproxEq for Quat {
-    fn approx_eq(&self, other: &Self) -> bool {
-        (*self - *other).length_sq() < TOLERANCE*TOLERANCE
+impl ApproxEq for Float {
+    fn approx_eq(self, other: Self) -> bool {
+        (&self).approx_eq(&other)
     }
 }

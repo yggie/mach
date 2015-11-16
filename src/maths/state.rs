@@ -67,7 +67,7 @@ impl State {
     /// `Vector`.
     #[inline]
     pub fn set_position(&mut self, x: Float, y: Float, z: Float) {
-        self.transform.translation_mut().set(x, y, z);
+        self.transform.translation_mut().set(&(x, y, z));
     }
 
     /// Sets the position to the `Vector` provided.
@@ -88,7 +88,7 @@ impl State {
     /// Sets the rotation using a quaternion.
     #[inline]
     pub fn set_rotation(&mut self, rotation: Quat) {
-        self.transform.rotation_mut().copy(rotation);
+        self.transform.rotation_mut().set(&rotation);
     }
 
     /// Sets the rotation with the provided axis and angle of rotation.
@@ -111,7 +111,7 @@ impl State {
     /// `Vector`.
     #[inline]
     pub fn set_velocity(&mut self, u: Float, v: Float, w: Float) {
-        self.velocity.set(u, v, w);
+        self.velocity.set(&(u, v, w));
     }
 
     /// Returns a copy of the `State` using the inputs as the components of the
@@ -125,14 +125,14 @@ impl State {
     /// Sets the velocity to the `Vector` provided.
     #[inline]
     pub fn set_velocity_with_vector(&mut self, velocity: Vector) {
-        self.velocity.set(velocity.x, velocity.y, velocity.z);
+        self.velocity.set(&(velocity.x, velocity.y, velocity.z));
     }
 
     /// Sets the angular velocity using the specified values as components of a
     /// `Vector`.
     #[inline]
     pub fn set_angular_velocity(&mut self, u: Float, v: Float, w: Float) {
-        self.angular_velocity.set(u, v, w);
+        self.angular_velocity.set(&(u, v, w));
     }
 
     /// Returns a copy of the `State` using the inputs as components of the

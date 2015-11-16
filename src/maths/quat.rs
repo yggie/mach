@@ -1,26 +1,39 @@
 use std::fmt;
-use std::ops::{ Add, Div, Index, IndexMut, Mul, Neg, Sub };
+use std::mem;
+use std::ops::{ Add, Deref, DerefMut, Div, Mul, Neg, Sub };
 
 use { Float, TOLERANCE };
-use maths::Vector;
+use maths::{ ApproxEq, Vector };
 
 /// A representation of a quaternion.
 #[derive(Clone, Copy, Debug)]
 pub struct Quat {
-    elements: [Float; 4]
+    /// The real component of the `Quat`.
+    pub r: Float,
+    /// The first imaginary component of the `Quat`.
+    pub i: Float,
+    /// The second imaginary component of the `Quat`.
+    pub j: Float,
+    /// The third imaginary component of the `Quat`.
+    pub k: Float,
 }
 
 impl Quat {
     /// Creates a new `Quat` with the coordinates provided.
     #[inline(always)]
     pub fn new(r: Float, i: Float, j: Float, k: Float) -> Quat {
-        Quat { elements: [r, i, j, k] }
+        Quat {
+            r: r,
+            i: i,
+            j: j,
+            k: k,
+        }
     }
 
     /// Creates a new `Quat` representing an identity transformation.
     #[inline(always)]
     pub fn new_identity() -> Quat {
-        Quat { elements: [1.0, 0.0, 0.0, 0.0] }
+        Quat::new(1.0, 0.0, 0.0, 0.0)
     }
 
     /// Creates a new `Quat` taking the input `Vector` as the components
@@ -43,7 +56,7 @@ impl Quat {
     /// Computes the squared length of the `Quat`.
     #[inline(always)]
     pub fn length_sq(&self) -> Float {
-        self[0]*self[0] + self[1]*self[1] + self[2]*self[2] + self[3]*self[3]
+        self.r*self.r + self.i*self.i + self.j*self.j + self.k*self.k
     }
 
     /// Computes the length of the `Quat`.
@@ -63,59 +76,65 @@ impl Quat {
     #[inline]
     pub fn inverse(&self) -> Quat {
         let denom = self.length_sq();
-        Quat::new(self[0]/denom, -self[1]/denom, -self[2]/denom, -self[3]/denom)
+        Quat::new(self.r/denom, -self.i/denom, -self.j/denom, -self.k/denom)
     }
 
     /// Sets the components of the `Quat` to the specified values.
     #[inline]
-    pub fn set(&mut self, r: Float, i: Float, j: Float, k: Float) {
-        self[0] = r;
-        self[1] = i;
-        self[2] = j;
-        self[3] = k;
-    }
-
-    /// Copies the contents of the provided `Quat`.
-    #[inline]
-    pub fn copy(&mut self, q: Quat) {
-        self.set(q[0], q[1], q[2], q[3]);
+    pub fn set(&mut self, other: &(Float, Float, Float, Float)) {
+        self.r = other.0;
+        self.i = other.1;
+        self.j = other.2;
+        self.k = other.3;
     }
 
     /// Computes the sum between the `Quat` and the input scalars treated
     /// as components of a `Quat`.
     #[inline]
     pub fn add(self, r: Float, i: Float, j: Float, k: Float) -> Quat {
-        Quat{ elements: [
-            self[0] + r,
-            self[1] + i,
-            self[2] + j,
-            self[3] + k,
-        ] }
+        Quat::new(
+            self.r + r,
+            self.i + i,
+            self.j + j,
+            self.k + k,
+        )
 
     }
 
     /// Computes the difference between the `Quat` and the input scalars
     /// treated as components of a `Quat`.
     #[inline]
-    pub fn sub(self, r: Float, i: Float, j: Float, k: Float) -> Quat {
-        Quat{ elements: [
-            self[0] - r,
-            self[1] - i,
-            self[2] - j,
-            self[3] - k,
-        ] }
+    pub fn sub(&self, r: Float, i: Float, j: Float, k: Float) -> Quat {
+        Quat::new(
+            self.r - r,
+            self.i - i,
+            self.j - j,
+            self.k - k,
+        )
+    }
+
+    /// Multiples each component of the `Quat` by the scalar.
+    #[inline]
+    pub fn mult_scalar(&self, s: Float) -> Quat {
+        Quat::new(self.r * s, self.i * s, self.j * s, self.k * s)
+    }
+
+    /// Divides each component of the `Quat` by the scalar.
+    #[inline]
+    pub fn div_scalar(&self, s: Float) -> Quat {
+        Quat::new(self.r / s, self.i / s, self.j / s, self.k / s)
     }
 
     /// Computes the `Quat` multiplication with the input scalars as
     /// components of a `Quat`.
     #[inline]
-    pub fn mult(&self, r: Float, i: Float, j: Float, k: Float) -> Quat {
-        Quat{ elements: [
-            self[0]*r - self[1]*i - self[2]*j - self[3]*k,
-            self[0]*i + self[1]*r + self[2]*k - self[3]*j,
-            self[0]*j - self[1]*k + self[2]*r + self[3]*i,
-            self[0]*k + self[1]*j - self[2]*i + self[3]*r,
-        ] }
+    pub fn mult_quat(&self, r: Float, i: Float, j: Float, k: Float) -> Quat {
+        Quat::new(
+            self.r*r - self.i*i - self.j*j - self.k*k,
+            self.r*i + self.i*r + self.j*k - self.k*j,
+            self.r*j - self.i*k + self.j*r + self.k*i,
+            self.r*k + self.i*j - self.j*i + self.k*r,
+        )
     }
 }
 
@@ -126,10 +145,10 @@ impl fmt::Display for Quat {
     /// equivalent to:
     ///
     /// ```rust,ignore
-    /// println!("[{}, {}, {}, {}]", quat[0], quat[1], quat[2], quat[3]);
+    /// println!("[{}, {}, {}, {}]", quat.r, quat.i, quat.j, quat.k);
     /// ```
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "[{}, {}, {}, {}]", self[0], self[1], self[2], self[3])
+        write!(f, "[{}, {}, {}, {}]", self.r, self.i, self.j, self.k)
     }
 }
 
@@ -146,27 +165,6 @@ impl PartialEq for Quat {
     }
 }
 
-/// Implements the index operator.
-impl Index<usize> for Quat {
-    type Output = Float;
-
-    /// Obtains a component from the `Quat` by index.
-    #[inline(always)]
-    fn index<'a>(&'a self, index: usize) -> &'a Float {
-        &self.elements[index]
-    }
-}
-
-/// Implements the mutable index operator.
-impl IndexMut<usize> for Quat {
-    /// Obtains a mutable reference to a component from the `Quat` by
-    /// index.
-    #[inline(always)]
-    fn index_mut<'a>(&'a mut self, index: usize) -> &'a mut Float {
-        &mut self.elements[index]
-    }
-}
-
 /// Implements the unary negation operator.
 impl Neg for Quat {
     type Output = Quat;
@@ -174,7 +172,7 @@ impl Neg for Quat {
     /// Reverses the direction of the quaternion.
     #[inline]
     fn neg(self) -> Quat {
-        Quat{ elements: [ -self[0], -self[1], -self[2], -self[3] ] }
+        Quat::new(-self.r, -self.i, -self.j, -self.k)
     }
 }
 
@@ -182,10 +180,39 @@ impl Neg for Quat {
 impl Add<Quat> for Quat {
     type Output = Quat;
 
-    /// Computes the sum of two `Quat`s.
     #[inline]
     fn add(self, other: Quat) -> Quat {
-        self.add(other[0], other[1], other[2], other[3])
+        self.add(other.r, other.i, other.j, other.k)
+    }
+}
+
+/// Implements the subtraction operator.
+impl<'a, 'b> Sub<&'a Quat> for &'b Quat {
+    type Output = Quat;
+
+    #[inline]
+    fn sub(self, other: &'a Quat) -> Quat {
+        Quat::sub(self, other.r, other.i, other.j, other.k)
+    }
+}
+
+/// Implements the subtraction operator.
+impl<'a> Sub<Quat> for &'a Quat {
+    type Output = Quat;
+
+    #[inline]
+    fn sub(self, other: Quat) -> Quat {
+        self - &other
+    }
+}
+
+/// Implements the subtraction operator.
+impl<'a> Sub<&'a Quat> for Quat {
+    type Output = Quat;
+
+    #[inline]
+    fn sub(self, other: &'a Quat) -> Quat {
+        &self - other
     }
 }
 
@@ -193,10 +220,18 @@ impl Add<Quat> for Quat {
 impl Sub<Quat> for Quat {
     type Output = Quat;
 
-    /// Computes the difference between two `Quat`s.
     #[inline]
     fn sub(self, other: Quat) -> Quat {
-        self.sub(other[0], other[1], other[2], other[3])
+        &self - &other
+    }
+}
+
+/// Implements the multiplication operator between a `Quat` and a scalar.
+impl<'a> Mul<Float> for &'a Quat {
+    type Output = Quat;
+
+    fn mul(self, s: Float) -> Quat {
+        Quat::mult_scalar(self, s)
     }
 }
 
@@ -204,9 +239,41 @@ impl Sub<Quat> for Quat {
 impl Mul<Float> for Quat {
     type Output = Quat;
 
-    /// Computes the result of multiplying a `Quat` by a scalar.
     fn mul(self, s: Float) -> Quat {
-        Quat::new(self[0]*s, self[1]*s, self[2]*s, self[3]*s)
+        &self * s
+    }
+}
+
+/// Implements the multiplication operator between two `Quat`s.
+impl<'a, 'b> Mul<&'a Quat> for &'b Quat {
+    type Output = Quat;
+
+    /// Multiplies two quaternions and returns the result.
+    #[inline]
+    fn mul(self, other: &'a Quat) -> Quat {
+        Quat::mult_quat(self, other.r, other.i, other.j, other.k)
+    }
+}
+
+/// Implements the multiplication operator between two `Quat`s.
+impl<'a> Mul<&'a Quat> for Quat {
+    type Output = Quat;
+
+    /// Multiplies two quaternions and returns the result.
+    #[inline]
+    fn mul(self, other: &'a Quat) -> Quat {
+        &self * other
+    }
+}
+
+/// Implements the multiplication operator between two `Quat`s.
+impl<'a> Mul<Quat> for &'a Quat {
+    type Output = Quat;
+
+    /// Multiplies two quaternions and returns the result.
+    #[inline]
+    fn mul(self, other: Quat) -> Quat {
+        self * &other
     }
 }
 
@@ -217,7 +284,18 @@ impl Mul<Quat> for Quat {
     /// Multiplies two quaternions and returns the result.
     #[inline]
     fn mul(self, other: Quat) -> Quat {
-        self.mult(other[0], other[1], other[2], other[3])
+        &self * &other
+    }
+}
+
+/// Implements the division operator between a `Quat` and a scalar.
+impl<'a> Div<Float> for &'a Quat {
+    type Output = Quat;
+
+    /// Divides the `Quat` by a scalar.
+    #[inline]
+    fn div(self, s: Float) -> Quat {
+        Quat::div_scalar(self, s)
     }
 }
 
@@ -228,6 +306,50 @@ impl Div<Float> for Quat {
     /// Divides the `Quat` by a scalar.
     #[inline]
     fn div(self, s: Float) -> Quat {
-        Quat::new(self[0]/s, self[1]/s, self[2]/s, self[3]/s)
+        &self / s
+    }
+}
+
+/// Implements the `ApproxEq` trait to approximate the equality of two
+/// `Quat`s. The implementation uses the Euclidean distance between the two
+/// `Quat`s to perform the comparison.
+impl<'a> ApproxEq<&'a Quat> for &'a Quat {
+    fn approx_eq(self, other: &'a Quat) -> bool {
+        (self - other).length_sq() < TOLERANCE*TOLERANCE
+    }
+}
+
+/// Reuses the implementation `ApproxEq<&Quat> for &Quat`.
+impl<'a> ApproxEq<Quat> for &'a Quat {
+    fn approx_eq(self, other: Quat) -> bool {
+        self.approx_eq(&other)
+    }
+}
+
+/// Reuses the implementation `ApproxEq<&Quat> for &Quat`.
+impl<'a> ApproxEq<&'a Quat> for Quat {
+    fn approx_eq(self, other: &'a Quat) -> bool {
+        (&self).approx_eq(other)
+    }
+}
+
+/// Reuses the implementation `ApproxEq<&Quat> for &Quat`.
+impl ApproxEq<Quat> for Quat {
+    fn approx_eq(self, other: Quat) -> bool {
+        (&self).approx_eq(&other)
+    }
+}
+
+impl Deref for Quat {
+    type Target = (Float, Float, Float, Float);
+
+    fn deref(&self) -> &Self::Target {
+        unsafe { mem::transmute(self) }
+    }
+}
+
+impl DerefMut for Quat {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        unsafe { mem::transmute(self) }
     }
 }

@@ -17,6 +17,8 @@ pub mod dynamics;
 pub mod entities;
 pub mod collisions;
 
+pub use self::maths::Vector;
+
 use std::fmt;
 use std::rc::Rc;
 use std::cell::RefCell;
