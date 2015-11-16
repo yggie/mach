@@ -27,7 +27,7 @@ impl Quat {
     /// of the complex part of the `Quat`.
     #[inline]
     pub fn new_from_vector(vector: Vector) -> Quat {
-        Quat::new(0.0, vector[0], vector[1], vector[2])
+        Quat::new(0.0, vector.x, vector.y, vector.z)
     }
 
     /// Creates a new `Quat` representing a rotation about an axis.
@@ -37,7 +37,7 @@ impl Quat {
         let sl = half_radians.sin() / length;
         let c = half_radians.cos();
 
-        return Quat::new(c, sl*axis[0], sl*axis[1], sl*axis[2]);
+        return Quat::new(c, sl*axis.x, sl*axis.y, sl*axis.z);
     }
 
     /// Computes the squared length of the `Quat`.

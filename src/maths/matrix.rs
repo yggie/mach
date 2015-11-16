@@ -79,8 +79,8 @@ impl Matrix {
         let s = radians.sin();
         let a = axis.normalize();
         let c1 = 1.0 - c;
-        let aa = Vector::new(a[0]*c1, a[1]*c1, a[2]*c1);
-        Matrix::new_diag(c, c, c) + a.outer(aa) + Matrix::new_skew(a[0]*s, a[1]*s, a[2]*s)
+        let aa = Vector::new(a.x*c1, a.y*c1, a.z*c1);
+        Matrix::new_diag(c, c, c) + a.outer(aa) + Matrix::new_skew(a.x*s, a.y*s, a.z*s)
     }
 
     /// Returns an element from the matrix, given the row and column numbers.
@@ -265,9 +265,9 @@ impl Mul<Vector> for Matrix {
     /// and a vector.
     fn mul(self, vect: Vector) -> Vector {
         Vector::new(
-            self[0]*vect[0] + self[3]*vect[1] + self[6]*vect[2],
-            self[1]*vect[0] + self[4]*vect[1] + self[7]*vect[2],
-            self[2]*vect[0] + self[5]*vect[1] + self[8]*vect[2],
+            self[0]*vect.x + self[3]*vect.y + self[6]*vect.z,
+            self[1]*vect.x + self[4]*vect.y + self[7]*vect.z,
+            self[2]*vect.x + self[5]*vect.y + self[8]*vect.z,
         )
     }
 }

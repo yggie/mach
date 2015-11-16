@@ -139,7 +139,7 @@ impl RigidBody {
     /// Set the `RigidBody`’s angular velocity using the `Vector` provided.
     #[inline]
     pub fn set_angular_velocity_with_vector(&mut self, angular_velocity: Vector) {
-        self.state.set_angular_velocity(angular_velocity[0], angular_velocity[1], angular_velocity[2]);
+        self.state.set_angular_velocity(angular_velocity.x, angular_velocity.y, angular_velocity.z);
     }
 }
 

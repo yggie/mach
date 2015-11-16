@@ -1,5 +1,5 @@
 use std::fmt;
-use std::ops::{ Add, Div, Index, IndexMut, Mul, Neg, Sub };
+use std::ops::{ Add, Div, Mul, Neg, Sub };
 
 use { Float, TOLERANCE };
 use maths::{ Matrix, Quat };
@@ -7,7 +7,12 @@ use maths::{ Matrix, Quat };
 /// A representation of a 3-dimensional column vector.
 #[derive(Clone, Copy, Debug)]
 pub struct Vector {
-    elements: [Float; 3]
+    /// The x component of the vector.
+    pub x: Float,
+    /// The y component of the vector.
+    pub y: Float,
+    /// The z component of the vector.
+    pub z: Float,
 }
 
 /// Static methods for the Vector struct.
@@ -15,7 +20,11 @@ impl Vector {
     /// A simple constructor which builds a column vector given three elements.
     #[inline(always)]
     pub fn new(x: Float, y: Float, z: Float) -> Vector {
-        Vector{ elements: [x, y, z] }
+        Vector {
+            x: x,
+            y: y,
+            z: z,
+        }
     }
 
     /// Constructs a zero vector.
@@ -26,46 +35,38 @@ impl Vector {
     /// Set the components of the `Vector` to the specified values.
     #[inline]
     pub fn set(&mut self, x: Float, y: Float, z: Float) {
-        self[0] = x;
-        self[1] = y;
-        self[2] = z;
+        self.x = x;
+        self.y = y;
+        self.z = z;
     }
 
     /// Computes the sum of the `Vector` and three scalars treated as components
     /// of a `Vector`.
     #[inline]
     pub fn add(self, x: Float, y: Float, z: Float) -> Vector {
-        Vector{ elements: [
-            self[0] + x,
-            self[1] + y,
-            self[2] + z,
-        ] }
+        Vector::new(self.x + x, self.y + y, self.z + z)
     }
 
     /// Computes the difference between a `Vector` and three scalars treated as
     /// components of a `Vector`.
     #[inline]
     pub fn sub(self, x: Float, y: Float, z: Float) -> Vector {
-        Vector{ elements: [
-            self[0] - x,
-            self[1] - y,
-            self[2] - z,
-        ] }
+        Vector::new(self.x - x, self.y - y, self.z - z)
     }
 
     /// Computes the dot product between two vectors.
     #[inline(always)]
     pub fn dot(&self, other: Vector) -> Float {
-        self[0]*other[0] + self[1]*other[1] + self[2]*other[2]
+        self.x*other.x + self.y*other.y + self.z*other.z
     }
 
     /// Computes the cross product between two vectors.
     #[inline]
     pub fn cross(&self, other: Vector) -> Vector {
         Vector::new(
-            self[1]*other[2] - self[2]*other[1],
-            self[2]*other[0] - self[0]*other[2],
-            self[0]*other[1] - self[1]*other[0],
+            self.y*other.z - self.z*other.y,
+            self.z*other.x - self.x*other.z,
+            self.x*other.y - self.y*other.x,
         )
     }
 
@@ -78,7 +79,7 @@ impl Vector {
     /// Computes the squared length of a Vector.
     #[inline(always)]
     pub fn length_sq(&self) -> Float {
-        self[0]*self[0] + self[1]*self[1] + self[2]*self[2]
+        self.x*self.x + self.y*self.y + self.z*self.z
     }
 
     /// Computes the length of a Vector.
@@ -90,9 +91,9 @@ impl Vector {
     /// Computes the outer product between two Vectors.
     pub fn outer(&self, other: Vector) -> Matrix {
         return Matrix::new(
-            self[0]*other[0], self[0]*other[1], self[0]*other[2],
-            self[1]*other[0], self[1]*other[1], self[1]*other[2],
-            self[2]*other[0], self[2]*other[1], self[2]*other[2],
+            self.x*other.x, self.x*other.y, self.x*other.z,
+            self.y*other.x, self.y*other.y, self.y*other.z,
+            self.z*other.x, self.z*other.y, self.z*other.z,
         );
     }
 
@@ -104,7 +105,7 @@ impl Vector {
     /// Computes the `Vector` that is the result of being rotated by the input
     /// `Quat`.
     pub fn rotate_by_quaternion(&self, q: Quat) -> Vector {
-        let result = q * Quat::new(0.0, self[0], self[1], self[2]) * q.inverse();
+        let result = q * Quat::new(0.0, self.x, self.y, self.z) * q.inverse();
         return Vector::new(result[1], result[2], result[3]);
     }
 }
@@ -115,10 +116,10 @@ impl fmt::Display for Vector {
     /// equivalent to:
     ///
     /// ```rust,ignore
-    /// println!("[{}, {}, {}]", vec[0], vec[1], vec[2]);
+    /// println!("[{}, {}, {}]", vec.x, vec.y, vec.z);
     /// ```
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "[{}, {}, {}]", self[0], self[1], self[2])
+        write!(f, "[{}, {}, {}]", self.x, self.y, self.z)
     }
 }
 
@@ -133,26 +134,6 @@ impl PartialEq for Vector {
     }
 }
 
-/// Implement the index operator.
-impl Index<usize> for Vector {
-    type Output = Float;
-
-    /// Obtain the vector's elements by index. Uses zero-based indexing.
-    #[inline(always)]
-    fn index<'a>(&'a self, index: usize) -> &'a Float {
-        &self.elements[index]
-    }
-}
-
-/// Implement the mutable index operator.
-impl IndexMut<usize> for Vector {
-    /// Allows setting a vector's element using index notation.
-    #[inline(always)]
-    fn index_mut<'a>(&'a mut self, index: usize) -> &'a mut Float {
-        &mut self.elements[index]
-    }
-}
-
 /// Implement the unary negation operator.
 impl Neg for Vector {
     type Output = Vector;
@@ -160,7 +141,7 @@ impl Neg for Vector {
     /// Reverses the direction of the vector.
     #[inline]
     fn neg(self) -> Vector {
-        Vector{ elements: [ -self[0], -self[1], -self[2] ] }
+        Vector::new(-self.x, -self.y, -self.z)
     }
 }
 
@@ -171,7 +152,7 @@ impl Add<Vector> for Vector {
     /// Calculates the sum of two vectors.
     #[inline]
     fn add(self, other: Vector) -> Vector {
-        self.add(other[0], other[1], other[2])
+        self.add(other.x, other.y, other.z)
     }
 }
 
@@ -182,7 +163,7 @@ impl Sub<Vector> for Vector {
     /// Calculates the difference between two vectors.
     #[inline]
     fn sub(self, other: Vector) -> Vector {
-        self.sub(other[0], other[1], other[2])
+        self.sub(other.x, other.y, other.z)
     }
 }
 
@@ -193,7 +174,7 @@ impl Mul<Float> for Vector {
     /// Multiplies a `Vector` by a scalar.
     #[inline]
     fn mul(self, s: Float) -> Vector {
-        Vector::new(self[0]*s, self[1]*s, self[2]*s)
+        Vector::new(self.x*s, self.y*s, self.z*s)
     }
 }
 
@@ -204,6 +185,6 @@ impl Div<Float> for Vector {
     /// Divides the `Vector` by a scalar.
     #[inline]
     fn div(self, s: Float) -> Vector {
-        Vector::new(self[0]/s, self[1]/s, self[2]/s)
+        Vector::new(self.x/s, self.y/s, self.z/s)
     }
 }

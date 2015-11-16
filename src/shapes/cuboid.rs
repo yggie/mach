@@ -111,9 +111,9 @@ impl Shape for Cuboid {
 
     fn support_indices_for(&self, direction: Vector) -> Vec<usize> {
         let new_direction = Vector::new(
-            direction[0]/self.width,
-            direction[1]/self.height,
-            direction[2]/self.depth,
+            direction.x/self.width,
+            direction.y/self.height,
+            direction.z/self.depth,
         );
         let mut max_value = 0.0;
         let mut max_indices = Vec::new();

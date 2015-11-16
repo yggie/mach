@@ -73,7 +73,7 @@ impl State {
     /// Sets the position to the `Vector` provided.
     #[inline]
     pub fn set_position_with_vector(&mut self, position: Vector) {
-        self.set_position(position[0], position[1], position[2]);
+        self.set_position(position.x, position.y, position.z);
     }
 
     /// Returns a copy of the `State` using the inputs as components of the
@@ -125,7 +125,7 @@ impl State {
     /// Sets the velocity to the `Vector` provided.
     #[inline]
     pub fn set_velocity_with_vector(&mut self, velocity: Vector) {
-        self.velocity.set(velocity[0], velocity[1], velocity[2]);
+        self.velocity.set(velocity.x, velocity.y, velocity.z);
     }
 
     /// Sets the angular velocity using the specified values as components of a

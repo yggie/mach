@@ -5,21 +5,21 @@ use mach::maths::{ Vector, Quat };
 fn instantiating_with_components() {
     let v = Vector::new(1.0, 2.0, 3.0);
 
-    assert_eq!((v[0], v[1], v[2]), (1.0, 2.0, 3.0));
+    assert_eq!((v.x, v.y, v.z), (1.0, 2.0, 3.0));
 }
 
 #[test]
 fn instantiating_as_a_zero_vector() {
     let v = Vector::new_zero();
 
-    assert_eq!((v[0], v[1], v[2]), (0.0, 0.0, 0.0));
+    assert_eq!((v.x, v.y, v.z), (0.0, 0.0, 0.0));
 }
 
 #[test]
 fn adding_with_scalar_components() {
     let v = Vector::new(1.0, 2.0, 3.0).add(-1.0, 2.0, -3.0);
 
-    assert_eq!((v[0], v[1], v[2]), (0.0, 4.0, 0.0));
+    assert_eq!((v.x, v.y, v.z), (0.0, 4.0, 0.0));
 }
 
 #[test]
@@ -29,14 +29,14 @@ fn adding_a_vector() {
 
     let c = a + b;
 
-    assert_eq!((c[0], c[1], c[2]), (3.0, 4.0, 0.0));
+    assert_eq!((c.x, c.y, c.z), (3.0, 4.0, 0.0));
 }
 
 #[test]
 fn subtracting_by_scalar_components() {
     let v = Vector::new(4.0, 5.0, 4.5).sub(4.0, 4.0, 5.0);
 
-    assert_eq!((v[0], v[1], v[2]), (0.0, 1.0, -0.5));
+    assert_eq!((v.x, v.y, v.z), (0.0, 1.0, -0.5));
 }
 
 #[test]
@@ -46,7 +46,7 @@ fn subtracting_by_a_vector() {
 
     let c = a - b;
 
-    assert_eq!((c[0], c[1], c[2]), (0.0, -2.0, 7.0));
+    assert_eq!((c.x, c.y, c.z), (0.0, -2.0, 7.0));
 }
 
 #[test]
@@ -61,7 +61,7 @@ fn computing_the_inner_product() {
 fn computing_the_cross_product() {
     let v = Vector::new(1.0, 2.0, 1.0).cross(Vector::new(2.0, 1.0, 2.0));
 
-    assert_eq!((v[0], v[1], v[2]), (3.0, 0.0, -3.0));
+    assert_eq!((v.x, v.y, v.z), (3.0, 0.0, -3.0));
 }
 
 #[test]
@@ -80,7 +80,7 @@ fn computing_the_outer_product() {
 fn computing_the_normalized_vector() {
     let n = Vector::new(12.0, -20.0, 9.0).normalize();
 
-    assert_eq!((n[0], n[1], n[2]), (0.48, -0.80, 0.36));
+    assert_eq!((n.x, n.y, n.z), (0.48, -0.80, 0.36));
 }
 
 #[test]
@@ -121,22 +121,22 @@ fn rotating_by_a_quaternion() {
 fn cloning() {
     let v = Vector::new(1.0, 2.0, 3.0).clone();
 
-    assert_eq!((v[0], v[1], v[2]), (1.0, 2.0, 3.0));
+    assert_eq!((v.x, v.y, v.z), (1.0, 2.0, 3.0));
 }
 
 #[test]
 fn dereferencing_elements_by_index() {
     let v = Vector::new(1.0, 2.0, 3.0);
 
-    assert_eq!((v[0], v[1], v[2]), (1.0, 2.0, 3.0));
+    assert_eq!((v.x, v.y, v.z), (1.0, 2.0, 3.0));
 }
 
 #[test]
 fn mutably_dereferencing_elements_by_index() {
     let mut v = Vector::new(1.0, 2.0, 3.0);
-    v[0] = 3.0;
+    v.x = 3.0;
 
-    assert_eq!((v[0], v[1], v[2]), (3.0, 2.0, 3.0));
+    assert_eq!((v.x, v.y, v.z), (3.0, 2.0, 3.0));
 }
 
 #[test]
@@ -144,12 +144,12 @@ fn negating() {
     let a = Vector::new(1.0, 3.0, 9.0);
     let b = -a;
 
-    assert_eq!((b[0], b[1], b[2]), (-1.0, -3.0, -9.0));
+    assert_eq!((b.x, b.y, b.z), (-1.0, -3.0, -9.0));
 }
 
 #[test]
 fn multiplying_by_a_scalar() {
     let v = Vector::new(1.0, 2.0, 3.0) * 2.5;
 
-    assert_eq!((v[0], v[1], v[2]), (2.5, 5.0, 7.5));
+    assert_eq!((v.x, v.y, v.z), (2.5, 5.0, 7.5));
 }

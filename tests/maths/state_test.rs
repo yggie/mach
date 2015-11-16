@@ -119,7 +119,7 @@ fn transforming_a_point_with_only_translation() {
 
     let v = state.transform_point(Vector::new(4.0, 5.0, 6.0));
 
-    assert_eq!((v[0], v[1], v[2]), (5.0, 7.0, 9.0));
+    assert_eq!((v.x, v.y, v.z), (5.0, 7.0, 9.0));
 }
 
 #[test]
@@ -147,7 +147,7 @@ fn transforming_a_direction_with_only_translation() {
 
     let v = state.transform_direction(Vector::new(1.0, 2.0, 3.0));
 
-    assert_eq!((v[0], v[1], v[2]), (1.0, 2.0, 3.0));
+    assert_eq!((v.x, v.y, v.z), (1.0, 2.0, 3.0));
 }
 
 #[test]

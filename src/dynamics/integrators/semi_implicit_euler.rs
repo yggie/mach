@@ -18,7 +18,7 @@ impl SemiImplicitEuler {
         state.set_position_with_vector(p + new_velocity * t);
 
         let w = state.angular_velocity();
-        let w_as_quat = Quat::new(0.0, w[0] * t, w[1] * t, w[2] * t);
+        let w_as_quat = Quat::new(0.0, w.x * t, w.y * t, w.z * t);
         let q = state.rotation();
         let new_rotation = q + w_as_quat * q * 0.5;
 

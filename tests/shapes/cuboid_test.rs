@@ -24,7 +24,7 @@ fn computing_the_support_indices() {
     let v = c.vertex(indices[0]);
 
     assert_eq!(indices.len(), 1);
-    assert_eq!((v[0], v[1], v[2]), (-1.0, 1.5, 0.5));
+    assert_eq!((v.x, v.y, v.z), (-1.0, 1.5, 0.5));
 
     let other_indices = c.support_indices_for(Vector::new(1.0, 0.0, 0.0));
     let other_vertices: Vec<Vector> = other_indices.iter()
@@ -36,10 +36,10 @@ fn computing_the_support_indices() {
     let v1 = other_vertices[1];
     let v2 = other_vertices[2];
     let v3 = other_vertices[3];
-    assert_eq!((v0[0], v0[1], v0[2]), (1.0,  1.5,  0.5));
-    assert_eq!((v1[0], v1[1], v1[2]), (1.0, -1.5,  0.5));
-    assert_eq!((v2[0], v2[1], v2[2]), (1.0,  1.5, -0.5));
-    assert_eq!((v3[0], v3[1], v3[2]), (1.0, -1.5, -0.5));
+    assert_eq!((v0.x, v0.y, v0.z), (1.0,  1.5,  0.5));
+    assert_eq!((v1.x, v1.y, v1.z), (1.0, -1.5,  0.5));
+    assert_eq!((v2.x, v2.y, v2.z), (1.0,  1.5, -0.5));
+    assert_eq!((v3.x, v3.y, v3.z), (1.0, -1.5, -0.5));
 }
 
 #[test]

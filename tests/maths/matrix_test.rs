@@ -163,7 +163,7 @@ fn multiplying_by_a_vector() {
 
     let a: Vector = m * v;
 
-    assert_eq!((a[0], a[1], a[2]), (30.0, 36.0, 42.0));
+    assert_eq!((a.x, a.y, a.z), (30.0, 36.0, 42.0));
 }
 
 #[test]
