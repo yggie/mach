@@ -85,26 +85,26 @@ impl RigidBody {
 
     /// Returns the position of the `RigidBody`.
     #[inline]
-    pub fn position(&self) -> Vector {
-        self.state.position()
+    pub fn pos(&self) -> Vector {
+        self.state.pos()
     }
 
     /// Returns the velocity of the `RigidBody`.
     #[inline]
-    pub fn velocity(&self) -> Vector {
-        self.state.velocity()
+    pub fn vel(&self) -> Vector {
+        self.state.vel()
     }
 
     /// Returns the rotation of the `RigidBody` expressed as a `Quat`.
     #[inline]
-    pub fn rotation(&self) -> Quat {
-        self.state.rotation()
+    pub fn rot(&self) -> Quat {
+        self.state.rot()
     }
 
     /// Returns the angular velocity of the `RigidBody`.
     #[inline]
-    pub fn angular_velocity(&self) -> Vector {
-        self.state.angular_velocity()
+    pub fn ang_vel(&self) -> Vector {
+        self.state.ang_vel()
     }
 
     /// Returns the position of the vertex associated with the index.
@@ -120,26 +120,26 @@ impl RigidBody {
 
     /// Sets the `RigidBody`’s position using the `Vector` provided.
     #[inline]
-    pub fn set_position_with_vector(&mut self, position: Vector) {
-        self.state.set_position_with_vector(position);
+    pub fn set_pos(&mut self, values: &(Float, Float, Float)) {
+        self.state.set_pos(values);
     }
 
     /// Sets the `RigidBody`’s rotation using the `Quat` provided.
     #[inline]
-    pub fn set_rotation(&mut self, rotation: Quat) {
-        self.state.set_rotation(rotation);
+    pub fn set_rot(&mut self, rot: &Quat) {
+        self.state.set_rot(rot);
     }
 
     /// Sets the `RigidBody`’s velocity using the `Vector` provided.
     #[inline]
-    pub fn set_velocity_with_vector(&mut self, velocity: Vector) {
-        self.state.set_velocity_with_vector(velocity);
+    pub fn set_vel(&mut self, values: &(Float, Float, Float)) {
+        self.state.set_vel(values);
     }
 
     /// Set the `RigidBody`’s angular velocity using the `Vector` provided.
     #[inline]
-    pub fn set_angular_velocity_with_vector(&mut self, angular_velocity: Vector) {
-        self.state.set_angular_velocity(angular_velocity.x, angular_velocity.y, angular_velocity.z);
+    pub fn set_ang_vel(&mut self, values: &(Float, Float, Float)) {
+        self.state.set_ang_vel(values);
     }
 }
 
@@ -160,10 +160,10 @@ impl fmt::Display for RigidBody {
         write!(f,
             "RigidBody[{}]: Pos={}, Rot={}, Vel={}, AngVel={}",
             self.id(),
-            self.position(),
-            self.rotation(),
-            self.velocity(),
-            self.angular_velocity(),
+            self.pos(),
+            self.rot(),
+            self.vel(),
+            self.ang_vel(),
         )
     }
 }

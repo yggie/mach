@@ -10,10 +10,10 @@ pub fn kinetic_energy_for(body: &RigidBody) -> Float {
 /// Computes the translational component of the kinetic energy for the
 /// `RigidBody`.
 pub fn translational_kinetic_energy_for(body: &RigidBody) -> Float {
-    body.mass() * body.velocity().length_sq() / 2.0
+    body.mass() * body.vel().length_sq() / 2.0
 }
 
 /// Computes the rotational component of the kinetic energy for the `RigidBody`.
 pub fn rotational_kinetic_energy_for(body: &RigidBody) -> Float {
-    (body.inertia() * body.angular_velocity()).dot(body.angular_velocity()) / 2.0
+    (body.inertia() * body.ang_vel()).dot(body.ang_vel()) / 2.0
 }

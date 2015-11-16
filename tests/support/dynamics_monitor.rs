@@ -40,8 +40,8 @@ impl<D: Dynamics> Dynamics for DynamicsMonitor<D> {
         let total_energy = collisions.bodies_iter()
             .fold(0.0, |cumulative_energy, cell| {
                 let body = &*cell;
-                let kinetic_energy = 0.5 * body.mass() * body.velocity().length_sq();
-                let potential_energy = body.mass() * body.position().dot(self.gravity());
+                let kinetic_energy = 0.5 * body.mass() * body.vel().length_sq();
+                let potential_energy = body.mass() * body.pos().dot(self.gravity());
 
                 renderevent::update_rigid_body(body);
                 return cumulative_energy + kinetic_energy + potential_energy;

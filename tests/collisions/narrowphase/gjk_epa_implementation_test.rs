@@ -26,7 +26,7 @@ fn almost_colliding_vertex_to_vertex() {
         Cuboid::new(1.0, 2.0, 1.0),
         State::new_stationary(),
         Cuboid::new(2.0, 1.0, 1.0),
-        State::new_with_position(1.51, 1.51, 1.01),
+        State::new_with_pos(1.51, 1.51, 1.01),
     );
 
     let intersection = narrowphase.find_intersection(&bodies[0], &bodies[1]);
@@ -40,7 +40,7 @@ fn colliding_vertex_to_vertex() {
         Cuboid::new(1.0, 2.0, 1.0),
         State::new_stationary(),
         Cuboid::new(2.0, 1.0, 1.0),
-        State::new_with_position(1.49, 1.49, 0.99),
+        State::new_with_pos(1.49, 1.49, 0.99),
     );
 
     let intersection = narrowphase.find_intersection(&bodies[0], &bodies[1]);
@@ -58,7 +58,7 @@ fn almost_colliding_edge_to_edge() {
         Cuboid::new(1.0, 2.0, 3.0),
         State::new_stationary(),
         Cuboid::new(1.0, 2.0, 3.0),
-        State::new_with_position(1.01, 1.51, 0.00),
+        State::new_with_pos(1.01, 1.51, 0.00),
     );
 
     let intersection = narrowphase.find_intersection(&bodies[0], &bodies[1]);
@@ -72,7 +72,7 @@ fn colliding_edge_to_edge() {
         Cuboid::new(1.0, 2.0, 3.0),
         State::new_stationary(),
         Cuboid::new(1.0, 2.0, 3.0),
-        State::new_with_position(0.99, 1.49, 0.00),
+        State::new_with_pos(0.99, 1.49, 0.00),
     );
 
     let intersection = narrowphase.find_intersection(&bodies[0], &bodies[1]);
@@ -90,7 +90,7 @@ fn almost_colliding_face_to_face() {
         Cuboid::new(1.0, 1.0, 1.0),
         State::new_stationary(),
         Cuboid::new(1.0, 1.0, 1.0),
-        State::new_with_position(1.01, 0.5, 0.5),
+        State::new_with_pos(1.01, 0.5, 0.5),
     );
 
     let intersection = narrowphase.find_intersection(&bodies[0], &bodies[1]);
@@ -104,7 +104,7 @@ fn colliding_face_to_face() {
         Cuboid::new(1.0, 1.0, 1.0),
         State::new_stationary(),
         Cuboid::new(1.0, 1.0, 1.0),
-        State::new_with_position(0.99, 0.5, 0.5),
+        State::new_with_pos(0.99, 0.5, 0.5),
     );
 
     let option = narrowphase.find_intersection(&bodies[0], &bodies[1]);
@@ -122,7 +122,7 @@ fn almost_colliding_edge_to_face() {
         Cuboid::new(1.0, 1.0, 1.0),
         State::new_stationary(),
         Cuboid::new(1.0, 1.0, 1.0),
-        State::new_with_position(0.51 + 0.5*(2.0 as Float).sqrt(), 0.00, 0.00)
+        State::new_with_pos(0.51 + 0.5*(2.0 as Float).sqrt(), 0.00, 0.00)
             .with_axis_angle(Vector::new(0.0, 1.0, 0.0), PI/4.0),
     );
 
@@ -137,7 +137,7 @@ fn colliding_edge_to_face() {
         Cuboid::new(1.0, 1.0, 1.0),
         State::new_stationary(),
         Cuboid::new(1.0, 1.0, 1.0),
-        State::new_with_position(0.49 + 0.5*(2.0 as Float).sqrt(), 0.00, 0.00)
+        State::new_with_pos(0.49 + 0.5*(2.0 as Float).sqrt(), 0.00, 0.00)
             .with_axis_angle(Vector::new(0.0, 0.0, 1.0), PI/4.0),
     );
 
@@ -157,7 +157,7 @@ fn almost_colliding_vertex_to_face() {
     let initial_axis = Vector::new(1.0, 1.0, 1.0).normalize();
     let final_axis = Vector::new(1.0, 0.0, 0.0);
     let rotation = initial_axis.cross(final_axis);
-    let state_1 = State::new_with_position((1.01 + (3.0 as Float).sqrt())/2.0, 0.0, 0.0)
+    let state_1 = State::new_with_pos((1.01 + (3.0 as Float).sqrt())/2.0, 0.0, 0.0)
         .with_axis_angle(rotation, rotation.length().asin());
     let (narrowphase, bodies) = setup_cubes(
         Cuboid::new(1.0, 1.0, 1.0),
@@ -179,7 +179,7 @@ fn colliding_vertex_to_face() {
     let initial_axis = Vector::new(1.0, 1.0, 1.0).normalize();
     let final_axis = Vector::new(1.0, 0.0, 0.0);
     let rotation = initial_axis.cross(final_axis);
-    let state_1 = State::new_with_position((0.98 + (3.0 as Float).sqrt())/2.0, 0.1, 0.0)
+    let state_1 = State::new_with_pos((0.98 + (3.0 as Float).sqrt())/2.0, 0.1, 0.0)
         .with_axis_angle(rotation, rotation.length().asin());
     let (narrowphase, bodies) = setup_cubes(
         Cuboid::new(1.0, 1.0, 1.0),

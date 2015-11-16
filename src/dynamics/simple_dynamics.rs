@@ -28,13 +28,13 @@ impl SimpleDynamics {
         let M = [rigid_body_0.mass(), rigid_body_1.mass()];
         let Jinv = [rigid_body_0.inertia().inverse(), rigid_body_1.inertia().inverse()];
         // body velocities
-        let v = [rigid_body_0.velocity(), rigid_body_1.velocity()];
+        let v = [rigid_body_0.vel(), rigid_body_1.vel()];
         // body angular velocities
-        let w = [rigid_body_0.angular_velocity(), rigid_body_1.angular_velocity()];
+        let w = [rigid_body_0.ang_vel(), rigid_body_1.ang_vel()];
         // relative vector from position to contact center
         let to_contact_center = [
-            contact_center - rigid_body_0.position(),
-            contact_center - rigid_body_1.position(),
+            contact_center - rigid_body_0.pos(),
+            contact_center - rigid_body_1.pos(),
         ];
         // axis of rotation for the impulse introduced by the contact. The axis
         // has been scaled by the distance to the contact.
@@ -65,14 +65,14 @@ impl SimpleDynamics {
     fn solve_for_contact_with_static(&mut self, rigid_body: &RigidBody, static_body: &StaticBody, contact_center: Vector, contact_normal: Vector) -> (Vector, Vector) {
         let epsilon = rigid_body.coefficient_of_restitution() * static_body.coefficient_of_restitution();
         // relative vector from position to contact center
-        let to_contact_center = contact_center - rigid_body.position();
+        let to_contact_center = contact_center - rigid_body.pos();
         // axis of rotation for the impulse introduced by the contact. The axis
         // has been scaled by the distance to the contact.
         let k_scaled = to_contact_center.cross(contact_normal);
 
         let m = rigid_body.mass();
-        let v = rigid_body.velocity();
-        let w = rigid_body.angular_velocity();
+        let v = rigid_body.vel();
+        let w = rigid_body.ang_vel();
         let Jinv = rigid_body.inertia().inverse();
 
         let impulse = - (1.0 + epsilon) *
@@ -152,10 +152,10 @@ impl SimpleDynamics {
     }
 
     fn update_rigid_body(&self, rigid_body: &mut RigidBody, change: (Vector, Vector), remaining_time: Float) {
-        let v = rigid_body.velocity();
-        let w = rigid_body.angular_velocity();
-        rigid_body.set_velocity_with_vector(v + change.0);
-        rigid_body.set_angular_velocity_with_vector(w + change.1);
+        let v = rigid_body.vel();
+        let w = rigid_body.ang_vel();
+        rigid_body.set_vel(&(v + change.0));
+        rigid_body.set_ang_vel(&(w + change.1));
 
         self.integrator.integrate_in_place(rigid_body.state_mut(), remaining_time, self.gravity);
     }
