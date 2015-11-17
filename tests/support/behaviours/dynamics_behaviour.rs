@@ -6,7 +6,7 @@ macro_rules! assert_dynamics_behaviour(
         mod dynamics_behaviour {
             use super::test_subject;
 
-            use support::{ CollisionSpaceMonitor, DynamicsMonitor };
+            use support::MonitoredWorld;
 
             use mach::{ Scalar, PI, World };
             use mach::maths::{ State, Transform, Vector };
@@ -15,11 +15,8 @@ macro_rules! assert_dynamics_behaviour(
             use mach::entities::Material;
             use mach::collisions::{ CollisionSpace, SimpleCollisionSpace };
 
-            fn new_world<D: Dynamics>(dynamics: D) -> World<CollisionSpaceMonitor<SimpleCollisionSpace>, DynamicsMonitor<D>> {
-                let monitored_dynamics = DynamicsMonitor::new(dynamics);
-                let collision_space = CollisionSpaceMonitor::new(SimpleCollisionSpace::new());
-
-                return World::new(collision_space, monitored_dynamics);
+            fn new_world<D: Dynamics>(dynamics: D) -> MonitoredWorld<SimpleCollisionSpace, D> {
+                return MonitoredWorld::new(SimpleCollisionSpace::new(), dynamics);
             }
 
             fn default_material() -> Material {

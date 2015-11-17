@@ -7,8 +7,12 @@
 #![warn(missing_docs)]
 
 mod world;
+mod mach_world;
+mod custom_world;
 
 pub use self::world::World;
+pub use self::mach_world::MachWorld;
+pub use self::custom_world::CustomWorld;
 
 pub mod utils;
 pub mod maths;

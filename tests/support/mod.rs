@@ -1,6 +1,7 @@
-mod collision_space_monitor;
-mod dynamics_monitor;
 mod simulation;
+mod monitored_world;
+mod dynamics_monitor;
+mod collision_space_monitor;
 
 #[macro_use]
 #[cfg(test)]
@@ -10,6 +11,7 @@ mod behaviours;
 #[cfg(test)]
 mod assert_approx_eq;
 
-pub use self::collision_space_monitor::CollisionSpaceMonitor;
-pub use self::dynamics_monitor::DynamicsMonitor;
 pub use self::simulation::Simulation;
+pub use self::monitored_world::MonitoredWorld;
+pub use self::dynamics_monitor::DynamicsMonitor;
+pub use self::collision_space_monitor::CollisionSpaceMonitor;

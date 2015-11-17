@@ -4,6 +4,7 @@ use std::rc::Rc;
 
 use support::Simulation;
 
+use mach::World;
 use mach::maths::{ State, Transform, Vector };
 use mach::shapes::{ Cuboid, Sphere, TriangleMesh };
 use mach::entities::Material;

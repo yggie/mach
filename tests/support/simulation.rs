@@ -2,10 +2,10 @@ use mach::{ World, Scalar };
 use mach::dynamics::{ Dynamics, SimpleDynamics };
 use mach::collisions::{ CollisionSpace, SimpleCollisionSpace };
 
-use support::{ CollisionSpaceMonitor, DynamicsMonitor };
+use support::MonitoredWorld;
 
 pub struct Simulation<C: CollisionSpace, D: Dynamics> {
-    world: World<CollisionSpaceMonitor<C>, DynamicsMonitor<D>>,
+    world: MonitoredWorld<C, D>,
     did_assert: bool
 }
 
@@ -13,10 +13,7 @@ impl<C: CollisionSpace, D: Dynamics> Simulation<C, D> {
     pub fn new_default() -> Simulation<SimpleCollisionSpace, SimpleDynamics> {
         let collisions = SimpleCollisionSpace::new();
         let dynamics = SimpleDynamics::new();
-        let world = World::new(
-            CollisionSpaceMonitor::new(collisions),
-            DynamicsMonitor::new(dynamics)
-        );
+        let world = MonitoredWorld::new(collisions, dynamics);
 
         println!("[RENDERABLE]");
 
@@ -26,7 +23,7 @@ impl<C: CollisionSpace, D: Dynamics> Simulation<C, D> {
         };
     }
 
-    pub fn configure<F: FnOnce(&mut World<CollisionSpaceMonitor<C>, DynamicsMonitor<D>>)>(&mut self, func: F) -> &mut Simulation<C, D> {
+    pub fn configure<F: FnOnce(&mut MonitoredWorld<C, D>)>(&mut self, func: F) -> &mut Simulation<C, D> {
         self.did_assert = false;
 
         func(&mut self.world);
