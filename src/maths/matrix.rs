@@ -1,19 +1,19 @@
 use std::fmt;
 use std::ops::{ Add, Div, Index, IndexMut, Mul, Neg, Sub };
 
-use { Float, TOLERANCE };
+use { Scalar, TOLERANCE };
 use maths::Vector;
 
 /// A representation of a 3-by-3 matrix
 #[derive(Clone, Copy, Debug)]
 pub struct Matrix {
-    elements: [Float; 9]
+    elements: [Scalar; 9]
 }
 
 impl Matrix {
     /// Constructs a new matrix given 9 elements in row major order.
     #[inline(always)]
-    pub fn new(m11: Float, m12: Float, m13: Float, m21: Float, m22: Float, m23: Float, m31: Float, m32: Float, m33: Float) -> Matrix {
+    pub fn new(m11: Scalar, m12: Scalar, m13: Scalar, m21: Scalar, m22: Scalar, m23: Scalar, m31: Scalar, m32: Scalar, m33: Scalar) -> Matrix {
         Matrix {
             elements: [
                 m11,
@@ -31,7 +31,7 @@ impl Matrix {
 
     /// Constructs a new matrix from a slice given 9 elements in row major
     /// order.
-    pub fn new_from_slice(elements: &[Float]) -> Matrix {
+    pub fn new_from_slice(elements: &[Scalar]) -> Matrix {
         Matrix {
             elements: [
                 elements[0],
@@ -54,7 +54,7 @@ impl Matrix {
 
     /// Constructs a new matrix given 3 elements in the matrix diagonal.
     #[inline(always)]
-    pub fn new_diag(x: Float, y: Float, z: Float) -> Matrix {
+    pub fn new_diag(x: Scalar, y: Scalar, z: Scalar) -> Matrix {
         Matrix{ elements: [
               x, 0.0, 0.0,
             0.0,   y, 0.0,
@@ -64,7 +64,7 @@ impl Matrix {
 
     /// Constructs a skew matrix based on the input vector.
     #[inline(always)]
-    pub fn new_skew(x: Float, y: Float, z: Float) -> Matrix {
+    pub fn new_skew(x: Scalar, y: Scalar, z: Scalar) -> Matrix {
         Matrix{ elements: [
             0.0,  -z,   y,
               z, 0.0,  -x,
@@ -74,7 +74,7 @@ impl Matrix {
 
     /// Computes the orientation matrix given the axis of rotation and angle
     /// of rotation measured in radians.
-    pub fn new_rotation(radians: Float, axis: Vector) -> Matrix {
+    pub fn new_rotation(radians: Scalar, axis: Vector) -> Matrix {
         let c = radians.cos();
         let s = radians.sin();
         let a = axis.normalize();
@@ -85,12 +85,12 @@ impl Matrix {
 
     /// Returns an element from the matrix, given the row and column numbers.
     #[inline(always)]
-    pub fn get(&self, row: usize, col: usize) -> Float {
+    pub fn get(&self, row: usize, col: usize) -> Scalar {
         self.elements[3*col + row]
     }
 
     /// Computes the determinant of the `Matrix`.
-    pub fn determinant(&self) -> Float {
+    pub fn determinant(&self) -> Scalar {
         return self[0]*(self[4]*self[8] - self[5]*self[7]) -
                self[1]*(self[3]*self[8] - self[5]*self[6]) +
                self[2]*(self[3]*self[7] - self[4]*self[6]);
@@ -151,11 +151,11 @@ impl PartialEq for Matrix {
 
 /// Implement the index operator.
 impl Index<usize> for Matrix {
-    type Output = Float;
+    type Output = Scalar;
 
     /// Obtain the elements in the Matrix in column major order.
     #[inline(always)]
-    fn index<'a>(&'a self, index: usize) -> &'a Float {
+    fn index<'a>(&'a self, index: usize) -> &'a Scalar {
         &self.elements[index]
     }
 }
@@ -165,7 +165,7 @@ impl IndexMut<usize> for Matrix {
     /// Obtains a mutable reference to the element in the Matrix in column
     /// major order.
     #[inline(always)]
-    fn index_mut<'a>(&'a mut self, index: usize) -> &'a mut Float {
+    fn index_mut<'a>(&'a mut self, index: usize) -> &'a mut Scalar {
         &mut self.elements[index]
     }
 }
@@ -176,7 +176,7 @@ impl Neg for Matrix {
 
     /// Applies the negation operator to each element in the matrix.
     fn neg(self) -> Matrix {
-        let elems: [Float; 9] = [
+        let elems: [Scalar; 9] = [
             -self[0], -self[1], -self[2],
             -self[3], -self[4], -self[5],
             -self[6], -self[7], -self[8],
@@ -191,7 +191,7 @@ impl Add<Matrix> for Matrix {
 
     /// Calculates the sum of two matrices.
     fn add(self, other: Matrix) -> Matrix {
-        let elems: [Float; 9] = [
+        let elems: [Scalar; 9] = [
             self[0] + other[0], self[1] + other[1], self[2] + other[2],
             self[3] + other[3], self[4] + other[4], self[5] + other[5],
             self[6] + other[6], self[7] + other[7], self[8] + other[8],
@@ -206,7 +206,7 @@ impl Sub<Matrix> for Matrix {
 
     /// Calculates the difference between two vectors.
     fn sub(self, other: Matrix) -> Matrix {
-        let elems: [Float; 9] = [
+        let elems: [Scalar; 9] = [
             self[0] - other[0], self[1] - other[1], self[2] - other[2],
             self[3] - other[3], self[4] - other[4], self[5] - other[5],
             self[6] - other[6], self[7] - other[7], self[8] - other[8],
@@ -216,12 +216,12 @@ impl Sub<Matrix> for Matrix {
 }
 
 /// Implement the multiplication operator between a `Matrix` and a `Vector`.
-impl Div<Float> for Matrix {
+impl Div<Scalar> for Matrix {
     type Output = Matrix;
 
     /// Divides all elements of the `Matrix` by the input and returns the
     /// resulting `Matrix`.
-    fn div(self, scalar: Float) -> Matrix {
+    fn div(self, scalar: Scalar) -> Matrix {
         return Matrix::new(
             self[0]/scalar,
             self[1]/scalar,
@@ -237,12 +237,12 @@ impl Div<Float> for Matrix {
 }
 
 /// Implement the multiplication operator between a `Matrix` and a `Vector`.
-impl Mul<Float> for Matrix {
+impl Mul<Scalar> for Matrix {
     type Output = Matrix;
 
     /// Multiplies all elements of the `Matrix` by the input and returns the
     /// resulting `Matrix`.
-    fn mul(self, scalar: Float) -> Matrix {
+    fn mul(self, scalar: Scalar) -> Matrix {
         return Matrix::new(
             self[0]*scalar,
             self[1]*scalar,
@@ -279,7 +279,7 @@ impl Mul<Matrix> for Matrix {
     /// Calculates the result of applying matrix multiplication between two
     /// matrices.
     fn mul(self, other: Matrix) -> Matrix {
-        let elems: [Float; 9] = [
+        let elems: [Scalar; 9] = [
             self[0]*other[0] + self[1]*other[3] + self[2]*other[6],
             self[0]*other[1] + self[1]*other[4] + self[2]*other[7],
             self[0]*other[2] + self[1]*other[5] + self[2]*other[8],

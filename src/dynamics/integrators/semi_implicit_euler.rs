@@ -1,4 +1,4 @@
-use Float;
+use Scalar;
 use maths::{ State, Quat, Vector };
 use dynamics::Integrator;
 
@@ -8,7 +8,7 @@ pub struct SemiImplicitEuler;
 impl SemiImplicitEuler {
     /// Integrates the `State` in place for the given time step and applied
     /// force.
-    pub fn integrate_in_place(&self, state: &mut State, time_step: Float, applied_force: Vector) {
+    pub fn integrate_in_place(&self, state: &mut State, time_step: Scalar, applied_force: Vector) {
         // TODO deal with temporaries once language limitation is resolved, see https://github.com/rust-lang/rfcs/pull/396
         let t = time_step;
         let p = state.pos();
@@ -28,7 +28,7 @@ impl SemiImplicitEuler {
 
 impl Integrator for SemiImplicitEuler {
     #[inline]
-    fn integrate_in_place(&self, state: &mut State, time_step: Float, applied_force: Vector) {
+    fn integrate_in_place(&self, state: &mut State, time_step: Scalar, applied_force: Vector) {
         (self as &SemiImplicitEuler).integrate_in_place(state, time_step, applied_force);
     }
 }

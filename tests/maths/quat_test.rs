@@ -1,4 +1,4 @@
-use mach::Float;
+use mach::Scalar;
 use mach::maths::{ Quat, Vector };
 
 #[test]
@@ -45,7 +45,7 @@ fn it_can_compute_the_squared_length() {
 fn it_can_compute_the_length() {
     let q = Quat::new(-3.0, 4.0, 2.0, -1.0);
 
-    assert_approx_eq!(q.length(), (30.0 as Float).sqrt());
+    assert_approx_eq!(q.length(), (30.0 as Scalar).sqrt());
 }
 
 #[test]

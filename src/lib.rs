@@ -32,7 +32,7 @@ macro_rules! set_precision {
 
         /// A floating point type used throughout the engine, depends on the precision
         /// that the engine was compiled with.
-        pub type Float = $precision;
+        pub type Scalar = $precision;
 
         /// The PI constant. This is simply an alias for the constants in the standard
         /// library, depending on the precision the library was compiled with.

@@ -1,4 +1,4 @@
-use { Float, TOLERANCE };
+use { Scalar, TOLERANCE };
 
 /// This trait is implemented by types without infinite precision.
 pub trait ApproxEq<T = Self> {
@@ -6,14 +6,8 @@ pub trait ApproxEq<T = Self> {
     fn approx_eq(self, T) -> bool;
 }
 
-impl<'a> ApproxEq<&'a Float> for &'a Float {
-    fn approx_eq(self, other: &'a Float) -> bool {
-        (self - other).abs() < TOLERANCE
-    }
-}
-
-impl ApproxEq for Float {
+impl ApproxEq for Scalar {
     fn approx_eq(self, other: Self) -> bool {
-        (&self).approx_eq(&other)
+        (self - other).abs() < TOLERANCE
     }
 }

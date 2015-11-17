@@ -1,6 +1,6 @@
 use std::mem;
 
-use mach::{ Float, PI };
+use mach::{ Scalar, PI };
 use mach::maths::{ State, Vector };
 use mach::shapes::Cuboid;
 use mach::entities::{ Material, RigidBody };
@@ -122,7 +122,7 @@ fn almost_colliding_edge_to_face() {
         Cuboid::new(1.0, 1.0, 1.0),
         State::new_stationary(),
         Cuboid::new(1.0, 1.0, 1.0),
-        State::new_with_pos(0.51 + 0.5*(2.0 as Float).sqrt(), 0.00, 0.00)
+        State::new_with_pos(0.51 + 0.5*(2.0 as Scalar).sqrt(), 0.00, 0.00)
             .with_axis_angle(Vector::new(0.0, 1.0, 0.0), PI/4.0),
     );
 
@@ -137,7 +137,7 @@ fn colliding_edge_to_face() {
         Cuboid::new(1.0, 1.0, 1.0),
         State::new_stationary(),
         Cuboid::new(1.0, 1.0, 1.0),
-        State::new_with_pos(0.49 + 0.5*(2.0 as Float).sqrt(), 0.00, 0.00)
+        State::new_with_pos(0.49 + 0.5*(2.0 as Scalar).sqrt(), 0.00, 0.00)
             .with_axis_angle(Vector::new(0.0, 0.0, 1.0), PI/4.0),
     );
 
@@ -157,7 +157,7 @@ fn almost_colliding_vertex_to_face() {
     let initial_axis = Vector::new(1.0, 1.0, 1.0).normalize();
     let final_axis = Vector::new(1.0, 0.0, 0.0);
     let rotation = initial_axis.cross(final_axis);
-    let state_1 = State::new_with_pos((1.01 + (3.0 as Float).sqrt())/2.0, 0.0, 0.0)
+    let state_1 = State::new_with_pos((1.01 + (3.0 as Scalar).sqrt())/2.0, 0.0, 0.0)
         .with_axis_angle(rotation, rotation.length().asin());
     let (narrowphase, bodies) = setup_cubes(
         Cuboid::new(1.0, 1.0, 1.0),
@@ -179,7 +179,7 @@ fn colliding_vertex_to_face() {
     let initial_axis = Vector::new(1.0, 1.0, 1.0).normalize();
     let final_axis = Vector::new(1.0, 0.0, 0.0);
     let rotation = initial_axis.cross(final_axis);
-    let state_1 = State::new_with_pos((0.98 + (3.0 as Float).sqrt())/2.0, 0.1, 0.0)
+    let state_1 = State::new_with_pos((0.98 + (3.0 as Scalar).sqrt())/2.0, 0.1, 0.0)
         .with_axis_angle(rotation, rotation.length().asin());
     let (narrowphase, bodies) = setup_cubes(
         Cuboid::new(1.0, 1.0, 1.0),

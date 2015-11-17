@@ -1,4 +1,4 @@
-use { Float, TOLERANCE };
+use { Scalar, TOLERANCE };
 use maths::Vector;
 use utils::Surface;
 use utils::debug::renderevent;
@@ -136,7 +136,7 @@ impl DirectedEdge {
             self.nodes[1] == edge.nodes[1]
     }
 
-    fn project_to_directed_plane(&self, vertex: Vector) -> (Float, Float) {
+    fn project_to_directed_plane(&self, vertex: Vector) -> (Scalar, Scalar) {
         let relative_position = vertex - self.point_on_edge;
         let ref_x = relative_position.dot(self.direction);
         let ref_y = relative_position.dot(self.up_vector);
@@ -209,7 +209,7 @@ fn select_best_node_for_edge(available_nodes: &Vec<Node>, edge_list: &Vec<Direct
     let mut max_gradient = -1e5;
     let mut node_with_max_gradient = None;
     for node_with_gradient in filtered_nodes_with_gradients_iter {
-        let gradient: Float = node_with_gradient.2;
+        let gradient: Scalar = node_with_gradient.2;
         if gradient > max_gradient {
             max_gradient = gradient;
             node_with_max_gradient = Some(node_with_gradient);

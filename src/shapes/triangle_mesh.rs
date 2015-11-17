@@ -2,7 +2,7 @@ use std::rc::Rc;
 use std::fmt;
 use std::collections::HashMap;
 
-use { Float, NEG_INFINITY, TOLERANCE };
+use { Scalar, NEG_INFINITY, TOLERANCE };
 use maths::{ Matrix, Vector };
 use shapes::Shape;
 
@@ -67,7 +67,7 @@ impl fmt::Display for TriangleMesh {
 }
 
 impl Shape for TriangleMesh {
-    fn volume(&self) -> Float {
+    fn volume(&self) -> Scalar {
         0.0
     }
 

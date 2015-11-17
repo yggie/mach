@@ -1,4 +1,4 @@
-use mach::{ World, Float };
+use mach::{ World, Scalar };
 use mach::dynamics::{ Dynamics, SimpleDynamics };
 use mach::collisions::{ CollisionSpace, SimpleCollisionSpace };
 
@@ -34,7 +34,7 @@ impl<C: CollisionSpace, D: Dynamics> Simulation<C, D> {
         return self;
     }
 
-    pub fn execute_multiple_steps(&mut self, count: u32, step: Float) -> &mut Simulation<C, D> {
+    pub fn execute_multiple_steps(&mut self, count: u32, step: Scalar) -> &mut Simulation<C, D> {
         for _ in (0..count) {
             self.world.update(step);
         }

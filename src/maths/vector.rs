@@ -2,25 +2,25 @@ use std::fmt;
 use std::mem;
 use std::ops::{ Add, Deref, DerefMut, Div, Mul, Neg, Sub };
 
-use { Float, TOLERANCE };
+use { Scalar, TOLERANCE };
 use maths::{ ApproxEq, Matrix, Quat };
 
 /// A representation of a 3-dimensional column vector.
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Vector {
     /// The x component of the vector.
-    pub x: Float,
+    pub x: Scalar,
     /// The y component of the vector.
-    pub y: Float,
+    pub y: Scalar,
     /// The z component of the vector.
-    pub z: Float,
+    pub z: Scalar,
 }
 
 /// Static methods for the Vector struct.
 impl Vector {
     /// A simple constructor which builds a column vector given three elements.
     #[inline(always)]
-    pub fn new(x: Float, y: Float, z: Float) -> Vector {
+    pub fn new(x: Scalar, y: Scalar, z: Scalar) -> Vector {
         Vector {
             x: x,
             y: y,
@@ -35,7 +35,7 @@ impl Vector {
 
     /// Set the components of the `Vector` to the specified values.
     #[inline]
-    pub fn set(&mut self, other: &(Float, Float, Float)) {
+    pub fn set(&mut self, other: &(Scalar, Scalar, Scalar)) {
         self.x = other.0;
         self.y = other.1;
         self.z = other.2;
@@ -44,20 +44,20 @@ impl Vector {
     /// Computes the sum of the `Vector` and three scalars treated as components
     /// of a `Vector`.
     #[inline]
-    pub fn add(&self, x: Float, y: Float, z: Float) -> Vector {
+    pub fn add(&self, x: Scalar, y: Scalar, z: Scalar) -> Vector {
         Vector::new(self.x + x, self.y + y, self.z + z)
     }
 
     /// Computes the difference between a `Vector` and three scalars treated as
     /// components of a `Vector`.
     #[inline]
-    pub fn sub(&self, x: Float, y: Float, z: Float) -> Vector {
+    pub fn sub(&self, x: Scalar, y: Scalar, z: Scalar) -> Vector {
         Vector::new(self.x - x, self.y - y, self.z - z)
     }
 
     /// Computes the dot product between two vectors.
     #[inline(always)]
-    pub fn dot(&self, other: Vector) -> Float {
+    pub fn dot(&self, other: Vector) -> Scalar {
         self.x*other.x + self.y*other.y + self.z*other.z
     }
 
@@ -79,13 +79,13 @@ impl Vector {
 
     /// Computes the squared length of a Vector.
     #[inline(always)]
-    pub fn length_sq(&self) -> Float {
+    pub fn length_sq(&self) -> Scalar {
         self.x*self.x + self.y*self.y + self.z*self.z
     }
 
     /// Computes the length of a Vector.
     #[inline(always)]
-    pub fn length(&self) -> Float {
+    pub fn length(&self) -> Scalar {
         self.length_sq().sqrt()
     }
 
@@ -99,7 +99,7 @@ impl Vector {
     }
 
     /// Computes the distance to the `Vector` specified.
-    pub fn distance_to(&self, other: Vector) -> Float {
+    pub fn distance_to(&self, other: Vector) -> Scalar {
         (*self - other).length()
     }
 
@@ -259,69 +259,69 @@ impl Sub<Vector> for Vector {
 }
 
 /// Implement the `Mul` trait to allow using the `*` operator for a `Vector`
-/// with a `Float`.
-impl<'a> Mul<Float> for &'a Vector {
+/// with a `Scalar`.
+impl<'a> Mul<Scalar> for &'a Vector {
     type Output = Vector;
 
     #[inline]
-    fn mul(self, s: Float) -> Vector {
+    fn mul(self, s: Scalar) -> Vector {
         Vector::new(self.x*s, self.y*s, self.z*s)
     }
 }
 
 /// Implement the `Mul` trait to allow using the `*` operator for a `Vector`
-/// with a `Float`.
-impl Mul<Float> for Vector {
+/// with a `Scalar`.
+impl Mul<Scalar> for Vector {
     type Output = Vector;
 
     #[inline]
-    fn mul(self, s: Float) -> Vector {
+    fn mul(self, s: Scalar) -> Vector {
         &self * s
     }
 }
 
 /// Implement the `Div` trait to allow using the `/` operator for a `Vector`
-/// with a `Float`.
-impl<'a> Div<Float> for &'a Vector {
+/// with a `Scalar`.
+impl<'a> Div<Scalar> for &'a Vector {
     type Output = Vector;
 
     #[inline]
-    fn div(self, s: Float) -> Vector {
+    fn div(self, s: Scalar) -> Vector {
         Vector::new(self.x/s, self.y/s, self.z/s)
     }
 }
 
 /// Implement the `Div` trait to allow using the `/` operator for a `Vector`
-/// with a `Float`.
-impl Div<Float> for Vector {
+/// with a `Scalar`.
+impl Div<Scalar> for Vector {
     type Output = Vector;
 
     #[inline]
-    fn div(self, s: Float) -> Vector {
+    fn div(self, s: Scalar) -> Vector {
         Vector::new(self.x/s, self.y/s, self.z/s)
     }
 }
 
 /// Implements the `AsRef` trait to allow conversion between a `Vector` and a
-/// `[Float; 3]`.
-impl AsRef<[Float; 3]> for Vector {
+/// `[Scalar; 3]`.
+impl AsRef<[Scalar; 3]> for Vector {
     #[inline]
-    fn as_ref(&self) -> &[Float; 3] {
+    fn as_ref(&self) -> &[Scalar; 3] {
         unsafe { mem::transmute(self) }
     }
 }
 
 /// Implements the `AsRef` trait to allow conversion between a `Vector` and a
-/// `(Float, Float, Float)`.
-impl AsRef<(Float, Float, Float)> for Vector {
+/// `(Scalar, Scalar, Scalar)`.
+impl AsRef<(Scalar, Scalar, Scalar)> for Vector {
     #[inline]
-    fn as_ref(&self) -> &(Float, Float, Float) {
+    fn as_ref(&self) -> &(Scalar, Scalar, Scalar) {
         unsafe { mem::transmute(self) }
     }
 }
 
 impl Deref for Vector {
-    type Target = (Float, Float, Float);
+    type Target = (Scalar, Scalar, Scalar);
 
     fn deref(&self) -> &Self::Target {
         unsafe { mem::transmute(self) }

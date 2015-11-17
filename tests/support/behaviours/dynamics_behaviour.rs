@@ -8,7 +8,7 @@ macro_rules! assert_dynamics_behaviour(
 
             use support::{ CollisionSpaceMonitor, DynamicsMonitor };
 
-            use mach::{ Float, PI, World };
+            use mach::{ Scalar, PI, World };
             use mach::maths::{ State, Transform, Vector };
             use mach::shapes::Cuboid;
             use mach::dynamics::Dynamics;
@@ -81,7 +81,7 @@ macro_rules! assert_dynamics_behaviour(
                 let initial_axis = Vector::new(1.0, 1.0, 1.0).normalize();
                 let final_axis = Vector::new(1.0, 0.0, 0.0);
                 let rotation = initial_axis.cross(final_axis);
-                let state_1 = State::new_with_pos((0.98 + (3.0 as Float).sqrt())/2.0, 0.0, 0.0)
+                let state_1 = State::new_with_pos((0.98 + (3.0 as Scalar).sqrt())/2.0, 0.0, 0.0)
                     .with_axis_angle(rotation, rotation.length().asin())
                     .with_vel(-1.0, 0.0, 0.0);
                 let id_1 = world.create_body(
@@ -113,7 +113,7 @@ macro_rules! assert_dynamics_behaviour(
                 world.create_static_body(
                     Cuboid::new_cube(2.0),
                     &default_material(),
-                    Transform::new_with_translation(0.0, 5.0, -1.05 - (0.5 as Float).sqrt()),
+                    Transform::new_with_translation(0.0, 5.0, -1.05 - (0.5 as Scalar).sqrt()),
                 );
 
                 world.update(0.05);

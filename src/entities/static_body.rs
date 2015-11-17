@@ -1,6 +1,6 @@
 use std::fmt::{ Display, Formatter, Result };
 
-use { ID, Float };
+use { ID, Scalar };
 use maths::{ Transform, Quat, Vector };
 use shapes::Shape;
 use entities::{ Material, VolumetricBody };
@@ -11,8 +11,8 @@ pub struct StaticBody {
     id: ID,
     shape: Box<Shape>,
     transform: Transform,
-    coefficient_of_restitution: Float,
-    _friction_coefficient: Float,
+    coefficient_of_restitution: Scalar,
+    _friction_coefficient: Scalar,
 }
 
 impl StaticBody {
@@ -42,13 +42,13 @@ impl StaticBody {
 
     /// Returns the coefficient of restitution associated with the `RigidBody`.
     #[inline]
-    pub fn coefficient_of_restitution(&self) -> Float {
+    pub fn coefficient_of_restitution(&self) -> Scalar {
         self.coefficient_of_restitution
     }
 
     /// Returns the friction coefficient associated with the `RigidBody`.
     #[inline]
-    pub fn friction_coefficient(&self) -> Float {
+    pub fn friction_coefficient(&self) -> Scalar {
         self._friction_coefficient
     }
 

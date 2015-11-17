@@ -1,6 +1,6 @@
 use std::fmt;
 
-use { ID, Float };
+use { ID, Scalar };
 use maths::{ Matrix, State, Transform, Quat, Vector };
 use shapes::Shape;
 use entities::{ Material, VolumetricBody };
@@ -8,11 +8,11 @@ use entities::{ Material, VolumetricBody };
 /// Represents a physical entity in the world.
 pub struct RigidBody {
     id: ID,
-    mass: Float,
+    mass: Scalar,
     shape: Box<Shape>,
     state: State,
-    coefficient_of_restitution: Float,
-    _friction_coefficient: Float,
+    coefficient_of_restitution: Scalar,
+    _friction_coefficient: Scalar,
 }
 
 impl RigidBody {
@@ -61,19 +61,19 @@ impl RigidBody {
 
     /// Returns the mass of the `RigidBody`.
     #[inline]
-    pub fn mass(&self) -> Float {
+    pub fn mass(&self) -> Scalar {
         self.mass
     }
 
     /// Returns the coefficient of restitution associated with the `RigidBody`.
     #[inline]
-    pub fn coefficient_of_restitution(&self) -> Float {
+    pub fn coefficient_of_restitution(&self) -> Scalar {
         self.coefficient_of_restitution
     }
 
     /// Returns the friction coefficient associated with the `RigidBody`.
     #[inline]
-    pub fn friction_coefficient(&self) -> Float {
+    pub fn friction_coefficient(&self) -> Scalar {
         self._friction_coefficient
     }
 
@@ -120,7 +120,7 @@ impl RigidBody {
 
     /// Sets the `RigidBody`’s position using the `Vector` provided.
     #[inline]
-    pub fn set_pos(&mut self, values: &(Float, Float, Float)) {
+    pub fn set_pos(&mut self, values: &(Scalar, Scalar, Scalar)) {
         self.state.set_pos(values);
     }
 
@@ -132,13 +132,13 @@ impl RigidBody {
 
     /// Sets the `RigidBody`’s velocity using the `Vector` provided.
     #[inline]
-    pub fn set_vel(&mut self, values: &(Float, Float, Float)) {
+    pub fn set_vel(&mut self, values: &(Scalar, Scalar, Scalar)) {
         self.state.set_vel(values);
     }
 
     /// Set the `RigidBody`’s angular velocity using the `Vector` provided.
     #[inline]
-    pub fn set_ang_vel(&mut self, values: &(Float, Float, Float)) {
+    pub fn set_ang_vel(&mut self, values: &(Scalar, Scalar, Scalar)) {
         self.state.set_ang_vel(values);
     }
 }

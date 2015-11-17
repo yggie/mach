@@ -1,4 +1,4 @@
-use Float;
+use Scalar;
 use maths::{ Vector, Quat };
 
 /// The `Transform` object represents a spatial transformation in 3D space.
@@ -20,7 +20,7 @@ impl Transform {
 
     /// Creates a new `Transform` instance with the given translation and no
     /// rotation.
-    pub fn new_with_translation(x: Float, y: Float, z: Float) -> Transform {
+    pub fn new_with_translation(x: Scalar, y: Scalar, z: Scalar) -> Transform {
         Transform::new(Vector::new(x, y, z), Quat::new_identity())
     }
 

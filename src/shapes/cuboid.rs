@@ -1,21 +1,21 @@
 use std::fmt;
 
-use { Float, TOLERANCE };
+use { Scalar, TOLERANCE };
 use maths::{ ApproxEq, Matrix, Vector };
 use shapes::Shape;
 
 /// A representation of a cuboid in 3 dimensions.
 #[derive(Clone, Debug)]
 pub struct Cuboid {
-    width: Float,
-    height: Float,
-    depth: Float,
+    width: Scalar,
+    height: Scalar,
+    depth: Scalar,
     vertices: [Vector; 8],
 }
 
 impl Cuboid {
     /// Constructs a new `Cuboid` given the width, height and depth dimensions.
-    pub fn new(width: Float, height: Float, depth: Float) -> Cuboid {
+    pub fn new(width: Scalar, height: Scalar, depth: Scalar) -> Cuboid {
         let half_width = width / 2.0;
         let half_height = height / 2.0;
         let half_depth = depth / 2.0;
@@ -39,22 +39,22 @@ impl Cuboid {
     }
 
     /// Constructs a new `Cuboid` with equally sized edges.
-    pub fn new_cube(size: Float) -> Cuboid {
+    pub fn new_cube(size: Scalar) -> Cuboid {
         Cuboid::new(size, size, size)
     }
 
     /// Returns the width of the `Cuboid`.
-    pub fn width(&self) -> Float {
+    pub fn width(&self) -> Scalar {
         self.width
     }
 
     /// Returns the height of the `Cuboid`.
-    pub fn height(&self) -> Float {
+    pub fn height(&self) -> Scalar {
         self.height
     }
 
     /// Returns the depth of the `Cuboid`.
-    pub fn depth(&self) -> Float {
+    pub fn depth(&self) -> Scalar {
         self.depth
     }
 }
@@ -73,15 +73,15 @@ impl PartialEq for Cuboid {
     /// Implements the `==` operator for the `Cuboid` class. Compares the
     /// dimensions of the `Cuboid` to be within reasonable tolerance.
     fn eq(&self, other: &Cuboid) -> bool {
-        ApproxEq::approx_eq(&self.width, &other.width) &&
-            ApproxEq::approx_eq(&self.height, &other.height) &&
-            ApproxEq::approx_eq(&self.depth, &other.depth)
+        ApproxEq::approx_eq(self.width, other.width) &&
+            ApproxEq::approx_eq(self.height, other.height) &&
+            ApproxEq::approx_eq(self.depth, other.depth)
     }
 }
 
 impl Shape for Cuboid {
     /// Calculates the volume of the `Cuboid`.
-    fn volume(&self) -> Float {
+    fn volume(&self) -> Scalar {
         self.width * self.height * self.depth
     }
 

@@ -1,4 +1,4 @@
-use { Float, TOLERANCE };
+use { Scalar, TOLERANCE };
 use maths::Vector;
 
 /// Represents a `Surface` for a given set of points.
@@ -16,7 +16,7 @@ impl Surface {
         let reference_point = vertices.iter()
             .fold(Vector::new_zero(), |total, &vector| {
                 total + vector
-            }) / (vertices.len() as Float);
+            }) / (vertices.len() as Scalar);
 
         let base = vertices[index_0];
         let relative_to_reference = base - reference_point;

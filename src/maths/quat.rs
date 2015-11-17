@@ -2,26 +2,26 @@ use std::fmt;
 use std::mem;
 use std::ops::{ Add, Deref, DerefMut, Div, Mul, Neg, Sub };
 
-use { Float, TOLERANCE };
+use { Scalar, TOLERANCE };
 use maths::{ ApproxEq, Vector };
 
 /// A representation of a quaternion.
 #[derive(Clone, Copy, Debug)]
 pub struct Quat {
     /// The real component of the `Quat`.
-    pub r: Float,
+    pub r: Scalar,
     /// The first imaginary component of the `Quat`.
-    pub i: Float,
+    pub i: Scalar,
     /// The second imaginary component of the `Quat`.
-    pub j: Float,
+    pub j: Scalar,
     /// The third imaginary component of the `Quat`.
-    pub k: Float,
+    pub k: Scalar,
 }
 
 impl Quat {
     /// Creates a new `Quat` with the coordinates provided.
     #[inline(always)]
-    pub fn new(r: Float, i: Float, j: Float, k: Float) -> Quat {
+    pub fn new(r: Scalar, i: Scalar, j: Scalar, k: Scalar) -> Quat {
         Quat {
             r: r,
             i: i,
@@ -44,7 +44,7 @@ impl Quat {
     }
 
     /// Creates a new `Quat` representing a rotation about an axis.
-    pub fn new_from_axis_angle(axis: Vector, angle_in_radians: Float) -> Quat {
+    pub fn new_from_axis_angle(axis: Vector, angle_in_radians: Scalar) -> Quat {
         let length = axis.length();
         let half_radians = angle_in_radians / 2.0;
         let sl = half_radians.sin() / length;
@@ -55,13 +55,13 @@ impl Quat {
 
     /// Computes the squared length of the `Quat`.
     #[inline(always)]
-    pub fn length_sq(&self) -> Float {
+    pub fn length_sq(&self) -> Scalar {
         self.r*self.r + self.i*self.i + self.j*self.j + self.k*self.k
     }
 
     /// Computes the length of the `Quat`.
     #[inline]
-    pub fn length(&self) -> Float {
+    pub fn length(&self) -> Scalar {
         self.length_sq().sqrt()
     }
 
@@ -81,7 +81,7 @@ impl Quat {
 
     /// Sets the components of the `Quat` to the specified values.
     #[inline]
-    pub fn set(&mut self, other: &(Float, Float, Float, Float)) {
+    pub fn set(&mut self, other: &(Scalar, Scalar, Scalar, Scalar)) {
         self.r = other.0;
         self.i = other.1;
         self.j = other.2;
@@ -91,7 +91,7 @@ impl Quat {
     /// Computes the sum between the `Quat` and the input scalars treated
     /// as components of a `Quat`.
     #[inline]
-    pub fn add(self, r: Float, i: Float, j: Float, k: Float) -> Quat {
+    pub fn add(self, r: Scalar, i: Scalar, j: Scalar, k: Scalar) -> Quat {
         Quat::new(
             self.r + r,
             self.i + i,
@@ -104,7 +104,7 @@ impl Quat {
     /// Computes the difference between the `Quat` and the input scalars
     /// treated as components of a `Quat`.
     #[inline]
-    pub fn sub(&self, r: Float, i: Float, j: Float, k: Float) -> Quat {
+    pub fn sub(&self, r: Scalar, i: Scalar, j: Scalar, k: Scalar) -> Quat {
         Quat::new(
             self.r - r,
             self.i - i,
@@ -115,20 +115,20 @@ impl Quat {
 
     /// Multiples each component of the `Quat` by the scalar.
     #[inline]
-    pub fn mult_scalar(&self, s: Float) -> Quat {
+    pub fn mult_scalar(&self, s: Scalar) -> Quat {
         Quat::new(self.r * s, self.i * s, self.j * s, self.k * s)
     }
 
     /// Divides each component of the `Quat` by the scalar.
     #[inline]
-    pub fn div_scalar(&self, s: Float) -> Quat {
+    pub fn div_scalar(&self, s: Scalar) -> Quat {
         Quat::new(self.r / s, self.i / s, self.j / s, self.k / s)
     }
 
     /// Computes the `Quat` multiplication with the input scalars as
     /// components of a `Quat`.
     #[inline]
-    pub fn mult_quat(&self, r: Float, i: Float, j: Float, k: Float) -> Quat {
+    pub fn mult_quat(&self, r: Scalar, i: Scalar, j: Scalar, k: Scalar) -> Quat {
         Quat::new(
             self.r*r - self.i*i - self.j*j - self.k*k,
             self.r*i + self.i*r + self.j*k - self.k*j,
@@ -227,19 +227,19 @@ impl Sub<Quat> for Quat {
 }
 
 /// Implements the multiplication operator between a `Quat` and a scalar.
-impl<'a> Mul<Float> for &'a Quat {
+impl<'a> Mul<Scalar> for &'a Quat {
     type Output = Quat;
 
-    fn mul(self, s: Float) -> Quat {
+    fn mul(self, s: Scalar) -> Quat {
         Quat::mult_scalar(self, s)
     }
 }
 
 /// Implements the multiplication operator between a `Quat` and a scalar.
-impl Mul<Float> for Quat {
+impl Mul<Scalar> for Quat {
     type Output = Quat;
 
-    fn mul(self, s: Float) -> Quat {
+    fn mul(self, s: Scalar) -> Quat {
         &self * s
     }
 }
@@ -289,23 +289,23 @@ impl Mul<Quat> for Quat {
 }
 
 /// Implements the division operator between a `Quat` and a scalar.
-impl<'a> Div<Float> for &'a Quat {
+impl<'a> Div<Scalar> for &'a Quat {
     type Output = Quat;
 
     /// Divides the `Quat` by a scalar.
     #[inline]
-    fn div(self, s: Float) -> Quat {
+    fn div(self, s: Scalar) -> Quat {
         Quat::div_scalar(self, s)
     }
 }
 
 /// Implements the division operator between a `Quat` and a scalar.
-impl Div<Float> for Quat {
+impl Div<Scalar> for Quat {
     type Output = Quat;
 
     /// Divides the `Quat` by a scalar.
     #[inline]
-    fn div(self, s: Float) -> Quat {
+    fn div(self, s: Scalar) -> Quat {
         &self / s
     }
 }
@@ -341,7 +341,7 @@ impl ApproxEq<Quat> for Quat {
 }
 
 impl Deref for Quat {
-    type Target = (Float, Float, Float, Float);
+    type Target = (Scalar, Scalar, Scalar, Scalar);
 
     fn deref(&self) -> &Self::Target {
         unsafe { mem::transmute(self) }

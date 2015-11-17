@@ -1,4 +1,4 @@
-use mach::{ Float, PI };
+use mach::{ Scalar, PI };
 use mach::maths::{ Vector, Quat };
 
 #[test]
@@ -84,7 +84,7 @@ fn it_supports_the_subtraction_operator_with_vectors() {
 #[test]
 fn it_can_dereference_to_an_array() {
     let v = Vector::new(1.0, 2.0, 3.0);
-    let array: &[Float; 3] = v.as_ref();
+    let array: &[Scalar; 3] = v.as_ref();
 
     assert_eq!((array[0], array[1], array[2]), (1.0, 2.0, 3.0));
 }
@@ -92,7 +92,7 @@ fn it_can_dereference_to_an_array() {
 #[test]
 fn it_can_dereference_to_a_tuple() {
     let v = Vector::new(1.0, 2.0, 3.0);
-    let tuple: &(Float, Float, Float) = v.as_ref();
+    let tuple: &(Scalar, Scalar, Scalar) = v.as_ref();
 
     assert_eq!((tuple.0, tuple.1, tuple.2), (1.0, 2.0, 3.0));
 }

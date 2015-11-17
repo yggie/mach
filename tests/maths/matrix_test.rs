@@ -1,4 +1,4 @@
-use mach::Float;
+use mach::Scalar;
 use mach::maths::{ Vector, Matrix };
 
 #[test]
@@ -49,7 +49,7 @@ fn instantiating_as_a_skew_matrix() {
 #[test]
 fn instantiating_from_axis_angle() {
     let a = Vector::new(0.0, 0.0, 1.0);
-    let radians: Float = 3.0;
+    let radians: Scalar = 3.0;
     let c = radians.cos();
     let s = radians.sin();
     let r = Matrix::new_rotation(radians, a);

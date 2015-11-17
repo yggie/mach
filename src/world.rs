@@ -1,6 +1,6 @@
 use std::cell::Ref;
 
-use { ID, Float };
+use { ID, Scalar };
 use maths::{ State, Transform, Vector };
 use shapes::Shape;
 use entities::{ Material, RigidBody };
@@ -54,7 +54,7 @@ impl<C: CollisionSpace, D: Dynamics> World<C, D> {
 
     /// Steps the `World` forward in time by the specified amount.
     #[inline(always)]
-    pub fn update(&mut self, time_step: Float) {
+    pub fn update(&mut self, time_step: Scalar) {
         self._dynamics.update(&mut self._collision_space, time_step);
     }
 
