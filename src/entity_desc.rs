@@ -40,91 +40,91 @@ pub struct EntityDesc {
 }
 
 impl EntityDesc {
-    pub fn as_sphere(&self, radius: Scalar) -> EntityDesc {
+    pub fn as_sphere(self, radius: Scalar) -> EntityDesc {
         EntityDesc {
             shape_desc: ShapeDesc::Sphere(radius),
-            .. self.clone()
+            .. self
         }
     }
 
-    pub fn as_cube(&self, size: Scalar) -> EntityDesc {
+    pub fn as_cube(self, size: Scalar) -> EntityDesc {
         self.as_cuboid(size, size, size)
     }
 
-    pub fn as_cuboid(&self, width: Scalar, height: Scalar, depth: Scalar) -> EntityDesc {
+    pub fn as_cuboid(self, width: Scalar, height: Scalar, depth: Scalar) -> EntityDesc {
         EntityDesc {
             shape_desc: ShapeDesc::Cuboid(width, height, depth),
-            .. self.clone()
+            .. self
         }
     }
 
-    pub fn as_triangle_mesh(&self, vertices: Rc<Vec<Vector>>, indices: Vec<(usize, usize, usize)>) -> EntityDesc {
+    pub fn as_triangle_mesh(self, vertices: Rc<Vec<Vector>>, indices: Vec<(usize, usize, usize)>) -> EntityDesc {
         EntityDesc {
             shape_desc: ShapeDesc::TriangleMesh(vertices, indices),
-            .. self.clone()
+            .. self
         }
     }
 
-    pub fn as_stationary(&self) -> EntityDesc {
+    pub fn as_stationary(self) -> EntityDesc {
         EntityDesc {
             state: State::new_stationary(),
-            .. self.clone()
+            .. self
         }
     }
 
-    pub fn with_density(&self, density: Scalar) -> EntityDesc {
+    pub fn with_density(self, density: Scalar) -> EntityDesc {
         EntityDesc {
             material: self.material.with_density(density),
-            .. self.clone()
+            .. self
         }
     }
 
-    pub fn with_mass(&self, mass: Scalar) -> EntityDesc {
+    pub fn with_mass(self, mass: Scalar) -> EntityDesc {
         EntityDesc {
             material: self.material.with_mass(mass),
-            .. self.clone()
+            .. self
         }
     }
 
-    pub fn with_pos(&self, x: Scalar, y: Scalar, z: Scalar) -> EntityDesc {
+    pub fn with_pos(self, x: Scalar, y: Scalar, z: Scalar) -> EntityDesc {
         EntityDesc {
             state: self.state.with_pos(x, y, z),
-            .. self.clone()
+            .. self
         }
     }
 
-    pub fn with_vel(&self, vx: Scalar, vy: Scalar, vz: Scalar) -> EntityDesc {
+    pub fn with_vel(self, vx: Scalar, vy: Scalar, vz: Scalar) -> EntityDesc {
         EntityDesc {
             state: self.state.with_vel(vx, vy, vz),
-            .. self.clone()
+            .. self
         }
     }
 
-    pub fn with_axis_angle(&self, axis: Vector, angle: Scalar) -> EntityDesc {
+    pub fn with_axis_angle(self, axis: Vector, angle: Scalar) -> EntityDesc {
         EntityDesc {
             state: self.state.with_axis_angle(axis, angle),
-            .. self.clone()
+            .. self
         }
     }
 
-    pub fn with_ang_vel(&self, vx: Scalar, vy: Scalar, vz: Scalar) -> EntityDesc {
+    pub fn with_ang_vel(self, vx: Scalar, vy: Scalar, vz: Scalar) -> EntityDesc {
         EntityDesc {
             state: self.state.with_ang_vel(vx, vy, vz),
-            .. self.clone()
+            .. self
         }
     }
 
-    pub fn with_restitution_coefficient(&self, restitution_coefficient: Scalar) -> EntityDesc {
+    pub fn with_restitution_coefficient(self, restitution_coefficient: Scalar) -> EntityDesc {
         EntityDesc {
             material: self.material.with_coefficient_of_restitution(restitution_coefficient),
-            .. self.clone()
+            .. self
         }
     }
 
-    pub fn with_friction_coefficient(&self, friction_coefficient: Scalar) -> EntityDesc {
+    pub fn with_friction_coefficient(self, friction_coefficient: Scalar) -> EntityDesc {
         EntityDesc {
             material: self.material.with_friction_coefficient(friction_coefficient),
-            .. self.clone()
+            .. self
         }
     }
 }

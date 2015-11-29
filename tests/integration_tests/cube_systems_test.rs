@@ -16,13 +16,15 @@ fn colliding_two_cubes() {
             let entity_desc = EntityDesc::default().as_cube(1.0);
 
             world.create_body(
-                &entity_desc.with_density(1.0)
+                &entity_desc.clone()
+                    .with_density(1.0)
                     .with_pos(0.0,  3.0, 0.0)
                     .with_vel(0.0, -1.0, 0.0)
             );
 
             world.create_body(
-                &entity_desc.with_density(2.0)
+                &entity_desc.clone()
+                    .with_density(2.0)
                     .with_pos(0.0, -3.0, 0.0)
                     .with_axis_angle(Vector::new(1.0, 1.0, 0.0), 1.0)
                     .with_vel(0.0,  1.0, 0.0)
@@ -43,13 +45,14 @@ fn dropping_a_cube_on_a_platform() {
                 .with_restitution_coefficient(1.0);
 
             world.create_body(
-                &entity_desc.as_cube(1.0)
+                &entity_desc.clone()
+                    .as_cube(1.0)
                     .with_pos(0.0, 0.0,  3.0)
                     .with_vel(0.0, 0.0, -1.0)
                     .with_ang_vel(0.3, 0.4, 0.5)
             );
 
-            world.create_static_body(&entity_desc.as_cuboid(10.0, 10.0, 0.1));
+            world.create_static_body(&entity_desc.clone().as_cuboid(10.0, 10.0, 0.1));
         })
         .execute_multiple_steps(200, 0.1)
         .assert_compliance();
@@ -89,14 +92,16 @@ fn dropping_a_stuff_on_a_sinkhole() {
             let entity_desc = EntityDesc::default().with_mass(1.0);
 
             world.create_body(
-                &entity_desc.as_cube(1.0)
+                &entity_desc.clone()
+                    .as_cube(1.0)
                     .with_pos(0.0, 0.0,  3.0)
                     .with_vel(2.0, 1.0, -1.0)
                     .with_ang_vel(0.3, 0.4, 0.5)
             );
 
             world.create_body(
-                &entity_desc.as_sphere(0.5)
+                &entity_desc.clone()
+                    .as_sphere(0.5)
                     .with_pos(0.0, 2.0,  3.0)
                     .with_vel(1.0, 0.0, -1.0)
                     .with_ang_vel(0.5, 0.3, 0.4)
