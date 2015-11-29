@@ -9,19 +9,17 @@ macro_rules! assert_dynamics_behaviour(
             use support::MonitoredWorld;
 
             use mach::{EntityDesc, Scalar, PI, World};
-            use mach::maths::{State, Vector};
-            use mach::shapes::Cuboid;
+            use mach::maths::Vector;
             use mach::dynamics::Dynamics;
-            use mach::entities::Material;
             use mach::collisions::{CollisionSpace, SimpleCollisionSpace};
 
             fn new_world<D: Dynamics>(dynamics: D) -> MonitoredWorld<SimpleCollisionSpace, D> {
                 return MonitoredWorld::new(SimpleCollisionSpace::new(), dynamics);
             }
 
-            fn default_material() -> Material {
-                Material::default().with_density(1.0)
-                    .with_coefficient_of_restitution(1.0)
+            fn default_entity_desc() -> EntityDesc {
+                EntityDesc::default().with_density(1.0)
+                    .with_restitution_coefficient(1.0)
                     .with_friction_coefficient(0.0)
             }
 
@@ -37,10 +35,11 @@ macro_rules! assert_dynamics_behaviour(
             #[test]
             pub fn it_can_simulate_objects_moving_at_constant_velocity() {
                 let mut world = new_world(test_subject());
+                let entity_desc = default_entity_desc();
+
                 let id = world.create_body(
-                    Cuboid::new_cube(1.0),
-                    &default_material(),
-                    State::new_stationary().with_vel(1.0, -1.0, 0.5),
+                    &entity_desc.as_cube(1.0)
+                        .with_vel(1.0, -1.0, 0.5)
                 );
 
                 world.update(0.3);
@@ -54,9 +53,8 @@ macro_rules! assert_dynamics_behaviour(
             pub fn it_can_simulate_objects_moving_at_constant_velocity_with_gravity() {
                 let mut world = new_world(test_subject());
                 let id = world.create_body(
-                    Cuboid::new_cube(1.0),
-                    &default_material(),
-                    State::new_stationary().with_vel(1.0, -1.0, 0.5),
+                    &default_entity_desc().as_cube(1.0)
+                        .with_vel(1.0, -1.0, 0.5)
                 );
                 world.set_gravity(Vector::new(3.0, -2.0, 4.0));
 
@@ -70,21 +68,17 @@ macro_rules! assert_dynamics_behaviour(
             #[test]
             pub fn it_can_simulate_objects_colliding_without_rotation() {
                 let mut world = new_world(test_subject());
-                let id_0 = world.create_body(
-                    Cuboid::new_cube(1.0),
-                    &default_material(),
-                    State::new_stationary(),
-                );
+                let entity_desc = default_entity_desc().as_cube(1.0);
+                let id_0 = world.create_body(&entity_desc);
                 let initial_axis = Vector::new(1.0, 1.0, 1.0).normalize();
                 let final_axis = Vector::new(1.0, 0.0, 0.0);
                 let rotation = initial_axis.cross(final_axis);
-                let state_1 = State::new_with_pos((0.98 + (3.0 as Scalar).sqrt())/2.0, 0.0, 0.0)
-                    .with_axis_angle(rotation, rotation.length().asin())
-                    .with_vel(-1.0, 0.0, 0.0);
+
                 let id_1 = world.create_body(
-                    Cuboid::new_cube(1.0),
-                    &default_material(),
-                    state_1,
+                    &entity_desc
+                        .with_pos((0.98 + (3.0 as Scalar).sqrt())/2.0, 0.0, 0.0)
+                        .with_axis_angle(rotation, rotation.length().asin())
+                        .with_vel(-1.0, 0.0, 0.0)
                 );
 
                 world.update(0.2);
@@ -102,15 +96,13 @@ macro_rules! assert_dynamics_behaviour(
                 println!("[RENDERABLE]");
                 let mut world = new_world(test_subject());
                 let id_0 = world.create_body(
-                    Cuboid::new(1.0, 10.0, 1.0),
-                    &default_material(),
-                    State::new_with_axis_angle(Vector::new(0.0, 1.0, 0.0), PI / 4.0)
-                        .with_ang_vel(-1.0, 0.0, 0.0),
+                    &default_entity_desc().as_cuboid(1.0, 10.0, 1.0)
+                        .with_axis_angle(Vector::new(0.0, 1.0, 0.0), PI / 4.0)
+                        .with_ang_vel(-1.0, 0.0, 0.0)
                 );
                 world.create_static_body(
-                    &EntityDesc::default()
-                        .as_cube(2.0)
-                        .with_translation(0.0, 5.0, -1.05 - (0.5 as Scalar).sqrt())
+                    &default_entity_desc().as_cube(2.0)
+                        .with_pos(0.0, 5.0, -1.05 - (0.5 as Scalar).sqrt())
                 );
 
                 world.update(0.05);

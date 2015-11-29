@@ -3,9 +3,7 @@ use std::cell::{ Ref, RefCell, RefMut };
 use std::collections::HashMap;
 
 use {EntityDesc, ID, SharedCell};
-use maths::State;
-use shapes::Shape;
-use entities::{Material, RigidBody, StaticBody, VolumetricBody};
+use entities::{RigidBody, StaticBody, VolumetricBody};
 use collisions::{CollisionSpace, Contact, ContactPair};
 use collisions::narrowphase::{GjkEpaImplementation, Intersection};
 
@@ -38,9 +36,14 @@ impl SimpleCollisionSpace {
 }
 
 impl CollisionSpace for SimpleCollisionSpace {
-    fn create_body<S: Shape>(&mut self, shape: S, material: &Material, state: State) -> ID {
+    fn create_body(&mut self, entity_desc: &EntityDesc) -> ID {
         let new_id = self.generate_id();
-        let new_body = RigidBody::new_with_id(new_id, Box::new(shape), material, state);
+        let new_body = RigidBody::new_with_id(
+            new_id,
+            entity_desc.shape_desc.build(),
+            &entity_desc.material,
+            entity_desc.state,
+        );
         let new_shared_cell = Rc::new(RefCell::new(new_body));
 
         for shared_cell in self.registry.values() {

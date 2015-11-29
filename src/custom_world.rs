@@ -1,9 +1,8 @@
 use std::cell::Ref;
 
 use {EntityDesc, ID, Scalar, World};
-use maths::{State, Vector};
-use shapes::Shape;
-use entities::{Material, RigidBody};
+use maths::Vector;
+use entities::RigidBody;
 use dynamics::Dynamics;
 use collisions::CollisionSpace;
 
@@ -29,8 +28,8 @@ impl<C, D> CustomWorld<C, D> where C: CollisionSpace, D: Dynamics {
 
 impl<C, D> World for CustomWorld<C, D> where C: CollisionSpace, D: Dynamics {
     #[inline(always)]
-    fn create_body<S: Shape>(&mut self, shape: S, material: &Material, state: State) -> ID {
-        self.collision_space.create_body(shape, material, state)
+    fn create_body(&mut self, entity_desc: &EntityDesc) -> ID {
+        self.collision_space.create_body(entity_desc)
     }
 
     fn create_static_body(&mut self, entity_desc: &EntityDesc) -> ID {

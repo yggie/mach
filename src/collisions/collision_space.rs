@@ -1,19 +1,17 @@
 use std::cell::{ Ref, RefMut };
 
 use {EntityDesc, ID};
-use maths::State;
-use shapes::Shape;
-use entities::{Material, RigidBody, StaticBody, VolumetricBody};
+use entities::{RigidBody, StaticBody, VolumetricBody};
 use collisions::Contact;
 use collisions::narrowphase::Intersection;
 
 /// A `CollisionSpace` component is responsible for the storage, retrieval and
 /// querying of physical bodies in the simulation.
 pub trait CollisionSpace {
-    /// Creates an instance of a `RigidBody` from the given properties, returns
-    /// an identifier which can be used to retrieve the `RigidBody` at a later
-    /// time.
-    fn create_body<S: Shape>(&mut self, S, &Material, State) -> ID;
+    /// Creates an instance of a `RigidBody` with the properties from the
+    /// `EntityDesc` provided. Returns a unique identifier bound to the new
+    /// instance.
+    fn create_body(&mut self, entity_desc: &EntityDesc) -> ID;
 
     /// Creates an instance of a `StaticBody` with the properties from the
     /// `EntityDesc` provided. Returns a unique identifier bound to the new

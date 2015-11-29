@@ -1,9 +1,8 @@
 use std::cell::Ref;
 
 use {CustomWorld, EntityDesc, ID, Scalar, World};
-use maths::{State, Vector};
-use shapes::Shape;
-use entities::{Material, RigidBody};
+use maths::Vector;
+use entities::RigidBody;
 use dynamics::SimpleDynamics;
 use collisions::SimpleCollisionSpace;
 
@@ -20,8 +19,8 @@ impl MachWorld {
 
 impl World for MachWorld {
     #[inline(always)]
-    fn create_body<S: Shape>(&mut self, shape: S, material: &Material, state: State) -> ID {
-        self.0.create_body(shape, material, state)
+    fn create_body(&mut self, entity_desc: &EntityDesc) -> ID {
+        self.0.create_body(entity_desc)
     }
 
     fn create_static_body(&mut self, entity_desc: &EntityDesc) -> ID {

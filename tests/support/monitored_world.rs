@@ -1,9 +1,8 @@
 use std::cell::Ref;
 
 use mach::{CustomWorld, EntityDesc, ID, Scalar, World};
-use mach::maths::{State, Vector};
-use mach::shapes::Shape;
-use mach::entities::{Material, RigidBody};
+use mach::maths::Vector;
+use mach::entities::RigidBody;
 use mach::dynamics::Dynamics;
 use mach::collisions::CollisionSpace;
 
@@ -22,8 +21,8 @@ impl<C, D> MonitoredWorld<C, D> where C: CollisionSpace, D: Dynamics {
 
 impl<C, D> World for MonitoredWorld<C, D> where C: CollisionSpace, D: Dynamics {
     #[inline(always)]
-    fn create_body<S: Shape>(&mut self, shape: S, material: &Material, state: State) -> ID {
-        self.0.create_body(shape, material, state)
+    fn create_body(&mut self, entity_desc: &EntityDesc) -> ID {
+        self.0.create_body(entity_desc)
     }
 
     fn create_static_body(&mut self, entity_desc: &EntityDesc) -> ID {

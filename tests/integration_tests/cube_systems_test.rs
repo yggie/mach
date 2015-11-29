@@ -5,9 +5,7 @@ use std::rc::Rc;
 use support::Simulation;
 
 use mach::{EntityDesc, World};
-use mach::maths::{State, Vector};
-use mach::shapes::{Cuboid, Sphere};
-use mach::entities::Material;
+use mach::maths::Vector;
 use mach::dynamics::SimpleDynamics;
 use mach::collisions::SimpleCollisionSpace;
 
@@ -15,18 +13,20 @@ use mach::collisions::SimpleCollisionSpace;
 fn colliding_two_cubes() {
     Simulation::<SimpleCollisionSpace, SimpleDynamics>::new_default()
         .configure(|world| {
-            let shape = Cuboid::new_cube(1.0);
+            let entity_desc = EntityDesc::default().as_cube(1.0);
 
-            let state_0 =  State::new_stationary()
-                .with_pos(0.0,  3.0, 0.0)
-                .with_vel(0.0, -1.0, 0.0);
-            world.create_body(shape.clone(), &Material::default().with_density(1.0), state_0);
+            world.create_body(
+                &entity_desc.with_density(1.0)
+                    .with_pos(0.0,  3.0, 0.0)
+                    .with_vel(0.0, -1.0, 0.0)
+            );
 
-            let state_1 =  State::new_stationary()
-                .with_pos(0.0, -3.0, 0.0)
-                .with_axis_angle(Vector::new(1.0, 1.0, 0.0), 1.0)
-                .with_vel(0.0,  1.0, 0.0);
-            world.create_body(shape.clone(), &Material::default().with_density(2.0), state_1);
+            world.create_body(
+                &entity_desc.with_density(2.0)
+                    .with_pos(0.0, -3.0, 0.0)
+                    .with_axis_angle(Vector::new(1.0, 1.0, 0.0), 1.0)
+                    .with_vel(0.0,  1.0, 0.0)
+            );
         })
         .execute_multiple_steps(100, 0.1)
         .assert_compliance();
@@ -38,21 +38,18 @@ fn dropping_a_cube_on_a_platform() {
         .configure(|world| {
             world.set_gravity(Vector::new(0.0, 0.0, -0.5));
 
-            let material = Material::default().with_density(1.0)
-                .with_coefficient_of_restitution(1.0);
+            let entity_desc = EntityDesc::default()
+                .with_density(1.0)
+                .with_restitution_coefficient(1.0);
 
-            let state_0 = State::new_stationary()
-                .with_pos(0.0, 0.0,  3.0)
-                .with_vel(0.0, 0.0, -1.0)
-                .with_ang_vel(0.3, 0.4, 0.5);
-            world.create_body(Cuboid::new_cube(1.0), &material, state_0);
-
-            world.create_static_body(
-                &EntityDesc::default()
-                    .as_cuboid(10.0, 10.0, 0.1)
-                    .with_density(1.0)
-                    .with_restitution_coefficient(1.0)
+            world.create_body(
+                &entity_desc.as_cube(1.0)
+                    .with_pos(0.0, 0.0,  3.0)
+                    .with_vel(0.0, 0.0, -1.0)
+                    .with_ang_vel(0.3, 0.4, 0.5)
             );
+
+            world.create_static_body(&entity_desc.as_cuboid(10.0, 10.0, 0.1));
         })
         .execute_multiple_steps(200, 0.1)
         .assert_compliance();
@@ -64,13 +61,14 @@ fn dropping_a_sphere_on_a_platform() {
         .configure(|world| {
             world.set_gravity(Vector::new(0.0, 0.0, -0.5));
 
-            let material = Material::default().with_density(1.0);
+            let entity_desc = EntityDesc::default().with_density(1.0);
 
-            let state_0 = State::new_stationary()
-                .with_pos(0.0, 0.0,  3.0)
-                .with_vel(0.0, 0.0, -1.0)
-                .with_ang_vel(0.3, 0.4, 0.5);
-            world.create_body(Sphere::new(0.5), &material, state_0);
+            world.create_body(
+                &entity_desc.as_sphere(0.5)
+                    .with_pos(0.0, 0.0,  3.0)
+                    .with_vel(0.0, 0.0, -1.0)
+                    .with_ang_vel(0.3, 0.4, 0.5)
+            );
 
             world.create_static_body(
                 &EntityDesc::default()
@@ -88,19 +86,21 @@ fn dropping_a_stuff_on_a_sinkhole() {
         .configure(|world| {
             world.set_gravity(Vector::new(0.0, 0.0, -0.5));
 
-            let material = Material::default().with_mass(1.0);
+            let entity_desc = EntityDesc::default().with_mass(1.0);
 
-            let state_0 = State::new_stationary()
-                .with_pos(0.0, 0.0,  3.0)
-                .with_vel(2.0, 1.0, -1.0)
-                .with_ang_vel(0.3, 0.4, 0.5);
-            world.create_body(Cuboid::new_cube(1.0), &material, state_0);
+            world.create_body(
+                &entity_desc.as_cube(1.0)
+                    .with_pos(0.0, 0.0,  3.0)
+                    .with_vel(2.0, 1.0, -1.0)
+                    .with_ang_vel(0.3, 0.4, 0.5)
+            );
 
-            let state_0 = State::new_stationary()
-                .with_pos(0.0, 2.0,  3.0)
-                .with_vel(1.0, 0.0, -1.0)
-                .with_ang_vel(0.5, 0.3, 0.4);
-            world.create_body(Sphere::new(0.5), &material, state_0);
+            world.create_body(
+                &entity_desc.as_sphere(0.5)
+                    .with_pos(0.0, 2.0,  3.0)
+                    .with_vel(1.0, 0.0, -1.0)
+                    .with_ang_vel(0.5, 0.3, 0.4)
+            );
 
             let vertices = Rc::new(vec!(
                 Vector::new(  0.0,   0.0,   0.0),

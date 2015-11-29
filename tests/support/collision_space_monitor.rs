@@ -3,10 +3,8 @@ extern crate mach;
 use std::cell::{Ref, RefMut};
 
 use mach::{EntityDesc, ID};
-use mach::maths::State;
 use mach::utils::debug::renderevent;
-use mach::shapes::Shape;
-use mach::entities::{Material, RigidBody, StaticBody, VolumetricBody};
+use mach::entities::{RigidBody, StaticBody, VolumetricBody};
 use mach::collisions::{CollisionSpace, Contact};
 use mach::collisions::narrowphase::Intersection;
 
@@ -23,8 +21,8 @@ impl<C: CollisionSpace> CollisionSpaceMonitor<C> {
 }
 
 impl<C: CollisionSpace> CollisionSpace for CollisionSpaceMonitor<C> {
-    fn create_body<S: Shape>(&mut self, shape: S, material: &Material, state: State) -> ID {
-        let id = self.0.create_body(shape, material, state);
+    fn create_body(&mut self, entity_desc: &EntityDesc) -> ID {
+        let id = self.0.create_body(entity_desc);
         let body = self.0.find_body(id).unwrap();
         renderevent::create_rigid_body(&*body);
         return id;

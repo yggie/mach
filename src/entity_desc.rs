@@ -65,6 +65,13 @@ impl EntityDesc {
         }
     }
 
+    pub fn as_stationary(&self) -> EntityDesc {
+        EntityDesc {
+            state: State::new_stationary(),
+            .. self.clone()
+        }
+    }
+
     pub fn with_density(&self, density: Scalar) -> EntityDesc {
         EntityDesc {
             material: self.material.with_density(density),
@@ -79,9 +86,30 @@ impl EntityDesc {
         }
     }
 
-    pub fn with_translation(&self, x: Scalar, y: Scalar, z: Scalar) -> EntityDesc {
+    pub fn with_pos(&self, x: Scalar, y: Scalar, z: Scalar) -> EntityDesc {
         EntityDesc {
             state: self.state.with_pos(x, y, z),
+            .. self.clone()
+        }
+    }
+
+    pub fn with_vel(&self, vx: Scalar, vy: Scalar, vz: Scalar) -> EntityDesc {
+        EntityDesc {
+            state: self.state.with_vel(vx, vy, vz),
+            .. self.clone()
+        }
+    }
+
+    pub fn with_axis_angle(&self, axis: Vector, angle: Scalar) -> EntityDesc {
+        EntityDesc {
+            state: self.state.with_axis_angle(axis, angle),
+            .. self.clone()
+        }
+    }
+
+    pub fn with_ang_vel(&self, vx: Scalar, vy: Scalar, vz: Scalar) -> EntityDesc {
+        EntityDesc {
+            state: self.state.with_ang_vel(vx, vy, vz),
             .. self.clone()
         }
     }
@@ -89,6 +117,13 @@ impl EntityDesc {
     pub fn with_restitution_coefficient(&self, restitution_coefficient: Scalar) -> EntityDesc {
         EntityDesc {
             material: self.material.with_coefficient_of_restitution(restitution_coefficient),
+            .. self.clone()
+        }
+    }
+
+    pub fn with_friction_coefficient(&self, friction_coefficient: Scalar) -> EntityDesc {
+        EntityDesc {
+            material: self.material.with_friction_coefficient(friction_coefficient),
             .. self.clone()
         }
     }
