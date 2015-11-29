@@ -1,9 +1,9 @@
 use std::cell::{ Ref, RefMut };
 
-use ID;
-use maths::{ State, Transform };
+use {EntityDesc, ID};
+use maths::State;
 use shapes::Shape;
-use entities::{ Material, RigidBody, StaticBody, VolumetricBody };
+use entities::{Material, RigidBody, StaticBody, VolumetricBody};
 use collisions::Contact;
 use collisions::narrowphase::Intersection;
 
@@ -15,10 +15,10 @@ pub trait CollisionSpace {
     /// time.
     fn create_body<S: Shape>(&mut self, S, &Material, State) -> ID;
 
-    /// Creates an instance of a `StaticBody` from the given properties, returns
-    /// an identifier which can be used to retrieve the `StaticBody` at a later
-    /// time.
-    fn create_static_body<S: Shape>(&mut self, S, &Material, Transform) -> ID;
+    /// Creates an instance of a `StaticBody` with the properties from the
+    /// `EntityDesc` provided. Returns a unique identifier bound to the new
+    /// instance.
+    fn create_static_body(&mut self, entity_desc: &EntityDesc) -> ID;
 
     /// Searches the data structure for a matching `RigidBody` instance with the
     /// identifier specified and returns a reference to the `RigidBody` if found.

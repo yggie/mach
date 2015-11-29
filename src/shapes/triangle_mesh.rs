@@ -8,7 +8,7 @@ use shapes::Shape;
 
 /// A `TriangleMesh` object represents a mesh of triangles, built from a set of
 /// points and element connections.
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct TriangleMesh {
     vertices: Rc<Vec<Vector>>,
     elements: Vec<(usize, usize, usize)>,

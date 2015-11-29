@@ -148,3 +148,9 @@ impl State {
         direction.rotate_by_quaternion(self.rot().inverse())
     }
 }
+
+impl Default for State {
+    fn default() -> Self {
+        State::new_stationary()
+    }
+}

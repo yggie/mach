@@ -2,12 +2,12 @@ use std::rc::Rc;
 use std::cell::{ Ref, RefCell, RefMut };
 use std::collections::HashMap;
 
-use { ID, SharedCell };
-use maths::{ State, Transform };
+use {EntityDesc, ID, SharedCell};
+use maths::State;
 use shapes::Shape;
-use entities::{ Material, RigidBody, StaticBody, VolumetricBody };
-use collisions::{ CollisionSpace, Contact, ContactPair };
-use collisions::narrowphase::{ GjkEpaImplementation, Intersection };
+use entities::{Material, RigidBody, StaticBody, VolumetricBody};
+use collisions::{CollisionSpace, Contact, ContactPair};
+use collisions::narrowphase::{GjkEpaImplementation, Intersection};
 
 /// A simple implementation for representing space in the simulation.
 pub struct SimpleCollisionSpace {
@@ -51,9 +51,14 @@ impl CollisionSpace for SimpleCollisionSpace {
         return new_id;
     }
 
-    fn create_static_body<S: Shape>(&mut self, shape: S, material: &Material, transform: Transform) -> ID {
+    fn create_static_body(&mut self, entity_desc: &EntityDesc) -> ID {
         let new_id = self.generate_id();
-        let new_static_body = StaticBody::new_with_id(new_id, Box::new(shape), material, transform);
+        let new_static_body = StaticBody::new_with_id(
+            new_id,
+            entity_desc.shape_desc.build(),
+            &entity_desc.material,
+            entity_desc.state.transform(),
+        );
         let new_rc_cell = Rc::new(RefCell::new(new_static_body));
 
         for shared_cell in self.registry.values() {

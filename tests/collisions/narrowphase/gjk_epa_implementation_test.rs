@@ -7,7 +7,7 @@ use mach::entities::{ Material, RigidBody };
 use mach::collisions::narrowphase::GjkEpaImplementation;
 
 fn setup_cubes(cuboid_0: Cuboid, state_0: State, cuboid_1: Cuboid, state_1: State) -> (GjkEpaImplementation, [RigidBody; 2]) {
-    let material = &Material::new_with_density(3.0);
+    let material = &Material::default().with_density(3.0);
 
     // TODO remove this once the ID has been extracted from the body
     let body_0 = unsafe {

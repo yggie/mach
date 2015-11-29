@@ -7,26 +7,26 @@ use shapes::Shape;
 /// A representation of a sphere in 3 dimensions.
 #[derive(Clone, Copy, Debug)]
 pub struct Sphere {
-    _radius: Scalar,
+    radius: Scalar,
 }
 
 impl Sphere {
     /// Constructs a new `Sphere` with the radius provided.
     pub fn new(radius: Scalar) -> Sphere {
         Sphere {
-            _radius: radius,
+            radius: radius,
         }
     }
 
     /// Returns the radius of the `Sphere`.
     pub fn radius(&self) -> Scalar {
-        self._radius
+        self.radius
     }
 }
 
 impl fmt::Display for Sphere {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "Sphere{{{}}}", self._radius)
+        write!(f, "Sphere{{{}}}", self.radius)
     }
 }
 

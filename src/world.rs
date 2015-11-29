@@ -1,9 +1,9 @@
 use std::cell::Ref;
 
-use { ID, Scalar };
-use maths::{ State, Transform, Vector };
+use {EntityDesc, ID, Scalar};
+use maths::{State, Vector};
 use shapes::Shape;
-use entities::{ Material, RigidBody };
+use entities::{Material, RigidBody};
 
 /// The `World` trait should be implemented by objects capable of behaving as a
 /// physics engine.
@@ -12,10 +12,10 @@ pub trait World {
     /// a handle which can later be used to retrieve the `RigidBody`.
     fn create_body<S: Shape>(&mut self, shape: S, material: &Material, state: State) -> ID;
 
-    /// Creates an instance of a `StaticBody` from the given components and
-    /// returns an identifier which can be later used to retrieve the
-    /// `StaticBody`.
-    fn create_static_body<S: Shape>(&mut self, shape: S, material: &Material, transform: Transform) -> ID;
+    /// Creates an instance of a `StaticBody` with the properties from the
+    /// `EntityDesc` provided. Returns a unique identifier bound to the new
+    /// instance.
+    fn create_static_body(&mut self, entity_desc: &EntityDesc) -> ID;
 
     /// Searches the world for a matching `RigidBody` instance with the
     /// identifier specified and returns a reference to the `RigidBody` if

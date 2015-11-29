@@ -20,7 +20,7 @@ macro_rules! assert_collision_space_behaviour(
             pub fn it_can_create_rigid_bodies() {
                 let mut collision_space = validate(test_subject());
                 let shape = Cuboid::new_cube(1.0);
-                let material = &Material::new_with_density(3.0);
+                let material = &Material::default().with_density(3.0);
 
                 let id = collision_space.create_body(shape.clone(), material, State::new_stationary());
 
@@ -38,7 +38,7 @@ macro_rules! assert_collision_space_behaviour(
             pub fn it_can_find_a_rigid_body_by_id() {
                 let mut collision_space = validate(test_subject());
                 let shape = Cuboid::new_cube(1.0);
-                let material = &Material::new_with_mass(3.0);
+                let material = &Material::default().with_mass(3.0);
                 let state = State::new_stationary();
                 collision_space.create_body(shape.clone(), material, state);
                 let id = collision_space.create_body(shape.clone(), material, state);
@@ -54,7 +54,7 @@ macro_rules! assert_collision_space_behaviour(
             pub fn it_can_modify_a_rigid_body_by_id() {
                 let mut collision_space = validate(test_subject());
                 let shape = Cuboid::new_cube(1.0);
-                let material = &Material::new_with_density(3.0);
+                let material = &Material::default().with_density(3.0);
                 let state = State::new_stationary();
                 let id = collision_space.create_body(shape.clone(), material, state);
                 collision_space.create_body(shape.clone(), material, state);
@@ -70,7 +70,7 @@ macro_rules! assert_collision_space_behaviour(
             pub fn it_can_iterate_over_all_rigid_bodies() {
                 let mut collision_space = validate(test_subject());
                 let shape = Cuboid::new_cube(1.0);
-                let material = &Material::new_with_mass(3.0);
+                let material = &Material::default().with_mass(3.0);
                 let mut ids = vec!(
                     collision_space.create_body(shape.clone(), material, State::new_stationary()),
                     collision_space.create_body(shape.clone(), material, State::new_stationary()),
@@ -92,7 +92,7 @@ macro_rules! assert_collision_space_behaviour(
             pub fn it_can_mutate_all_bodies() {
                 let mut collision_space = validate(test_subject());
                 let shape = Cuboid::new_cube(1.0);
-                let material = &Material::new_with_density(3.0);
+                let material = &Material::default().with_density(3.0);
                 let mut ids = vec!(
                     collision_space.create_body(shape.clone(), material, State::new_stationary()),
                     collision_space.create_body(shape.clone(), material, State::new_stationary()),

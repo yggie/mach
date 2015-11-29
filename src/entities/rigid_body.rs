@@ -1,9 +1,9 @@
 use std::fmt;
 
-use { ID, Scalar };
-use maths::{ Matrix, State, Transform, Quat, Vector };
+use {ID, Scalar};
+use maths::{Matrix, State, Transform, Quat, Vector};
 use shapes::Shape;
-use entities::{ Material, VolumetricBody };
+use entities::{Material, VolumetricBody};
 
 /// Represents a physical entity in the world.
 pub struct RigidBody {

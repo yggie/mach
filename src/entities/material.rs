@@ -12,38 +12,29 @@ enum MassDefinition {
 /// it can be used to compute the final properties of an entity.
 #[derive(Clone, Copy, Debug)]
 pub struct Material {
-    _mass_definition: MassDefinition,
+    mass_definition: MassDefinition,
     cor: Scalar,
-    _friction_coefficient: Scalar,
+    friction_coefficient: Scalar,
 }
 
 impl Material {
-    #[inline]
-    fn default() -> Material {
-        Material {
-            _mass_definition: MassDefinition::ConstantMass(1.0),
-            cor: 0.9,
-            _friction_coefficient: 0.6,
-        }
-    }
-
     /// Creates a new `Material` object with a constant density.
-    pub fn new_with_density(density: Scalar) -> Material {
+    pub fn with_density(self, density: Scalar) -> Material {
         debug_assert!(density > 0.0, "an entity cannot have negative density!");
 
         Material {
-            _mass_definition: MassDefinition::ConstantDensity(density),
-            .. Material::default()
+            mass_definition: MassDefinition::ConstantDensity(density),
+            .. self
         }
     }
 
     /// Creates a new `Material` object with a constant mass.
-    pub fn new_with_mass(mass: Scalar) -> Material {
+    pub fn with_mass(self, mass: Scalar) -> Material {
         debug_assert!(mass > 0.0, "an entity cannot have negative mass!");
 
         Material {
-            _mass_definition: MassDefinition::ConstantMass(mass),
-            .. Material::default()
+            mass_definition: MassDefinition::ConstantMass(mass),
+            .. self
         }
     }
 
@@ -58,12 +49,12 @@ impl Material {
     /// coefficient of friction set to the value specified. This method can
     /// be chained.
     pub fn with_friction_coefficient(self, friction_coefficient: Scalar) -> Material {
-        Material { _friction_coefficient: friction_coefficient, .. self }
+        Material { friction_coefficient: friction_coefficient, .. self }
     }
 
     /// Computes the mass of a `Shape` if it was made from the `Material`.
     pub fn mass_of(&self, shape: &Shape) -> Scalar {
-        match self._mass_definition {
+        match self.mass_definition {
             MassDefinition::ConstantDensity(density) => density * shape.volume(),
 
             MassDefinition::ConstantMass(mass) => mass,
@@ -72,7 +63,7 @@ impl Material {
 
     /// Computes the density of a `Shape` if it was made from the `Material`.
     pub fn density_of(&self, shape: &Shape) -> Scalar {
-        match self._mass_definition {
+        match self.mass_definition {
             MassDefinition::ConstantDensity(density) => density,
 
             MassDefinition::ConstantMass(mass) => mass / shape.volume(),
@@ -92,6 +83,17 @@ impl Material {
 
     /// Returns the friction coefficient associated with the `Material`.
     pub fn friction_coefficient(&self) -> Scalar {
-        self._friction_coefficient
+        self.friction_coefficient
     }
+}
+
+impl Default for Material {
+    fn default() -> Material {
+        Material {
+            mass_definition: MassDefinition::ConstantMass(1.0),
+            cor: 0.9,
+            friction_coefficient: 0.6,
+        }
+    }
+
 }

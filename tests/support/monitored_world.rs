@@ -1,13 +1,13 @@
 use std::cell::Ref;
 
-use mach::{ CustomWorld, ID, Scalar, World };
-use mach::maths::{ State, Transform, Vector };
+use mach::{CustomWorld, EntityDesc, ID, Scalar, World};
+use mach::maths::{State, Vector};
 use mach::shapes::Shape;
-use mach::entities::{ Material, RigidBody };
+use mach::entities::{Material, RigidBody};
 use mach::dynamics::Dynamics;
 use mach::collisions::CollisionSpace;
 
-use support::{ CollisionSpaceMonitor, DynamicsMonitor };
+use support::{CollisionSpaceMonitor, DynamicsMonitor};
 
 pub struct MonitoredWorld<C: CollisionSpace, D: Dynamics>(CustomWorld<CollisionSpaceMonitor<C>, DynamicsMonitor<D>>);
 
@@ -26,8 +26,8 @@ impl<C, D> World for MonitoredWorld<C, D> where C: CollisionSpace, D: Dynamics {
         self.0.create_body(shape, material, state)
     }
 
-    fn create_static_body<S: Shape>(&mut self, shape: S, material: &Material, transform: Transform) -> ID {
-        self.0.create_static_body(shape, material, transform)
+    fn create_static_body(&mut self, entity_desc: &EntityDesc) -> ID {
+        self.0.create_static_body(entity_desc)
     }
 
     #[inline(always)]

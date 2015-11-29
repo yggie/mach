@@ -4,14 +4,17 @@
 #![crate_name = "mach"]
 #![crate_type = "lib"]
 
-#![warn(missing_docs)]
+// TODO: renable this, undergoing lots of changes, docs will just slow me down
+// #![warn(missing_docs)]
 
 mod world;
 mod mach_world;
+mod entity_desc;
 mod custom_world;
 
 pub use self::world::World;
 pub use self::mach_world::MachWorld;
+pub use self::entity_desc::EntityDesc;
 pub use self::custom_world::CustomWorld;
 
 pub mod utils;

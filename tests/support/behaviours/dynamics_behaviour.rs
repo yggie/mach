@@ -8,19 +8,19 @@ macro_rules! assert_dynamics_behaviour(
 
             use support::MonitoredWorld;
 
-            use mach::{ Scalar, PI, World };
-            use mach::maths::{ State, Transform, Vector };
+            use mach::{EntityDesc, Scalar, PI, World};
+            use mach::maths::{State, Vector};
             use mach::shapes::Cuboid;
             use mach::dynamics::Dynamics;
             use mach::entities::Material;
-            use mach::collisions::{ CollisionSpace, SimpleCollisionSpace };
+            use mach::collisions::{CollisionSpace, SimpleCollisionSpace};
 
             fn new_world<D: Dynamics>(dynamics: D) -> MonitoredWorld<SimpleCollisionSpace, D> {
                 return MonitoredWorld::new(SimpleCollisionSpace::new(), dynamics);
             }
 
             fn default_material() -> Material {
-                Material::new_with_density(1.0)
+                Material::default().with_density(1.0)
                     .with_coefficient_of_restitution(1.0)
                     .with_friction_coefficient(0.0)
             }
@@ -108,9 +108,9 @@ macro_rules! assert_dynamics_behaviour(
                         .with_ang_vel(-1.0, 0.0, 0.0),
                 );
                 world.create_static_body(
-                    Cuboid::new_cube(2.0),
-                    &default_material(),
-                    Transform::new_with_translation(0.0, 5.0, -1.05 - (0.5 as Scalar).sqrt()),
+                    &EntityDesc::default()
+                        .as_cube(2.0)
+                        .with_translation(0.0, 5.0, -1.05 - (0.5 as Scalar).sqrt())
                 );
 
                 world.update(0.05);
