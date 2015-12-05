@@ -55,7 +55,7 @@ impl RigidBody {
 
     /// Returns the associated `Transform` object.
     #[inline]
-    pub fn transform(&self) -> Transform {
+    pub fn transform(&self) -> &Transform {
         self.state.transform()
     }
 
@@ -150,7 +150,7 @@ impl VolumetricBody for RigidBody {
     }
 
     #[inline(always)]
-    fn transform(&self) -> Transform {
+    fn transform(&self) -> &Transform {
         (self as &RigidBody).transform()
     }
 }

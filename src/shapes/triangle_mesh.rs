@@ -2,9 +2,9 @@ use std::rc::Rc;
 use std::fmt;
 use std::collections::HashMap;
 
-use { Scalar, NEG_INFINITY, TOLERANCE };
-use maths::{ Matrix, Vector };
-use shapes::Shape;
+use {Scalar, NEG_INFINITY, TOLERANCE};
+use maths::{Matrix, Vector};
+use shapes::{Shape, ShapeSpec};
 
 /// A `TriangleMesh` object represents a mesh of triangles, built from a set of
 /// points and element connections.
@@ -67,6 +67,10 @@ impl fmt::Display for TriangleMesh {
 }
 
 impl Shape for TriangleMesh {
+    fn spec(&self) -> ShapeSpec {
+        ShapeSpec::TriangleMesh
+    }
+
     fn volume(&self) -> Scalar {
         0.0
     }

@@ -1,8 +1,8 @@
 use std::fmt;
 
-use { Scalar, PI, TOLERANCE };
-use maths::{ Matrix, Vector };
-use shapes::Shape;
+use {Scalar, PI, TOLERANCE};
+use maths::{Matrix, Vector};
+use shapes::{Shape, ShapeSpec};
 
 /// A representation of a sphere in 3 dimensions.
 #[derive(Clone, Copy, Debug)]
@@ -31,6 +31,10 @@ impl fmt::Display for Sphere {
 }
 
 impl Shape for Sphere {
+    fn spec(&self) -> ShapeSpec {
+        ShapeSpec::Sphere(self.radius)
+    }
+
     fn volume(&self) -> Scalar {
         PI * self.radius() * self.radius() * self.radius() * 4.0 / 3.0
     }

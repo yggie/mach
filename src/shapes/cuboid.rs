@@ -1,8 +1,8 @@
 use std::fmt;
 
-use { Scalar, TOLERANCE };
-use maths::{ ApproxEq, Matrix, Vector };
-use shapes::Shape;
+use {Scalar, TOLERANCE};
+use maths::{ApproxEq, Matrix, Vector};
+use shapes::{Shape, ShapeSpec};
 
 /// A representation of a cuboid in 3 dimensions.
 #[derive(Clone, Debug)]
@@ -80,6 +80,14 @@ impl PartialEq for Cuboid {
 }
 
 impl Shape for Cuboid {
+    fn spec(&self) -> ShapeSpec {
+        ShapeSpec::Cuboid {
+            depth: self.depth,
+            width: self.width,
+            height: self.height,
+        }
+    }
+
     /// Calculates the volume of the `Cuboid`.
     fn volume(&self) -> Scalar {
         self.width * self.height * self.depth

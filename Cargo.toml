@@ -16,3 +16,7 @@ path = "src/lib.rs"
 high_precision = [ ]
 
 debug_renderevent = [ ]
+
+[dev-dependencies]
+glium = "*"
+nalgebra = "*"

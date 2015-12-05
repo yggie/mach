@@ -54,8 +54,8 @@ impl StaticBody {
 
     /// Returns the associated `Transform` object for the entity.
     #[inline]
-    pub fn transform(&self) -> Transform {
-        self.transform
+    pub fn transform(&self) -> &Transform {
+        &self.transform
     }
 
     /// Returns the position of the `StaticBody`.
@@ -77,7 +77,7 @@ impl VolumetricBody for StaticBody {
         (self as &StaticBody).shape()
     }
 
-    fn transform(&self) -> Transform {
+    fn transform(&self) -> &Transform {
         (self as &StaticBody).transform()
     }
 }

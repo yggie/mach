@@ -60,7 +60,7 @@ impl CollisionSpace for SimpleCollisionSpace {
             new_id,
             entity_desc.shape_desc.build(),
             &entity_desc.material,
-            entity_desc.state.transform(),
+            entity_desc.state.transform().clone(),
         );
         let new_rc_cell = Rc::new(RefCell::new(new_static_body));
 

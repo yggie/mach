@@ -1,49 +1,11 @@
-use mach::{ World, Scalar };
-use mach::dynamics::{ Dynamics, SimpleDynamics };
-use mach::collisions::{ CollisionSpace, SimpleCollisionSpace };
+extern crate mach;
 
-use support::MonitoredWorld;
+pub trait Simulation {
+    fn name(&self) -> &'static str;
 
-pub struct Simulation<C: CollisionSpace, D: Dynamics> {
-    world: MonitoredWorld<C, D>,
-    did_assert: bool
-}
-
-impl<C: CollisionSpace, D: Dynamics> Simulation<C, D> {
-    pub fn new_default() -> Simulation<SimpleCollisionSpace, SimpleDynamics> {
-        let collisions = SimpleCollisionSpace::new();
-        let dynamics = SimpleDynamics::new();
-        let world = MonitoredWorld::new(collisions, dynamics);
-
-        println!("[RENDERABLE]");
-
-        return Simulation {
-            world: world,
-            did_assert: false
-        };
+    fn setup(&mut self, _world: &mut mach::World) -> Result<(), String> {
+        Ok(())
     }
 
-    pub fn configure<F: FnOnce(&mut MonitoredWorld<C, D>)>(&mut self, func: F) -> &mut Simulation<C, D> {
-        self.did_assert = false;
-
-        func(&mut self.world);
-
-        return self;
-    }
-
-    pub fn execute_multiple_steps(&mut self, count: u32, step: Scalar) -> &mut Simulation<C, D> {
-        for _ in (0..count) {
-            self.world.update(step);
-        }
-
-        return self;
-    }
-
-    pub fn assert_compliance(&mut self) {
-        self.did_assert = true;
-
-        if !self.did_assert {
-            panic!("The simulation did not check for any violations!")
-        }
-    }
+    fn update(&mut self, _world: &mut mach::World) -> Result<(), String>;
 }

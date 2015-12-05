@@ -1,10 +1,13 @@
 use std::fmt;
 
-use { Scalar, TOLERANCE };
-use maths::{ Matrix, Vector };
+use {Scalar, TOLERANCE};
+use maths::{Matrix, Vector};
+use shapes::ShapeSpec;
 
 /// Defines the traits for all geometric property descriptions.
 pub trait Shape: fmt::Display + 'static {
+    fn spec(&self) -> ShapeSpec;
+
     /// Computes the volume for the shape.
     fn volume(&self) -> Scalar;
 

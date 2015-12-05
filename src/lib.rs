@@ -25,6 +25,7 @@ pub mod entities;
 pub mod collisions;
 
 pub use self::maths::Vector;
+pub use self::shapes::{Shape, ShapeSpec};
 
 use std::fmt;
 use std::rc::Rc;

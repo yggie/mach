@@ -8,7 +8,7 @@ pub trait VolumetricBody {
     fn shape(&self) -> &Shape;
 
     /// Returns the `Transform` associated with the entity.
-    fn transform(&self) -> Transform;
+    fn transform(&self) -> &Transform;
 
     /// Returns the vertex at the given index for the entity.
     fn vertex(&self, index: usize) -> Vector {

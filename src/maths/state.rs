@@ -59,8 +59,8 @@ impl State {
 
     /// Returns the associated `Transform` object.
     #[inline]
-    pub fn transform(&self) -> Transform {
-        self.transform
+    pub fn transform(&self) -> &Transform {
+        &self.transform
     }
 
     /// Sets the position using the scalar values provided.
