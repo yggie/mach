@@ -6,15 +6,13 @@ use mach::entities::RigidBody;
 use mach::dynamics::Dynamics;
 use mach::collisions::CollisionSpace;
 
-use support::{CollisionSpaceMonitor, DynamicsMonitor};
-
-pub struct MonitoredWorld<C: CollisionSpace, D: Dynamics>(CustomWorld<CollisionSpaceMonitor<C>, DynamicsMonitor<D>>);
+pub struct MonitoredWorld<C: CollisionSpace, D: Dynamics>(CustomWorld<C, D>);
 
 impl<C, D> MonitoredWorld<C, D> where C: CollisionSpace, D: Dynamics {
     pub fn new(collision_space: C, dynamics: D) -> MonitoredWorld<C, D> {
         MonitoredWorld(CustomWorld::new(
-            CollisionSpaceMonitor::new(collision_space),
-            DynamicsMonitor::new(dynamics),
+            collision_space,
+            dynamics,
         ))
     }
 }

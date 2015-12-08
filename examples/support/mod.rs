@@ -13,7 +13,7 @@ pub use self::camera::{Camera, CameraDef};
 pub use self::instance::{Instance, InstanceFactory};
 pub use self::primitives::{Normal, Vertex};
 pub use self::polygon_model::PolygonModel;
-pub use self::tests_support::{CollisionSpaceMonitor, DynamicsMonitor, MonitoredWorld, Simulation};
+pub use self::tests_support::{MonitoredWorld, Simulation};
 pub use self::examples_runner::ExamplesRunner;
 pub use self::examples_renderer::ExamplesRenderer;
 
