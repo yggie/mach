@@ -42,5 +42,7 @@ impl Simulation for TwoCollidingCubes {
 }
 
 fn main() {
-    support::ExamplesRunner::new(TwoCollidingCubes).run();
+    support::ExamplesRunner::new(TwoCollidingCubes)
+        .with_fps(30)
+        .run();
 }

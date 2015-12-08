@@ -16,5 +16,6 @@ path = "src/lib.rs"
 high_precision = [ ]
 
 [dev-dependencies]
+time = "*"
 glium = "*"
 nalgebra = "*"

@@ -1,4 +1,5 @@
 extern crate mach;
+extern crate time;
 extern crate glium;
 
 use std;
@@ -12,6 +13,7 @@ use support::{Camera, CameraDef, ExamplesRenderer, MonitoredWorld, SceneEnv, Sim
 pub struct ExamplesRunner<S: Simulation> {
     simulation: S,
     camera: Camera,
+    desired_fps: u8,
 }
 
 impl<S> ExamplesRunner<S> where S: Simulation {
@@ -19,6 +21,14 @@ impl<S> ExamplesRunner<S> where S: Simulation {
         ExamplesRunner {
             simulation: simulation,
             camera: Camera::new(CameraDef::default()),
+            desired_fps: 30,
+        }
+    }
+
+    pub fn with_fps(self, fps: u8) -> ExamplesRunner<S> {
+        ExamplesRunner {
+            desired_fps: fps,
+            .. self
         }
     }
 
@@ -49,7 +59,10 @@ impl<S> ExamplesRunner<S> where S: Simulation {
 
         try!(self.simulation.setup(&mut world));
 
+        let nanoseconds_per_frame = 1_000_000_000 / (self.desired_fps as u64);
         loop {
+            let start_time = time::precise_time_ns();
+
             if let Some(result) = self.handle_window_events(&display) {
                 return result;
             }
@@ -58,7 +71,15 @@ impl<S> ExamplesRunner<S> where S: Simulation {
             try!(self.simulation.update(&mut world));
             try!(self.render(&display, &mut renderer, &mut world));
 
-            std::thread::sleep_ms(12);
+            let time_taken = time::precise_time_ns() - start_time;
+            if time_taken < nanoseconds_per_frame {
+                std::thread::sleep_ms(((nanoseconds_per_frame - time_taken) / 1_000_000) as u32);
+            }
+
+            let time_taken = time::precise_time_ns() - start_time;
+            let fps = 1_000_000_000 as f32 / time_taken as f32;
+            // TODO eventually render this on screen
+            println!("FPS: {}", fps);
         }
     }
 
