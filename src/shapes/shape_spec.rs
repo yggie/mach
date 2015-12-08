@@ -1,12 +1,13 @@
 use Scalar;
+use maths::Vector;
 
-pub enum ShapeSpec {
+pub enum ShapeSpec<'a> {
     Sphere(Scalar),
     Cuboid {
         depth: Scalar,
         width: Scalar,
         height: Scalar,
     },
-    TriangleMesh,
-    Custom(&'static str),
+    TriangleMesh(&'a Vec<Vector>, &'a Vec<(usize, usize, usize)>),
+    Custom(&'a str),
 }

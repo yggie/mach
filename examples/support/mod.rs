@@ -1,5 +1,7 @@
 mod camera;
 mod instance;
+mod primitives;
+mod polygon_model;
 mod examples_runner;
 mod examples_renderer;
 
@@ -9,6 +11,8 @@ pub mod tests_support;
 
 pub use self::camera::{Camera, CameraDef};
 pub use self::instance::{Instance, InstanceFactory};
+pub use self::primitives::{Normal, Vertex};
+pub use self::polygon_model::PolygonModel;
 pub use self::tests_support::{CollisionSpaceMonitor, DynamicsMonitor, MonitoredWorld, Simulation};
 pub use self::examples_runner::ExamplesRunner;
 pub use self::examples_renderer::ExamplesRenderer;

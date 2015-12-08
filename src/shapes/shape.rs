@@ -6,7 +6,7 @@ use shapes::ShapeSpec;
 
 /// Defines the traits for all geometric property descriptions.
 pub trait Shape: fmt::Display + 'static {
-    fn spec(&self) -> ShapeSpec;
+    fn spec<'a>(&'a self) -> ShapeSpec<'a>;
 
     /// Computes the volume for the shape.
     fn volume(&self) -> Scalar;

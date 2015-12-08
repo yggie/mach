@@ -1,22 +1,26 @@
 extern crate mach;
 
+use std::rc::Rc;
 use std::iter::Cycle;
 use std::slice::Iter;
 
-static COLORS: [[f32; 4]; 3] = [
-    [1.0, 0.0, 0.0, 1.0],
-    [0.0, 1.0, 0.0, 1.0],
-    [0.0, 0.0, 1.0, 1.0],
+use support::PolygonModel;
+
+static COLORS: [(f32, f32, f32, f32); 3] = [
+    (1.0, 0.0, 0.0, 1.0),
+    (0.0, 1.0, 0.0, 1.0),
+    (0.0, 0.0, 1.0, 1.0),
 ];
 
 pub struct Instance {
     pub id: mach::ID,
-    pub color: [f32; 4],
-    pub shape_spec: mach::ShapeSpec,
+    pub color: (f32, f32, f32, f32),
+    pub scale: (f32, f32, f32),
+    pub polygon_model: Rc<PolygonModel>,
 }
 
 pub struct InstanceFactory {
-    color_generator: Cycle<Iter<'static, [f32; 4]>>,
+    color_generator: Cycle<Iter<'static, (f32, f32, f32, f32)>>,
 }
 
 impl InstanceFactory {
@@ -26,11 +30,12 @@ impl InstanceFactory {
         }
     }
 
-    pub fn generate(&mut self, id: mach::ID, shape: &mach::Shape) -> Instance {
+    pub fn generate(&mut self, id: mach::ID, scale: (f32, f32, f32), polygon_model: Rc<PolygonModel>) -> Instance {
         Instance {
             id: id,
+            scale: scale,
             color: *self.color_generator.next().unwrap(),
-            shape_spec: shape.spec(),
+            polygon_model: polygon_model,
         }
     }
 }

@@ -11,7 +11,7 @@ use shapes::{Shape, ShapeSpec};
 #[derive(Clone, Debug)]
 pub struct TriangleMesh {
     vertices: Rc<Vec<Vector>>,
-    elements: Vec<(usize, usize, usize)>,
+    elements: Rc<Vec<(usize, usize, usize)>>,
     unique_nodes: Vec<usize>,
 }
 
@@ -36,7 +36,7 @@ impl TriangleMesh {
 
         TriangleMesh {
             vertices: vertices,
-            elements: elements,
+            elements: Rc::new(elements),
             unique_nodes: unique_nodes,
         }
     }
@@ -68,7 +68,7 @@ impl fmt::Display for TriangleMesh {
 
 impl Shape for TriangleMesh {
     fn spec(&self) -> ShapeSpec {
-        ShapeSpec::TriangleMesh
+        ShapeSpec::TriangleMesh(&self.vertices, &self.elements)
     }
 
     fn volume(&self) -> Scalar {

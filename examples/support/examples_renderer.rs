@@ -2,28 +2,17 @@ extern crate mach;
 extern crate glium;
 
 use std;
+use std::rc::Rc;
 use std::mem;
 use std::collections::HashMap;
 
 use self::glium::backend::glutin_backend::GlutinFacade;
 
-use support::{Camera, SceneEnv, Instance, InstanceFactory};
-
-#[derive(Clone, Copy)]
-pub struct Vertex {
-    position: (f32, f32, f32),
-}
-implement_vertex!(Vertex, position);
-
-#[derive(Clone, Copy)]
-pub struct Normal {
-    normal: (f32, f32, f32),
-}
-implement_vertex!(Normal, normal);
+use support::{SceneEnv, Instance, InstanceFactory, Normal, PolygonModel, Vertex};
 
 pub struct ExamplesRenderer {
     program: glium::Program,
-    cube: (glium::VertexBuffer<Vertex>, glium::VertexBuffer<Normal>, glium::IndexBuffer<u16>),
+    cube: Rc<PolygonModel>,
     instances: HashMap<mach::ID, Instance>,
     factory: InstanceFactory,
 }
@@ -81,12 +70,16 @@ impl ExamplesRenderer {
             let normal_buffer = glium::VertexBuffer::new(display, &normals).unwrap();
             let indices = glium::IndexBuffer::new(display, glium::index::PrimitiveType::TrianglesList, &indices).unwrap();
 
-            (vertex_buffer, normal_buffer, indices)
+            PolygonModel {
+                vertices: vertex_buffer,
+                normals: normal_buffer,
+                indices: indices,
+            }
         };
 
         Ok(ExamplesRenderer {
             instances: HashMap::new(),
-            cube: cube,
+            cube: Rc::new(cube),
             program: program,
             factory: InstanceFactory::new(),
         })
@@ -103,7 +96,7 @@ impl ExamplesRenderer {
             if let Some(instance) = old_instances.remove(&body.id()) {
                 self.render_and_save(surface, instance, body.state().transform(), env);
             } else {
-                let instance = self.factory.generate(body.id(), body.shape());
+                let instance = self.generate_new_instance(body.id(), body.shape());
 
                 self.render_and_save(surface, instance, body.state().transform(), env);
             }
@@ -113,43 +106,48 @@ impl ExamplesRenderer {
     }
 
     fn render_and_save<S: glium::Surface>(&mut self, surface: &mut S, instance: Instance, transform: &mach::maths::Transform, env: &SceneEnv) {
-        match instance.shape_spec {
-            mach::ShapeSpec::Cuboid { width, height, depth } => {
-                let model_matrix: [[f32; 4]; 4] = [
-                    [width, 0.0, 0.0, 0.0],
-                    [0.0, height, 0.0, 0.0],
-                    [0.0, 0.0, depth, 0.0],
-                    [transform.translation().x, transform.translation().y, transform.translation().z, 1.0],
-                ];
+        let model_matrix: [[f32; 4]; 4] = [
+            [instance.scale.0, 0.0, 0.0, 0.0],
+            [0.0, instance.scale.1, 0.0, 0.0],
+            [0.0, 0.0, instance.scale.2, 0.0],
+            [transform.translation().x, transform.translation().y, transform.translation().z, 1.0],
+        ];
 
-                let view_matrix: [[f32; 4]; 4] = unsafe {
-                    mem::transmute(env.camera.view_matrix())
-                };
+        let view_matrix: [[f32; 4]; 4] = unsafe {
+            mem::transmute(env.camera.view_matrix())
+        };
 
-                surface.draw(
-                    (&self.cube.0, &self.cube.1),
-                    &self.cube.2,
-                    &self.program,
-                    &uniform! {
-                        projection_matrix: *env.camera.projection_matrix(),
-                        view_matrix: view_matrix,
-                        model_matrix: model_matrix,
-                        light_direction: [1.0, 2.0, 1.0f32],
-                        surface_color: instance.color.clone(),
-                    },
-                    &glium::DrawParameters {
-                        depth: glium::Depth {
-                            test: glium::draw_parameters::DepthTest::IfLess,
-                            write: true,
-                            .. Default::default()
-                        },
-                        .. Default::default()
-                    },
-                ).unwrap();
+        surface.draw(
+            (&instance.polygon_model.vertices, &instance.polygon_model.normals),
+            &instance.polygon_model.indices,
+            &self.program,
+            &uniform! {
+                projection_matrix: *env.camera.projection_matrix(),
+                view_matrix: view_matrix,
+                model_matrix: model_matrix,
+                light_direction: [1.0, 2.0, 1.0f32],
+                surface_color: instance.color.clone(),
+            },
+            &glium::DrawParameters {
+                depth: glium::Depth {
+                    test: glium::draw_parameters::DepthTest::IfLess,
+                    write: true,
+                    .. Default::default()
+                },
+                .. Default::default()
+            },
+        ).unwrap();
+
+        self.instances.insert(instance.id, instance);
+    }
+
+    fn generate_new_instance(&mut self, id: mach::ID, shape: &mach::Shape) -> Instance {
+        match shape.spec() {
+            mach::ShapeSpec::Cuboid { width, depth, height} => {
+                self.factory.generate(id, (width, depth, height), self.cube.clone())
             },
 
-            _ => (),
+            _ => unimplemented!(),
         }
-        self.instances.insert(instance.id, instance);
     }
 }

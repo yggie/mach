@@ -1,6 +1,6 @@
 extern crate nalgebra as na;
 
-use self::na::{Cross, Dot, Norm};
+use self::na::{Dot, Norm};
 
 pub struct CameraDef {
     pub up: na::Vec3<f32>,
@@ -57,7 +57,6 @@ impl Camera {
 
         let new_up = up.normalize();
         let direction = eye_to_center.normalize();
-        let x_axis = direction.cross(&new_up).normalize();
 
         let mut camera = Camera {
             up: new_up,
