@@ -110,7 +110,7 @@ impl ExamplesRenderer {
             [instance.scale.0, 0.0, 0.0, 0.0],
             [0.0, instance.scale.1, 0.0, 0.0],
             [0.0, 0.0, instance.scale.2, 0.0],
-            [transform.translation().x, transform.translation().y, transform.translation().z, 1.0],
+            [transform.translation().x as f32, transform.translation().y as f32, transform.translation().z as f32, 1.0],
         ];
 
         let view_matrix: [[f32; 4]; 4] = unsafe {
@@ -144,7 +144,7 @@ impl ExamplesRenderer {
     fn generate_new_instance(&mut self, id: mach::ID, shape: &mach::Shape) -> Instance {
         match shape.spec() {
             mach::ShapeSpec::Cuboid { width, depth, height} => {
-                self.factory.generate(id, (width, depth, height), self.cube.clone())
+                self.factory.generate(id, (width as f32, depth as f32, height as f32), self.cube.clone())
             },
 
             _ => unimplemented!(),
