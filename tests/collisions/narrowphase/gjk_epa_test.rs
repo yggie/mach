@@ -4,9 +4,9 @@ use mach::{ Scalar, PI };
 use mach::maths::{ State, Vector };
 use mach::shapes::Cuboid;
 use mach::entities::{ Material, RigidBody };
-use mach::collisions::narrowphase::GjkEpaImplementation;
+use mach::collisions::narrowphase::GjkEpa;
 
-fn setup_cubes(cuboid_0: Cuboid, state_0: State, cuboid_1: Cuboid, state_1: State) -> (GjkEpaImplementation, [RigidBody; 2]) {
+fn setup_cubes(cuboid_0: Cuboid, state_0: State, cuboid_1: Cuboid, state_1: State) -> (GjkEpa, [RigidBody; 2]) {
     let material = &Material::default().with_density(3.0);
 
     // TODO remove this once the ID has been extracted from the body
@@ -17,7 +17,7 @@ fn setup_cubes(cuboid_0: Cuboid, state_0: State, cuboid_1: Cuboid, state_1: Stat
         RigidBody::new_with_id(mem::transmute(1), Box::new(cuboid_1), material, state_1)
     };
 
-    return (GjkEpaImplementation, [body_0, body_1]);
+    return (GjkEpa, [body_0, body_1]);
 }
 
 #[test]
@@ -111,7 +111,7 @@ fn colliding_face_to_face() {
 
     assert!(option.is_some());
     let intersection = option.unwrap();
-    assert_eq!(intersection.normal(), Vector::new(1.0, 0.0, 0.0));
+    assert_eq!(intersection.normal().clone(), Vector::new(1.0, 0.0, 0.0));
     // TODO compute intersection point
     // assert_eq!(c.point, Vector::new(0.995, 0.750, 0.750));
 }
@@ -146,7 +146,7 @@ fn colliding_edge_to_face() {
     assert!(option.is_some());
 
     let intersection = option.unwrap();
-    assert_eq!(intersection.normal(), Vector::new(1.0, 0.0, 0.0));
+    assert_eq!(intersection.normal().clone(), Vector::new(1.0, 0.0, 0.0));
     // TODO compute intersection point
     // assert_eq!(c.point, Vector::new(0.5, 0.0, 0.0));
 }

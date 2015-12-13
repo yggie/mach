@@ -14,7 +14,7 @@ mod collisions {
     mod simple_collision_space_test;
 
     mod narrowphase {
-        mod gjk_epa_implementation_test;
+        mod gjk_epa_test;
     }
 }
 

@@ -1,5 +1,5 @@
 use Scalar;
-use maths::{ State, Vector };
+use maths::{State, Vector};
 
 /// This trait should be implemented by objects with the ability to integrate a
 /// `State` over time.

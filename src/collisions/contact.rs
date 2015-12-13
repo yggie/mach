@@ -1,8 +1,6 @@
-use std::fmt;
-
-use SharedCell;
+use {Scalar, SharedCell};
 use maths::Vector;
-use entities::{ RigidBody, StaticBody };
+use entities::{RigidBody, StaticBody};
 
 /// Encapsulates the different possible pairs of physical bodies.
 pub enum ContactPair {
@@ -15,20 +13,11 @@ pub enum ContactPair {
 /// `Contact` contains information regarding contact between two physical
 /// entities.
 pub struct Contact {
+    pub penetration_depth: Scalar,
     /// The pair of contacting bodies.
     pub pair: ContactPair,
     /// The center of the contact.
     pub center: Vector,
     /// The surface normal of the contact.
     pub normal: Vector,
-}
-
-impl fmt::Display for Contact {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f,
-            "Contact: Center={}, Normal={}",
-            self.center,
-            self.normal,
-        )
-    }
 }

@@ -1,11 +1,11 @@
 use std::rc::Rc;
-use std::cell::{ Ref, RefCell, RefMut };
+use std::cell::{Ref, RefCell, RefMut};
 use std::collections::HashMap;
 
 use {EntityDesc, ID, SharedCell};
 use entities::{RigidBody, StaticBody, VolumetricBody};
 use collisions::{CollisionSpace, Contact, ContactPair};
-use collisions::narrowphase::{GjkEpaImplementation, Intersection};
+use collisions::narrowphase::{GjkEpa, Intersection};
 
 /// A simple implementation for representing space in the simulation.
 pub struct SimpleCollisionSpace {
@@ -101,7 +101,7 @@ impl CollisionSpace for SimpleCollisionSpace {
     }
 
     fn find_intersection(&self, body_0: &VolumetricBody, body_1: &VolumetricBody) -> Option<Intersection> {
-        GjkEpaImplementation.find_intersection(body_0, body_1)
+        GjkEpa.find_intersection(body_0, body_1)
     }
 
     fn find_contacts(&self) -> Option<Vec<Contact>> {
@@ -111,12 +111,13 @@ impl CollisionSpace for SimpleCollisionSpace {
             let body_0 = &*rc_cell_0.borrow();
             let body_1 = &*rc_cell_1.borrow();
 
-            if let Some(intersection) = GjkEpaImplementation.find_intersection(body_0, body_1) {
+            if let Some(intersection) = GjkEpa.find_intersection(body_0, body_1) {
                 contacts.push(
                     Contact {
                         pair: ContactPair::RigidRigid(rc_cell_0.clone(), rc_cell_1.clone()),
-                        center: intersection.point(),
-                        normal: intersection.normal(),
+                        center: intersection.point().clone(),
+                        normal: intersection.normal().clone(),
+                        penetration_depth: intersection.penetration_depth(),
                     }
                 );
             }
@@ -126,12 +127,13 @@ impl CollisionSpace for SimpleCollisionSpace {
             let rigid_body = &*rigid_body_rc_cell.borrow();
             let static_body = &*static_body_rc_cell.borrow();
 
-            if let Some(intersection) = GjkEpaImplementation.find_intersection(rigid_body, static_body) {
+            if let Some(intersection) = GjkEpa.find_intersection(rigid_body, static_body) {
                 contacts.push(
                     Contact {
                         pair: ContactPair::RigidStatic(rigid_body_rc_cell.clone(), static_body_rc_cell.clone()),
-                        center: intersection.point(),
-                        normal: intersection.normal(),
+                        center: intersection.point().clone(),
+                        normal: intersection.normal().clone(),
+                        penetration_depth: intersection.penetration_depth(),
                     }
                 );
             }

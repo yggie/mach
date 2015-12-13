@@ -17,7 +17,7 @@ fn with_a_cube() {
 
     let surfaces = compute_surfaces_for_convex_hull(&vertices);
 
-    let points_for_surfaces: Vec<(Vector, Vector, Vector)> = surfaces.iter().map(|surface| {
+    let _points_for_surfaces: Vec<(Vector, Vector, Vector)> = surfaces.iter().map(|surface| {
         (vertices[surface.nodes[0]], vertices[surface.nodes[1]], vertices[surface.nodes[2]])
     }).collect();
 }

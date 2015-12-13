@@ -280,6 +280,28 @@ impl Mul<Scalar> for Vector {
     }
 }
 
+/// Implement the `Mul` trait to allow using the `*` operator for a `Scalar`
+/// with a `Vector`.
+impl Mul<Vector> for Scalar {
+    type Output = Vector;
+
+    #[inline]
+    fn mul(self, vector: Vector) -> Vector {
+        &vector * self
+    }
+}
+
+/// Implement the `Mul` trait to allow using the `*` operator for a `Scalar`
+/// with a `Vector`.
+impl<'a> Mul<&'a Vector> for Scalar {
+    type Output = Vector;
+
+    #[inline]
+    fn mul(self, vector: &'a Vector) -> Vector {
+        vector * self
+    }
+}
+
 /// Implement the `Div` trait to allow using the `/` operator for a `Vector`
 /// with a `Scalar`.
 impl<'a> Div<Scalar> for &'a Vector {

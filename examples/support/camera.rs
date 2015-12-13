@@ -1,5 +1,7 @@
 extern crate nalgebra as na;
 
+use std::mem;
+
 use self::na::{Dot, Norm};
 
 pub struct CameraDef {
@@ -19,8 +21,8 @@ impl Default for CameraDef {
     fn default() -> Self {
         CameraDef {
             up: na::Vec3::new(0.0, 1.0, 0.0),
-            eye: na::Vec3::new(0.0, -3.0, 8.0),
-            center: na::Vec3::new(0.0, 3.0, 0.0),
+            eye: na::Vec3::new(0.0, 0.0, 5.0),
+            center: na::Vec3::new(0.0, 0.0, 0.0),
 
             far: 128.0,
             near: 0.1,
@@ -78,17 +80,19 @@ impl Camera {
         return camera;
     }
 
-    pub fn view_matrix(&self) -> na::Mat4<f32> {
+    pub fn view_matrix(&self) -> [[f32; 4]; 4] {
         let z_axis = -self.direction;
         let x_axis = na::cross(&self.up, &z_axis).normalize();
         let y_axis = -na::cross(&z_axis, &x_axis).normalize();
 
-        na::Mat4::new(
-            x_axis.x, -x_axis.y, x_axis.z, -x_axis.dot(&self.position),
-            y_axis.x, -y_axis.y, y_axis.z, -y_axis.dot(&self.position),
-            z_axis.x, -z_axis.y, z_axis.z, -z_axis.dot(&self.position),
-                 0.0,       0.0,      0.0,                        1.0,
-        )
+        unsafe {
+            mem::transmute(na::Mat4::new(
+                x_axis.x, -x_axis.y, x_axis.z, -x_axis.dot(&self.position),
+                y_axis.x, -y_axis.y, y_axis.z, -y_axis.dot(&self.position),
+                z_axis.x, -z_axis.y, z_axis.z, -z_axis.dot(&self.position),
+                     0.0,       0.0,      0.0,                        1.0,
+            ))
+        }
     }
 
     pub fn set_aspect_ratio(&mut self, aspect_ratio: f32) {
@@ -104,11 +108,20 @@ impl Camera {
         &self.projection_matrix
     }
 
+    // pub fn map_movement_to_rotation(&mut self, dx: f32, dy: f32) {
+    // }
+    //
+    // pub fn zoom_in(&mut self, step: f32) {
+    // }
+    //
+    // pub fn zoom_out(&mut self, step: f32) {
+    // }
+
     pub fn on_mouse_move(&mut self, x: f32, y: f32) {
         match self.last_drag_point {
             Some((prev_x, prev_y)) => {
                 let (dx, dy) = (x - prev_x, y - prev_y);
-                let rot_mag = f32::sqrt(dx*dx + dy*dy) / 1000.0;
+                let rot_mag = f32::sqrt(dx*dx + dy*dy) / 500.0;
 
                 let z_view = -self.direction;
                 let x_view = na::cross(&self.up, &z_view).normalize();
@@ -149,3 +162,8 @@ impl Camera {
     }
 }
 
+impl Default for Camera {
+    fn default() -> Self {
+        Camera::new(CameraDef::default())
+    }
+}

@@ -1,5 +1,5 @@
-use TOLERANCE;
-use maths::Vector;
+use {Scalar, TOLERANCE};
+use maths::{ApproxEq, Vector};
 use shapes::Shape;
 use entities::VolumetricBody;
 
@@ -28,7 +28,7 @@ impl Simplex {
             let b = support_point_1.position - relative_position;
             let norm = a.cross(b).normalize();
 
-            [1.0, -1.0].iter()
+            [1.0, -1.0 as Scalar].iter()
                 .flat_map(|&multiplier| {
                     Simplex::generate_support_points(norm * multiplier, bodies)
                 }).find(|support_point| {
@@ -65,7 +65,7 @@ impl Simplex {
         let mut simplex = Simplex::new(bodies);
         let surface_radius = bodies[0].shape().surface_radius() + bodies[1].shape().surface_radius();
 
-        for _ in (0..1000) {
+        for _ in 0..1000 {
             // find any surface facing the origin
             let next_guess = simplex.surfaces_iter()
                 .map(|(normal, indices, not_in_index)| {
@@ -75,31 +75,31 @@ impl Simplex {
                     let vertex_to_origin = -simplex.vertices[index].position;
                     let distance_to_origin = vertex_to_origin.dot(normal);
 
-                    return distance_to_origin > surface_radius;
+                    return distance_to_origin > surface_radius + TOLERANCE;
                 });
 
-            match next_guess {
-                Some((direction, index_on_surface, index_to_replace)) => {
-                    let new_support_points = Simplex::generate_support_points(direction, bodies);
+            let (direction, index_on_surface, index_to_replace) = match next_guess {
+                Some(data) => data,
+                None => return Some(simplex),
+            };
 
-                    let new_support_point = new_support_points.iter().find(|point| {
-                        !simplex.has_matching_support_point(&point)
-                    });
+            let new_support_points = Simplex::generate_support_points(direction, bodies);
+            let new_support_point = new_support_points.iter().find(|point| {
+                !simplex.has_matching_support_point(&point)
+            });
 
-                    match new_support_point {
-                        // update the simplex with the new support point if the
-                        // support point is in the direction of the surface
-                        // normal
-                        Some(vertex) if direction.dot(vertex.position - simplex.vertices[index_on_surface].position) > TOLERANCE => {
-                            simplex.vertices[index_to_replace] = *vertex;
-                        },
-
-                        _ => return None,
-                    }
+            let vertex = match new_support_point {
+                // update the simplex with the new support point if the
+                // support point is in the direction of the surface
+                // normal
+                Some(vertex) if direction.dot(vertex.position - simplex.vertices[index_on_surface].position) > TOLERANCE => {
+                    vertex
                 },
 
-                None => return Some(simplex),
-            }
+                _ => return None,
+            };
+
+            simplex.vertices[index_to_replace] = vertex.clone();
         }
 
         unreachable!();
@@ -113,7 +113,7 @@ impl Simplex {
 
     fn has_matching_support_point(&self, support_point: &SupportPoint) -> bool {
         return self.vertices.iter().find(|vertex| {
-            vertex.position == support_point.position
+            ApproxEq::approx_eq(vertex.position, support_point.position)
         }).is_some();
     }
 

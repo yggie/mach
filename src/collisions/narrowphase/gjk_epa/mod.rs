@@ -18,9 +18,9 @@ enum IntersectionType {
 
 /// The object which encapsulates the default implementation of the GJK-EPA
 /// algorithm for the engine.
-pub struct GjkEpaImplementation;
+pub struct GjkEpa;
 
-impl GjkEpaImplementation {
+impl GjkEpa {
     /// Returns the intersection information, if any, between two shape
     /// entities.
     pub fn find_intersection(&self, entity_0: &VolumetricBody, entity_1: &VolumetricBody) -> Option<Intersection> {
@@ -28,7 +28,7 @@ impl GjkEpaImplementation {
             let mut polytope = Polytope::new(&simplex);
             polytope.expand_fully([entity_0, entity_1]);
 
-            let intersection = GjkEpaImplementation::contact_for_polytope(&polytope, [entity_0, entity_1]);
+            let intersection = GjkEpa::contact_for_polytope(&polytope, [entity_0, entity_1]);
             return intersection;
         })
     }
@@ -53,8 +53,8 @@ impl GjkEpaImplementation {
 
         let (depth, contact_normal, indices) = closest_surface.unwrap();
 
-        let contact_type_0 = GjkEpaImplementation::infer_contact_type(0, polytope, indices);
-        let contact_type_1 = GjkEpaImplementation::infer_contact_type(1, polytope, indices);
+        let contact_type_0 = GjkEpa::infer_contact_type(0, polytope, indices);
+        let contact_type_1 = GjkEpa::infer_contact_type(1, polytope, indices);
 
         let contact_center = match (contact_type_0, contact_type_1) {
             (IntersectionType::Vertex(vertex_index), _) => {
@@ -88,7 +88,7 @@ impl GjkEpaImplementation {
             },
         };
 
-        return Intersection::new(contact_center, contact_normal);
+        return Intersection::new(contact_center, contact_normal, depth);
     }
 
     fn infer_contact_type(entity_number: usize, polytope: &Polytope, indices: [usize; 3]) -> IntersectionType {
@@ -98,7 +98,7 @@ impl GjkEpaImplementation {
             polytope.vertices[indices[2]].indices[entity_number],
         ];
 
-        return GjkEpaImplementation::infer_contact_type_with_indices(mapped_indices);
+        return GjkEpa::infer_contact_type_with_indices(mapped_indices);
     }
 
     fn infer_contact_type_with_indices(indices: [usize; 3]) -> IntersectionType {
@@ -112,9 +112,9 @@ impl GjkEpaImplementation {
     }
 }
 
-impl NarrowPhase for GjkEpaImplementation {
+impl NarrowPhase for GjkEpa {
     #[inline(always)]
     fn find_intersection(&self, entity_0: &VolumetricBody, entity_1: &VolumetricBody) -> Option<Intersection> {
-        (self as &GjkEpaImplementation).find_intersection(entity_0, entity_1)
+        (self as &GjkEpa).find_intersection(entity_0, entity_1)
     }
 }

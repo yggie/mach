@@ -197,7 +197,13 @@ fn negating() {
 
 #[test]
 fn multiplying_by_a_scalar() {
-    let v = Vector::new(1.0, 2.0, 3.0) * 2.5;
+    let v = Vector::new(1.0, 2.0, 3.0);
+    let expected = Vector::new(2.5, 5.0, 7.5);
 
-    assert_approx_eq!(v, Vector::new(2.5, 5.0, 7.5));
+    assert_approx_eq!(v * 2.5, expected);
+    assert_approx_eq!(2.5 * v, expected);
+    assert_approx_eq!(&v * 2.5, expected);
+    assert_approx_eq!(2.5 * &v, expected);
+
+    assert_approx_eq!(v * 2.5, expected);
 }

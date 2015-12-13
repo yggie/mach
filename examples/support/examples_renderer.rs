@@ -1,14 +1,14 @@
 extern crate mach;
 extern crate glium;
 
-use std;
 use std::rc::Rc;
 use std::mem;
 use std::collections::HashMap;
 
 use self::glium::backend::glutin_backend::GlutinFacade;
 
-use support::{SceneEnv, Instance, InstanceFactory, Normal, PolygonModel, Vertex};
+use support::{SceneEnv, Instance, InstanceFactory, PolygonModel};
+use support::polygons;
 
 pub struct ExamplesRenderer {
     program: glium::Program,
@@ -28,58 +28,9 @@ impl ExamplesRenderer {
             ).map_err(|err| format!("{}", err))
         );
 
-        let cube = {
-            let vertices: [Vertex; 8] = [
-                Vertex { position: (-1.0, -1.0, -1.0) },
-                Vertex { position: ( 1.0, -1.0, -1.0) },
-                Vertex { position: ( 1.0,  1.0, -1.0) },
-                Vertex { position: (-1.0,  1.0, -1.0) },
-                Vertex { position: (-1.0, -1.0,  1.0) },
-                Vertex { position: ( 1.0, -1.0,  1.0) },
-                Vertex { position: ( 1.0,  1.0,  1.0) },
-                Vertex { position: (-1.0,  1.0,  1.0) },
-            ];
-
-            let normals: [Normal; 8] = [
-                Normal { normal: (-1.0, -1.0, -1.0) },
-                Normal { normal: ( 1.0, -1.0, -1.0) },
-                Normal { normal: ( 1.0,  1.0, -1.0) },
-                Normal { normal: (-1.0,  1.0, -1.0) },
-                Normal { normal: (-1.0, -1.0,  1.0) },
-                Normal { normal: ( 1.0, -1.0,  1.0) },
-                Normal { normal: ( 1.0,  1.0,  1.0) },
-                Normal { normal: (-1.0,  1.0,  1.0) },
-            ];
-
-            let indices: [u16; 36] = [
-                0, 5, 1,
-                0, 4, 5,
-                3, 6, 7,
-                3, 2, 6,
-                1, 6, 2,
-                1, 5, 6,
-                0, 3, 7,
-                0, 7, 4,
-                0, 2, 3,
-                0, 1, 2,
-                4, 6, 5,
-                4, 7, 6,
-            ];
-
-            let vertex_buffer = glium::VertexBuffer::new(display, &vertices).unwrap();
-            let normal_buffer = glium::VertexBuffer::new(display, &normals).unwrap();
-            let indices = glium::IndexBuffer::new(display, glium::index::PrimitiveType::TrianglesList, &indices).unwrap();
-
-            PolygonModel {
-                vertices: vertex_buffer,
-                normals: normal_buffer,
-                indices: indices,
-            }
-        };
-
         Ok(ExamplesRenderer {
             instances: HashMap::new(),
-            cube: Rc::new(cube),
+            cube: Rc::new(polygons::initialize_cube(display)),
             program: program,
             factory: InstanceFactory::new(),
         })
@@ -90,7 +41,7 @@ impl ExamplesRenderer {
 
         let mut old_instances = HashMap::new();
 
-        std::mem::swap(&mut old_instances, &mut self.instances);
+        mem::swap(&mut old_instances, &mut self.instances);
 
         for body in world.bodies_iter() {
             if let Some(instance) = old_instances.remove(&body.id()) {
@@ -113,17 +64,13 @@ impl ExamplesRenderer {
             [transform.translation().x as f32, transform.translation().y as f32, transform.translation().z as f32, 1.0],
         ];
 
-        let view_matrix: [[f32; 4]; 4] = unsafe {
-            mem::transmute(env.camera.view_matrix())
-        };
-
         surface.draw(
             (&instance.polygon_model.vertices, &instance.polygon_model.normals),
             &instance.polygon_model.indices,
             &self.program,
             &uniform! {
                 projection_matrix: *env.camera.projection_matrix(),
-                view_matrix: view_matrix,
+                view_matrix: env.camera.view_matrix(),
                 model_matrix: model_matrix,
                 light_direction: [1.0, 2.0, 1.0f32],
                 surface_color: instance.color.clone(),

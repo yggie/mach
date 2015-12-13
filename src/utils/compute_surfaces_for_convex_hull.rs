@@ -155,9 +155,9 @@ fn initialize_surface(vertices: &Vec<Vector>) -> (Surface, Vec<Node>, Vec<Direct
         .collect();
 
     let mut first_surface_option: Option<Surface> = None;
-    'outer: for index_0 in (0..vertices.len()) {
-        for index_1 in ((index_0 + 1)..vertices.len()) {
-            for index_2 in ((index_1 + 1)..vertices.len()) {
+    'outer: for index_0 in 0..vertices.len() {
+        for index_1 in (index_0 + 1)..vertices.len() {
+            for index_2 in (index_1 + 1)..vertices.len() {
 
                 let trial_surface = Surface::new(vertices, index_0, index_1, index_2);
                 let point_on_surface = vertices[index_0];
@@ -175,7 +175,7 @@ fn initialize_surface(vertices: &Vec<Vector>) -> (Surface, Vec<Node>, Vec<Direct
     }
 
     let surface = first_surface_option.unwrap();
-    for i in (0..3) {
+    for i in 0..3 {
         let index = surface.nodes[i];
         available_nodes[index].on_edge = true;
     }

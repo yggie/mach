@@ -139,7 +139,7 @@ impl PartialEq for Matrix {
     /// the maximum difference in the `Matrix` components is less than the
     /// allowed tolerance.
     fn eq(&self, other: &Matrix) -> bool {
-        for i in (0..9) {
+        for i in 0..9 {
             if (self[i] - other[i]).abs() > TOLERANCE {
                 return false;
             }

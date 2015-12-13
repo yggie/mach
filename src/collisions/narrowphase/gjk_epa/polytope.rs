@@ -25,7 +25,7 @@ impl Polytope {
     }
 
     pub fn expand_fully(&mut self, bodies: [&VolumetricBody; 2]) {
-        for _ in (0..1000) {
+        for _ in 0..1000 {
             if !self.expand(bodies) { return }
         }
 

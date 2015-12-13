@@ -1,8 +1,8 @@
-use { Scalar, TOLERANCE };
-use maths::{ Vector, State };
-use dynamics::{ Dynamics, SemiImplicitEuler };
-use entities::{ RigidBody, StaticBody };
-use collisions::{ ContactPair, CollisionSpace };
+use {Scalar, TOLERANCE};
+use maths::{Vector, State};
+use dynamics::{Dynamics, SemiImplicitEuler};
+use entities::{RigidBody, StaticBody};
+use collisions::{ContactPair, CollisionSpace};
 use collisions::narrowphase::Intersection;
 
 /// Contains the simplest implementation for a time marching scheme.
@@ -21,7 +21,7 @@ impl SimpleDynamics {
     }
 
     #[allow(non_snake_case)]
-    fn solve_for_contact(&mut self, rigid_body_0: &RigidBody, rigid_body_1: &RigidBody, contact_center: Vector, contact_normal: Vector) -> ((Vector, Vector), (Vector, Vector)) {
+    fn solve_for_contact(&mut self, rigid_body_0: &RigidBody, rigid_body_1: &RigidBody, contact_center: &Vector, contact_normal: &Vector) -> ((Vector, Vector), (Vector, Vector)) {
         let epsilon = rigid_body_0.coefficient_of_restitution() * rigid_body_1.coefficient_of_restitution();
         // body masses
         let M = [rigid_body_0.mass(), rigid_body_1.mass()];
@@ -38,8 +38,9 @@ impl SimpleDynamics {
         // axis of rotation for the impulse introduced by the contact. The axis
         // has been scaled by the distance to the contact.
         let k_scaled = [
-            to_contact_center[0].cross(contact_normal),
-            to_contact_center[1].cross(contact_normal),
+            // TODO use traits for common vector methods
+            to_contact_center[0].cross(contact_normal.clone()),
+            to_contact_center[1].cross(contact_normal.clone()),
         ];
 
         let impulse = - (1.0 + epsilon) *
@@ -61,13 +62,13 @@ impl SimpleDynamics {
     }
 
     #[allow(non_snake_case)]
-    fn solve_for_contact_with_static(&mut self, rigid_body: &RigidBody, static_body: &StaticBody, contact_center: Vector, contact_normal: Vector) -> (Vector, Vector) {
+    fn solve_for_contact_with_static(&mut self, rigid_body: &RigidBody, static_body: &StaticBody, contact_center: &Vector, contact_normal: &Vector) -> (Vector, Vector) {
         let epsilon = rigid_body.coefficient_of_restitution() * static_body.coefficient_of_restitution();
         // relative vector from position to contact center
         let to_contact_center = contact_center - rigid_body.pos();
         // axis of rotation for the impulse introduced by the contact. The axis
         // has been scaled by the distance to the contact.
-        let k_scaled = to_contact_center.cross(contact_normal);
+        let k_scaled = to_contact_center.cross(contact_normal.clone());
 
         let m = rigid_body.mass();
         let v = rigid_body.vel();
@@ -96,7 +97,7 @@ impl SimpleDynamics {
         let mut did_intersect_last_step = true;
         let mut current_time = time_window;
 
-        for i in (0..5) {
+        for i in 0..5 {
             let multiplier = if did_intersect_last_step {
                 -1.0
             } else {
@@ -127,7 +128,7 @@ impl SimpleDynamics {
         let mut did_intersect_last_step = true;
         let mut current_time = time_window;
 
-        for i in (0..5) {
+        for i in 0..5 {
             let multiplier = if did_intersect_last_step {
                 -1.0
             } else {
@@ -150,11 +151,14 @@ impl SimpleDynamics {
         return (last_intersection.0, last_intersection.1);
     }
 
-    fn update_rigid_body(&self, rigid_body: &mut RigidBody, change: (Vector, Vector), remaining_time: Scalar) {
+    fn update_rigid_body(&self, rigid_body: &mut RigidBody, change: (Vector, Vector), remaining_time: Scalar, correction: Vector) {
         let v = rigid_body.vel();
         let w = rigid_body.ang_vel();
         rigid_body.set_vel(&(v + change.0));
         rigid_body.set_ang_vel(&(w + change.1));
+
+        let position = rigid_body.pos();
+        rigid_body.set_pos(&(position + correction));
 
         self.integrator.integrate_in_place(rigid_body.state_mut(), remaining_time, self.gravity);
     }
@@ -174,24 +178,26 @@ impl Dynamics for SimpleDynamics {
                     ContactPair::RigidRigid(ref cell_0, ref cell_1) => {
                         let rigid_body_0 = &mut cell_0.borrow_mut();
                         let rigid_body_1 = &mut cell_1.borrow_mut();
-                        let current_intersection = Intersection::new(contact.center, contact.normal);
+                        let current_intersection = Intersection::new(contact.center, contact.normal, contact.penetration_depth);
 
                         let (intersection, remaining_time) = self.revert_to_time_of_contact(collision_space, current_intersection, rigid_body_0, rigid_body_1, time_step);
                         let changes = self.solve_for_contact(rigid_body_0, rigid_body_1, intersection.point(), intersection.normal());
 
-                        self.update_rigid_body(rigid_body_0, changes.0, remaining_time);
-                        self.update_rigid_body(rigid_body_1, changes.1, remaining_time);
+                        let correction = -contact.penetration_depth * contact.normal;
+                        self.update_rigid_body(rigid_body_0, changes.0, remaining_time, correction);
+                        self.update_rigid_body(rigid_body_1, changes.1, remaining_time, -correction);
                     },
 
                     ContactPair::RigidStatic(ref cell_0, ref cell_1) => {
                         let rigid_body = &mut cell_0.borrow_mut();
-                        let static_body = &mut cell_1.borrow();
-                        let current_intersection = Intersection::new(contact.center, contact.normal);
+                        let static_body = &cell_1.borrow();
+                        let current_intersection = Intersection::new(contact.center, contact.normal, contact.penetration_depth);
 
                         let (intersection, remaining_time) = self.revert_to_time_of_contact_with_static(collision_space, current_intersection, rigid_body, static_body, time_step);
                         let change = self.solve_for_contact_with_static(rigid_body, static_body, intersection.point(), intersection.normal());
 
-                        self.update_rigid_body(rigid_body, change, remaining_time);
+                        let correction = contact.penetration_depth * contact.normal;
+                        self.update_rigid_body(rigid_body, change, remaining_time, correction);
                     },
                 }
             }
