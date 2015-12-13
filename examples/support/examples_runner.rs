@@ -35,25 +35,25 @@ impl<S> ExamplesRunner<S> where S: Simulation {
     }
 
     fn safe_run(&mut self) -> Result<(), String> {
-        let mut world = try!(ExamplesWindow::create(
+        let mut window = try!(ExamplesWindow::create(
             mach::CustomWorld::new(
                 mach::collisions::SimpleCollisionSpace::new(),
                 mach::dynamics::SimpleDynamics::new(),
             ),
         ));
 
-        try!(self.simulation.setup(&mut world));
+        try!(self.simulation.setup(window.world_mut()));
 
         let nanoseconds_per_frame = 1_000_000_000 / (self.desired_fps as u64);
         loop {
             let start_time = time::precise_time_ns();
 
-            if let Some(result) = world.update_window() {
+            if let Some(result) = window.update() {
                 return result;
             }
 
-            try!(self.simulation.update(&mut world));
-            try!(world.render_frame());
+            try!(self.simulation.update(window.world_mut()));
+            try!(window.render_frame());
 
             let time_taken = time::precise_time_ns() - start_time;
             if time_taken < nanoseconds_per_frame {

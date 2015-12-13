@@ -13,7 +13,9 @@ mod entity_desc;
 mod custom_world;
 
 pub use self::world::World;
+pub use self::dynamics::Dynamics;
 pub use self::entities::RigidBody;
+pub use self::collisions::CollisionSpace;
 pub use self::mach_world::MachWorld;
 pub use self::entity_desc::EntityDesc;
 pub use self::custom_world::CustomWorld;

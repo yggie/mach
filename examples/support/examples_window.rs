@@ -1,8 +1,6 @@
 extern crate mach;
 extern crate glium;
 
-use std::cell::Ref;
-
 use self::glium::glutin;
 use self::glium::{DisplayBuild, Surface};
 use self::glium::backend::glutin_backend::GlutinFacade;
@@ -10,10 +8,10 @@ use self::glium::backend::glutin_backend::GlutinFacade;
 use mach::dynamics::Dynamics;
 use mach::collisions::CollisionSpace;
 
-use support::{Camera, ExamplesRenderer, SceneEnv};
+use support::{Camera, ExamplesRenderer, SceneEnv, WorldRenderer};
 
 pub struct ExamplesWindow<C: CollisionSpace, D: Dynamics> {
-    world: mach::CustomWorld<C, D>,
+    world: WorldRenderer<C, D>,
     camera: Camera,
     display: GlutinFacade,
     temp_renderer: ExamplesRenderer,
@@ -36,14 +34,14 @@ impl<C, D> ExamplesWindow<C, D> where C: CollisionSpace, D: Dynamics {
         let renderer = try!(ExamplesRenderer::new(&display));
 
         Ok(ExamplesWindow {
-            world: world,
+            world: WorldRenderer::new(world),
             camera: camera,
             display: display,
             temp_renderer: renderer,
         })
     }
 
-    pub fn update_window(&mut self) -> Option<Result<(), String>> {
+    pub fn update(&mut self) -> Option<Result<(), String>> {
         if let Some(result) = self.handle_window_events() {
             Some(result)
         } else {
@@ -51,6 +49,10 @@ impl<C, D> ExamplesWindow<C, D> where C: CollisionSpace, D: Dynamics {
 
             None
         }
+    }
+
+    pub fn world_mut(&mut self) -> &mut mach::World {
+        &mut self.world
     }
 
     pub fn render_frame(&mut self) -> Result<(), String> {
@@ -79,41 +81,5 @@ impl<C, D> ExamplesWindow<C, D> where C: CollisionSpace, D: Dynamics {
         }
 
         return None;
-    }
-}
-
-impl<C, D> mach::World for ExamplesWindow<C, D> where C: CollisionSpace, D: Dynamics {
-    #[inline(always)]
-    fn create_body(&mut self, entity_desc: &mach::EntityDesc) -> mach::ID {
-        self.world.create_body(entity_desc)
-    }
-
-    fn create_static_body(&mut self, entity_desc: &mach::EntityDesc) -> mach::ID {
-        self.world.create_static_body(entity_desc)
-    }
-
-    #[inline(always)]
-    fn find_body(&self, id: mach::ID) -> Option<Ref<mach::RigidBody>> {
-        self.world.find_body(id)
-    }
-
-    #[inline(always)]
-    fn bodies_iter<'a>(&'a self) -> Box<Iterator<Item=Ref<mach::RigidBody>> + 'a> {
-        self.world.bodies_iter()
-    }
-
-    #[inline(always)]
-    fn update(&mut self, time_step: mach::Scalar) {
-        self.world.update(time_step);
-    }
-
-    #[inline(always)]
-    fn gravity(&self) -> mach::Vector {
-        self.world.gravity()
-    }
-
-    #[inline(always)]
-    fn set_gravity(&mut self, gravity: mach::Vector) {
-        self.world.set_gravity(gravity);
     }
 }
