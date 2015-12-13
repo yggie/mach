@@ -6,15 +6,13 @@ macro_rules! assert_dynamics_behaviour(
         mod dynamics_behaviour {
             use super::test_subject;
 
-            use support::MonitoredWorld;
-
-            use mach::{EntityDesc, Scalar, PI, World};
+            use mach::{CustomWorld, EntityDesc, Scalar, PI, World};
             use mach::maths::Vector;
             use mach::dynamics::Dynamics;
             use mach::collisions::{CollisionSpace, SimpleCollisionSpace};
 
-            fn new_world<D: Dynamics>(dynamics: D) -> MonitoredWorld<SimpleCollisionSpace, D> {
-                return MonitoredWorld::new(SimpleCollisionSpace::new(), dynamics);
+            fn new_world<D: Dynamics>(dynamics: D) -> CustomWorld<SimpleCollisionSpace, D> {
+                return CustomWorld::new(SimpleCollisionSpace::new(), dynamics);
             }
 
             fn default_entity_desc() -> EntityDesc {

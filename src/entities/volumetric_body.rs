@@ -10,6 +10,10 @@ pub trait VolumetricBody {
     /// Returns the `Transform` associated with the entity.
     fn transform(&self) -> &Transform;
 
+    fn translation(&self) -> Vector {
+        self.transform().translation()
+    }
+
     /// Returns the vertex at the given index for the entity.
     fn vertex(&self, index: usize) -> Vector {
         self.transform().apply_to_point(self.shape().vertex(index))

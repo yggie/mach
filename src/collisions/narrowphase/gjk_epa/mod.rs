@@ -24,13 +24,17 @@ impl GjkEpa {
     /// Returns the intersection information, if any, between two shape
     /// entities.
     pub fn find_intersection(&self, entity_0: &VolumetricBody, entity_1: &VolumetricBody) -> Option<Intersection> {
-        Simplex::new_containing_origin([entity_0, entity_1]).map(|simplex| {
+        let result = Simplex::new_containing_origin([entity_0, entity_1]).map(|simplex| {
             let mut polytope = Polytope::new(&simplex);
             polytope.expand_fully([entity_0, entity_1]);
 
             let intersection = GjkEpa::contact_for_polytope(&polytope, [entity_0, entity_1]);
             return intersection;
-        })
+        });
+
+        println!("DONE");
+
+        return result;
     }
 
     fn contact_for_polytope(polytope: &Polytope, entities: [&VolumetricBody; 2]) -> Intersection {

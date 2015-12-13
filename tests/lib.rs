@@ -13,6 +13,10 @@ mod integration_tests {
 mod collisions {
     mod simple_collision_space_test;
 
+    mod gjk {
+        mod simplex_test;
+    }
+
     mod narrowphase {
         mod gjk_epa_test;
     }

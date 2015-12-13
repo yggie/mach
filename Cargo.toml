@@ -19,3 +19,4 @@ high_precision = [ ]
 time = "*"
 glium = "*"
 nalgebra = "*"
+quickcheck = "*"

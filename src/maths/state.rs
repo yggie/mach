@@ -21,6 +21,13 @@ impl State {
         }
     }
 
+    pub fn new_from_transform(transform: &Transform) -> State {
+        State {
+            transform: transform.clone(),
+            .. State::new_stationary()
+        }
+    }
+
     /// Creates a new `State` with a non-zero position.
     #[inline]
     pub fn new_with_pos(x: Scalar, y: Scalar, z: Scalar) -> State {
