@@ -100,46 +100,6 @@ impl Simplex {
             };
 
             simplex.vertices[index_to_replace] = vertex.clone();
-
-            {
-                let A = simplex.vertices[0].position - simplex.vertices[1].position;
-                let B = simplex.vertices[2].position - simplex.vertices[1].position;
-                let C = A.cross(B).normalize();
-
-                let d = C.dot(simplex.vertices[3].position - simplex.vertices[1].position);
-
-                println!("DEPTH 1: {}", d.abs());
-            }
-
-            {
-                let A = simplex.vertices[3].position - simplex.vertices[1].position;
-                let B = simplex.vertices[2].position - simplex.vertices[1].position;
-                let C = A.cross(B).normalize();
-
-                let d = C.dot(simplex.vertices[0].position - simplex.vertices[1].position);
-
-                println!("DEPTH 2: {}", d.abs());
-            }
-
-            {
-                let A = simplex.vertices[1].position - simplex.vertices[2].position;
-                let B = simplex.vertices[3].position - simplex.vertices[2].position;
-                let C = A.cross(B).normalize();
-
-                let d = C.dot(simplex.vertices[1].position - simplex.vertices[2].position);
-
-                println!("DEPTH 3: {}", d.abs());
-            }
-
-            {
-                let A = simplex.vertices[1].position - simplex.vertices[0].position;
-                let B = simplex.vertices[3].position - simplex.vertices[0].position;
-                let C = A.cross(B).normalize();
-
-                let d = C.dot(simplex.vertices[2].position - simplex.vertices[0].position);
-
-                println!("DEPTH 4: {}", d.abs());
-            }
         }
 
         unreachable!();

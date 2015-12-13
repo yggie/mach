@@ -17,12 +17,12 @@ impl<'a> MinkowskiDifference<'a> {
         self.bodies.0.translation() - self.bodies.1.translation()
     }
 
-    pub fn support_points(&self, direction: Vector) -> Vec<SupportPoint> {
+    pub fn support_points(&self, direction: &Vector) -> Vec<SupportPoint> {
         let shapes = (self.bodies.0.shape(), self.bodies.1.shape());
         let transforms = (self.bodies.0.transform(), self.bodies.1.transform());
 
         let direction_in_body_coordinates = (
-            transforms.0.apply_inverse_to_direction( direction),
+            transforms.0.apply_inverse_to_direction(*direction),
             transforms.1.apply_inverse_to_direction(-direction),
         );
 

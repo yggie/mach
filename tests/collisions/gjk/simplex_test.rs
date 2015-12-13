@@ -3,7 +3,7 @@ extern crate quickcheck;
 use mach::{TOLERANCE, Vector};
 use mach::collisions::gjk::{MinkowskiDifference, Simplex};
 
-use support::TestVolumetricBody;
+use support::inputs;
 
 #[test]
 fn it_does_not_initialize_degenerate_simplices() {
@@ -15,9 +15,9 @@ fn it_does_not_initialize_degenerate_simplices() {
         return Vector::dot(&plane_normal, simplex.vertex(point)).abs() > TOLERANCE;
     }
 
-    fn property(body_0: TestVolumetricBody, body_1: TestVolumetricBody) -> bool {
-        let body_0 = body_0.as_volumetric_body();
-        let body_1 = body_1.as_volumetric_body();
+    fn property(body_0: inputs::VolumetricBody, body_1: inputs::VolumetricBody) -> bool {
+        let body_0 = body_0.to_object();
+        let body_1 = body_1.to_object();
 
         let diff = MinkowskiDifference::new_from_bodies(body_0.as_ref(), body_1.as_ref());
         let simplex = Simplex::new(diff);
@@ -28,5 +28,5 @@ fn it_does_not_initialize_degenerate_simplices() {
             valid_simplex_plane(&simplex, (0, 1, 2), 3);
     }
 
-    quickcheck::quickcheck(property as fn(TestVolumetricBody, TestVolumetricBody) -> bool);
+    quickcheck::quickcheck(property as fn(inputs::VolumetricBody, inputs::VolumetricBody) -> bool);
 }
