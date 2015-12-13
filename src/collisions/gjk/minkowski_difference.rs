@@ -1,6 +1,8 @@
 use maths::Vector;
 use entities::VolumetricBody;
-use collisions::gjk::SupportPoint;
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct SupportPoint(usize, usize);
 
 pub struct MinkowskiDifference<'a> {
     pub bodies: (&'a VolumetricBody, &'a VolumetricBody)
@@ -15,6 +17,14 @@ impl<'a> MinkowskiDifference<'a> {
 
     pub fn center(&self) -> Vector {
         self.bodies.0.translation() - self.bodies.1.translation()
+    }
+
+    pub fn vertex(&self, support_point: &SupportPoint) -> Vector {
+        let shapes = (self.bodies.0.shape(), self.bodies.1.shape());
+        let transforms = (self.bodies.0.transform(), self.bodies.1.transform());
+
+        return transforms.0.apply_to_point(shapes.0.vertex(support_point.0)) -
+            transforms.1.apply_to_point(shapes.1.vertex(support_point.1));
     }
 
     pub fn support_points(&self, direction: &Vector) -> Vec<SupportPoint> {
@@ -35,13 +45,7 @@ impl<'a> MinkowskiDifference<'a> {
 
         for &index_0 in support_point_index_iters.0.iter() {
             for &index_1 in support_point_index_iters.1.iter() {
-                let point = transforms.0.apply_to_point(shapes.0.vertex(index_0)) -
-                    transforms.1.apply_to_point(shapes.1.vertex(index_1));
-
-                support_points.push(SupportPoint {
-                    vertex_indices: (index_0, index_1),
-                    value: point,
-                });
+                support_points.push(SupportPoint(index_0, index_1));
             }
         }
 
