@@ -4,11 +4,7 @@ extern crate glium;
 
 use std;
 
-use self::glium::glutin;
-use self::glium::{DisplayBuild, Surface};
-use self::glium::backend::glutin_backend::GlutinFacade;
-
-use support::{ExamplesRenderer, SceneEnv, Simulation, WorldRenderer};
+use support::{Simulation, ExamplesWindow};
 
 pub struct ExamplesRunner<S: Simulation> {
     simulation: S,
@@ -39,9 +35,11 @@ impl<S> ExamplesRunner<S> where S: Simulation {
     }
 
     fn safe_run(&mut self) -> Result<(), String> {
-        let mut world = try!(WorldRenderer::create(
-            mach::collisions::SimpleCollisionSpace::new(),
-            mach::dynamics::SimpleDynamics::new(),
+        let mut world = try!(ExamplesWindow::create(
+            mach::CustomWorld::new(
+                mach::collisions::SimpleCollisionSpace::new(),
+                mach::dynamics::SimpleDynamics::new(),
+            ),
         ));
 
         try!(self.simulation.setup(&mut world));

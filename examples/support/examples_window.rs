@@ -12,15 +12,15 @@ use mach::collisions::CollisionSpace;
 
 use support::{Camera, ExamplesRenderer, SceneEnv};
 
-pub struct WorldRenderer<C: CollisionSpace, D: Dynamics> {
+pub struct ExamplesWindow<C: CollisionSpace, D: Dynamics> {
     world: mach::CustomWorld<C, D>,
     camera: Camera,
     display: GlutinFacade,
     temp_renderer: ExamplesRenderer,
 }
 
-impl<C, D> WorldRenderer<C, D> where C: CollisionSpace, D: Dynamics {
-    pub fn create(collision_space: C, dynamics: D) -> Result<WorldRenderer<C, D>, String> {
+impl<C, D> ExamplesWindow<C, D> where C: CollisionSpace, D: Dynamics {
+    pub fn create(world: mach::CustomWorld<C, D>) -> Result<ExamplesWindow<C, D>, String> {
         let display = try!(
             glutin::WindowBuilder::new()
                 .with_dimensions(640, 480)
@@ -35,11 +35,8 @@ impl<C, D> WorldRenderer<C, D> where C: CollisionSpace, D: Dynamics {
 
         let renderer = try!(ExamplesRenderer::new(&display));
 
-        Ok(WorldRenderer {
-            world: mach::CustomWorld::new(
-                collision_space,
-                dynamics,
-            ),
+        Ok(ExamplesWindow {
+            world: world,
             camera: camera,
             display: display,
             temp_renderer: renderer,
@@ -85,7 +82,7 @@ impl<C, D> WorldRenderer<C, D> where C: CollisionSpace, D: Dynamics {
     }
 }
 
-impl<C, D> mach::World for WorldRenderer<C, D> where C: CollisionSpace, D: Dynamics {
+impl<C, D> mach::World for ExamplesWindow<C, D> where C: CollisionSpace, D: Dynamics {
     #[inline(always)]
     fn create_body(&mut self, entity_desc: &mach::EntityDesc) -> mach::ID {
         self.world.create_body(entity_desc)
