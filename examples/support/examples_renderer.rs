@@ -90,8 +90,8 @@ impl ExamplesRenderer {
 
     fn generate_new_instance(&mut self, id: mach::ID, shape: &mach::Shape) -> Instance {
         match shape.spec() {
-            mach::ShapeSpec::Cuboid { width, depth, height} => {
-                self.factory.generate(id, (width as f32, depth as f32, height as f32), self.cube.clone())
+            mach::ShapeSpec::Cuboid(x, y, z) => {
+                self.factory.generate(id, (x as f32, y as f32, z as f32), self.cube.clone())
             },
 
             _ => unimplemented!(),

@@ -5,7 +5,8 @@ use mach::shapes::{ Shape, Cuboid };
 fn instantiating_with_dimensions() {
     let c = Cuboid::new(5.0, 3.0, 7.5);
 
-    assert_eq!((c.width(), c.height(), c.depth()), (5.0, 3.0, 7.5));
+    let dim = c.dimensions();
+    assert_eq!((dim.x, dim.y, dim.z), (5.0, 3.0, 7.5));
 }
 
 #[test]

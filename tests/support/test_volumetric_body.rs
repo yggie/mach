@@ -2,7 +2,6 @@ extern crate quickcheck;
 
 use std::mem;
 
-use mach::ID;
 use mach::maths::State;
 use mach::entities::{Material, RigidBody, VolumetricBody};
 
