@@ -15,12 +15,12 @@ pub struct VolumetricBody {
 }
 
 impl VolumetricBody {
-    pub fn to_object(self) -> Box<entities::VolumetricBody> {
+    pub fn to_value(self) -> Box<entities::VolumetricBody> {
         Box::new(RigidBody::new_with_id(
             unsafe { mem::transmute(0u32) },
-            self.shape.to_object(),
+            self.shape.to_value(),
             &Material::default(),
-            State::new_from_transform(&self.transform.to_object()),
+            State::new_from_transform(&self.transform.to_value()),
         ))
     }
 }

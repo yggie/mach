@@ -9,7 +9,7 @@ pub enum Shape {
 }
 
 impl Shape {
-    pub fn to_object(self) -> Box<shapes::Shape> {
+    pub fn to_value(self) -> Box<shapes::Shape> {
         match self {
             Shape::Cuboid(x, y, z) => {
                 Box::new(shapes::Cuboid::new(x, y, z))

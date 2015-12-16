@@ -26,6 +26,7 @@ pub mod shapes;
 pub mod dynamics;
 pub mod entities;
 pub mod collisions;
+pub mod geometries;
 
 pub use self::maths::Vector;
 pub use self::shapes::{Shape, ShapeSpec};

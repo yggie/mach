@@ -2,7 +2,7 @@ use maths::Vector;
 use entities::VolumetricBody;
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
-pub struct SupportPoint(usize, usize);
+pub struct SupportPoint(pub usize, pub usize);
 
 pub struct MinkowskiDifference<'a> {
     pub bodies: (&'a VolumetricBody, &'a VolumetricBody)
