@@ -5,7 +5,7 @@ use std::fmt;
 use mach::{PI, Scalar};
 
 #[derive(Clone, Copy)]
-pub struct Radians(Scalar);
+pub struct Radians(pub Scalar);
 
 impl Radians {
     pub fn to_value(self) -> Scalar {
@@ -15,7 +15,7 @@ impl Radians {
 
 impl quickcheck::Arbitrary for Radians {
     fn arbitrary<G: quickcheck::Gen>(generator: &mut G) -> Self {
-        Radians(2.0 * (generator.next_f32() - 0.5))
+        Radians(generator.gen_range(-1.0, 1.0))
     }
 }
 

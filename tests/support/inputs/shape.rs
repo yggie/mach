@@ -23,9 +23,9 @@ impl quickcheck::Arbitrary for Shape {
         match generator.next_u32() % 1 {
             _ => {
                 Shape::Cuboid(
-                    100.0 * generator.next_f32() as Scalar,
-                    100.0 * generator.next_f32() as Scalar,
-                    100.0 * generator.next_f32() as Scalar,
+                    generator.gen_range(1.1, 10.0),
+                    generator.gen_range(1.1, 10.0),
+                    generator.gen_range(1.1, 10.0),
                 )
             },
         }

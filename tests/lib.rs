@@ -17,6 +17,10 @@ mod collisions {
         mod simplex_test;
     }
 
+    mod epa {
+        mod compute_contact_points_test;
+    }
+
     mod narrowphase {
         mod gjk_epa_test;
     }

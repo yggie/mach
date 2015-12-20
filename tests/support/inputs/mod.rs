@@ -1,9 +1,11 @@
+mod vect;
 mod shape;
 mod radians;
-mod transform;
-mod volumetric_body;
+mod unit_quat;
+mod unit_vect;
 
+pub use self::vect::Vect;
 pub use self::shape::Shape;
 pub use self::radians::Radians;
-pub use self::transform::Transform;
-pub use self::volumetric_body::VolumetricBody;
+pub use self::unit_quat::UnitQuat;
+pub use self::unit_vect::UnitVect;

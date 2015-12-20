@@ -2,7 +2,7 @@ extern crate rand;
 
 use self::rand::Rng;
 
-use {NEG_INFINITY, Scalar, TOLERANCE};
+use {INFINITY, TOLERANCE};
 use maths::Vector;
 use geometries::Surface;
 use collisions::gjk;
@@ -42,9 +42,9 @@ impl<'a> Polytope<'a> {
 
         while support_points.len() < 4 {
             let guess = Vector::new(
-                rng.next_f32() - 0.5 as Scalar,
-                rng.next_f32() - 0.5 as Scalar,
-                rng.next_f32() - 0.5 as Scalar,
+                rng.gen_range(-1.0, 1.0),
+                rng.gen_range(-1.0, 1.0),
+                rng.gen_range(-1.0, 1.0),
             );
             let candidate_support_points = diff.support_points(&guess);
 
@@ -132,13 +132,13 @@ impl<'a> Polytope<'a> {
 
         let diff = self.diff;
         let (penetration_depth, closest_surface) = self.surfaces.iter()
-            .fold((NEG_INFINITY, fake_surface), |(closest_surface_to_origin, closest_surface), surface| {
-                let surface_to_origin = -surface.normal.dot(diff.vertex(&self.support_points[surface.indices.0]));
+            .fold((INFINITY, fake_surface), |(origin_to_closest_surface, closest_surface), surface| {
+                let origin_to_surface = surface.normal.dot(diff.vertex(&self.support_points[surface.indices.0]));
 
-                if surface_to_origin > closest_surface_to_origin {
-                    (surface_to_origin, surface.clone())
+                if origin_to_surface < origin_to_closest_surface {
+                    (origin_to_surface, surface.clone())
                 } else {
-                    (closest_surface_to_origin, closest_surface)
+                    (origin_to_closest_surface, closest_surface)
                 }
             });
 
