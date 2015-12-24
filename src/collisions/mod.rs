@@ -12,6 +12,5 @@ pub mod narrowphase;
 pub mod collision_space;
 
 pub use self::contact::{Contact, ContactPair};
-pub use self::narrowphase::NarrowPhase;
 pub use self::collision_space::CollisionSpace;
 pub use self::simple_collision_space::SimpleCollisionSpace;

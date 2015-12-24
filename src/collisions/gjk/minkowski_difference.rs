@@ -9,7 +9,7 @@ pub struct MinkowskiDifference<'a> {
 }
 
 impl<'a> MinkowskiDifference<'a> {
-    pub fn new_from_bodies(body_0: &'a VolumetricBody, body_1: &'a VolumetricBody) -> MinkowskiDifference<'a> {
+    pub fn new(body_0: &'a VolumetricBody, body_1: &'a VolumetricBody) -> MinkowskiDifference<'a> {
         MinkowskiDifference {
             bodies: (body_0, body_1),
         }

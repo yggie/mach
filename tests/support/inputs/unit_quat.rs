@@ -2,7 +2,7 @@ extern crate quickcheck;
 
 use std::fmt;
 
-use mach::maths::Quat;
+use maths::Quat;
 
 use support::inputs;
 

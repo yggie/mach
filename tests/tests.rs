@@ -1,5 +1,8 @@
 extern crate mach;
 
+// this allows code to be shared between unit and integration tests
+pub use mach::*;
+
 #[macro_use]
 #[cfg(test)]
 mod support;
@@ -10,34 +13,30 @@ mod integration_tests {
 }
 
 #[cfg(test)]
-mod collisions {
+#[path="collisions"]
+mod collisions_tests {
     mod simple_collision_space_test;
-
-    mod gjk {
-        mod simplex_test;
-    }
 
     mod epa {
         mod compute_contact_points_test;
     }
-
-    mod narrowphase {
-        mod gjk_epa_test;
-    }
 }
 
 #[cfg(test)]
-mod dynamics {
+#[path="dynamics"]
+mod dynamics_tests {
     mod simple_dynamics_test;
 }
 
 #[cfg(test)]
-mod entities {
+#[path="entities"]
+mod entities_tests {
     mod material_test;
 }
 
 #[cfg(test)]
-mod maths {
+#[path="maths"]
+mod maths_tests {
     mod matrix_test;
     mod quat_test;
     mod vector_test;
@@ -46,11 +45,13 @@ mod maths {
 }
 
 #[cfg(test)]
-mod shapes {
+#[path="shapes"]
+mod shapes_tests {
     mod cuboid_test;
 }
 
 #[cfg(test)]
-mod utils {
+#[path="utils"]
+mod utils_tests {
     mod compute_surfaces_for_convex_hull_test;
 }

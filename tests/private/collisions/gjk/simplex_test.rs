@@ -1,7 +1,20 @@
 extern crate quickcheck;
 
-use mach::{TOLERANCE, Vector};
-use mach::collisions::gjk::{MinkowskiDifference, Simplex};
+use {TOLERANCE, Vector};
+use collisions::gjk::{MinkowskiDifference, Simplex};
+
+fn assert_valid_simplex_surfaces(simplex: &Simplex, diff: &MinkowskiDifference) {
+    let centroid = simplex.centroid(diff);
+    let support_points = simplex.support_points();
+    for surface in simplex.surfaces_iter(diff) {
+        let vertex = diff.vertex(&support_points[surface.indices.0]);
+        let distance_from_centroid = (vertex - centroid).dot(surface.normal);
+
+        if distance_from_centroid < -TOLERANCE {
+            panic!(format!("{:?} is degenerate, surfaces do not point outwards", simplex));
+        }
+    }
+}
 
 fn assert_valid_simplex_plane(simplex: &Simplex, diff: &MinkowskiDifference, plane: (usize, usize, usize), outside_plane: usize) {
     let datum = diff.vertex(&simplex.support_points()[plane.0]);
@@ -21,16 +34,15 @@ pub fn assert_valid_simplex(simplex: &Simplex, diff: &MinkowskiDifference) {
     assert_valid_simplex_plane(simplex, diff, (0, 2, 3), 1);
     assert_valid_simplex_plane(simplex, diff, (0, 1, 3), 2);
     assert_valid_simplex_plane(simplex, diff, (0, 1, 2), 3);
+    assert_valid_simplex_surfaces(simplex, diff);
 }
 
 #[cfg(test)]
 mod without_intersections {
     extern crate quickcheck;
 
-    use mach::collisions::gjk::{MinkowskiDifference, Simplex};
-
-    use support::EntityBuilder;
-    use support::inputs;
+    use collisions::gjk::{MinkowskiDifference, Simplex};
+    use support::{inputs, EntityBuilder};
 
     #[test]
     fn it_can_handle_arbitrary_rotations() {
@@ -41,7 +53,7 @@ mod without_intersections {
                 .with_rotation(rot)
                 .build_region();
 
-            let diff = MinkowskiDifference::new_from_bodies(
+            let diff = MinkowskiDifference::new(
                 control_body.as_ref(),
                 body.as_ref(),
             );
@@ -64,10 +76,8 @@ mod without_intersections {
 mod with_intersections {
     extern crate quickcheck;
 
-    use mach::collisions::gjk::{MinkowskiDifference, Simplex};
-
-    use support::EntityBuilder;
-    use support::inputs;
+    use collisions::gjk::{MinkowskiDifference, Simplex};
+    use support::{inputs, EntityBuilder};
 
     #[test]
     fn it_can_handle_arbitrary_rotations() {
@@ -77,7 +87,7 @@ mod with_intersections {
                 .with_rotation(rot)
                 .build_region();
 
-            let diff = MinkowskiDifference::new_from_bodies(
+            let diff = MinkowskiDifference::new(
                 control_body.as_ref(),
                 body.as_ref(),
             );

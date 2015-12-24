@@ -2,7 +2,7 @@ extern crate quickcheck;
 
 use std::fmt;
 
-use mach::{PI, Scalar};
+use {PI, Scalar};
 
 #[derive(Clone, Copy)]
 pub struct Radians(pub Scalar);

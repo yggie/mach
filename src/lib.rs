@@ -75,3 +75,17 @@ impl fmt::Display for ID {
         write!(f, "ID({})", self.0)
     }
 }
+
+#[cfg(test)]
+pub mod support {
+    mod entity_builder {
+        include!("../tests/support/entity_builder.rs");
+    }
+
+    pub use self::entity_builder::EntityBuilder;
+
+    #[cfg(test)]
+    pub mod inputs {
+        include!("../tests/support/inputs/mod.rs");
+    }
+}

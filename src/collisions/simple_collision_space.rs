@@ -5,7 +5,9 @@ use std::collections::HashMap;
 use {EntityDesc, ID, SharedCell};
 use entities::{RigidBody, StaticBody, VolumetricBody};
 use collisions::{CollisionSpace, Contact, ContactPair};
-use collisions::narrowphase::{GjkEpa, Intersection};
+use collisions::epa;
+use collisions::gjk;
+use collisions::narrowphase::Intersection;
 
 /// A simple implementation for representing space in the simulation.
 pub struct SimpleCollisionSpace {
@@ -100,8 +102,12 @@ impl CollisionSpace for SimpleCollisionSpace {
         Box::new(self.registry.iter_mut().map(|(_, cell)| cell.borrow_mut()))
     }
 
+    #[inline]
     fn find_intersection(&self, body_0: &VolumetricBody, body_1: &VolumetricBody) -> Option<Intersection> {
-        GjkEpa.find_intersection(body_0, body_1)
+        let diff = gjk::MinkowskiDifference::new(body_0, body_1);
+        gjk::Simplex::new(&diff)
+            .reshape_to_contain_origin(&diff)
+            .map(|simplex_with_origin| epa::compute_contact_points(simplex_with_origin))
     }
 
     fn find_contacts(&self) -> Option<Vec<Contact>> {
@@ -111,7 +117,7 @@ impl CollisionSpace for SimpleCollisionSpace {
             let body_0 = &*rc_cell_0.borrow();
             let body_1 = &*rc_cell_1.borrow();
 
-            if let Some(intersection) = GjkEpa.find_intersection(body_0, body_1) {
+            if let Some(intersection) = self.find_intersection(body_0, body_1) {
                 contacts.push(
                     Contact {
                         pair: ContactPair::RigidRigid(rc_cell_0.clone(), rc_cell_1.clone()),
@@ -127,7 +133,7 @@ impl CollisionSpace for SimpleCollisionSpace {
             let rigid_body = &*rigid_body_rc_cell.borrow();
             let static_body = &*static_body_rc_cell.borrow();
 
-            if let Some(intersection) = GjkEpa.find_intersection(rigid_body, static_body) {
+            if let Some(intersection) = self.find_intersection(rigid_body, static_body) {
                 contacts.push(
                     Contact {
                         pair: ContactPair::RigidStatic(rigid_body_rc_cell.clone(), static_body_rc_cell.clone()),

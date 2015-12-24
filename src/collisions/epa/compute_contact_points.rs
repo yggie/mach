@@ -1,9 +1,6 @@
-extern crate rand;
-
-use self::rand::Rng;
-
-use {INFINITY, TOLERANCE};
+use {NEG_INFINITY, TOLERANCE};
 use maths::Vector;
+use utils::compute_surfaces_for_convex_hull;
 use geometries::Surface;
 use collisions::gjk;
 use collisions::narrowphase::Intersection;
@@ -12,6 +9,10 @@ use collisions::narrowphase::Intersection;
 pub fn compute_contact_points(simplex_with_origin: gjk::SimplexContainingOrigin) -> Intersection {
     Polytope::new(&simplex_with_origin).compute_contact_points()
 }
+
+#[cfg(test)]
+#[path="../../../tests/private/collisions/epa/polytope_test.rs"]
+mod polytope_tests;
 
 struct Polytope<'a> {
     diff: &'a gjk::MinkowskiDifference<'a>,
@@ -25,95 +26,73 @@ enum IntersectionType {
     Face,
 }
 
-static SURFACE_INDICES_COMBINATIONS: [(usize, usize, usize); 4] = [
-    (1, 2, 3),
-    (0, 2, 3),
-    (0, 1, 3),
-    (0, 1, 2),
-];
-
 impl<'a> Polytope<'a> {
     fn new(simplex_with_origin: &'a gjk::SimplexContainingOrigin<'a>) -> Polytope<'a> {
         let diff = simplex_with_origin.diff();
 
-        let mut support_points: Vec<gjk::SupportPoint> = Vec::new();
-
-        let mut rng = rand::thread_rng();
-
-        while support_points.len() < 4 {
-            let guess = Vector::new(
-                rng.gen_range(-1.0, 1.0),
-                rng.gen_range(-1.0, 1.0),
-                rng.gen_range(-1.0, 1.0),
-            );
-            let candidate_support_points = diff.support_points(&guess);
-
-            if candidate_support_points.len() == 1 && !support_points.contains(&candidate_support_points[0]) {
-                support_points.push(candidate_support_points[0]);
-            }
-        }
-
-        let mid_point = support_points.iter()
-            .fold(Vector::new_zero(), |total, support_point| {
-                total + diff.vertex(support_point)
-            }) / 4.0;
-
-        let new_surface = |support_points: &Vec<gjk::SupportPoint>, indices: (usize, usize, usize)| -> Surface {
-            let datum = diff.vertex(&support_points[indices.0]);
-            let edge_0 = diff.vertex(&support_points[indices.1]) - datum;
-            let edge_1 = diff.vertex(&support_points[indices.2]) - datum;
-            let vertex_to_mid = mid_point - datum;
-            let mut surface_normal = edge_0.cross(edge_1).normalize();
-
-            if surface_normal.dot(vertex_to_mid) > 0.0 {
-                surface_normal = -surface_normal;
-            }
-
-            return Surface {
-                normal: surface_normal,
-                indices: indices,
-            };
-        };
-
-        let mut surfaces: Vec<Surface> = SURFACE_INDICES_COMBINATIONS.iter()
-            .map(|&indices| new_surface(&support_points, indices))
-            .collect();
+        let mut support_points = simplex_with_origin.simplex().support_points().clone().to_vec();
+        let mut surfaces: Vec<Surface> = simplex_with_origin.simplex().surfaces_iter(diff).collect();
 
         for _ in 0..1000 {
-            let mut candidate_points: Vec<(Surface, usize, gjk::SupportPoint)> = surfaces.iter()
-                .enumerate()
-                .filter_map(|(surface_index, surface)| {
-                    diff.support_points(&surface.normal).iter()
-                        .find(|point| {
-                            !support_points.contains(point) && {
-                                let root = diff.vertex(&support_points[surface.indices.0]);
-                                let relative_to_root = diff.vertex(point) - root;
-                                let distance_from_surface = relative_to_root.dot(surface.normal);
+            let candidate_point = surfaces.iter()
+                .filter_map(|surface| {
+                    let mut new_support_points = diff.support_points(&surface.normal);
 
-                                distance_from_surface > TOLERANCE
-                            }
-                        })
-                        .map(|&point| (surface.clone(), surface_index, point))
+                    if new_support_points.iter().any(|point| support_points.contains(point)) || {
+                        let candidate_point = &new_support_points[0];
+
+                        let point_on_surface = diff.vertex(&support_points[surface.indices.0]);
+                        let point_to_surface = point_on_surface - diff.vertex(candidate_point);
+                        let surface_offset = -point_to_surface.dot(surface.normal);
+
+                        surface_offset < TOLERANCE
+                    } {
+                        return None;
+                    }
+
+                    let new_support_point = new_support_points.pop()
+                        .expect("Expected there to be only one support point at this step");
+
+                    {
+                        let candidate_point = &new_support_point;
+
+                        let point_on_surface = diff.vertex(&support_points[surface.indices.0]);
+                        let point_to_surface = point_on_surface - diff.vertex(candidate_point);
+                        let surface_offset = -point_to_surface.dot(surface.normal);
+
+                        if surface_offset < TOLERANCE {
+                            panic!(format!("OOO SHALALALA ({}, {})", support_points.len(), surfaces.len()));
+                        }
+                    }
+
+                    return Some(new_support_point);
                 })
-                .collect();
+                .take(1)
+                .next();
 
-            match candidate_points.pop() {
-                Some((surface, surface_index, support_point)) => {
-                    let new_point_index = support_points.len();
-
+            match candidate_point {
+                Some(support_point) => {
                     support_points.push(support_point);
 
-                    surfaces.remove(surface_index);
-                    surfaces.push(new_surface(&support_points, (surface.indices.0, surface.indices.1, new_point_index)));
-                    surfaces.push(new_surface(&support_points, (surface.indices.0, surface.indices.2, new_point_index)));
-                    surfaces.push(new_surface(&support_points, (surface.indices.1, surface.indices.2, new_point_index)));
+                    let vertex_positions: Vec<Vector> = support_points.iter()
+                        .map(|point| diff.vertex(&point))
+                        .collect();
+
+                    surfaces = compute_surfaces_for_convex_hull(&vertex_positions).iter()
+                        .map(|surface| {
+                            Surface {
+                                normal: surface.normal,
+                                indices: (surface.nodes[0], surface.nodes[1], surface.nodes[2]),
+                            }
+                        })
+                        .collect();
                 },
 
                 None => {
                     return Polytope {
                         diff: diff,
-                        support_points: support_points,
                         surfaces: surfaces,
+                        support_points: support_points,
                     };
                 },
             }
@@ -132,13 +111,14 @@ impl<'a> Polytope<'a> {
 
         let diff = self.diff;
         let (penetration_depth, closest_surface) = self.surfaces.iter()
-            .fold((INFINITY, fake_surface), |(origin_to_closest_surface, closest_surface), surface| {
-                let origin_to_surface = surface.normal.dot(diff.vertex(&self.support_points[surface.indices.0]));
+            .fold((NEG_INFINITY, fake_surface), |(origin_to_closest_surface_offset, closest_surface), surface| {
+                let point_on_surface = diff.vertex(&self.support_points[surface.indices.0]);
+                let origin_surface_offset = -point_on_surface.dot(surface.normal);
 
-                if origin_to_surface < origin_to_closest_surface {
-                    (origin_to_surface, surface.clone())
+                if origin_surface_offset > origin_to_closest_surface_offset {
+                    (origin_surface_offset, surface.clone())
                 } else {
-                    (origin_to_closest_surface, closest_surface)
+                    (origin_to_closest_surface_offset, closest_surface)
                 }
             });
 
@@ -155,13 +135,13 @@ impl<'a> Polytope<'a> {
 
         let contact_point = match contact_types {
             (IntersectionType::Vertex(index), _other) => {
-                let correction = closest_surface.normal * penetration_depth / -2.0;
+                let correction = closest_surface.normal * penetration_depth / 2.0;
                 diff.bodies.0.vertex(index) + correction
             },
 
             (_other, IntersectionType::Vertex(index)) => {
-                let correction = closest_surface.normal * penetration_depth / 2.0;
-                diff.bodies.0.vertex(index) + correction
+                let correction = closest_surface.normal * penetration_depth / -2.0;
+                diff.bodies.1.vertex(index) + correction
             },
 
             (IntersectionType::Edge(_), IntersectionType::Edge(_)) => {

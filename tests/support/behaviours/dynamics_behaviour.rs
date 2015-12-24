@@ -91,7 +91,6 @@ macro_rules! assert_dynamics_behaviour(
 
             #[test]
             pub fn it_can_simulate_objects_colliding_with_rotation() {
-                println!("[RENDERABLE]");
                 let mut world = new_world(test_subject());
                 let id_0 = world.create_body(
                     &default_entity_desc().as_cuboid(1.0, 10.0, 1.0)

@@ -1,5 +1,9 @@
 extern crate rand;
 
+#[cfg(test)]
+#[path="../../../tests/private/collisions/gjk/simplex_test.rs"]
+mod tests;
+
 use self::rand::Rng;
 
 use {Scalar, TOLERANCE};
@@ -131,7 +135,7 @@ impl Simplex {
         panic!("Took over 1000 iterations while seeking the origin");
     }
 
-    fn centroid(&self, diff: &MinkowskiDifference) -> Vector {
+    pub fn centroid(&self, diff: &MinkowskiDifference) -> Vector {
         self.support_points.iter()
             .fold(Vector::new_zero(), |total, support_point| {
                 total + diff.vertex(support_point)

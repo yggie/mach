@@ -2,7 +2,7 @@ extern crate quickcheck;
 
 use std::fmt;
 
-use mach::{Scalar, Vector};
+use {Scalar, Vector};
 
 #[derive(Clone)]
 pub struct UnitVect {

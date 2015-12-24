@@ -1,8 +1,8 @@
 use std::mem;
 
-use mach::Scalar;
-use mach::maths::{State, Transform};
-use mach::entities::{Material, RigidBody, VolumetricBody};
+use Scalar;
+use maths::{State, Transform};
+use entities::{Material, RigidBody, VolumetricBody};
 
 use support::inputs;
 

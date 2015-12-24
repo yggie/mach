@@ -14,7 +14,7 @@ fn it_always_returns_valid_contact_points() {
             .with_rotation(rot)
             .build_region();
 
-        let diff = MinkowskiDifference::new_from_bodies(
+        let diff = MinkowskiDifference::new(
             control_body.as_ref(),
             body.as_ref(),
         );

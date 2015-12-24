@@ -1,7 +1,7 @@
 extern crate quickcheck;
 
-use mach::Scalar;
-use mach::shapes;
+use Scalar;
+use shapes;
 
 #[derive(Clone, Debug)]
 pub enum Shape {
