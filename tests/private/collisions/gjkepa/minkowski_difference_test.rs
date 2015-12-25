@@ -1,6 +1,6 @@
 extern crate quickcheck;
 
-use super::MinkowskiDifference;
+use super::minkowski_difference::MinkowskiDifference;
 
 use Scalar;
 use maths::ApproxEq;
@@ -20,11 +20,11 @@ fn it_always_returns_at_least_one_support_point_at_an_offset_from_the_origin() {
         );
 
         let direction = direction.to_value();
-        let support_points = diff.support_points(&direction);
+        let index_pairs = diff.support_index_pairs(&direction);
 
-        assert!(support_points.len() > 0, "Expected the Minkowski Difference to always return at least one support point, but got none");
+        assert!(index_pairs.len() > 0, "Expected the Minkowski Difference to always return at least one support point, but got none");
 
-        let distances: Vec<Scalar> = support_points.iter()
+        let distances: Vec<Scalar> = index_pairs.iter()
             .map(|point| diff.vertex(point).dot(direction))
             .collect();
 

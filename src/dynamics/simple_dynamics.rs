@@ -2,8 +2,7 @@ use {Scalar, TOLERANCE};
 use maths::{Vector, State};
 use dynamics::{Dynamics, SemiImplicitEuler};
 use entities::{RigidBody, StaticBody};
-use collisions::{ContactPair, CollisionSpace};
-use collisions::narrowphase::Intersection;
+use collisions::{ContactPair, CollisionSpace, Intersection};
 
 /// Contains the simplest implementation for a time marching scheme.
 pub struct SimpleDynamics {

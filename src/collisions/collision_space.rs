@@ -2,8 +2,7 @@ use std::cell::{ Ref, RefMut };
 
 use {EntityDesc, ID};
 use entities::{RigidBody, StaticBody, VolumetricBody};
-use collisions::Contact;
-use collisions::narrowphase::Intersection;
+use collisions::{Contact, Intersection};
 
 /// A `CollisionSpace` component is responsible for the storage, retrieval and
 /// querying of physical bodies in the simulation.

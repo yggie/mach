@@ -4,10 +4,7 @@ use std::collections::HashMap;
 
 use {EntityDesc, ID, SharedCell};
 use entities::{RigidBody, StaticBody, VolumetricBody};
-use collisions::{CollisionSpace, Contact, ContactPair};
-use collisions::epa;
-use collisions::gjk;
-use collisions::narrowphase::Intersection;
+use collisions::{CollisionSpace, Contact, ContactCache, ContactDetector, ContactPair, Intersection};
 
 /// A simple implementation for representing space in the simulation.
 pub struct SimpleCollisionSpace {
@@ -104,10 +101,8 @@ impl CollisionSpace for SimpleCollisionSpace {
 
     #[inline]
     fn find_intersection(&self, body_0: &VolumetricBody, body_1: &VolumetricBody) -> Option<Intersection> {
-        let diff = gjk::MinkowskiDifference::new(body_0, body_1);
-        gjk::Simplex::new(&diff)
-            .reshape_to_contain_origin(&diff)
-            .map(|simplex_with_origin| epa::compute_contact_points(simplex_with_origin))
+        ContactCache::new(body_0, body_1)
+            .compute_contacts(body_0, body_1)
     }
 
     fn find_contacts(&self) -> Option<Vec<Contact>> {

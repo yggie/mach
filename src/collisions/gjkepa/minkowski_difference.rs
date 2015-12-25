@@ -2,8 +2,9 @@ use maths::Vector;
 use entities::VolumetricBody;
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
-pub struct SupportPoint(pub usize, pub usize);
+pub struct IndexPair(pub usize, pub usize);
 
+#[derive(Clone)]
 pub struct MinkowskiDifference<'a> {
     pub bodies: (&'a VolumetricBody, &'a VolumetricBody)
 }
@@ -15,11 +16,7 @@ impl<'a> MinkowskiDifference<'a> {
         }
     }
 
-    pub fn center(&self) -> Vector {
-        self.bodies.0.translation() - self.bodies.1.translation()
-    }
-
-    pub fn vertex(&self, support_point: &SupportPoint) -> Vector {
+    pub fn vertex(&self, support_point: &IndexPair) -> Vector {
         let shapes = (self.bodies.0.shape(), self.bodies.1.shape());
         let transforms = (self.bodies.0.transform(), self.bodies.1.transform());
 
@@ -27,7 +24,7 @@ impl<'a> MinkowskiDifference<'a> {
             transforms.1.apply_to_point(shapes.1.vertex(support_point.1));
     }
 
-    pub fn support_points(&self, direction: &Vector) -> Vec<SupportPoint> {
+    pub fn support_index_pairs(&self, direction: &Vector) -> Vec<IndexPair> {
         let shapes = (self.bodies.0.shape(), self.bodies.1.shape());
         let transforms = (self.bodies.0.transform(), self.bodies.1.transform());
 
@@ -41,14 +38,14 @@ impl<'a> MinkowskiDifference<'a> {
             shapes.1.support_indices_for(direction_in_body_coordinates.1),
         );
 
-        let mut support_points = Vec::new();
+        let mut support_index_pairs = Vec::new();
 
         for &index_0 in support_point_index_iters.0.iter() {
             for &index_1 in support_point_index_iters.1.iter() {
-                support_points.push(SupportPoint(index_0, index_1));
+                support_index_pairs.push(IndexPair(index_0, index_1));
             }
         }
 
-        return support_points;
+        return support_index_pairs;
     }
 }

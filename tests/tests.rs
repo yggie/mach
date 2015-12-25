@@ -16,10 +16,6 @@ mod integration_tests {
 #[path="collisions"]
 mod collisions_tests {
     mod simple_collision_space_test;
-
-    mod epa {
-        mod compute_contact_points_test;
-    }
 }
 
 #[cfg(test)]
