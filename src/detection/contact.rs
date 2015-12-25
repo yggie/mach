@@ -1,5 +1,5 @@
 use {Scalar, SharedCell};
-use maths::Vector;
+use maths::Vect;
 use entities::{RigidBody, StaticBody};
 
 /// Encapsulates the different possible pairs of physical bodies.
@@ -17,7 +17,7 @@ pub struct Contact {
     /// The pair of contacting bodies.
     pub pair: ContactPair,
     /// The center of the contact.
-    pub center: Vector,
+    pub center: Vect,
     /// The surface normal of the contact.
-    pub normal: Vector,
+    pub normal: Vect,
 }

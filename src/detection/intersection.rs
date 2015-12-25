@@ -1,23 +1,23 @@
 use Scalar;
-use maths::Vector;
+use maths::Vect;
 
 /// This object contains information about the intersection between two
 /// entities.
-pub struct Intersection(Vector, Vector, Scalar);
+pub struct Intersection(Vect, Vect, Scalar);
 
 impl Intersection {
     /// Creates a new `Intersection` instance.
-    pub fn new(center: Vector, normal: Vector, penetration_depth: Scalar) -> Intersection {
+    pub fn new(center: Vect, normal: Vect, penetration_depth: Scalar) -> Intersection {
         Intersection(center, normal, penetration_depth)
     }
 
     /// Returns the center of the intersection.
-    pub fn point(&self) -> &Vector {
+    pub fn point(&self) -> &Vect {
         &self.0
     }
 
     /// Returns the normal vector associated with the intersection.
-    pub fn normal(&self) -> &Vector {
+    pub fn normal(&self) -> &Vect {
         &self.1
     }
 

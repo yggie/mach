@@ -1,9 +1,9 @@
-use std::fmt::{ Display, Formatter, Result };
+use std::fmt;
 
-use { ID, Scalar };
-use maths::{ Transform, Quat, Vector };
+use {ID, Scalar};
+use maths::{Transform, Quat, Vect};
 use shapes::Shape;
-use entities::{ Material, VolumetricBody };
+use entities::{Material, Body};
 
 /// Represents a physical entity which cannot move. Within the engine, the
 /// object is simply treated as if it has infinite mass.
@@ -60,7 +60,7 @@ impl StaticBody {
 
     /// Returns the position of the `StaticBody`.
     #[inline]
-    pub fn position(&self) -> Vector {
+    pub fn position(&self) -> Vect {
         self.transform.translation()
     }
 
@@ -71,7 +71,7 @@ impl StaticBody {
     }
 }
 
-impl VolumetricBody for StaticBody {
+impl Body for StaticBody {
     #[inline(always)]
     fn shape(&self) -> &Shape {
         (self as &StaticBody).shape()
@@ -82,8 +82,8 @@ impl VolumetricBody for StaticBody {
     }
 }
 
-impl Display for StaticBody {
-    fn fmt(&self, f: &mut Formatter) -> Result {
+impl fmt::Display for StaticBody {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f,
             "StaticBody[{}]: Pos={}, Rot={}",
             self.id(),

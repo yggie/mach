@@ -37,8 +37,8 @@ impl<S> ExamplesRunner<S> where S: Simulation {
     fn safe_run(&mut self) -> Result<(), String> {
         let mut window = try!(ExamplesWindow::create(
             mach::CustomWorld::new(
-                mach::collisions::SimpleCollisionSpace::new(),
-                mach::dynamics::SimpleDynamics::new(),
+                mach::detection::MachSpace::new(),
+                mach::dynamics::MachDynamics::new(),
             ),
         ));
 

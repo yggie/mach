@@ -1,9 +1,9 @@
 use std::fmt;
 use std::mem;
-use std::ops::{ Add, Deref, DerefMut, Div, Mul, Neg, Sub };
+use std::ops::{Add, Deref, DerefMut, Div, Mul, Neg, Sub};
 
-use { Scalar, TOLERANCE };
-use maths::{ ApproxEq, Vector };
+use {Scalar, TOLERANCE};
+use maths::{ApproxEq, Vect};
 
 /// A representation of a quaternion.
 #[derive(Clone, Copy, Debug)]
@@ -36,15 +36,15 @@ impl Quat {
         Quat::new(1.0, 0.0, 0.0, 0.0)
     }
 
-    /// Creates a new `Quat` taking the input `Vector` as the components
+    /// Creates a new `Quat` taking the input `Vect` as the components
     /// of the complex part of the `Quat`.
     #[inline]
-    pub fn new_from_vector(vector: Vector) -> Quat {
+    pub fn new_from_vector(vector: Vect) -> Quat {
         Quat::new(0.0, vector.x, vector.y, vector.z)
     }
 
     /// Creates a new `Quat` representing a rotation about an axis.
-    pub fn new_from_axis_angle(axis: Vector, angle_in_radians: Scalar) -> Quat {
+    pub fn new_from_axis_angle(axis: Vect, angle_in_radians: Scalar) -> Quat {
         let length = axis.length();
         let half_radians = angle_in_radians / 2.0;
         let sl = half_radians.sin() / length;

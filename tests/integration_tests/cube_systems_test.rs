@@ -6,12 +6,12 @@
 //
 // use mach::{EntityDesc, World};
 // use mach::maths::Vector;
-// use mach::dynamics::SimpleDynamics;
+// use mach::dynamics::MachDynamics;
 // use mach::collisions::SimpleCollisionSpace;
 //
 // #[test]
 // fn dropping_a_cube_on_a_platform() {
-//     Simulation::<SimpleCollisionSpace, SimpleDynamics>::new_default()
+//     Simulation::<SimpleCollisionSpace, MachDynamics>::new_default()
 //         .configure(|world| {
 //             world.set_gravity(Vector::new(0.0, 0.0, -0.5));
 //
@@ -35,7 +35,7 @@
 //
 // #[test]
 // fn dropping_a_sphere_on_a_platform() {
-//     Simulation::<SimpleCollisionSpace, SimpleDynamics>::new_default()
+//     Simulation::<SimpleCollisionSpace, MachDynamics>::new_default()
 //         .configure(|world| {
 //             world.set_gravity(Vector::new(0.0, 0.0, -0.5));
 //
@@ -60,7 +60,7 @@
 //
 // #[test]
 // fn dropping_a_stuff_on_a_sinkhole() {
-//     Simulation::<SimpleCollisionSpace, SimpleDynamics>::new_default()
+//     Simulation::<SimpleCollisionSpace, MachDynamics>::new_default()
 //         .configure(|world| {
 //             world.set_gravity(Vector::new(0.0, 0.0, -0.5));
 //

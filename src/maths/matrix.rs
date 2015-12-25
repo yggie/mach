@@ -2,7 +2,7 @@ use std::fmt;
 use std::ops::{ Add, Div, Index, IndexMut, Mul, Neg, Sub };
 
 use { Scalar, TOLERANCE };
-use maths::Vector;
+use maths::Vect;
 
 /// A representation of a 3-by-3 matrix
 #[derive(Clone, Copy, Debug)]
@@ -74,12 +74,12 @@ impl Matrix {
 
     /// Computes the orientation matrix given the axis of rotation and angle
     /// of rotation measured in radians.
-    pub fn new_rotation(radians: Scalar, axis: Vector) -> Matrix {
+    pub fn new_rotation(radians: Scalar, axis: Vect) -> Matrix {
         let c = radians.cos();
         let s = radians.sin();
         let a = axis.normalize();
         let c1 = 1.0 - c;
-        let aa = Vector::new(a.x*c1, a.y*c1, a.z*c1);
+        let aa = Vect::new(a.x*c1, a.y*c1, a.z*c1);
         Matrix::new_diag(c, c, c) + a.outer(aa) + Matrix::new_skew(a.x*s, a.y*s, a.z*s)
     }
 
@@ -215,7 +215,7 @@ impl Sub<Matrix> for Matrix {
     }
 }
 
-/// Implement the multiplication operator between a `Matrix` and a `Vector`.
+/// Implement the multiplication operator between a `Matrix` and a `Vect`.
 impl Div<Scalar> for Matrix {
     type Output = Matrix;
 
@@ -236,7 +236,7 @@ impl Div<Scalar> for Matrix {
     }
 }
 
-/// Implement the multiplication operator between a `Matrix` and a `Vector`.
+/// Implement the multiplication operator between a `Matrix` and a `Vect`.
 impl Mul<Scalar> for Matrix {
     type Output = Matrix;
 
@@ -257,14 +257,14 @@ impl Mul<Scalar> for Matrix {
     }
 }
 
-/// Implement the multiplication operator between a `Matrix` and a `Vector`.
-impl Mul<Vector> for Matrix {
-    type Output = Vector;
+/// Implement the multiplication operator between a `Matrix` and a `Vect`.
+impl Mul<Vect> for Matrix {
+    type Output = Vect;
 
     /// Computes the resulting vector from the multiplication between a matrix
     /// and a vector.
-    fn mul(self, vect: Vector) -> Vector {
-        Vector::new(
+    fn mul(self, vect: Vect) -> Vect {
+        Vect::new(
             self[0]*vect.x + self[3]*vect.y + self[6]*vect.z,
             self[1]*vect.x + self[4]*vect.y + self[7]*vect.z,
             self[2]*vect.x + self[5]*vect.y + self[8]*vect.z,

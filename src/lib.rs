@@ -15,7 +15,7 @@ mod custom_world;
 pub use self::world::World;
 pub use self::dynamics::Dynamics;
 pub use self::entities::RigidBody;
-pub use self::collisions::CollisionSpace;
+pub use self::detection::Space;
 pub use self::mach_world::MachWorld;
 pub use self::entity_desc::EntityDesc;
 pub use self::custom_world::CustomWorld;
@@ -25,10 +25,10 @@ pub mod maths;
 pub mod shapes;
 pub mod dynamics;
 pub mod entities;
-pub mod collisions;
+pub mod detection;
 pub mod geometries;
 
-pub use self::maths::Vector;
+pub use self::maths::Vect;
 pub use self::shapes::{Shape, ShapeSpec};
 
 use std::fmt;

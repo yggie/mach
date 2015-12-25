@@ -3,11 +3,11 @@ use std::cell::{Ref, RefCell, RefMut};
 use std::collections::HashMap;
 
 use {EntityDesc, ID, SharedCell};
-use entities::{RigidBody, StaticBody, VolumetricBody};
-use collisions::{CollisionSpace, Contact, ContactCache, ContactDetector, ContactPair, Intersection};
+use entities::{RigidBody, StaticBody, Body};
+use detection::{Space, Contact, ContactCache, ContactDetector, ContactPair, Intersection};
 
 /// A simple implementation for representing space in the simulation.
-pub struct SimpleCollisionSpace {
+pub struct MachSpace {
     registry: HashMap<ID, SharedCell<RigidBody>>,
     static_registry: HashMap<ID, SharedCell<StaticBody>>,
     rigid_body_pairs: Vec<(SharedCell<RigidBody>, SharedCell<RigidBody>)>,
@@ -15,10 +15,10 @@ pub struct SimpleCollisionSpace {
     counter: usize,
 }
 
-impl SimpleCollisionSpace {
-    /// Instantiates a new `SimpleCollisionSpace` object.
-    pub fn new() -> SimpleCollisionSpace {
-        SimpleCollisionSpace {
+impl MachSpace {
+    /// Instantiates a new `MachSpace` object.
+    pub fn new() -> MachSpace {
+        MachSpace {
             registry: HashMap::new(),
             static_registry: HashMap::new(),
             rigid_body_pairs: Vec::new(),
@@ -34,7 +34,7 @@ impl SimpleCollisionSpace {
     }
 }
 
-impl CollisionSpace for SimpleCollisionSpace {
+impl Space for MachSpace {
     fn create_body(&mut self, entity_desc: &EntityDesc) -> ID {
         let new_id = self.generate_id();
         let new_body = RigidBody::new_with_id(
@@ -100,7 +100,7 @@ impl CollisionSpace for SimpleCollisionSpace {
     }
 
     #[inline]
-    fn find_intersection(&self, body_0: &VolumetricBody, body_1: &VolumetricBody) -> Option<Intersection> {
+    fn find_intersection(&self, body_0: &Body, body_1: &Body) -> Option<Intersection> {
         ContactCache::new(body_0, body_1)
             .compute_contacts(body_0, body_1)
     }

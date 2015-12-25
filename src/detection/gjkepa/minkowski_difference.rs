@@ -1,22 +1,22 @@
-use maths::Vector;
-use entities::VolumetricBody;
+use maths::Vect;
+use entities::Body;
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct IndexPair(pub usize, pub usize);
 
 #[derive(Clone)]
 pub struct MinkowskiDifference<'a> {
-    pub bodies: (&'a VolumetricBody, &'a VolumetricBody)
+    pub bodies: (&'a Body, &'a Body)
 }
 
 impl<'a> MinkowskiDifference<'a> {
-    pub fn new(body_0: &'a VolumetricBody, body_1: &'a VolumetricBody) -> MinkowskiDifference<'a> {
+    pub fn new(body_0: &'a Body, body_1: &'a Body) -> MinkowskiDifference<'a> {
         MinkowskiDifference {
             bodies: (body_0, body_1),
         }
     }
 
-    pub fn vertex(&self, support_point: &IndexPair) -> Vector {
+    pub fn vertex(&self, support_point: &IndexPair) -> Vect {
         let shapes = (self.bodies.0.shape(), self.bodies.1.shape());
         let transforms = (self.bodies.0.transform(), self.bodies.1.transform());
 
@@ -24,7 +24,7 @@ impl<'a> MinkowskiDifference<'a> {
             transforms.1.apply_to_point(shapes.1.vertex(support_point.1));
     }
 
-    pub fn support_index_pairs(&self, direction: &Vector) -> Vec<IndexPair> {
+    pub fn support_index_pairs(&self, direction: &Vect) -> Vec<IndexPair> {
         let shapes = (self.bodies.0.shape(), self.bodies.1.shape());
         let transforms = (self.bodies.0.transform(), self.bodies.1.transform());
 

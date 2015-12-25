@@ -7,12 +7,12 @@ macro_rules! assert_dynamics_behaviour(
             use super::test_subject;
 
             use mach::{CustomWorld, EntityDesc, Scalar, PI, World};
-            use mach::maths::Vector;
+            use mach::maths::Vect;
             use mach::dynamics::Dynamics;
-            use mach::collisions::{CollisionSpace, SimpleCollisionSpace};
+            use mach::detection::{Space, MachSpace};
 
-            fn new_world<D: Dynamics>(dynamics: D) -> CustomWorld<SimpleCollisionSpace, D> {
-                return CustomWorld::new(SimpleCollisionSpace::new(), dynamics);
+            fn new_world<D: Dynamics>(dynamics: D) -> CustomWorld<MachSpace, D> {
+                return CustomWorld::new(MachSpace::new(), dynamics);
             }
 
             fn default_entity_desc() -> EntityDesc {
@@ -25,9 +25,9 @@ macro_rules! assert_dynamics_behaviour(
             pub fn it_can_define_gravity() {
                 let mut world = new_world(test_subject());
 
-                world.set_gravity(Vector::new(2.5, -2.5, 3.3));
+                world.set_gravity(Vect::new(2.5, -2.5, 3.3));
 
-                assert_approx_eq!(world.gravity(), Vector::new(2.5, -2.5, 3.3));
+                assert_approx_eq!(world.gravity(), Vect::new(2.5, -2.5, 3.3));
             }
 
             #[test]
@@ -43,8 +43,8 @@ macro_rules! assert_dynamics_behaviour(
                 world.update(0.3);
 
                 let body = world.find_body(id).unwrap();
-                assert_approx_eq!(body.pos(), Vector::new(0.30, -0.30, 0.15));
-                assert_approx_eq!(body.vel(), Vector::new(1.0, -1.0, 0.5));
+                assert_approx_eq!(body.pos(), Vect::new(0.30, -0.30, 0.15));
+                assert_approx_eq!(body.vel(), Vect::new(1.0, -1.0, 0.5));
             }
 
             #[test]
@@ -54,13 +54,13 @@ macro_rules! assert_dynamics_behaviour(
                     &default_entity_desc().as_cube(1.0)
                         .with_vel(1.0, -1.0, 0.5)
                 );
-                world.set_gravity(Vector::new(3.0, -2.0, 4.0));
+                world.set_gravity(Vect::new(3.0, -2.0, 4.0));
 
                 world.update(0.2);
 
                 let body = world.find_body(id).unwrap();
-                assert_approx_eq!(body.pos(), Vector::new(0.32, -0.28, 0.26));
-                assert_approx_eq!(body.vel(), Vector::new(1.6, -1.4, 1.3));
+                assert_approx_eq!(body.pos(), Vect::new(0.32, -0.28, 0.26));
+                assert_approx_eq!(body.vel(), Vect::new(1.6, -1.4, 1.3));
             }
 
             #[test]
@@ -68,8 +68,8 @@ macro_rules! assert_dynamics_behaviour(
                 let mut world = new_world(test_subject());
                 let entity_desc = default_entity_desc().as_cube(1.0);
                 let id_0 = world.create_body(&entity_desc);
-                let initial_axis = Vector::new(1.0, 1.0, 1.0).normalize();
-                let final_axis = Vector::new(1.0, 0.0, 0.0);
+                let initial_axis = Vect::new(1.0, 1.0, 1.0).normalize();
+                let final_axis = Vect::new(1.0, 0.0, 0.0);
                 let rotation = initial_axis.cross(final_axis);
 
                 let id_1 = world.create_body(
@@ -83,10 +83,10 @@ macro_rules! assert_dynamics_behaviour(
 
                 let body_0 = world.find_body(id_0).unwrap();
                 let body_1 = world.find_body(id_1).unwrap();
-                assert_approx_eq!(body_0.vel(), Vector::new(-1.0, 0.0, 0.0));
-                assert_approx_eq!(body_0.ang_vel(), Vector::new(0.0, 0.0, 0.0));
-                assert_approx_eq!(body_1.vel(), Vector::new( 0.0, 0.0, 0.0));
-                assert_approx_eq!(body_1.ang_vel(), Vector::new(0.0, 0.0, 0.0));
+                assert_approx_eq!(body_0.vel(), Vect::new(-1.0, 0.0, 0.0));
+                assert_approx_eq!(body_0.ang_vel(), Vect::new(0.0, 0.0, 0.0));
+                assert_approx_eq!(body_1.vel(), Vect::new( 0.0, 0.0, 0.0));
+                assert_approx_eq!(body_1.ang_vel(), Vect::new(0.0, 0.0, 0.0));
             }
 
             #[test]
@@ -94,7 +94,7 @@ macro_rules! assert_dynamics_behaviour(
                 let mut world = new_world(test_subject());
                 let id_0 = world.create_body(
                     &default_entity_desc().as_cuboid(1.0, 10.0, 1.0)
-                        .with_axis_angle(Vector::new(0.0, 1.0, 0.0), PI / 4.0)
+                        .with_axis_angle(Vect::new(0.0, 1.0, 0.0), PI / 4.0)
                         .with_ang_vel(-1.0, 0.0, 0.0)
                 );
                 world.create_static_body(
@@ -106,8 +106,8 @@ macro_rules! assert_dynamics_behaviour(
 
                 // TODO quite a rough test, can be improved
                 let rigid_body = world.find_body(id_0).unwrap();
-                assert!(rigid_body.ang_vel().dot(Vector::new(1.0, 0.0, 0.0)) > 0.0);
-                assert!(rigid_body.vel().dot(Vector::new(0.0, 0.0, 1.0)) > 0.0);
+                assert!(rigid_body.ang_vel().dot(Vect::new(1.0, 0.0, 0.0)) > 0.0);
+                assert!(rigid_body.vel().dot(Vect::new(0.0, 0.0, 1.0)) > 0.0);
             }
         }
     );

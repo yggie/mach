@@ -1,9 +1,9 @@
 use std::fmt;
 
 use {ID, Scalar};
-use maths::{Matrix, State, Transform, Quat, Vector};
+use maths::{Matrix, State, Transform, Quat, Vect};
 use shapes::Shape;
-use entities::{Material, VolumetricBody};
+use entities::{Material, Body};
 
 /// Represents a physical entity in the world.
 pub struct RigidBody {
@@ -85,13 +85,13 @@ impl RigidBody {
 
     /// Returns the position of the `RigidBody`.
     #[inline]
-    pub fn pos(&self) -> Vector {
+    pub fn pos(&self) -> Vect {
         self.state.pos()
     }
 
     /// Returns the velocity of the `RigidBody`.
     #[inline]
-    pub fn vel(&self) -> Vector {
+    pub fn vel(&self) -> Vect {
         self.state.vel()
     }
 
@@ -103,22 +103,22 @@ impl RigidBody {
 
     /// Returns the angular velocity of the `RigidBody`.
     #[inline]
-    pub fn ang_vel(&self) -> Vector {
+    pub fn ang_vel(&self) -> Vect {
         self.state.ang_vel()
     }
 
     /// Returns the position of the vertex associated with the index.
-    pub fn vertex(&self, index: usize) -> Vector {
+    pub fn vertex(&self, index: usize) -> Vect {
         self.state.transform_point(self.shape.vertex(index))
     }
 
     /// Returns an `Iterator` over the vertices of the `RigidBody`.
-    pub fn vertices_iter<'a>(&'a self) -> Box<Iterator<Item=Vector> + 'a> {
+    pub fn vertices_iter<'a>(&'a self) -> Box<Iterator<Item=Vect> + 'a> {
         let s = self.state.clone();
         Box::new(self.shape.vertices_iter().map(move |v| s.transform_point(v)))
     }
 
-    /// Sets the `RigidBody`’s position using the `Vector` provided.
+    /// Sets the `RigidBody`’s position using the `Vect` provided.
     #[inline]
     pub fn set_pos(&mut self, values: &(Scalar, Scalar, Scalar)) {
         self.state.set_pos(values);
@@ -130,20 +130,20 @@ impl RigidBody {
         self.state.set_rot(rot);
     }
 
-    /// Sets the `RigidBody`’s velocity using the `Vector` provided.
+    /// Sets the `RigidBody`’s velocity using the `Vect` provided.
     #[inline]
     pub fn set_vel(&mut self, values: &(Scalar, Scalar, Scalar)) {
         self.state.set_vel(values);
     }
 
-    /// Set the `RigidBody`’s angular velocity using the `Vector` provided.
+    /// Set the `RigidBody`’s angular velocity using the `Vect` provided.
     #[inline]
     pub fn set_ang_vel(&mut self, values: &(Scalar, Scalar, Scalar)) {
         self.state.set_ang_vel(values);
     }
 }
 
-impl VolumetricBody for RigidBody {
+impl Body for RigidBody {
     #[inline(always)]
     fn shape(&self) -> &Shape {
         (self as &RigidBody).shape()

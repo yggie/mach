@@ -49,11 +49,11 @@ pub fn assert_valid_simplex(cache: &SimplexCache, diff: &MinkowskiDifference) {
 #[test]
 fn it_can_handle_arbitrary_rotations_for_non_intersecting_bodies() {
     fn property(rot: inputs::UnitQuat) {
-        let control = EntityBuilder::new_cube(1.0).build_region();
+        let control = EntityBuilder::new_cube(1.0).build_body();
         let body = EntityBuilder::new_cube(1.0)
             .with_translation(4.0, 4.0, 4.0)
             .with_rotation(rot)
-            .build_region();
+            .build_body();
         let diff = MinkowskiDifference::new(
             control.as_ref(),
             body.as_ref(),
@@ -76,10 +76,10 @@ fn it_can_handle_arbitrary_rotations_for_non_intersecting_bodies() {
 #[test]
 fn it_can_handle_arbitrary_rotations_for_intersecting_bodies() {
     fn property(rot: inputs::UnitQuat) {
-        let control = EntityBuilder::new_cube(1.0).build_region();
+        let control = EntityBuilder::new_cube(1.0).build_body();
         let body = EntityBuilder::new_cube(1.0)
             .with_rotation(rot)
-            .build_region();
+            .build_body();
         let diff = MinkowskiDifference::new(
             control.as_ref(),
             body.as_ref(),

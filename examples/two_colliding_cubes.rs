@@ -27,7 +27,7 @@ impl Simulation for TwoCollidingCubes {
             &entity_desc.clone()
                 .with_density(2.0)
                 .with_pos(0.0, -3.0, 0.0)
-                .with_axis_angle(mach::Vector::new(1.0, 1.0, 0.0), 1.0)
+                .with_axis_angle(mach::Vect::new(1.0, 1.0, 0.0), 1.0)
                 .with_vel(0.0,  1.0, 0.0)
         );
 

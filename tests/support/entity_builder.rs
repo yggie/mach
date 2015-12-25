@@ -2,7 +2,7 @@ use std::mem;
 
 use Scalar;
 use maths::{State, Transform};
-use entities::{Material, RigidBody, VolumetricBody};
+use entities::{Material, RigidBody, Body};
 
 use support::inputs;
 
@@ -40,7 +40,7 @@ impl EntityBuilder {
         }
     }
 
-    pub fn build_region(self) -> Box<VolumetricBody> {
+    pub fn build_body(self) -> Box<Body> {
         let transform = Transform::new(self.translation.to_value(), self.rotation.to_value());
 
         Box::new(RigidBody::new_with_id(

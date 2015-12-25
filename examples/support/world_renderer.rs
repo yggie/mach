@@ -2,17 +2,17 @@ extern crate mach;
 
 use std::cell::Ref;
 
-pub struct WorldRenderer<C: mach::CollisionSpace, D: mach::Dynamics>(mach::CustomWorld<C, D>);
+pub struct WorldRenderer<S: mach::Space, D: mach::Dynamics>(mach::CustomWorld<S, D>);
 
-impl<C, D> WorldRenderer<C, D>
-where C: mach::CollisionSpace, D: mach::Dynamics {
-    pub fn new(world: mach::CustomWorld<C, D>) -> WorldRenderer<C, D> {
+impl<S, D> WorldRenderer<S, D>
+where S: mach::Space, D: mach::Dynamics {
+    pub fn new(world: mach::CustomWorld<S, D>) -> WorldRenderer<S, D> {
         WorldRenderer(world)
     }
 }
 
-impl<C, D> mach::World for WorldRenderer<C, D>
-where C: mach::CollisionSpace, D: mach::Dynamics {
+impl<S, D> mach::World for WorldRenderer<S, D>
+where S: mach::Space, D: mach::Dynamics {
     #[inline(always)]
     fn create_body(&mut self, entity_desc: &mach::EntityDesc) -> mach::ID {
         self.0.create_body(entity_desc)
@@ -38,12 +38,12 @@ where C: mach::CollisionSpace, D: mach::Dynamics {
     }
 
     #[inline(always)]
-    fn gravity(&self) -> mach::Vector {
+    fn gravity(&self) -> mach::maths::Vect {
         self.0.gravity()
     }
 
     #[inline(always)]
-    fn set_gravity(&mut self, gravity: mach::Vector) {
+    fn set_gravity(&mut self, gravity: mach::maths::Vect) {
         self.0.set_gravity(gravity);
     }
 }

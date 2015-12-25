@@ -1,5 +1,5 @@
 use mach::Scalar;
-use mach::maths::{ Vector, Matrix };
+use mach::maths::{Vect, Matrix};
 
 #[test]
 fn instantiating_with_components() {
@@ -48,7 +48,7 @@ fn instantiating_as_a_skew_matrix() {
 
 #[test]
 fn instantiating_from_axis_angle() {
-    let a = Vector::new(0.0, 0.0, 1.0);
+    let a = Vect::new(0.0, 0.0, 1.0);
     let radians: Scalar = 3.0;
     let c = radians.cos();
     let s = radians.sin();
@@ -159,9 +159,9 @@ fn dividing_by_a_scalar() {
 #[test]
 fn multiplying_by_a_vector() {
     let m = Matrix::new(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0);
-    let v = Vector::new(1.0, 2.0, 3.0);
+    let v = Vect::new(1.0, 2.0, 3.0);
 
-    let a: Vector = m * v;
+    let a: Vect = m * v;
 
     assert_eq!((a.x, a.y, a.z), (30.0, 36.0, 42.0));
 }

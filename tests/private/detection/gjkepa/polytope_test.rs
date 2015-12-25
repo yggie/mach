@@ -1,7 +1,7 @@
 extern crate quickcheck;
 
 use Scalar;
-use maths::Vector;
+use maths::Vect;
 use geometries::PlaneLocation;
 
 use super::polytope::Polytope;
@@ -13,10 +13,10 @@ use support::{inputs, EntityBuilder};
 #[test]
 fn it_should_not_generate_incomplete_shells() {
     fn property(rot: inputs::UnitQuat) {
-        let control = EntityBuilder::new_cube(1.0).build_region();
+        let control = EntityBuilder::new_cube(1.0).build_body();
         let body = EntityBuilder::new_cube(1.0)
             .with_rotation(rot)
-            .build_region();
+            .build_body();
 
         let diff = MinkowskiDifference::new(control.as_ref(), body.as_ref());
 
@@ -28,7 +28,7 @@ fn it_should_not_generate_incomplete_shells() {
         let polytope = Polytope::new(simplex);
 
         let mid_point = polytope.support_points.iter()
-            .fold(Vector::new_zero(), |total, &(vertex, _index_pair)| {
+            .fold(Vect::new_zero(), |total, &(vertex, _index_pair)| {
                 total + vertex
             }) / polytope.support_points.len() as Scalar;
 

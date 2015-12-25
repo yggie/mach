@@ -1,7 +1,7 @@
 use std::rc::Rc;
 
 use Scalar;
-use maths::{State, Vector};
+use maths::{State, Vect};
 use entities::Material;
 use shapes::{Cuboid, Shape, Sphere, TriangleMesh};
 
@@ -9,7 +9,7 @@ use shapes::{Cuboid, Shape, Sphere, TriangleMesh};
 pub enum ShapeDesc {
     Cuboid(Scalar, Scalar, Scalar),
     Sphere(Scalar),
-    TriangleMesh(Rc<Vec<Vector>>, Vec<(usize, usize, usize)>),
+    TriangleMesh(Rc<Vec<Vect>>, Vec<(usize, usize, usize)>),
 }
 
 impl ShapeDesc {
@@ -58,7 +58,7 @@ impl EntityDesc {
         }
     }
 
-    pub fn as_triangle_mesh(self, vertices: Rc<Vec<Vector>>, indices: Vec<(usize, usize, usize)>) -> EntityDesc {
+    pub fn as_triangle_mesh(self, vertices: Rc<Vec<Vect>>, indices: Vec<(usize, usize, usize)>) -> EntityDesc {
         EntityDesc {
             shape_desc: ShapeDesc::TriangleMesh(vertices, indices),
             .. self
@@ -100,7 +100,7 @@ impl EntityDesc {
         }
     }
 
-    pub fn with_axis_angle(self, axis: Vector, angle: Scalar) -> EntityDesc {
+    pub fn with_axis_angle(self, axis: Vect, angle: Scalar) -> EntityDesc {
         EntityDesc {
             state: self.state.with_axis_angle(axis, angle),
             .. self

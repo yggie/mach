@@ -1,14 +1,14 @@
 use std::fmt;
 
 use {Scalar, TOLERANCE};
-use maths::{ApproxEq, Matrix, Vector};
+use maths::{ApproxEq, Matrix, Vect};
 use shapes::{Shape, ShapeSpec};
 
 /// A representation of a cuboid in 3 dimensions.
 #[derive(Clone, Debug)]
 pub struct Cuboid {
-    dimensions: Vector,
-    vertices: [Vector; 8],
+    dimensions: Vect,
+    vertices: [Vect; 8],
 }
 
 impl Cuboid {
@@ -19,17 +19,17 @@ impl Cuboid {
         let half_z = z_size / 2.0;
 
         Cuboid {
-            dimensions: Vector::new(x_size, y_size, z_size),
+            dimensions: Vect::new(x_size, y_size, z_size),
             vertices: [
                 // TODO refactor this to something else (z = height??)
-                Vector::new( half_x,  half_y,  half_z),
-                Vector::new(-half_x,  half_y,  half_z),
-                Vector::new(-half_x, -half_y,  half_z),
-                Vector::new( half_x, -half_y,  half_z),
-                Vector::new( half_x,  half_y, -half_z),
-                Vector::new(-half_x,  half_y, -half_z),
-                Vector::new(-half_x, -half_y, -half_z),
-                Vector::new( half_x, -half_y, -half_z),
+                Vect::new( half_x,  half_y,  half_z),
+                Vect::new(-half_x,  half_y,  half_z),
+                Vect::new(-half_x, -half_y,  half_z),
+                Vect::new( half_x, -half_y,  half_z),
+                Vect::new( half_x,  half_y, -half_z),
+                Vect::new(-half_x,  half_y, -half_z),
+                Vect::new(-half_x, -half_y, -half_z),
+                Vect::new( half_x, -half_y, -half_z),
             ],
         }
     }
@@ -39,7 +39,7 @@ impl Cuboid {
         Cuboid::new(size, size, size)
     }
 
-    pub fn dimensions(&self) -> &Vector {
+    pub fn dimensions(&self) -> &Vect {
         &self.dimensions
     }
 }
@@ -88,7 +88,7 @@ impl Shape for Cuboid {
         );
     }
 
-    fn vertex(&self, index: usize) -> Vector {
+    fn vertex(&self, index: usize) -> Vect {
         self.vertices[index]
     }
 
@@ -96,12 +96,12 @@ impl Shape for Cuboid {
         8
     }
 
-    fn vertices_iter<'a>(&'a self) -> Box<Iterator<Item=Vector> + 'a> {
+    fn vertices_iter<'a>(&'a self) -> Box<Iterator<Item=Vect> + 'a> {
         Box::new(self.vertices.iter().map(|&a| a))
     }
 
-    fn support_indices_for(&self, direction: Vector) -> Vec<usize> {
-        let new_direction = Vector::new(
+    fn support_indices_for(&self, direction: Vect) -> Vec<usize> {
+        let new_direction = Vect::new(
             direction.x/self.dimensions.x,
             direction.y/self.dimensions.y,
             direction.z/self.dimensions.z,

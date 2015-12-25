@@ -6,19 +6,19 @@ use self::glium::{DisplayBuild, Surface};
 use self::glium::backend::glutin_backend::GlutinFacade;
 
 use mach::dynamics::Dynamics;
-use mach::collisions::CollisionSpace;
+use mach::detection::Space;
 
 use support::{Camera, ExamplesRenderer, SceneEnv, WorldRenderer};
 
-pub struct ExamplesWindow<C: CollisionSpace, D: Dynamics> {
-    world: WorldRenderer<C, D>,
+pub struct ExamplesWindow<S: Space, D: Dynamics> {
+    world: WorldRenderer<S, D>,
     camera: Camera,
     display: GlutinFacade,
     temp_renderer: ExamplesRenderer,
 }
 
-impl<C, D> ExamplesWindow<C, D> where C: CollisionSpace, D: Dynamics {
-    pub fn create(world: mach::CustomWorld<C, D>) -> Result<ExamplesWindow<C, D>, String> {
+impl<S, D> ExamplesWindow<S, D> where S: Space, D: Dynamics {
+    pub fn create(world: mach::CustomWorld<S, D>) -> Result<ExamplesWindow<S, D>, String> {
         let display = try!(
             glutin::WindowBuilder::new()
                 .with_dimensions(640, 480)

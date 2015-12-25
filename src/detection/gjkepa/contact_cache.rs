@@ -1,7 +1,7 @@
-use entities::VolumetricBody;
-use collisions::Intersection;
+use entities::Body;
+use detection::Intersection;
 
-use collisions::contact_detector::ContactDetector;
+use detection::contact_detector::ContactDetector;
 
 use super::polytope::Polytope;
 use super::simplex_cache::SimplexCache;
@@ -10,7 +10,7 @@ use super::minkowski_difference::MinkowskiDifference;
 pub struct ContactCache(SimplexCache);
 
 impl ContactCache {
-    pub fn new(body_0: &VolumetricBody, body_1: &VolumetricBody) -> ContactCache {
+    pub fn new(body_0: &Body, body_1: &Body) -> ContactCache {
         let diff = MinkowskiDifference::new(body_0, body_1);
 
         return ContactCache(SimplexCache::new(&diff));
@@ -18,7 +18,7 @@ impl ContactCache {
 }
 
 impl ContactDetector for ContactCache {
-    fn compute_contacts(&mut self, body_0: &VolumetricBody, body_1: &VolumetricBody) -> Option<Intersection> {
+    fn compute_contacts(&mut self, body_0: &Body, body_1: &Body) -> Option<Intersection> {
         let diff = MinkowskiDifference::new(body_0, body_1);
 
         return self.0.update_to_contain_origin(diff)

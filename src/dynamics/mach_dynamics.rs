@@ -1,26 +1,26 @@
 use {Scalar, TOLERANCE};
-use maths::{Vector, State};
+use maths::{Vect, State};
 use dynamics::{Dynamics, SemiImplicitEuler};
 use entities::{RigidBody, StaticBody};
-use collisions::{ContactPair, CollisionSpace, Intersection};
+use detection::{ContactPair, Space, Intersection};
 
 /// Contains the simplest implementation for a time marching scheme.
-pub struct SimpleDynamics {
-    gravity: Vector,
+pub struct MachDynamics {
+    gravity: Vect,
     integrator: SemiImplicitEuler,
 }
 
-impl SimpleDynamics {
-    /// Instantiates a new `SimpleDynamics` object.
-    pub fn new() -> SimpleDynamics {
-        SimpleDynamics {
-            gravity: Vector::new_zero(),
+impl MachDynamics {
+    /// Instantiates a new `MachDynamics` object.
+    pub fn new() -> MachDynamics {
+        MachDynamics {
+            gravity: Vect::new_zero(),
             integrator: SemiImplicitEuler,
         }
     }
 
     #[allow(non_snake_case)]
-    fn solve_for_contact(&mut self, rigid_body_0: &RigidBody, rigid_body_1: &RigidBody, contact_center: &Vector, contact_normal: &Vector) -> ((Vector, Vector), (Vector, Vector)) {
+    fn solve_for_contact(&mut self, rigid_body_0: &RigidBody, rigid_body_1: &RigidBody, contact_center: &Vect, contact_normal: &Vect) -> ((Vect, Vect), (Vect, Vect)) {
         let epsilon = rigid_body_0.coefficient_of_restitution() * rigid_body_1.coefficient_of_restitution();
         // body masses
         let M = [rigid_body_0.mass(), rigid_body_1.mass()];
@@ -61,7 +61,7 @@ impl SimpleDynamics {
     }
 
     #[allow(non_snake_case)]
-    fn solve_for_contact_with_static(&mut self, rigid_body: &RigidBody, static_body: &StaticBody, contact_center: &Vector, contact_normal: &Vector) -> (Vector, Vector) {
+    fn solve_for_contact_with_static(&mut self, rigid_body: &RigidBody, static_body: &StaticBody, contact_center: &Vect, contact_normal: &Vect) -> (Vect, Vect) {
         let epsilon = rigid_body.coefficient_of_restitution() * static_body.coefficient_of_restitution();
         // relative vector from position to contact center
         let to_contact_center = contact_center - rigid_body.pos();
@@ -91,7 +91,7 @@ impl SimpleDynamics {
         return (velocity_change / m, angular_velocity_change);
     }
 
-    fn revert_to_time_of_contact<C: CollisionSpace>(&self, collision_space: &mut C, current_intersection: Intersection, rigid_body_0: &mut RigidBody, rigid_body_1: &mut RigidBody, time_window: Scalar) -> (Intersection, Scalar) {
+    fn revert_to_time_of_contact<S: Space>(&self, space: &mut S, current_intersection: Intersection, rigid_body_0: &mut RigidBody, rigid_body_1: &mut RigidBody, time_window: Scalar) -> (Intersection, Scalar) {
         let mut last_intersection: (Intersection, Scalar, State, State) = (current_intersection, 0.0, rigid_body_0.state().clone(), rigid_body_1.state().clone());
         let mut did_intersect_last_step = true;
         let mut current_time = time_window;
@@ -109,7 +109,7 @@ impl SimpleDynamics {
             self.integrator.integrate_in_place(rigid_body_0.state_mut(), step, self.gravity);
             self.integrator.integrate_in_place(rigid_body_1.state_mut(), step, self.gravity);
 
-            if let Some(intersection) = collision_space.find_intersection(rigid_body_0, rigid_body_1) {
+            if let Some(intersection) = space.find_intersection(rigid_body_0, rigid_body_1) {
                 did_intersect_last_step = true;
                 last_intersection = (intersection, current_time, rigid_body_0.state().clone(), rigid_body_1.state().clone());
             } else {
@@ -120,8 +120,8 @@ impl SimpleDynamics {
         return (last_intersection.0, last_intersection.1);
     }
 
-    fn revert_to_time_of_contact_with_static<C: CollisionSpace>(&self, collision_space: &mut C, current_intersection: Intersection, rigid_body: &mut RigidBody, static_body: &StaticBody, time_window: Scalar) -> (Intersection, Scalar) {
-        // let intersection_option = collision_space.find_intersection(rigid_body, static_body);
+    fn revert_to_time_of_contact_with_static<S: Space>(&self, space: &mut S, current_intersection: Intersection, rigid_body: &mut RigidBody, static_body: &StaticBody, time_window: Scalar) -> (Intersection, Scalar) {
+        // let intersection_option = space.find_intersection(rigid_body, static_body);
         // debug_assert!(intersection_option.is_some(), "find_intersection returned false when there was a contact!");
         let mut last_intersection: (Intersection, Scalar, State) = (current_intersection, 0.0, rigid_body.state().clone());
         let mut did_intersect_last_step = true;
@@ -139,7 +139,7 @@ impl SimpleDynamics {
 
             self.integrator.integrate_in_place(rigid_body.state_mut(), step, self.gravity);
 
-            if let Some(intersection) = collision_space.find_intersection(rigid_body, static_body) {
+            if let Some(intersection) = space.find_intersection(rigid_body, static_body) {
                 did_intersect_last_step = true;
                 last_intersection = (intersection, current_time, rigid_body.state().clone());
             } else {
@@ -150,7 +150,7 @@ impl SimpleDynamics {
         return (last_intersection.0, last_intersection.1);
     }
 
-    fn update_rigid_body(&self, rigid_body: &mut RigidBody, change: (Vector, Vector), remaining_time: Scalar, correction: Vector) {
+    fn update_rigid_body(&self, rigid_body: &mut RigidBody, change: (Vect, Vect), remaining_time: Scalar, correction: Vect) {
         let v = rigid_body.vel();
         let w = rigid_body.ang_vel();
         rigid_body.set_vel(&(v + change.0));
@@ -163,13 +163,13 @@ impl SimpleDynamics {
     }
 }
 
-impl Dynamics for SimpleDynamics {
-    fn update<C: CollisionSpace>(&mut self, collision_space: &mut C, time_step: Scalar) {
-        for mut body in collision_space.bodies_iter_mut() {
+impl Dynamics for MachDynamics {
+    fn update<S: Space>(&mut self, space: &mut S, time_step: Scalar) {
+        for mut body in space.bodies_iter_mut() {
             self.integrator.integrate_in_place(body.state_mut(), time_step, self.gravity);
         }
 
-        if let Some(contacts) = collision_space.find_contacts() {
+        if let Some(contacts) = space.find_contacts() {
             println!("CONTACTS FOUND ({})", contacts.len());
 
             for contact in contacts.iter() {
@@ -179,7 +179,7 @@ impl Dynamics for SimpleDynamics {
                         let rigid_body_1 = &mut cell_1.borrow_mut();
                         let current_intersection = Intersection::new(contact.center, contact.normal, contact.penetration_depth);
 
-                        let (intersection, remaining_time) = self.revert_to_time_of_contact(collision_space, current_intersection, rigid_body_0, rigid_body_1, time_step);
+                        let (intersection, remaining_time) = self.revert_to_time_of_contact(space, current_intersection, rigid_body_0, rigid_body_1, time_step);
                         let changes = self.solve_for_contact(rigid_body_0, rigid_body_1, intersection.point(), intersection.normal());
 
                         let correction = -contact.penetration_depth * contact.normal;
@@ -192,7 +192,7 @@ impl Dynamics for SimpleDynamics {
                         let static_body = &cell_1.borrow();
                         let current_intersection = Intersection::new(contact.center, contact.normal, contact.penetration_depth);
 
-                        let (intersection, remaining_time) = self.revert_to_time_of_contact_with_static(collision_space, current_intersection, rigid_body, static_body, time_step);
+                        let (intersection, remaining_time) = self.revert_to_time_of_contact_with_static(space, current_intersection, rigid_body, static_body, time_step);
                         let change = self.solve_for_contact_with_static(rigid_body, static_body, intersection.point(), intersection.normal());
 
                         let correction = contact.penetration_depth * contact.normal;
@@ -203,11 +203,11 @@ impl Dynamics for SimpleDynamics {
         }
     }
 
-    fn gravity(&self) -> Vector {
+    fn gravity(&self) -> Vect {
         self.gravity
     }
 
-    fn set_gravity(&mut self, gravity: Vector) {
+    fn set_gravity(&mut self, gravity: Vect) {
         self.gravity = gravity;
     }
 }

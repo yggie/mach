@@ -1,13 +1,13 @@
 use Scalar;
-use maths::{ Transform, Quat, Vector };
+use maths::{Transform, Quat, Vect};
 
 /// Represents a physical state. The state contains information regarding the
 /// current position, rotation, velocity and rotational velocity.
 #[derive(Clone, Copy, Debug)]
 pub struct State {
     transform: Transform,
-    vel: Vector,
-    ang_vel: Vector,
+    vel: Vect,
+    ang_vel: Vect,
 }
 
 impl State {
@@ -16,8 +16,8 @@ impl State {
     pub fn new_stationary() -> State {
         State {
             transform: Transform::new_identity(),
-            vel: Vector::new_zero(),
-            ang_vel: Vector::new_zero(),
+            vel: Vect::new_zero(),
+            ang_vel: Vect::new_zero(),
         }
     }
 
@@ -36,13 +36,13 @@ impl State {
 
     /// Creates a new `State` with a non-zero rotation.
     #[inline]
-    pub fn new_with_axis_angle(axis: Vector, angle_in_radians: Scalar) -> State {
+    pub fn new_with_axis_angle(axis: Vect, angle_in_radians: Scalar) -> State {
         State::new_stationary().with_axis_angle(axis, angle_in_radians)
     }
 
     /// Returns the position of the `State`.
     #[inline(always)]
-    pub fn pos(&self) -> Vector {
+    pub fn pos(&self) -> Vect {
         self.transform.translation()
     }
 
@@ -54,13 +54,13 @@ impl State {
 
     /// Returns the velocity of the `State`.
     #[inline]
-    pub fn vel(&self) -> Vector {
+    pub fn vel(&self) -> Vect {
         self.vel
     }
 
     /// Returns the angular velocity of the `State`.
     #[inline]
-    pub fn ang_vel(&self) -> Vector {
+    pub fn ang_vel(&self) -> Vect {
         self.ang_vel
     }
 
@@ -77,7 +77,7 @@ impl State {
     }
 
     /// Returns a copy of the `State` using the inputs as components of the
-    /// position `Vector`. This function can be chained.
+    /// position `Vect`. This function can be chained.
     #[inline]
     pub fn with_pos(&self, x: Scalar, y: Scalar, z: Scalar) -> State {
         let mut state = self.clone();
@@ -93,7 +93,7 @@ impl State {
 
     /// Sets the rotation with the provided axis and angle of rotation.
     #[inline]
-    pub fn set_axis_angle(&mut self, axis: Vector, angle_in_radians: Scalar) {
+    pub fn set_axis_angle(&mut self, axis: Vect, angle_in_radians: Scalar) {
         let q = Quat::new_from_axis_angle(axis, angle_in_radians);
         self.set_rot(&q);
     }
@@ -101,7 +101,7 @@ impl State {
     /// Returns a copy of the `State` using the specified angle and axis of
     /// rotation to initialize the rotation. This function can be chained.
     #[inline]
-    pub fn with_axis_angle(&self, axis: Vector, angle_in_radians: Scalar) -> State {
+    pub fn with_axis_angle(&self, axis: Vect, angle_in_radians: Scalar) -> State {
         let mut state = self.clone();
         state.set_axis_angle(axis, angle_in_radians);
         return state;
@@ -114,7 +114,7 @@ impl State {
     }
 
     /// Returns a copy of the `State` using the inputs as the components of the
-    /// velocity `Vector`. This function can be chained.
+    /// velocity `Vect`. This function can be chained.
     pub fn with_vel(&self, u: Scalar, v: Scalar, w: Scalar) -> State {
         let mut state = self.clone();
         state.set_vel(&(u, v, w));
@@ -122,14 +122,14 @@ impl State {
     }
 
     /// Sets the angular velocity using the specified values as components of a
-    /// `Vector`.
+    /// `Vect`.
     #[inline]
     pub fn set_ang_vel(&mut self, values: &(Scalar, Scalar, Scalar)) {
         self.ang_vel.set(values);
     }
 
     /// Returns a copy of the `State` using the inputs as components of the
-    /// angular velocity `Vector`. This function can be chained.
+    /// angular velocity `Vect`. This function can be chained.
     #[inline]
     pub fn with_ang_vel(&self, u: Scalar, v: Scalar, w: Scalar) -> State {
         let mut state = self.clone();
@@ -137,21 +137,21 @@ impl State {
         return state;
     }
 
-    /// Applies the `State` transformations to a `Vector`, treating the `Vector`
+    /// Applies the `State` transformations to a `Vect`, treating the `Vect`
     /// as a point.
-    pub fn transform_point(&self, point: Vector) -> Vector {
+    pub fn transform_point(&self, point: Vect) -> Vect {
         point.rotate_by_quaternion(self.rot()) + self.pos()
     }
 
-    /// Applies the `State` transformation to a `Vector`, treating the `Vector`
+    /// Applies the `State` transformation to a `Vect`, treating the `Vect`
     /// as a direction.
-    pub fn transform_direction(&self, direction: Vector) -> Vector {
+    pub fn transform_direction(&self, direction: Vect) -> Vect {
         direction.rotate_by_quaternion(self.rot())
     }
 
-    /// Applies the inverse `State` transformation to a `Vector`, treating the
-    /// `Vector` as a direction.
-    pub fn inverse_transform_direction(&self, direction: Vector) -> Vector {
+    /// Applies the inverse `State` transformation to a `Vect`, treating the
+    /// `Vect` as a direction.
+    pub fn inverse_transform_direction(&self, direction: Vect) -> Vect {
         direction.rotate_by_quaternion(self.rot().inverse())
     }
 }

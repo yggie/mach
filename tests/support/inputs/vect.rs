@@ -2,7 +2,7 @@ extern crate quickcheck;
 
 use std::fmt;
 
-use {Scalar, Vector};
+use Scalar;
 
 #[derive(Clone)]
 pub struct Vect {
@@ -10,8 +10,8 @@ pub struct Vect {
 }
 
 impl Vect {
-    pub fn to_value(self) -> Vector {
-        Vector::new(self.values.0, self.values.1, self.values.2)
+    pub fn to_value(self) -> super::super::super::Vect {
+        super::super::super::Vect::new(self.values.0, self.values.1, self.values.2)
     }
 }
 

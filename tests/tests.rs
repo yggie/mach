@@ -13,15 +13,15 @@ mod integration_tests {
 }
 
 #[cfg(test)]
-#[path="collisions"]
-mod collisions_tests {
-    mod simple_collision_space_test;
+#[path="detection"]
+mod detection_tests {
+    mod mach_space_test;
 }
 
 #[cfg(test)]
 #[path="dynamics"]
 mod dynamics_tests {
-    mod simple_dynamics_test;
+    mod mach_dynamics_test;
 }
 
 #[cfg(test)]
@@ -33,10 +33,10 @@ mod entities_tests {
 #[cfg(test)]
 #[path="maths"]
 mod maths_tests {
-    mod matrix_test;
     mod quat_test;
-    mod vector_test;
+    mod vect_test;
     mod state_test;
+    mod matrix_test;
     mod transform_test;
 }
 

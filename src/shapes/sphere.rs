@@ -1,7 +1,7 @@
 use std::fmt;
 
 use {Scalar, PI, TOLERANCE};
-use maths::{Matrix, Vector};
+use maths::{Matrix, Vect};
 use shapes::{Shape, ShapeSpec};
 
 /// A representation of a sphere in 3 dimensions.
@@ -44,20 +44,20 @@ impl Shape for Sphere {
         Matrix::new_diag(i, i, i)
     }
 
-    fn vertex(&self, index: usize) -> Vector {
+    fn vertex(&self, index: usize) -> Vect {
         debug_assert_eq!(index, 0);
-        Vector::new_zero()
+        Vect::new_zero()
     }
 
     fn vertices_len(&self) -> usize {
         1
     }
 
-    fn vertices_iter<'a>(&'a self) -> Box<Iterator<Item=Vector> + 'a> {
-        Box::new(Defer::new(Vector::new_zero()))
+    fn vertices_iter<'a>(&'a self) -> Box<Iterator<Item=Vect> + 'a> {
+        Box::new(Defer::new(Vect::new_zero()))
     }
 
-    fn support_indices_for(&self, _: Vector) -> Vec<usize> {
+    fn support_indices_for(&self, _: Vect) -> Vec<usize> {
         vec!(0)
     }
 

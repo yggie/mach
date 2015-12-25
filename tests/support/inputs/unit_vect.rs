@@ -2,7 +2,7 @@ extern crate quickcheck;
 
 use std::fmt;
 
-use {Scalar, Vector};
+use {Scalar, Vect};
 
 #[derive(Clone)]
 pub struct UnitVect {
@@ -10,14 +10,14 @@ pub struct UnitVect {
 }
 
 impl UnitVect {
-    pub fn to_value(self) -> Vector {
-        Vector::new(self.values.0, self.values.1, self.values.2).normalize()
+    pub fn to_value(self) -> Vect {
+        Vect::new(self.values.0, self.values.1, self.values.2).normalize()
     }
 }
 
 impl quickcheck::Arbitrary for UnitVect {
     fn arbitrary<G: quickcheck::Gen>(random: &mut G) -> Self {
-        let value = Vector::new(
+        let value = Vect::new(
             random.gen_range(-1.0, 1.0),
             random.gen_range(-1.0, 1.0),
             random.gen_range(-1.0, 1.0),

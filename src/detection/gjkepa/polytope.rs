@@ -1,7 +1,7 @@
 use NEG_INFINITY;
-use maths::Vector;
+use maths::Vect;
 use utils::compute_surfaces_for_convex_hull;
-use collisions::Intersection;
+use detection::Intersection;
 use geometries::{PlaneLocation, Plane};
 
 use super::simplex::Simplex;
@@ -16,7 +16,7 @@ enum IntersectionType {
 pub struct Polytope<'a> {
     diff: MinkowskiDifference<'a>,
     pub surfaces: Vec<(Plane, (usize, usize, usize))>,
-    pub support_points: Vec<(Vector, IndexPair)>,
+    pub support_points: Vec<(Vect, IndexPair)>,
 }
 
 impl<'a> Polytope<'a> {
@@ -62,7 +62,7 @@ impl<'a> Polytope<'a> {
                 Some(index_pair) => {
                     polytope.support_points.push((polytope.diff.vertex(&index_pair), index_pair));
 
-                    let vertex_positions: Vec<Vector> = polytope.support_points.iter()
+                    let vertex_positions: Vec<Vect> = polytope.support_points.iter()
                         .map(|&(ref vertex, _index_pair)| vertex.clone())
                         .collect();
 
@@ -87,7 +87,7 @@ impl<'a> Polytope<'a> {
 
     /// TODO return more than 1 point
     pub fn compute_contact_points(&self) -> Intersection {
-        let fake_plane = Plane::from_point(&Vector::new(1.0, 0.0, 0.0), &Vector::new(0.0, 0.0, 0.0));
+        let fake_plane = Plane::from_point(&Vect::new(1.0, 0.0, 0.0), &Vect::new(0.0, 0.0, 0.0));
 
         let (penetration_depth, closest_plane, closest_vertex_indices) = self.surfaces.iter()
             .fold((NEG_INFINITY, fake_plane, (0, 0, 0)), |(origin_to_closest_plane_offset, closest_plane, closest_vertex_indices), &(ref plane, vertex_indices)| {
@@ -124,22 +124,22 @@ impl<'a> Polytope<'a> {
 
             (IntersectionType::Edge(_), IntersectionType::Edge(_)) => {
                 println!("UNHANDLED CONTACT TYPE [EDGE|EDGE]");
-                Vector::new_zero()
+                Vect::new_zero()
             },
 
             (IntersectionType::Face, IntersectionType::Edge(_)) => {
                 println!("UNHANDLED CONTACT TYPE [FACE|EDGE]");
-                Vector::new_zero()
+                Vect::new_zero()
             },
 
             (IntersectionType::Edge(_), IntersectionType::Face) => {
                 println!("UNHANDLED CONTACT TYPE [EDGE|FACE]");
-                Vector::new_zero()
+                Vect::new_zero()
             },
 
             (IntersectionType::Face, IntersectionType::Face) => {
                 println!("UNHANDLED CONTACT TYPE [FACE|FACE]");
-                Vector::new_zero()
+                Vect::new_zero()
             },
         };
 

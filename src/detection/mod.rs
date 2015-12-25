@@ -4,17 +4,17 @@
 
 mod gjkepa;
 mod contact;
+mod mach_space;
 mod intersection;
-mod simple_collision_space;
 
 /// TODO temporary workaround for the issue of rexporting traits, see https://github.com/rust-lang/rust/issues/16264
-pub mod collision_space;
+pub mod space;
 /// TODO temporary workaround for the issue of rexporting traits, see https://github.com/rust-lang/rust/issues/16264
 pub mod contact_detector;
 
+pub use self::space::Space;
 pub use self::gjkepa::ContactCache;
 pub use self::contact::{Contact, ContactPair};
+pub use self::mach_space::MachSpace;
 pub use self::intersection::Intersection;
-pub use self::collision_space::CollisionSpace;
 pub use self::contact_detector::ContactDetector;
-pub use self::simple_collision_space::SimpleCollisionSpace;

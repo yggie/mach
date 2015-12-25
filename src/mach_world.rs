@@ -1,19 +1,19 @@
 use std::cell::Ref;
 
 use {CustomWorld, EntityDesc, ID, Scalar, World};
-use maths::Vector;
+use maths::Vect;
 use entities::RigidBody;
-use dynamics::SimpleDynamics;
-use collisions::SimpleCollisionSpace;
+use dynamics::MachDynamics;
+use detection::MachSpace;
 
 /// The default implementation of a `World` object, using all the engine’s core
 /// trait implementations to function.
-pub struct MachWorld(CustomWorld<SimpleCollisionSpace, SimpleDynamics>);
+pub struct MachWorld(CustomWorld<MachSpace, MachDynamics>);
 
 impl MachWorld {
     /// Creates a new `MachWorld` with the default configuration.
     pub fn new() -> MachWorld {
-        MachWorld(CustomWorld::new(SimpleCollisionSpace::new(), SimpleDynamics::new()))
+        MachWorld(CustomWorld::new(MachSpace::new(), MachDynamics::new()))
     }
 }
 
@@ -43,12 +43,12 @@ impl World for MachWorld {
     }
 
     #[inline(always)]
-    fn gravity(&self) -> Vector {
+    fn gravity(&self) -> Vect {
         self.0.gravity()
     }
 
     #[inline(always)]
-    fn set_gravity(&mut self, gravity: Vector) {
+    fn set_gravity(&mut self, gravity: Vect) {
         self.0.set_gravity(gravity);
     }
 }

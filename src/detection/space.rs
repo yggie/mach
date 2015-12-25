@@ -1,12 +1,12 @@
-use std::cell::{ Ref, RefMut };
+use std::cell::{Ref, RefMut};
 
 use {EntityDesc, ID};
-use entities::{RigidBody, StaticBody, VolumetricBody};
-use collisions::{Contact, Intersection};
+use entities::{RigidBody, StaticBody, Body};
+use detection::{Contact, Intersection};
 
-/// A `CollisionSpace` component is responsible for the storage, retrieval and
+/// A `Space` component is responsible for the storage, retrieval and
 /// querying of physical bodies in the simulation.
-pub trait CollisionSpace {
+pub trait Space {
     /// Creates an instance of a `RigidBody` with the properties from the
     /// `EntityDesc` provided. Returns a unique identifier bound to the new
     /// instance.
@@ -49,7 +49,7 @@ pub trait CollisionSpace {
 
     /// Finds the intersection between two volumetric bodies.
     // TODO: needs refactoring: are there alternatives to not exposing this function?
-    fn find_intersection(&self, &VolumetricBody, &VolumetricBody) -> Option<Intersection>;
+    fn find_intersection(&self, &Body, &Body) -> Option<Intersection>;
 
     /// Finds all contacts between bodies.
     // TODO test it?

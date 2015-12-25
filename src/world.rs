@@ -1,7 +1,7 @@
 use std::cell::Ref;
 
 use {EntityDesc, ID, Scalar};
-use maths::Vector;
+use maths::Vect;
 use entities::RigidBody;
 
 /// The `World` trait should be implemented by objects capable of behaving as a
@@ -28,9 +28,9 @@ pub trait World {
     /// Steps the `World` forward in time by the specified amount.
     fn update(&mut self, time_step: Scalar);
 
-    /// Returns the value of the global gravity `Vector` set in the `World`.
-    fn gravity(&self) -> Vector;
+    /// Returns the value of the global gravity `Vect` set in the `World`.
+    fn gravity(&self) -> Vect;
 
     /// Changes the global gravitational force acting on `RigidBody` objects.
-    fn set_gravity(&mut self, gravity: Vector);
+    fn set_gravity(&mut self, gravity: Vect);
 }

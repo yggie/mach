@@ -9,10 +9,10 @@ use support::{inputs, EntityBuilder};
 #[test]
 fn it_always_returns_at_least_one_support_point_at_an_offset_from_the_origin() {
     fn property(rotation: inputs::UnitQuat, direction: inputs::UnitVect) {
-        let control = EntityBuilder::new_cube(1.0).build_region();
+        let control = EntityBuilder::new_cube(1.0).build_body();
         let body = EntityBuilder::new_cube(1.0)
             .with_rotation(rotation)
-            .build_region();
+            .build_body();
 
         let diff = MinkowskiDifference::new(
             control.as_ref(),

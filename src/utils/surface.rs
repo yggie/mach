@@ -1,20 +1,20 @@
 use { Scalar, TOLERANCE };
-use maths::Vector;
+use maths::Vect;
 
 /// Represents a `Surface` for a given set of points.
 #[derive(Copy, Clone)]
 pub struct Surface {
     /// The `Surface` normal
-    pub normal: Vector,
+    pub normal: Vect,
     /// The node indices associated with the `Surface`
     pub nodes: [usize; 3],
 }
 
 impl Surface {
     /// Creates a new `Surface` from the point cloud and indices provided.
-    pub fn new(vertices: &Vec<Vector>, index_0: usize, index_1: usize, index_2: usize) -> Surface {
+    pub fn new(vertices: &Vec<Vect>, index_0: usize, index_1: usize, index_2: usize) -> Surface {
         let reference_point = vertices.iter()
-            .fold(Vector::new_zero(), |total, &vector| {
+            .fold(Vect::new_zero(), |total, &vector| {
                 total + vector
             }) / (vertices.len() as Scalar);
 
@@ -36,9 +36,9 @@ impl Surface {
 
     /// Computes the centroid of a `Surface` using the node indices in the
     /// `Surface` and the point cloud provided.
-    pub fn compute_centroid(surface: &Surface, vertices: &Vec<Vector>) -> Vector {
+    pub fn compute_centroid(surface: &Surface, vertices: &Vec<Vect>) -> Vect {
         return surface.nodes.iter()
-            .fold(Vector::new_zero(), |total, &index| {
+            .fold(Vect::new_zero(), |total, &index| {
                 total + vertices[index]
             }) / 3.0;
     }
