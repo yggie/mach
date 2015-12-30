@@ -12,14 +12,6 @@ mod mach_world;
 mod entity_desc;
 mod custom_world;
 
-pub use self::world::World;
-pub use self::dynamics::Dynamics;
-pub use self::entities::RigidBody;
-pub use self::detection::Space;
-pub use self::mach_world::MachWorld;
-pub use self::entity_desc::EntityDesc;
-pub use self::custom_world::CustomWorld;
-
 pub mod utils;
 pub mod maths;
 pub mod shapes;
@@ -29,7 +21,14 @@ pub mod detection;
 pub mod geometries;
 
 pub use self::maths::Vect;
+pub use self::world::World;
 pub use self::shapes::{Shape, ShapeSpec};
+pub use self::dynamics::Dynamics;
+pub use self::entities::RigidBody;
+pub use self::detection::Space;
+pub use self::mach_world::MachWorld;
+pub use self::entity_desc::EntityDesc;
+pub use self::custom_world::CustomWorld;
 
 use std::fmt;
 use std::rc::Rc;

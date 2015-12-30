@@ -2,7 +2,7 @@ use {Scalar, TOLERANCE};
 use maths::{Vect, State};
 use dynamics::{Dynamics, SemiImplicitEuler};
 use entities::{RigidBody, StaticBody};
-use detection::{ContactPair, Space, Intersection};
+use detection::{Contact, ContactPair, Space, Intersection};
 
 /// Contains the simplest implementation for a time marching scheme.
 pub struct MachDynamics {
@@ -164,12 +164,13 @@ impl MachDynamics {
 }
 
 impl Dynamics for MachDynamics {
-    fn update<S: Space>(&mut self, space: &mut S, time_step: Scalar) {
+    fn update<S: Space>(&mut self, space: &mut S, time_step: Scalar) -> Option<Vec<Contact>> {
         for mut body in space.bodies_iter_mut() {
             self.integrator.integrate_in_place(body.state_mut(), time_step, self.gravity);
         }
 
-        if let Some(contacts) = space.find_contacts() {
+        let contacts_option = space.find_contacts();
+        if let &Some(ref contacts) = &contacts_option {
             println!("CONTACTS FOUND ({})", contacts.len());
 
             for contact in contacts.iter() {
@@ -201,6 +202,8 @@ impl Dynamics for MachDynamics {
                 }
             }
         }
+
+        return contacts_option;
     }
 
     fn gravity(&self) -> Vect {

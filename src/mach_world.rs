@@ -4,7 +4,7 @@ use {CustomWorld, EntityDesc, ID, Scalar, World};
 use maths::Vect;
 use entities::RigidBody;
 use dynamics::MachDynamics;
-use detection::MachSpace;
+use detection::{Contact, MachSpace};
 
 /// The default implementation of a `World` object, using all the engine’s core
 /// trait implementations to function.
@@ -38,8 +38,8 @@ impl World for MachWorld {
     }
 
     #[inline(always)]
-    fn update(&mut self, time_step: Scalar) {
-        self.0.update(time_step);
+    fn update(&mut self, time_step: Scalar) -> Option<Vec<Contact>> {
+        return self.0.update(time_step);
     }
 
     #[inline(always)]

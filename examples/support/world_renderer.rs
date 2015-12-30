@@ -33,8 +33,8 @@ where S: mach::Space, D: mach::Dynamics {
     }
 
     #[inline(always)]
-    fn update(&mut self, time_step: mach::Scalar) {
-        self.0.update(time_step);
+    fn update(&mut self, time_step: mach::Scalar) -> Option<Vec<mach::detection::Contact>> {
+        return self.0.update(time_step);
     }
 
     #[inline(always)]

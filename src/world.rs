@@ -3,6 +3,7 @@ use std::cell::Ref;
 use {EntityDesc, ID, Scalar};
 use maths::Vect;
 use entities::RigidBody;
+use detection::Contact;
 
 /// The `World` trait should be implemented by objects capable of behaving as a
 /// physics engine.
@@ -26,7 +27,7 @@ pub trait World {
     fn bodies_iter<'a>(&'a self) -> Box<Iterator<Item=Ref<RigidBody>> + 'a>;
 
     /// Steps the `World` forward in time by the specified amount.
-    fn update(&mut self, time_step: Scalar);
+    fn update(&mut self, time_step: Scalar) -> Option<Vec<Contact>>;
 
     /// Returns the value of the global gravity `Vect` set in the `World`.
     fn gravity(&self) -> Vect;

@@ -8,12 +8,13 @@ use self::glium::backend::glutin_backend::GlutinFacade;
 use mach::dynamics::Dynamics;
 use mach::detection::Space;
 
-use support::{Camera, ExamplesRenderer, SceneEnv, WorldRenderer};
+use support::{Camera, ExamplesRenderer, FrameMetadata, SceneEnv, WorldRenderer};
 
 pub struct ExamplesWindow<S: Space, D: Dynamics> {
     world: WorldRenderer<S, D>,
     camera: Camera,
     display: GlutinFacade,
+    frame_metadata: FrameMetadata,
     temp_renderer: ExamplesRenderer,
 }
 
@@ -38,6 +39,7 @@ impl<S, D> ExamplesWindow<S, D> where S: Space, D: Dynamics {
             camera: camera,
             display: display,
             temp_renderer: renderer,
+            frame_metadata: FrameMetadata::new(),
         })
     }
 
@@ -57,11 +59,20 @@ impl<S, D> ExamplesWindow<S, D> where S: Space, D: Dynamics {
 
     pub fn render_frame(&mut self) -> Result<(), String> {
         let mut target = self.display.draw();
-        try!(self.temp_renderer.render(&mut target, &mut self.world, &SceneEnv {
+        try!(self.temp_renderer.render(&mut target, &mut self.world, &self.frame_metadata, &SceneEnv {
             camera: &self.camera,
         }));
 
+        self.frame_metadata.contacts = Vec::new();
         return target.finish().map_err(|err| format!("{:?}", err));
+    }
+
+    pub fn handle_contact_events(&mut self, events: Option<Vec<mach::detection::Contact>>) {
+        self.frame_metadata.contacts = events.map_or(Vec::new(), |contacts: Vec<mach::detection::Contact>| -> Vec<mach::maths::Vect> {
+            return contacts.into_iter()
+                .map(|contact| contact.center.clone())
+                .collect();
+        });
     }
 
     fn handle_window_events(&mut self) -> Option<Result<(), String>> {

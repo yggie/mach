@@ -113,6 +113,7 @@ impl Space for MachSpace {
             let body_1 = &*rc_cell_1.borrow();
 
             if let Some(intersection) = self.find_intersection(body_0, body_1) {
+                println!("Found contact: {:?}", intersection);
                 contacts.push(
                     Contact {
                         pair: ContactPair::RigidRigid(rc_cell_0.clone(), rc_cell_1.clone()),

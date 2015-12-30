@@ -7,5 +7,5 @@ pub trait Simulation {
         Ok(())
     }
 
-    fn update(&mut self, _world: &mut mach::World) -> Result<(), String>;
+    fn update(&mut self, _world: &mut mach::World) -> Result<Option<Vec<mach::detection::Contact>>, String>;
 }

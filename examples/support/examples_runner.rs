@@ -52,7 +52,8 @@ impl<S> ExamplesRunner<S> where S: Simulation {
                 return result;
             }
 
-            try!(self.simulation.update(window.world_mut()));
+            let contacts_option = try!(self.simulation.update(window.world_mut()));
+            window.handle_contact_events(contacts_option);
             try!(window.render_frame());
 
             let time_taken = time::precise_time_ns() - start_time;

@@ -4,7 +4,7 @@ use {EntityDesc, ID, Scalar, World};
 use maths::Vect;
 use entities::RigidBody;
 use dynamics::Dynamics;
-use detection::Space;
+use detection::{Contact, Space};
 
 /// A customizable implementation of a `World` object, which simply correctly
 /// interfaces the individual `Space` and `Dynamics` components in the
@@ -47,8 +47,8 @@ impl<S, D> World for CustomWorld<S, D> where S: Space, D: Dynamics {
     }
 
     #[inline(always)]
-    fn update(&mut self, time_step: Scalar) {
-        self.dynamics.update(&mut self.space, time_step);
+    fn update(&mut self, time_step: Scalar) -> Option<Vec<Contact>> {
+        return self.dynamics.update(&mut self.space, time_step);
     }
 
     #[inline(always)]

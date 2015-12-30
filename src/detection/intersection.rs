@@ -3,6 +3,7 @@ use maths::Vect;
 
 /// This object contains information about the intersection between two
 /// entities.
+#[derive(Debug)]
 pub struct Intersection(Vect, Vect, Scalar);
 
 impl Intersection {
