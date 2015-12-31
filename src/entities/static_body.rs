@@ -3,14 +3,13 @@ use std::fmt;
 use {ID, Scalar};
 use maths::{Transform, Quat, Vect};
 use shapes::Shape;
-use entities::{Material, Body};
+use entities::{Form, Material, Body};
 
 /// Represents a physical entity which cannot move. Within the engine, the
 /// object is simply treated as if it has infinite mass.
 pub struct StaticBody {
     id: ID,
-    shape: Box<Shape>,
-    transform: Transform,
+    form: Form,
     coefficient_of_restitution: Scalar,
     _friction_coefficient: Scalar,
 }
@@ -21,8 +20,7 @@ impl StaticBody {
     pub fn new_with_id(id: ID, shape: Box<Shape>, material: &Material, transform: Transform) -> StaticBody {
         StaticBody {
             id: id,
-            shape: shape,
-            transform: transform,
+            form: Form::new(shape, transform),
             coefficient_of_restitution: material.coefficient_of_restitution(),
             _friction_coefficient: material.friction_coefficient(),
         }
@@ -37,7 +35,7 @@ impl StaticBody {
     /// Returns the associated `Shape` object for the entity.
     #[inline]
     pub fn shape(&self) -> &Shape {
-        &*self.shape
+        &*self.form.shape()
     }
 
     /// Returns the coefficient of restitution associated with the `RigidBody`.
@@ -55,19 +53,19 @@ impl StaticBody {
     /// Returns the associated `Transform` object for the entity.
     #[inline]
     pub fn transform(&self) -> &Transform {
-        &self.transform
+        &self.form.transform()
     }
 
     /// Returns the position of the `StaticBody`.
     #[inline]
-    pub fn position(&self) -> Vect {
-        self.transform.translation()
+    pub fn position(&self) -> &Vect {
+        self.form.translation()
     }
 
     /// Returns the rotation of the `StaticBody` expressed as a `Quat`.
     #[inline]
-    pub fn rotation(&self) -> Quat {
-        self.transform.rotation()
+    pub fn rotation(&self) -> &Quat {
+        self.form.rotation()
     }
 }
 

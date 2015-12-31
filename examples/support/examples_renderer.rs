@@ -45,11 +45,11 @@ impl ExamplesRenderer {
 
         for body in world.bodies_iter() {
             if let Some(instance) = old_instances.remove(&body.id()) {
-                self.render_and_save(surface, instance, body.state().transform(), env);
+                self.render_and_save(surface, instance, body.transform(), env);
             } else {
                 let instance = self.generate_new_instance(body.id(), body.shape());
 
-                self.render_and_save(surface, instance, body.state().transform(), env);
+                self.render_and_save(surface, instance, body.transform(), env);
             }
         }
 

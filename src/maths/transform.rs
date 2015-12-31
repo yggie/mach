@@ -1,11 +1,11 @@
 use Scalar;
-use maths::{Vect, Quat};
+use maths::{Quat, Vect};
 
 /// The `Transform` object represents a spatial transformation in 3D space.
 #[derive(Clone, Copy, Debug)]
 pub struct Transform {
-    translation: Vect,
-    rotation: Quat,
+    pub translation: Vect,
+    pub rotation: Quat,
 }
 
 impl Transform {

@@ -15,5 +15,5 @@ pub fn translational_kinetic_energy_for(body: &RigidBody) -> Scalar {
 
 /// Computes the rotational component of the kinetic energy for the `RigidBody`.
 pub fn rotational_kinetic_energy_for(body: &RigidBody) -> Scalar {
-    (body.inertia() * body.ang_vel()).dot(body.ang_vel()) / 2.0
+    (body.inertia() * body.ang_vel()).dot(*body.ang_vel()) / 2.0
 }

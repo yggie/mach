@@ -258,17 +258,28 @@ impl Mul<Scalar> for Matrix {
 }
 
 /// Implement the multiplication operator between a `Matrix` and a `Vect`.
+impl<'a> Mul<&'a Vect> for Matrix {
+    type Output = Vect;
+
+    /// Computes the resulting vector from the multiplication between a matrix
+    /// and a vector.
+    fn mul(self, vect: &'a Vect) -> Vect {
+        Vect::new(
+            self[0]*vect.x + self[3]*vect.y + self[6]*vect.z,
+            self[1]*vect.x + self[4]*vect.y + self[7]*vect.z,
+            self[2]*vect.x + self[5]*vect.y + self[8]*vect.z,
+        )
+    }
+}
+
+/// Implement the multiplication operator between a `Matrix` and a `Vect`.
 impl Mul<Vect> for Matrix {
     type Output = Vect;
 
     /// Computes the resulting vector from the multiplication between a matrix
     /// and a vector.
     fn mul(self, vect: Vect) -> Vect {
-        Vect::new(
-            self[0]*vect.x + self[3]*vect.y + self[6]*vect.z,
-            self[1]*vect.x + self[4]*vect.y + self[7]*vect.z,
-            self[2]*vect.x + self[5]*vect.y + self[8]*vect.z,
-        )
+        self * &vect
     }
 }
 

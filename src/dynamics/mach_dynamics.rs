@@ -1,6 +1,6 @@
 use {Scalar, TOLERANCE};
-use maths::{Vect, State};
-use dynamics::{Dynamics, SemiImplicitEuler};
+use maths::Vect;
+use dynamics::{Dynamics, Integrator, SemiImplicitEuler};
 use entities::{RigidBody, StaticBody};
 use detection::{Contact, ContactPair, Space, Intersection};
 
@@ -75,7 +75,7 @@ impl MachDynamics {
         let Jinv = rigid_body.inertia().inverse();
 
         let impulse = - (1.0 + epsilon) *
-            (contact_normal.dot(v) + w.dot(k_scaled)) /
+            (contact_normal.dot(*v) + w.dot(k_scaled)) /
             (1.0/m + k_scaled.dot(Jinv*k_scaled));
 
         let impulse = if impulse > TOLERANCE {
@@ -92,7 +92,7 @@ impl MachDynamics {
     }
 
     fn revert_to_time_of_contact<S: Space>(&self, space: &mut S, current_intersection: Intersection, rigid_body_0: &mut RigidBody, rigid_body_1: &mut RigidBody, time_window: Scalar) -> (Intersection, Scalar) {
-        let mut last_intersection: (Intersection, Scalar, State, State) = (current_intersection, 0.0, rigid_body_0.state().clone(), rigid_body_1.state().clone());
+        let mut last_intersection: (Intersection, Scalar) = (current_intersection, 0.0);
         let mut did_intersect_last_step = true;
         let mut current_time = time_window;
 
@@ -106,12 +106,12 @@ impl MachDynamics {
             let step = multiplier * time_window / ((2usize << i) as Scalar);
             current_time = current_time + step;
 
-            self.integrator.integrate_in_place(rigid_body_0.state_mut(), step, self.gravity);
-            self.integrator.integrate_in_place(rigid_body_1.state_mut(), step, self.gravity);
+            self.integrator.integrate(rigid_body_0, step, self.gravity);
+            self.integrator.integrate(rigid_body_1, step, self.gravity);
 
             if let Some(intersection) = space.find_intersection(rigid_body_0, rigid_body_1) {
                 did_intersect_last_step = true;
-                last_intersection = (intersection, current_time, rigid_body_0.state().clone(), rigid_body_1.state().clone());
+                last_intersection = (intersection, current_time);
             } else {
                 did_intersect_last_step = false;
             }
@@ -123,7 +123,7 @@ impl MachDynamics {
     fn revert_to_time_of_contact_with_static<S: Space>(&self, space: &mut S, current_intersection: Intersection, rigid_body: &mut RigidBody, static_body: &StaticBody, time_window: Scalar) -> (Intersection, Scalar) {
         // let intersection_option = space.find_intersection(rigid_body, static_body);
         // debug_assert!(intersection_option.is_some(), "find_intersection returned false when there was a contact!");
-        let mut last_intersection: (Intersection, Scalar, State) = (current_intersection, 0.0, rigid_body.state().clone());
+        let mut last_intersection: (Intersection, Scalar) = (current_intersection, 0.0);
         let mut did_intersect_last_step = true;
         let mut current_time = time_window;
 
@@ -137,11 +137,11 @@ impl MachDynamics {
             let step = multiplier * time_window / ((2usize << i) as Scalar);
             current_time = current_time + step;
 
-            self.integrator.integrate_in_place(rigid_body.state_mut(), step, self.gravity);
+            self.integrator.integrate(rigid_body, step, self.gravity);
 
             if let Some(intersection) = space.find_intersection(rigid_body, static_body) {
                 did_intersect_last_step = true;
-                last_intersection = (intersection, current_time, rigid_body.state().clone());
+                last_intersection = (intersection, current_time);
             } else {
                 did_intersect_last_step = false;
             }
@@ -151,22 +151,22 @@ impl MachDynamics {
     }
 
     fn update_rigid_body(&self, rigid_body: &mut RigidBody, change: (Vect, Vect), remaining_time: Scalar, correction: Vect) {
-        let v = rigid_body.vel();
-        let w = rigid_body.ang_vel();
+        let v = rigid_body.vel().clone();
+        let w = rigid_body.ang_vel().clone();
         rigid_body.set_vel(&(v + change.0));
         rigid_body.set_ang_vel(&(w + change.1));
 
-        let position = rigid_body.pos();
+        let position = rigid_body.pos().clone();
         rigid_body.set_pos(&(position + correction));
 
-        self.integrator.integrate_in_place(rigid_body.state_mut(), remaining_time, self.gravity);
+        self.integrator.integrate(rigid_body, remaining_time, self.gravity);
     }
 }
 
 impl Dynamics for MachDynamics {
     fn update<S: Space>(&mut self, space: &mut S, time_step: Scalar) -> Option<Vec<Contact>> {
         for mut body in space.bodies_iter_mut() {
-            self.integrator.integrate_in_place(body.state_mut(), time_step, self.gravity);
+            self.integrator.integrate(&mut *body, time_step, self.gravity);
         }
 
         let contacts_option = space.find_contacts();

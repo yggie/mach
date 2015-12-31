@@ -1,16 +1,16 @@
 use std::fmt;
 
 use {ID, Scalar};
-use maths::{Matrix, State, Transform, Quat, Vect};
+use maths::{Matrix, Motion, State, Transform, Quat, Vect};
 use shapes::Shape;
-use entities::{Material, Body};
+use entities::{Form, Material, Moveable, Body};
 
 /// Represents a physical entity in the world.
 pub struct RigidBody {
     id: ID,
     mass: Scalar,
-    shape: Box<Shape>,
-    state: State,
+    form: Form,
+    motion: Motion,
     coefficient_of_restitution: Scalar,
     _friction_coefficient: Scalar,
 }
@@ -21,8 +21,8 @@ impl RigidBody {
         RigidBody {
             id: id,
             mass: material.mass_of(&*shape),
-            shape: shape,
-            state: state,
+            form: Form::new(shape, state.transform().clone()),
+            motion: Motion::new(state.vel().clone(), state.ang_vel().clone()),
             coefficient_of_restitution: material.coefficient_of_restitution(),
             _friction_coefficient: material.friction_coefficient(),
         }
@@ -37,26 +37,28 @@ impl RigidBody {
     /// Returns a borrowed pointer to the Shape object held internally.
     #[inline]
     pub fn shape(&self) -> &Shape {
-        &*self.shape
-    }
-
-    /// Returns the `State` associated with the `RigidBody`.
-    #[inline]
-    pub fn state(&self) -> State {
-        self.state
-    }
-
-    /// Returns the `State` associated with the `RigidBody` as a mutable
-    /// reference.
-    #[inline]
-    pub fn state_mut(&mut self) -> &mut State {
-        &mut self.state
+        self.form.shape()
     }
 
     /// Returns the associated `Transform` object.
     #[inline]
     pub fn transform(&self) -> &Transform {
-        self.state.transform()
+        self.form.transform()
+    }
+
+    #[inline]
+    pub fn transform_mut(&mut self) -> &mut Transform {
+        self.form.transform_mut()
+    }
+
+    #[inline]
+    pub fn motion(&self) -> &Motion {
+        &self.motion
+    }
+
+    #[inline]
+    pub fn motion_mut(&mut self) -> &mut Motion {
+        &mut self.motion
     }
 
     /// Returns the mass of the `RigidBody`.
@@ -80,66 +82,65 @@ impl RigidBody {
     /// Returns the inertia tensor of the `RigidBody`.
     #[inline]
     pub fn inertia(&self) -> Matrix {
-        self.shape.inertia() * self.mass
+        self.shape().inertia() * self.mass
     }
 
     /// Returns the position of the `RigidBody`.
     #[inline]
-    pub fn pos(&self) -> Vect {
-        self.state.pos()
+    pub fn pos(&self) -> &Vect {
+        self.form.translation()
     }
 
     /// Returns the velocity of the `RigidBody`.
     #[inline]
-    pub fn vel(&self) -> Vect {
-        self.state.vel()
+    pub fn vel(&self) -> &Vect {
+        &self.motion.velocity
     }
 
     /// Returns the rotation of the `RigidBody` expressed as a `Quat`.
     #[inline]
-    pub fn rot(&self) -> Quat {
-        self.state.rot()
+    pub fn rot(&self) -> &Quat {
+        self.form.rotation()
     }
 
     /// Returns the angular velocity of the `RigidBody`.
     #[inline]
-    pub fn ang_vel(&self) -> Vect {
-        self.state.ang_vel()
+    pub fn ang_vel(&self) -> &Vect {
+        &self.motion.angular_velocity
     }
 
     /// Returns the position of the vertex associated with the index.
     pub fn vertex(&self, index: usize) -> Vect {
-        self.state.transform_point(self.shape.vertex(index))
+        self.transform().apply_to_point(self.shape().vertex(index))
     }
 
     /// Returns an `Iterator` over the vertices of the `RigidBody`.
     pub fn vertices_iter<'a>(&'a self) -> Box<Iterator<Item=Vect> + 'a> {
-        let s = self.state.clone();
-        Box::new(self.shape.vertices_iter().map(move |v| s.transform_point(v)))
+        self.form.vertices_iter()
     }
 
     /// Sets the `RigidBody`’s position using the `Vect` provided.
     #[inline]
     pub fn set_pos(&mut self, values: &(Scalar, Scalar, Scalar)) {
-        self.state.set_pos(values);
+        *self.form.translation_mut() = Vect::new(values.0, values.1, values.2);
     }
 
     /// Sets the `RigidBody`’s rotation using the `Quat` provided.
     #[inline]
     pub fn set_rot(&mut self, rot: &Quat) {
-        self.state.set_rot(rot);
+        *self.form.rotation_mut() = rot.clone();
     }
 
     /// Sets the `RigidBody`’s velocity using the `Vect` provided.
     #[inline]
     pub fn set_vel(&mut self, values: &(Scalar, Scalar, Scalar)) {
-        self.state.set_vel(values);
+        self.motion.velocity = Vect::new(values.0, values.1, values.2);
     }
 
     /// Set the `RigidBody`’s angular velocity using the `Vect` provided.
     #[inline]
     pub fn set_ang_vel(&mut self, values: &(Scalar, Scalar, Scalar)) {
-        self.state.set_ang_vel(values);
+        self.motion.angular_velocity = Vect::new(values.0, values.1, values.2);
     }
 }
 
@@ -152,6 +153,24 @@ impl Body for RigidBody {
     #[inline(always)]
     fn transform(&self) -> &Transform {
         (self as &RigidBody).transform()
+    }
+}
+
+impl Moveable for RigidBody {
+    fn transform(&self) -> &Transform {
+        self.form.transform()
+    }
+
+    fn transform_mut(&mut self) -> &mut Transform {
+        self.form.transform_mut()
+    }
+
+    fn motion(&self) -> &Motion {
+        &self.motion
+    }
+
+    fn motion_mut(&mut self) -> &mut Motion {
+        &mut self.motion
     }
 }
 

@@ -91,7 +91,7 @@ impl Quat {
     /// Computes the sum between the `Quat` and the input scalars treated
     /// as components of a `Quat`.
     #[inline]
-    pub fn add(self, r: Scalar, i: Scalar, j: Scalar, k: Scalar) -> Quat {
+    pub fn add(&self, r: Scalar, i: Scalar, j: Scalar, k: Scalar) -> Quat {
         Quat::new(
             self.r + r,
             self.i + i,
@@ -177,12 +177,42 @@ impl Neg for Quat {
 }
 
 /// Implements the addition operator.
+impl<'a, 'b> Add<&'a Quat> for &'b Quat {
+    type Output = Quat;
+
+    #[inline]
+    fn add(self, other: &'a Quat) -> Quat {
+        Quat::add(self, other.r, other.i, other.j, other.k)
+    }
+}
+
+/// Implements the addition operator.
+impl<'a> Add<&'a Quat> for Quat {
+    type Output = Quat;
+
+    #[inline]
+    fn add(self, other: &'a Quat) -> Quat {
+        &self + other
+    }
+}
+
+/// Implements the addition operator.
+impl<'a> Add<Quat> for &'a Quat {
+    type Output = Quat;
+
+    #[inline]
+    fn add(self, other: Quat) -> Quat {
+        self + &other
+    }
+}
+
+/// Implements the addition operator.
 impl Add<Quat> for Quat {
     type Output = Quat;
 
     #[inline]
     fn add(self, other: Quat) -> Quat {
-        self.add(other.r, other.i, other.j, other.k)
+        &self + &other
     }
 }
 
