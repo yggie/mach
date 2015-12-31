@@ -1,21 +1,21 @@
 use std::cell::{Ref, RefMut};
 
-use {EntityDesc, ID};
-use entities::{RigidBody, StaticBody, Body};
+use ID;
+use entities::{BodyParams, RigidBody, StaticBody, Body};
 use detection::{Contact, Intersection};
 
 /// A `Space` component is responsible for the storage, retrieval and
 /// querying of physical bodies in the simulation.
 pub trait Space {
     /// Creates an instance of a `RigidBody` with the properties from the
-    /// `EntityDesc` provided. Returns a unique identifier bound to the new
+    /// `BodyParams` provided. Returns a unique identifier bound to the new
     /// instance.
-    fn create_body(&mut self, entity_desc: &EntityDesc) -> ID;
+    fn create_body(&mut self, &BodyParams) -> ID;
 
     /// Creates an instance of a `StaticBody` with the properties from the
-    /// `EntityDesc` provided. Returns a unique identifier bound to the new
+    /// `BodyParams` provided. Returns a unique identifier bound to the new
     /// instance.
-    fn create_static_body(&mut self, entity_desc: &EntityDesc) -> ID;
+    fn create_static_body(&mut self, &BodyParams) -> ID;
 
     /// Searches the data structure for a matching `RigidBody` instance with the
     /// identifier specified and returns a reference to the `RigidBody` if found.

@@ -1,9 +1,9 @@
 use std::fmt;
 
 use {ID, Scalar};
-use maths::{Matrix, Motion, State, Transform, Quat, Vect};
+use maths::{Matrix, Motion, Transform, Quat, Vect};
 use shapes::Shape;
-use entities::{Form, Material, Moveable, Body};
+use entities::{BodyParams, Form, Moveable, Body};
 
 /// Represents a physical entity in the world.
 pub struct RigidBody {
@@ -17,12 +17,15 @@ pub struct RigidBody {
 
 impl RigidBody {
     /// Creates a new instance of a `RigidBody` object
-    pub fn new_with_id(id: ID, shape: Box<Shape>, material: &Material, state: State) -> RigidBody {
+    pub fn new_with_id(id: ID, params: &BodyParams) -> RigidBody {
+        let shape = params.shape_desc.build();
+        let material = &params.material;
+
         RigidBody {
             id: id,
             mass: material.mass_of(&*shape),
-            form: Form::new(shape, state.transform().clone()),
-            motion: Motion::new(state.vel().clone(), state.ang_vel().clone()),
+            form: Form::new(shape, params.transform.clone()),
+            motion: params.motion.clone(),
             coefficient_of_restitution: material.coefficient_of_restitution(),
             _friction_coefficient: material.friction_coefficient(),
         }

@@ -1,14 +1,13 @@
 use std::mem;
 
 use Scalar;
-use maths::{State, Transform};
-use entities::{Material, RigidBody, Body};
+use entities::{BodyParams, Material, RigidBody, Body};
 
 use support::inputs;
 
 #[derive(Clone)]
 pub struct EntityBuilder {
-    shape: inputs::Shape,
+    shape: inputs::ShapeDesc,
     rotation: inputs::UnitQuat,
     translation: inputs::Vect,
 }
@@ -16,11 +15,8 @@ pub struct EntityBuilder {
 impl EntityBuilder {
     pub fn new_cube(size: Scalar) -> EntityBuilder {
         EntityBuilder {
-            shape: inputs::Shape::Cuboid(size, size, size),
-            rotation: inputs::UnitQuat::identity(),
-            translation: inputs::Vect {
-                values: (0.0, 0.0, 0.0)
-            }
+            shape: inputs::ShapeDesc::Cuboid(size, size, size),
+            .. EntityBuilder::default()
         }
     }
 
@@ -41,13 +37,25 @@ impl EntityBuilder {
     }
 
     pub fn build_body(self) -> Box<Body> {
-        let transform = Transform::new(self.translation.to_value(), self.rotation.to_value());
-
         Box::new(RigidBody::new_with_id(
             unsafe { mem::transmute(0u32) },
-            self.shape.to_value(),
-            &Material::default(),
-            State::new_from_transform(&transform),
+            &BodyParams::default()
+                .as_shape(self.shape.to_value())
+                .with_material(Material::default())
+                .with_translation(self.translation.to_value())
+                .with_rotation(self.rotation.to_value()),
         ))
+    }
+}
+
+impl Default for EntityBuilder {
+    fn default() -> EntityBuilder {
+        EntityBuilder {
+            shape: inputs::ShapeDesc::Cuboid(1.0, 1.0, 1.0),
+            rotation: inputs::UnitQuat::identity(),
+            translation: inputs::Vect {
+                values: (0.0, 0.0, 0.0)
+            }
+        }
     }
 }

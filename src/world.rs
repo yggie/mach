@@ -1,22 +1,22 @@
 use std::cell::Ref;
 
-use {EntityDesc, ID, Scalar};
+use {ID, Scalar};
 use maths::Vect;
-use entities::RigidBody;
+use entities::{BodyParams, RigidBody};
 use detection::Contact;
 
 /// The `World` trait should be implemented by objects capable of behaving as a
 /// physics engine.
 pub trait World {
     /// Creates an instance of a `RigidBody` with the properties from the
-    /// `EntityDesc` provided. Returns a unique identifier bound to the new
+    /// `BodyParams` provided. Returns a unique identifier bound to the new
     /// instance.
-    fn create_body(&mut self, entity_desc: &EntityDesc) -> ID;
+    fn create_body(&mut self, &BodyParams) -> ID;
 
     /// Creates an instance of a `StaticBody` with the properties from the
-    /// `EntityDesc` provided. Returns a unique identifier bound to the new
+    /// `BodyParams` provided. Returns a unique identifier bound to the new
     /// instance.
-    fn create_static_body(&mut self, entity_desc: &EntityDesc) -> ID;
+    fn create_static_body(&mut self, &BodyParams) -> ID;
 
     /// Searches the world for a matching `RigidBody` instance with the
     /// identifier specified and returns a reference to the `RigidBody` if

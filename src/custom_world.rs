@@ -1,8 +1,8 @@
 use std::cell::Ref;
 
-use {EntityDesc, ID, Scalar, World};
+use {ID, Scalar, World};
 use maths::Vect;
-use entities::RigidBody;
+use entities::{BodyParams, RigidBody};
 use dynamics::Dynamics;
 use detection::{Contact, Space};
 
@@ -28,12 +28,12 @@ impl<S, D> CustomWorld<S, D> where S: Space, D: Dynamics {
 
 impl<S, D> World for CustomWorld<S, D> where S: Space, D: Dynamics {
     #[inline(always)]
-    fn create_body(&mut self, entity_desc: &EntityDesc) -> ID {
-        self.space.create_body(entity_desc)
+    fn create_body(&mut self, params: &BodyParams) -> ID {
+        self.space.create_body(params)
     }
 
-    fn create_static_body(&mut self, entity_desc: &EntityDesc) -> ID {
-        self.space.create_static_body(entity_desc)
+    fn create_static_body(&mut self, params: &BodyParams) -> ID {
+        self.space.create_static_body(params)
     }
 
     #[inline(always)]

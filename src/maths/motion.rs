@@ -13,4 +13,11 @@ impl Motion {
             angular_velocity: angular_velocity,
         }
     }
+
+    pub fn stationary() -> Motion {
+        Motion {
+            velocity: Vect::new_zero(),
+            angular_velocity: Vect::new_zero(),
+        }
+    }
 }

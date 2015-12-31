@@ -14,17 +14,17 @@ impl Simulation for TwoCollidingCubes {
     }
 
     fn setup(&mut self, world: &mut mach::World) -> Result<(), String> {
-        let entity_desc = mach::EntityDesc::default().as_cube(1.0);
+        let params = mach::entities::BodyParams::default().as_cube(1.0);
 
         world.create_body(
-            &entity_desc.clone()
+            &params.clone()
                 .with_density(1.0)
                 .with_pos(0.0,  3.0, 0.0)
                 .with_vel(0.0, -1.0, 0.0)
         );
 
         world.create_body(
-            &entity_desc.clone()
+            &params.clone()
                 .with_density(2.0)
                 .with_pos(0.0, -3.0, 0.0)
                 .with_axis_angle(mach::Vect::new(1.0, 1.0, 0.0), 1.0)

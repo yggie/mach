@@ -6,17 +6,18 @@ macro_rules! assert_dynamics_behaviour(
         mod dynamics_behaviour {
             use super::test_subject;
 
-            use mach::{CustomWorld, EntityDesc, Scalar, PI, World};
+            use mach::{CustomWorld, Scalar, PI, World};
             use mach::maths::Vect;
             use mach::dynamics::Dynamics;
+            use mach::entities::BodyParams;
             use mach::detection::{Space, MachSpace};
 
             fn new_world<D: Dynamics>(dynamics: D) -> CustomWorld<MachSpace, D> {
                 return CustomWorld::new(MachSpace::new(), dynamics);
             }
 
-            fn default_entity_desc() -> EntityDesc {
-                EntityDesc::default().with_density(1.0)
+            fn default_params() -> BodyParams {
+                BodyParams::default().with_density(1.0)
                     .with_restitution_coefficient(1.0)
                     .with_friction_coefficient(0.0)
             }
@@ -33,10 +34,10 @@ macro_rules! assert_dynamics_behaviour(
             #[test]
             pub fn it_can_simulate_objects_moving_at_constant_velocity() {
                 let mut world = new_world(test_subject());
-                let entity_desc = default_entity_desc();
+                let params = default_params();
 
                 let id = world.create_body(
-                    &entity_desc.as_cube(1.0)
+                    &params.as_cube(1.0)
                         .with_vel(1.0, -1.0, 0.5)
                 );
 
@@ -51,7 +52,7 @@ macro_rules! assert_dynamics_behaviour(
             pub fn it_can_simulate_objects_moving_at_constant_velocity_with_gravity() {
                 let mut world = new_world(test_subject());
                 let id = world.create_body(
-                    &default_entity_desc().as_cube(1.0)
+                    &default_params().as_cube(1.0)
                         .with_vel(1.0, -1.0, 0.5)
                 );
                 world.set_gravity(Vect::new(3.0, -2.0, 4.0));
@@ -66,14 +67,14 @@ macro_rules! assert_dynamics_behaviour(
             #[test]
             pub fn it_can_simulate_objects_colliding_without_rotation() {
                 let mut world = new_world(test_subject());
-                let entity_desc = default_entity_desc().as_cube(1.0);
-                let id_0 = world.create_body(&entity_desc);
+                let params = default_params().as_cube(1.0);
+                let id_0 = world.create_body(&params);
                 let initial_axis = Vect::new(1.0, 1.0, 1.0).normalize();
                 let final_axis = Vect::new(1.0, 0.0, 0.0);
                 let rotation = initial_axis.cross(final_axis);
 
                 let id_1 = world.create_body(
-                    &entity_desc
+                    &params
                         .with_pos((0.98 + (3.0 as Scalar).sqrt())/2.0, 0.0, 0.0)
                         .with_axis_angle(rotation, rotation.length().asin())
                         .with_vel(-1.0, 0.0, 0.0)
@@ -93,12 +94,12 @@ macro_rules! assert_dynamics_behaviour(
             pub fn it_can_simulate_objects_colliding_with_rotation() {
                 let mut world = new_world(test_subject());
                 let id_0 = world.create_body(
-                    &default_entity_desc().as_cuboid(1.0, 10.0, 1.0)
+                    &default_params().as_cuboid(1.0, 10.0, 1.0)
                         .with_axis_angle(Vect::new(0.0, 1.0, 0.0), PI / 4.0)
                         .with_ang_vel(-1.0, 0.0, 0.0)
                 );
                 world.create_static_body(
-                    &default_entity_desc().as_cube(2.0)
+                    &default_params().as_cube(2.0)
                         .with_pos(0.0, 5.0, -1.05 - (0.5 as Scalar).sqrt())
                 );
 

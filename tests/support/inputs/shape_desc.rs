@@ -1,28 +1,27 @@
 extern crate quickcheck;
 
-use Scalar;
-use shapes;
+use {entities, Scalar};
 
 #[derive(Clone, Debug)]
-pub enum Shape {
+pub enum ShapeDesc {
     Cuboid(Scalar, Scalar, Scalar),
 }
 
-impl Shape {
-    pub fn to_value(self) -> Box<shapes::Shape> {
+impl ShapeDesc {
+    pub fn to_value(self) -> entities::ShapeDesc {
         match self {
-            Shape::Cuboid(x, y, z) => {
-                Box::new(shapes::Cuboid::new(x, y, z))
+            ShapeDesc::Cuboid(x, y, z) => {
+                entities::ShapeDesc::Cuboid(x, y, z)
             },
         }
     }
 }
 
-impl quickcheck::Arbitrary for Shape {
+impl quickcheck::Arbitrary for ShapeDesc {
     fn arbitrary<G: quickcheck::Gen>(generator: &mut G) -> Self {
         match generator.next_u32() % 1 {
             _ => {
-                Shape::Cuboid(
+                ShapeDesc::Cuboid(
                     generator.gen_range(1.1, 10.0),
                     generator.gen_range(1.1, 10.0),
                     generator.gen_range(1.1, 10.0),

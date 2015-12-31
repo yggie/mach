@@ -14,12 +14,12 @@ where S: mach::Space, D: mach::Dynamics {
 impl<S, D> mach::World for WorldRenderer<S, D>
 where S: mach::Space, D: mach::Dynamics {
     #[inline(always)]
-    fn create_body(&mut self, entity_desc: &mach::EntityDesc) -> mach::ID {
-        self.0.create_body(entity_desc)
+    fn create_body(&mut self, params: &mach::entities::BodyParams) -> mach::ID {
+        self.0.create_body(params)
     }
 
-    fn create_static_body(&mut self, entity_desc: &mach::EntityDesc) -> mach::ID {
-        self.0.create_static_body(entity_desc)
+    fn create_static_body(&mut self, params: &mach::entities::BodyParams) -> mach::ID {
+        self.0.create_static_body(params)
     }
 
     #[inline(always)]

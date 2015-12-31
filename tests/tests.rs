@@ -35,7 +35,6 @@ mod entities_tests {
 mod maths_tests {
     mod quat_test;
     mod vect_test;
-    mod state_test;
     mod matrix_test;
     mod transform_test;
 }

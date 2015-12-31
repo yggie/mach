@@ -2,8 +2,8 @@ use std::rc::Rc;
 use std::cell::{Ref, RefCell, RefMut};
 use std::collections::HashMap;
 
-use {EntityDesc, ID, SharedCell};
-use entities::{RigidBody, StaticBody, Body};
+use {ID, SharedCell};
+use entities::{BodyParams, RigidBody, StaticBody, Body};
 use detection::{Space, Contact, ContactCache, ContactDetector, ContactPair, Intersection};
 
 /// A simple implementation for representing space in the simulation.
@@ -35,14 +35,9 @@ impl MachSpace {
 }
 
 impl Space for MachSpace {
-    fn create_body(&mut self, entity_desc: &EntityDesc) -> ID {
+    fn create_body(&mut self, params: &BodyParams) -> ID {
         let new_id = self.generate_id();
-        let new_body = RigidBody::new_with_id(
-            new_id,
-            entity_desc.shape_desc.build(),
-            &entity_desc.material,
-            entity_desc.state,
-        );
+        let new_body = RigidBody::new_with_id(new_id, params);
         let new_shared_cell = Rc::new(RefCell::new(new_body));
 
         for shared_cell in self.registry.values() {
@@ -53,14 +48,9 @@ impl Space for MachSpace {
         return new_id;
     }
 
-    fn create_static_body(&mut self, entity_desc: &EntityDesc) -> ID {
+    fn create_static_body(&mut self, params: &BodyParams) -> ID {
         let new_id = self.generate_id();
-        let new_static_body = StaticBody::new_with_id(
-            new_id,
-            entity_desc.shape_desc.build(),
-            &entity_desc.material,
-            entity_desc.state.transform().clone(),
-        );
+        let new_static_body = StaticBody::new_with_id(new_id, params);
         let new_rc_cell = Rc::new(RefCell::new(new_static_body));
 
         for shared_cell in self.registry.values() {

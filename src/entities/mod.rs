@@ -4,6 +4,7 @@
 mod form;
 mod material;
 mod rigid_body;
+mod body_params;
 mod static_body;
 
 /// TODO temporary workaround for the issue of rexporting traits, see https://github.com/rust-lang/rust/issues/16264
@@ -16,4 +17,5 @@ pub use self::form::Form;
 pub use self::material::Material;
 pub use self::moveable::Moveable;
 pub use self::rigid_body::RigidBody;
+pub use self::body_params::{BodyParams, ShapeDesc};
 pub use self::static_body::StaticBody;

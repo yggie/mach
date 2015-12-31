@@ -6,9 +6,9 @@ macro_rules! assert_space_behaviour(
         mod collision_space_behaviour {
             use super::test_subject;
 
-            use mach::{EntityDesc, ID, PI, Scalar};
+            use mach::{ID, PI, Scalar};
             use mach::maths::{ApproxEq, Vect};
-            use mach::entities::RigidBody;
+            use mach::entities::{BodyParams, RigidBody};
             use mach::detection::{Space, ContactPair};
 
             fn validate<C: Space>(input: C) -> C {
@@ -69,7 +69,7 @@ macro_rules! assert_space_behaviour(
             #[test]
             fn it_can_create_rigid_bodies() {
                 let mut space = validate(test_subject());
-                let entity_desc = EntityDesc::default()
+                let entity_desc = BodyParams::default()
                     .as_cube(1.0)
                     .with_density(3.0)
                     .as_stationary();
@@ -90,7 +90,7 @@ macro_rules! assert_space_behaviour(
             #[test]
             fn it_can_find_a_rigid_body_by_id() {
                 let mut space = validate(test_subject());
-                let entity_desc = EntityDesc::default()
+                let entity_desc = BodyParams::default()
                     .as_cube(1.0)
                     .with_mass(3.0)
                     .as_stationary();
@@ -108,7 +108,7 @@ macro_rules! assert_space_behaviour(
             #[test]
             fn it_can_modify_a_rigid_body_by_id() {
                 let mut space = validate(test_subject());
-                let entity_desc = EntityDesc::default()
+                let entity_desc = BodyParams::default()
                     .as_cube(1.0)
                     .with_mass(3.0)
                     .as_stationary();
@@ -126,7 +126,7 @@ macro_rules! assert_space_behaviour(
             #[test]
             fn it_can_iterate_over_all_rigid_bodies() {
                 let mut space = validate(test_subject());
-                let entity_desc = EntityDesc::default()
+                let entity_desc = BodyParams::default()
                     .as_cube(1.0)
                     .with_mass(3.0)
                     .as_stationary();
@@ -151,7 +151,7 @@ macro_rules! assert_space_behaviour(
             #[test]
             fn it_can_mutate_all_bodies() {
                 let mut space = validate(test_subject());
-                let entity_desc = EntityDesc::default()
+                let entity_desc = BodyParams::default()
                     .as_cube(1.0)
                     .with_mass(3.0)
                     .as_stationary();
@@ -177,9 +177,9 @@ macro_rules! assert_space_behaviour(
             #[test]
             fn it_correctly_identifies_non_colliding_vertex_vertex_cases() {
                 let mut space = validate(test_subject());
-                let params_0 = EntityDesc::default()
+                let params_0 = BodyParams::default()
                     .as_cuboid(1.0, 2.0, 1.0);
-                let params_1 = EntityDesc::default()
+                let params_1 = BodyParams::default()
                     .as_cuboid(2.0, 1.0, 1.0)
                     .with_pos(1.51, 1.51, 1.01);
 
@@ -192,9 +192,9 @@ macro_rules! assert_space_behaviour(
             #[test]
             fn it_correctly_identifies_colliding_vertex_vertex_cases() {
                 let mut space = validate(test_subject());
-                let params_0 = EntityDesc::default()
+                let params_0 = BodyParams::default()
                     .as_cuboid(1.0, 2.0, 1.0);
-                let params_1 = EntityDesc::default()
+                let params_1 = BodyParams::default()
                     .as_cuboid(2.0, 1.0, 1.0)
                     .with_pos(1.49, 1.49, 0.99);
 
@@ -214,9 +214,9 @@ macro_rules! assert_space_behaviour(
             #[test]
             fn it_correctly_identifies_non_colliding_edge_edge_cases() {
                 let mut space = validate(test_subject());
-                let params_0 = EntityDesc::default()
+                let params_0 = BodyParams::default()
                     .as_cuboid(1.0, 2.0, 3.0);
-                let params_1 = EntityDesc::default()
+                let params_1 = BodyParams::default()
                     .as_cuboid(1.0, 2.0, 3.0)
                     .with_pos(1.01, 1.51, 0.00);
 
@@ -229,9 +229,9 @@ macro_rules! assert_space_behaviour(
             #[test]
             fn it_correctly_identifies_colliding_edge_edge_cases() {
                 let mut space = validate(test_subject());
-                let params_0 = EntityDesc::default()
+                let params_0 = BodyParams::default()
                     .as_cuboid(1.0, 2.0, 3.0);
-                let params_1 = EntityDesc::default()
+                let params_1 = BodyParams::default()
                     .as_cuboid(1.0, 2.0, 3.0)
                     .with_pos(0.99, 1.49, 0.00);
 
@@ -251,9 +251,9 @@ macro_rules! assert_space_behaviour(
             #[test]
             fn it_correctly_identifies_non_colliding_face_face_cases() {
                 let mut space = validate(test_subject());
-                let params_0 = EntityDesc::default()
+                let params_0 = BodyParams::default()
                     .as_cuboid(1.0, 1.0, 1.0);
-                let params_1 = EntityDesc::default()
+                let params_1 = BodyParams::default()
                     .as_cuboid(1.0, 1.0, 1.0)
                     .with_pos(1.01, 0.50, 0.50);
 
@@ -266,9 +266,9 @@ macro_rules! assert_space_behaviour(
             #[test]
             fn it_correctly_identifies_colliding_face_face_cases() {
                 let mut space = validate(test_subject());
-                let params_0 = EntityDesc::default()
+                let params_0 = BodyParams::default()
                     .as_cuboid(1.0, 1.0, 1.0);
-                let params_1 = EntityDesc::default()
+                let params_1 = BodyParams::default()
                     .as_cuboid(1.0, 1.0, 1.0)
                     .with_pos(0.99, 0.50, 0.50);
 
@@ -288,9 +288,9 @@ macro_rules! assert_space_behaviour(
             #[test]
             fn it_correctly_identifies_non_colliding_edge_face_cases() {
                 let mut space = validate(test_subject());
-                let params_0 = EntityDesc::default()
+                let params_0 = BodyParams::default()
                     .as_cuboid(1.0, 1.0, 1.0);
-                let params_1 = EntityDesc::default()
+                let params_1 = BodyParams::default()
                     .as_cuboid(1.0, 1.0, 1.0)
                     .with_pos(0.51 + 0.5*(2.0 as Scalar).sqrt(), 0.00, 0.00)
                     .with_axis_angle(Vect::new(0.0, 1.0, 0.0), PI/4.0);
@@ -304,9 +304,9 @@ macro_rules! assert_space_behaviour(
             #[test]
             fn it_correctly_identifies_colliding_edge_face_cases() {
                 let mut space = validate(test_subject());
-                let params_0 = EntityDesc::default()
+                let params_0 = BodyParams::default()
                     .as_cuboid(1.0, 1.0, 1.0);
-                let params_1 = EntityDesc::default()
+                let params_1 = BodyParams::default()
                     .as_cuboid(1.0, 1.0, 1.0)
                     .with_pos(0.49 + 0.5*(2.0 as Scalar).sqrt(), 0.00, 0.00)
                     .with_axis_angle(Vect::new(0.0, 0.0, 1.0), PI/4.0);
@@ -327,13 +327,13 @@ macro_rules! assert_space_behaviour(
             #[test]
             fn it_correctly_identifies_non_colliding_vertex_face_cases() {
                 let mut space = validate(test_subject());
-                let params_0 = EntityDesc::default()
+                let params_0 = BodyParams::default()
                     .as_cuboid(1.0, 1.0, 1.0);
 
                 let initial_axis = Vect::new(1.0, 1.0, 1.0).normalize();
                 let final_axis = Vect::new(1.0, 0.0, 0.0);
                 let rotation = initial_axis.cross(final_axis);
-                let params_1 = EntityDesc::default()
+                let params_1 = BodyParams::default()
                     .as_cuboid(1.0, 1.0, 1.0)
                     .with_pos((1.01 + (3.0 as Scalar).sqrt())/2.0, 0.0, 0.0)
                     .with_axis_angle(rotation, rotation.length().asin());
@@ -347,13 +347,13 @@ macro_rules! assert_space_behaviour(
             #[test]
             fn it_correctly_identifies_colliding_vertex_face_cases() {
                 let mut space = validate(test_subject());
-                let params_0 = EntityDesc::default()
+                let params_0 = BodyParams::default()
                     .as_cuboid(1.0, 1.0, 1.0);
 
                 let initial_axis = Vect::new(1.0, 1.0, 1.0).normalize();
                 let final_axis = Vect::new(1.0, 0.0, 0.0);
                 let rotation = initial_axis.cross(final_axis);
-                let params_1 = EntityDesc::default()
+                let params_1 = BodyParams::default()
                     .as_cuboid(1.0, 1.0, 1.0)
                     .with_pos((0.98 + (3.0 as Scalar).sqrt())/2.0, 0.1, 0.0)
                     .with_axis_angle(rotation, rotation.length().asin());

@@ -1,8 +1,8 @@
 use std::cell::Ref;
 
-use {CustomWorld, EntityDesc, ID, Scalar, World};
+use {CustomWorld, ID, Scalar, World};
 use maths::Vect;
-use entities::RigidBody;
+use entities::{BodyParams, RigidBody};
 use dynamics::MachDynamics;
 use detection::{Contact, MachSpace};
 
@@ -19,12 +19,12 @@ impl MachWorld {
 
 impl World for MachWorld {
     #[inline(always)]
-    fn create_body(&mut self, entity_desc: &EntityDesc) -> ID {
-        self.0.create_body(entity_desc)
+    fn create_body(&mut self, params: &BodyParams) -> ID {
+        self.0.create_body(params)
     }
 
-    fn create_static_body(&mut self, entity_desc: &EntityDesc) -> ID {
-        self.0.create_static_body(entity_desc)
+    fn create_static_body(&mut self, params: &BodyParams) -> ID {
+        self.0.create_static_body(params)
     }
 
     #[inline(always)]

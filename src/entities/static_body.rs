@@ -3,7 +3,7 @@ use std::fmt;
 use {ID, Scalar};
 use maths::{Transform, Quat, Vect};
 use shapes::Shape;
-use entities::{Form, Material, Body};
+use entities::{BodyParams, Form, Body};
 
 /// Represents a physical entity which cannot move. Within the engine, the
 /// object is simply treated as if it has infinite mass.
@@ -17,10 +17,13 @@ pub struct StaticBody {
 impl StaticBody {
     /// Creates a new `StaticBody` instance using the components provided to
     /// construct the entity.
-    pub fn new_with_id(id: ID, shape: Box<Shape>, material: &Material, transform: Transform) -> StaticBody {
+    pub fn new_with_id(id: ID, params: &BodyParams) -> StaticBody {
+        let shape = params.shape_desc.build();
+        let material = &params.material;
+
         StaticBody {
             id: id,
-            form: Form::new(shape, transform),
+            form: Form::new(shape, params.transform.clone()),
             coefficient_of_restitution: material.coefficient_of_restitution(),
             _friction_coefficient: material.friction_coefficient(),
         }
