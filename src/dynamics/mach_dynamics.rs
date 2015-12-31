@@ -171,8 +171,6 @@ impl Dynamics for MachDynamics {
 
         let contacts_option = space.find_contacts();
         if let &Some(ref contacts) = &contacts_option {
-            println!("CONTACTS FOUND ({})", contacts.len());
-
             for contact in contacts.iter() {
                 match contact.pair {
                     ContactPair::RigidRigid(ref cell_0, ref cell_1) => {
@@ -183,8 +181,8 @@ impl Dynamics for MachDynamics {
                         let (intersection, remaining_time) = self.revert_to_time_of_contact(space, current_intersection, rigid_body_0, rigid_body_1, time_step);
                         let changes = self.solve_for_contact(rigid_body_0, rigid_body_1, intersection.point(), intersection.normal());
 
-                        let correction = -contact.penetration_depth * contact.normal;
-                        self.update_rigid_body(rigid_body_0, changes.0, remaining_time, correction);
+                        let correction = 0.5 * contact.penetration_depth * contact.normal;
+                        self.update_rigid_body(rigid_body_0, changes.0, remaining_time,  correction);
                         self.update_rigid_body(rigid_body_1, changes.1, remaining_time, -correction);
                     },
 
@@ -196,7 +194,7 @@ impl Dynamics for MachDynamics {
                         let (intersection, remaining_time) = self.revert_to_time_of_contact_with_static(space, current_intersection, rigid_body, static_body, time_step);
                         let change = self.solve_for_contact_with_static(rigid_body, static_body, intersection.point(), intersection.normal());
 
-                        let correction = contact.penetration_depth * contact.normal;
+                        let correction = 0.5 * contact.penetration_depth * contact.normal;
                         self.update_rigid_body(rigid_body, change, remaining_time, correction);
                     },
                 }

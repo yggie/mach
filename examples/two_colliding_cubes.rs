@@ -35,7 +35,7 @@ impl Simulation for TwoCollidingCubes {
     }
 
     fn update(&mut self, world: &mut mach::World) -> Result<Option<Vec<mach::detection::Contact>>, String> {
-        return Ok(world.update(0.1));
+        return Ok(world.update(0.05));
     }
 }
 
