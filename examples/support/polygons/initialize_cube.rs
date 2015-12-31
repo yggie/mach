@@ -6,14 +6,14 @@ use support::{Normal, PolygonModel, Vertex};
 
 pub fn initialize_cube(display: &GlutinFacade) -> PolygonModel {
     let vertices: [Vertex; 8] = [
-        Vertex { position: (-1.0, -1.0, -1.0) },
-        Vertex { position: ( 1.0, -1.0, -1.0) },
-        Vertex { position: ( 1.0,  1.0, -1.0) },
-        Vertex { position: (-1.0,  1.0, -1.0) },
-        Vertex { position: (-1.0, -1.0,  1.0) },
-        Vertex { position: ( 1.0, -1.0,  1.0) },
-        Vertex { position: ( 1.0,  1.0,  1.0) },
-        Vertex { position: (-1.0,  1.0,  1.0) },
+        Vertex { position: (-0.5, -0.5, -0.5) },
+        Vertex { position: ( 0.5, -0.5, -0.5) },
+        Vertex { position: ( 0.5,  0.5, -0.5) },
+        Vertex { position: (-0.5,  0.5, -0.5) },
+        Vertex { position: (-0.5, -0.5,  0.5) },
+        Vertex { position: ( 0.5, -0.5,  0.5) },
+        Vertex { position: ( 0.5,  0.5,  0.5) },
+        Vertex { position: (-0.5,  0.5,  0.5) },
     ];
 
     let normals: [Normal; 8] = [

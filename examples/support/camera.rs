@@ -21,7 +21,7 @@ impl Default for CameraDef {
     fn default() -> Self {
         CameraDef {
             up: na::Vec3::new(0.0, 1.0, 0.0),
-            eye: na::Vec3::new(0.0, 0.0, 5.0),
+            eye: na::Vec3::new(0.0, 0.0, 2.5),
             center: na::Vec3::new(0.0, 0.0, 0.0),
 
             far: 128.0,
