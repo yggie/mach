@@ -74,11 +74,11 @@ macro_rules! assert_space_behaviour(
                     .with_density(3.0)
                     .as_stationary();
 
-                let id = space.create_body(&entity_desc);
+                let id = space.create_rigid_body(&entity_desc);
 
                 // TODO assertions about rigid bodies count?
 
-                let rigid_body = space.find_body(id)
+                let rigid_body = space.find_rigid_body(id)
                     .expect("expected to find the rigid body recently created but got nothing");
 
                 // TODO assertions about shape?
@@ -95,11 +95,11 @@ macro_rules! assert_space_behaviour(
                     .with_mass(3.0)
                     .as_stationary();
 
-                space.create_body(&entity_desc);
-                let id = space.create_body(&entity_desc);
-                space.create_body(&entity_desc);
+                space.create_rigid_body(&entity_desc);
+                let id = space.create_rigid_body(&entity_desc);
+                space.create_rigid_body(&entity_desc);
 
-                let body: &RigidBody = &space.find_body(id)
+                let body: &RigidBody = &space.find_rigid_body(id)
                     .expect("expected to find the rigid body recently created but got nothing");
 
                 assert_eq!(body.id(), id);
@@ -113,9 +113,9 @@ macro_rules! assert_space_behaviour(
                     .with_mass(3.0)
                     .as_stationary();
 
-                let id = space.create_body(&entity_desc);
-                space.create_body(&entity_desc);
-                space.create_body(&entity_desc);
+                let id = space.create_rigid_body(&entity_desc);
+                space.create_rigid_body(&entity_desc);
+                space.create_rigid_body(&entity_desc);
 
                 let body: &mut RigidBody = &mut space.find_body_mut(id)
                     .expect("expected to find the rigid body recently created but got nothing");
@@ -132,12 +132,12 @@ macro_rules! assert_space_behaviour(
                     .as_stationary();
 
                 let mut ids = vec!(
-                    space.create_body(&entity_desc),
-                    space.create_body(&entity_desc),
-                    space.create_body(&entity_desc),
+                    space.create_rigid_body(&entity_desc),
+                    space.create_rigid_body(&entity_desc),
+                    space.create_rigid_body(&entity_desc),
                 );
 
-                let mut iterated_ids: Vec<ID> = space.bodies_iter()
+                let mut iterated_ids: Vec<ID> = space.rigid_bodies_iter()
                     .map(|body| body.id())
                     .collect();
 
@@ -157,9 +157,9 @@ macro_rules! assert_space_behaviour(
                     .as_stationary();
 
                 let mut ids = vec!(
-                    space.create_body(&entity_desc),
-                    space.create_body(&entity_desc),
-                    space.create_body(&entity_desc),
+                    space.create_rigid_body(&entity_desc),
+                    space.create_rigid_body(&entity_desc),
+                    space.create_rigid_body(&entity_desc),
                 );
 
                 let mut iterated_ids: Vec<ID> = space.bodies_iter_mut()
@@ -183,8 +183,8 @@ macro_rules! assert_space_behaviour(
                     .as_cuboid(2.0, 1.0, 1.0)
                     .with_pos(1.51, 1.51, 1.01);
 
-                space.create_body(&params_0);
-                space.create_body(&params_1);
+                space.create_rigid_body(&params_0);
+                space.create_rigid_body(&params_1);
 
                 assert_contact_points(&mut space, vec!());
             }
@@ -198,8 +198,8 @@ macro_rules! assert_space_behaviour(
                     .as_cuboid(2.0, 1.0, 1.0)
                     .with_pos(1.49, 1.49, 0.99);
 
-                space.create_body(&params_0);
-                space.create_body(&params_1);
+                space.create_rigid_body(&params_0);
+                space.create_rigid_body(&params_1);
 
                 let contacts = space.find_contacts()
                     .expect("Expected a collision, but did not find any");
@@ -220,8 +220,8 @@ macro_rules! assert_space_behaviour(
                     .as_cuboid(1.0, 2.0, 3.0)
                     .with_pos(1.01, 1.51, 0.00);
 
-                space.create_body(&params_0);
-                space.create_body(&params_1);
+                space.create_rigid_body(&params_0);
+                space.create_rigid_body(&params_1);
 
                 assert_contact_points(&mut space, vec!());
             }
@@ -235,8 +235,8 @@ macro_rules! assert_space_behaviour(
                     .as_cuboid(1.0, 2.0, 3.0)
                     .with_pos(0.99, 1.49, 0.00);
 
-                space.create_body(&params_0);
-                space.create_body(&params_1);
+                space.create_rigid_body(&params_0);
+                space.create_rigid_body(&params_1);
 
                 let contacts = space.find_contacts()
                     .expect("Expected a collision, but did not find any");
@@ -257,8 +257,8 @@ macro_rules! assert_space_behaviour(
                     .as_cuboid(1.0, 1.0, 1.0)
                     .with_pos(1.01, 0.50, 0.50);
 
-                space.create_body(&params_0);
-                space.create_body(&params_1);
+                space.create_rigid_body(&params_0);
+                space.create_rigid_body(&params_1);
 
                 assert_contact_points(&mut space, vec!());
             }
@@ -272,8 +272,8 @@ macro_rules! assert_space_behaviour(
                     .as_cuboid(1.0, 1.0, 1.0)
                     .with_pos(0.99, 0.50, 0.50);
 
-                space.create_body(&params_0);
-                space.create_body(&params_1);
+                space.create_rigid_body(&params_0);
+                space.create_rigid_body(&params_1);
 
                 let contacts = space.find_contacts()
                     .expect("Expected a collision, but did not find any");
@@ -295,8 +295,8 @@ macro_rules! assert_space_behaviour(
                     .with_pos(0.51 + 0.5*(2.0 as Scalar).sqrt(), 0.00, 0.00)
                     .with_axis_angle(Vect::new(0.0, 1.0, 0.0), PI/4.0);
 
-                space.create_body(&params_0);
-                space.create_body(&params_1);
+                space.create_rigid_body(&params_0);
+                space.create_rigid_body(&params_1);
 
                 assert_contact_points(&mut space, vec!());
             }
@@ -311,8 +311,8 @@ macro_rules! assert_space_behaviour(
                     .with_pos(0.49 + 0.5*(2.0 as Scalar).sqrt(), 0.00, 0.00)
                     .with_axis_angle(Vect::new(0.0, 0.0, 1.0), PI/4.0);
 
-                space.create_body(&params_0);
-                space.create_body(&params_1);
+                space.create_rigid_body(&params_0);
+                space.create_rigid_body(&params_1);
 
                 let contacts = space.find_contacts()
                     .expect("Expected a collision, but did not find any");
@@ -338,8 +338,8 @@ macro_rules! assert_space_behaviour(
                     .with_pos((1.01 + (3.0 as Scalar).sqrt())/2.0, 0.0, 0.0)
                     .with_axis_angle(rotation, rotation.length().asin());
 
-                space.create_body(&params_0);
-                space.create_body(&params_1);
+                space.create_rigid_body(&params_0);
+                space.create_rigid_body(&params_1);
 
                 assert_contact_points(&mut space, vec!());
             }
@@ -358,8 +358,8 @@ macro_rules! assert_space_behaviour(
                     .with_pos((0.98 + (3.0 as Scalar).sqrt())/2.0, 0.1, 0.0)
                     .with_axis_angle(rotation, rotation.length().asin());
 
-                let id_0 = space.create_body(&params_0);
-                let id_1 = space.create_body(&params_1);
+                let id_0 = space.create_rigid_body(&params_0);
+                let id_1 = space.create_rigid_body(&params_1);
 
                 assert_contact_points(&mut space, vec!(
                     ExpectedContact {

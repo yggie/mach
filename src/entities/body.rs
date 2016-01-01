@@ -1,10 +1,12 @@
 use maths::{Transform, Vect};
 use shapes::Shape;
-use entities::Form;
+use entities::{BodyType, Form};
 
 /// This trait describes a physical entity which has both geometric and spatial
 /// configurations.
 pub trait Body {
+    fn body_type<'a>(&'a self) -> BodyType<'a>;
+
     fn form(&self) -> &Form;
 
     /// Returns the `Shape` associated with the entity.
@@ -23,6 +25,6 @@ pub trait Body {
 
     /// Returns the vertex at the given index for the entity.
     fn vertex(&self, index: usize) -> Vect {
-        self.transform().apply_to_point(self.shape().vertex(index))
+        self.form().vertex(index)
     }
 }

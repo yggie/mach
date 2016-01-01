@@ -19,8 +19,8 @@ impl MachWorld {
 
 impl World for MachWorld {
     #[inline(always)]
-    fn create_body(&mut self, params: &BodyParams) -> ID {
-        self.0.create_body(params)
+    fn create_rigid_body(&mut self, params: &BodyParams) -> ID {
+        self.0.create_rigid_body(params)
     }
 
     fn create_static_body(&mut self, params: &BodyParams) -> ID {
@@ -28,13 +28,13 @@ impl World for MachWorld {
     }
 
     #[inline(always)]
-    fn find_body(&self, id: ID) -> Option<Ref<RigidBody>> {
-        self.0.find_body(id)
+    fn find_rigid_body(&self, id: ID) -> Option<Ref<RigidBody>> {
+        self.0.find_rigid_body(id)
     }
 
     #[inline(always)]
-    fn bodies_iter<'a>(&'a self) -> Box<Iterator<Item=Ref<RigidBody>> + 'a> {
-        self.0.bodies_iter()
+    fn rigid_bodies_iter<'a>(&'a self) -> Box<Iterator<Item=Ref<RigidBody>> + 'a> {
+        self.0.rigid_bodies_iter()
     }
 
     #[inline(always)]

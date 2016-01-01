@@ -3,7 +3,7 @@ use std::fmt;
 use {ID, Scalar};
 use maths::{Transform, Quat, Vect};
 use shapes::Shape;
-use entities::{BodyParams, Form, Body};
+use entities::{Body, BodyParams, BodyType, Form};
 
 /// Represents a physical entity which cannot move. Within the engine, the
 /// object is simply treated as if it has infinite mass.
@@ -78,6 +78,10 @@ impl StaticBody {
 }
 
 impl Body for StaticBody {
+    fn body_type<'a>(&'a self) -> BodyType<'a> {
+        BodyType::Static(self as &StaticBody)
+    }
+
     fn form(&self) -> &Form {
         StaticBody::form(self)
     }

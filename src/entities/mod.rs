@@ -3,6 +3,7 @@
 
 mod form;
 mod material;
+mod body_type;
 mod rigid_body;
 mod body_params;
 mod static_body;
@@ -16,6 +17,7 @@ pub use self::body::Body;
 pub use self::form::Form;
 pub use self::material::Material;
 pub use self::moveable::Moveable;
+pub use self::body_type::BodyType;
 pub use self::rigid_body::RigidBody;
 pub use self::body_params::{BodyParams, ShapeDesc};
 pub use self::static_body::StaticBody;

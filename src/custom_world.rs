@@ -28,8 +28,8 @@ impl<S, D> CustomWorld<S, D> where S: Space, D: Dynamics {
 
 impl<S, D> World for CustomWorld<S, D> where S: Space, D: Dynamics {
     #[inline(always)]
-    fn create_body(&mut self, params: &BodyParams) -> ID {
-        self.space.create_body(params)
+    fn create_rigid_body(&mut self, params: &BodyParams) -> ID {
+        self.space.create_rigid_body(params)
     }
 
     fn create_static_body(&mut self, params: &BodyParams) -> ID {
@@ -37,13 +37,13 @@ impl<S, D> World for CustomWorld<S, D> where S: Space, D: Dynamics {
     }
 
     #[inline(always)]
-    fn find_body(&self, id: ID) -> Option<Ref<RigidBody>> {
-        self.space.find_body(id)
+    fn find_rigid_body(&self, id: ID) -> Option<Ref<RigidBody>> {
+        self.space.find_rigid_body(id)
     }
 
     #[inline(always)]
-    fn bodies_iter<'a>(&'a self) -> Box<Iterator<Item=Ref<RigidBody>> + 'a> {
-        self.space.bodies_iter()
+    fn rigid_bodies_iter<'a>(&'a self) -> Box<Iterator<Item=Ref<RigidBody>> + 'a> {
+        self.space.rigid_bodies_iter()
     }
 
     #[inline(always)]

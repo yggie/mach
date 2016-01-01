@@ -43,7 +43,7 @@ impl ExamplesRenderer {
 
         mem::swap(&mut old_instances, &mut self.instances);
 
-        for body in world.bodies_iter() {
+        for body in world.rigid_bodies_iter() {
             if let Some(instance) = old_instances.remove(&body.id()) {
                 self.render_and_save(surface, instance, body.transform(), env);
             } else {

@@ -14,8 +14,8 @@ where S: mach::Space, D: mach::Dynamics {
 impl<S, D> mach::World for WorldRenderer<S, D>
 where S: mach::Space, D: mach::Dynamics {
     #[inline(always)]
-    fn create_body(&mut self, params: &mach::entities::BodyParams) -> mach::ID {
-        self.0.create_body(params)
+    fn create_rigid_body(&mut self, params: &mach::entities::BodyParams) -> mach::ID {
+        self.0.create_rigid_body(params)
     }
 
     fn create_static_body(&mut self, params: &mach::entities::BodyParams) -> mach::ID {
@@ -23,13 +23,13 @@ where S: mach::Space, D: mach::Dynamics {
     }
 
     #[inline(always)]
-    fn find_body(&self, id: mach::ID) -> Option<Ref<mach::RigidBody>> {
-        self.0.find_body(id)
+    fn find_rigid_body(&self, id: mach::ID) -> Option<Ref<mach::RigidBody>> {
+        self.0.find_rigid_body(id)
     }
 
     #[inline(always)]
-    fn bodies_iter<'a>(&'a self) -> Box<Iterator<Item=Ref<mach::RigidBody>> + 'a> {
-        self.0.bodies_iter()
+    fn rigid_bodies_iter<'a>(&'a self) -> Box<Iterator<Item=Ref<mach::RigidBody>> + 'a> {
+        self.0.rigid_bodies_iter()
     }
 
     #[inline(always)]

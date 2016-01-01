@@ -49,6 +49,7 @@ impl Form {
         &mut self.transform.rotation
     }
 
+    #[inline]
     pub fn vertex(&self, index: usize) -> Vect {
         self.transform().apply_to_point(self.shape().vertex(index))
     }

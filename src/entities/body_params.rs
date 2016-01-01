@@ -175,8 +175,8 @@ impl Default for BodyParams {
         BodyParams {
             motion: Motion::stationary(),
             material: Material::default(),
-            shape_desc: ShapeDesc::Cuboid(1.0, 1.0, 1.0),
             transform: Transform::new_identity(),
+            shape_desc: ShapeDesc::Cuboid(1.0, 1.0, 1.0),
         }
     }
 }

@@ -35,7 +35,7 @@ impl MachSpace {
 }
 
 impl Space for MachSpace {
-    fn create_body(&mut self, params: &BodyParams) -> ID {
+    fn create_rigid_body(&mut self, params: &BodyParams) -> ID {
         let new_id = self.generate_id();
         let new_body = RigidBody::new_with_id(new_id, params);
         let new_shared_cell = Rc::new(RefCell::new(new_body));
@@ -61,7 +61,7 @@ impl Space for MachSpace {
         return new_id;
     }
 
-    fn find_body(&self, id: ID) -> Option<Ref<RigidBody>> {
+    fn find_rigid_body(&self, id: ID) -> Option<Ref<RigidBody>> {
         self.registry.get(&id).map(|cell| cell.borrow())
     }
 
@@ -77,7 +77,7 @@ impl Space for MachSpace {
         self.static_registry.get_mut(&id).map(|cell| cell.borrow_mut())
     }
 
-    fn bodies_iter<'a>(&'a self) -> Box<Iterator<Item=Ref<RigidBody>> + 'a> {
+    fn rigid_bodies_iter<'a>(&'a self) -> Box<Iterator<Item=Ref<RigidBody>> + 'a> {
         Box::new(self.registry.values().map(|cell| cell.borrow()))
     }
 
