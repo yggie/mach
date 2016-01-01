@@ -14,10 +14,7 @@ fn it_always_returns_at_least_one_support_point_at_an_offset_from_the_origin() {
             .with_rotation(rotation)
             .build_body();
 
-        let diff = MinkowskiDifference::new(
-            control.as_ref(),
-            body.as_ref(),
-        );
+        let diff = MinkowskiDifference(control.form(), body.form());
 
         let direction = direction.to_value();
         let index_pairs = diff.support_index_pairs(&direction);

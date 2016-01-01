@@ -49,6 +49,10 @@ impl Form {
         &mut self.transform.rotation
     }
 
+    pub fn vertex(&self, index: usize) -> Vect {
+        self.transform().apply_to_point(self.shape().vertex(index))
+    }
+
     pub fn vertices_iter<'a>(&'a self) -> Box<Iterator<Item=Vect> + 'a> {
         let transform = self.transform.clone();
         let iterator = self.shape.vertices_iter()

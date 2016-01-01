@@ -38,7 +38,12 @@ impl StaticBody {
     /// Returns the associated `Shape` object for the entity.
     #[inline]
     pub fn shape(&self) -> &Shape {
-        &*self.form.shape()
+        self.form.shape()
+    }
+
+    #[inline]
+    pub fn form(&self) -> &Form {
+        &self.form
     }
 
     /// Returns the coefficient of restitution associated with the `RigidBody`.
@@ -73,13 +78,8 @@ impl StaticBody {
 }
 
 impl Body for StaticBody {
-    #[inline(always)]
-    fn shape(&self) -> &Shape {
-        (self as &StaticBody).shape()
-    }
-
-    fn transform(&self) -> &Transform {
-        (self as &StaticBody).transform()
+    fn form(&self) -> &Form {
+        StaticBody::form(self)
     }
 }
 

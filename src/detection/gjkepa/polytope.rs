@@ -114,12 +114,12 @@ impl<'a> Polytope<'a> {
         let contact_point = match contact_types {
             (IntersectionType::Vertex(index), _other) => {
                 let correction = closest_plane.normal() * penetration_depth / 2.0;
-                self.diff.bodies.0.vertex(index) + correction
+                self.diff.0.vertex(index) + correction
             },
 
             (_other, IntersectionType::Vertex(index)) => {
                 let correction = closest_plane.normal() * penetration_depth / -2.0;
-                self.diff.bodies.1.vertex(index) + correction
+                self.diff.1.vertex(index) + correction
             },
 
             (IntersectionType::Edge(_), IntersectionType::Edge(_)) => {

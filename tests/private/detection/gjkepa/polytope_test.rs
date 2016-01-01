@@ -18,7 +18,7 @@ fn it_should_not_generate_incomplete_shells() {
             .with_rotation(rot)
             .build_body();
 
-        let diff = MinkowskiDifference::new(control.as_ref(), body.as_ref());
+        let diff = MinkowskiDifference(control.form(), body.form());
 
         let mut simplex_cache = SimplexCache::new(&diff);
 

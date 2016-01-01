@@ -1,7 +1,7 @@
 use std::cell::{Ref, RefMut};
 
 use ID;
-use entities::{BodyParams, RigidBody, StaticBody, Body};
+use entities::{BodyParams, Form, RigidBody, StaticBody};
 use detection::{Contact, Intersection};
 
 /// A `Space` component is responsible for the storage, retrieval and
@@ -49,7 +49,7 @@ pub trait Space {
 
     /// Finds the intersection between two volumetric bodies.
     // TODO: needs refactoring: are there alternatives to not exposing this function?
-    fn find_intersection(&self, &Body, &Body) -> Option<Intersection>;
+    fn find_intersection(&self, &Form, &Form) -> Option<Intersection>;
 
     /// Finds all contacts between bodies.
     // TODO test it?

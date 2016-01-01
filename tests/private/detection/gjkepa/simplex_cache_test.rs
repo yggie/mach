@@ -54,10 +54,7 @@ fn it_can_handle_arbitrary_rotations_for_non_intersecting_bodies() {
             .with_translation(4.0, 4.0, 4.0)
             .with_rotation(rot)
             .build_body();
-        let diff = MinkowskiDifference::new(
-            control.as_ref(),
-            body.as_ref(),
-        );
+        let diff = MinkowskiDifference(control.form(), body.form());
 
         let mut simplex_cache = SimplexCache::new(&diff);
 
@@ -80,10 +77,7 @@ fn it_can_handle_arbitrary_rotations_for_intersecting_bodies() {
         let body = EntityBuilder::new_cube(1.0)
             .with_rotation(rot)
             .build_body();
-        let diff = MinkowskiDifference::new(
-            control.as_ref(),
-            body.as_ref(),
-        );
+        let diff = MinkowskiDifference(control.form(), body.form());
 
         let mut simplex_cache = SimplexCache::new(&diff);
 

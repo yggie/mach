@@ -109,7 +109,7 @@ impl MachDynamics {
             self.integrator.integrate(rigid_body_0, step, self.gravity);
             self.integrator.integrate(rigid_body_1, step, self.gravity);
 
-            if let Some(intersection) = space.find_intersection(rigid_body_0, rigid_body_1) {
+            if let Some(intersection) = space.find_intersection(rigid_body_0.form(), rigid_body_1.form()) {
                 did_intersect_last_step = true;
                 last_intersection = (intersection, current_time);
             } else {
@@ -121,8 +121,6 @@ impl MachDynamics {
     }
 
     fn revert_to_time_of_contact_with_static<S: Space>(&self, space: &mut S, current_intersection: Intersection, rigid_body: &mut RigidBody, static_body: &StaticBody, time_window: Scalar) -> (Intersection, Scalar) {
-        // let intersection_option = space.find_intersection(rigid_body, static_body);
-        // debug_assert!(intersection_option.is_some(), "find_intersection returned false when there was a contact!");
         let mut last_intersection: (Intersection, Scalar) = (current_intersection, 0.0);
         let mut did_intersect_last_step = true;
         let mut current_time = time_window;
@@ -139,7 +137,7 @@ impl MachDynamics {
 
             self.integrator.integrate(rigid_body, step, self.gravity);
 
-            if let Some(intersection) = space.find_intersection(rigid_body, static_body) {
+            if let Some(intersection) = space.find_intersection(rigid_body.form(), static_body.form()) {
                 did_intersect_last_step = true;
                 last_intersection = (intersection, current_time);
             } else {

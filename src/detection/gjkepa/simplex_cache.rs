@@ -74,8 +74,8 @@ impl SimplexCache {
     }
 
     pub fn update_to_contain_origin<'a>(&mut self, diff: MinkowskiDifference<'a>) -> Option<Simplex<'a>> {
-        let surface_radius = diff.bodies.0.shape().surface_radius() +
-            diff.bodies.1.shape().surface_radius();
+        let surface_radius = diff.0.shape().surface_radius() +
+            diff.1.shape().surface_radius();
 
         let mut history = self.index_pairs.clone().to_vec();
         let mut simplex = Simplex::new(self, diff);

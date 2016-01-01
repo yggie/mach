@@ -3,7 +3,7 @@ use std::cell::{Ref, RefCell, RefMut};
 use std::collections::HashMap;
 
 use {ID, SharedCell};
-use entities::{BodyParams, RigidBody, StaticBody, Body};
+use entities::{BodyParams, Form, RigidBody, StaticBody};
 use detection::{Space, Contact, ContactCache, ContactDetector, ContactPair, Intersection};
 
 /// A simple implementation for representing space in the simulation.
@@ -90,9 +90,9 @@ impl Space for MachSpace {
     }
 
     #[inline]
-    fn find_intersection(&self, body_0: &Body, body_1: &Body) -> Option<Intersection> {
-        ContactCache::new(body_0, body_1)
-            .compute_contacts(body_0, body_1)
+    fn find_intersection(&self, form_0: &Form, form_1: &Form) -> Option<Intersection> {
+        ContactCache::new(form_0, form_1)
+            .compute_contacts(form_0, form_1)
     }
 
     fn find_contacts(&self) -> Option<Vec<Contact>> {
@@ -102,7 +102,7 @@ impl Space for MachSpace {
             let body_0 = &*rc_cell_0.borrow();
             let body_1 = &*rc_cell_1.borrow();
 
-            if let Some(intersection) = self.find_intersection(body_0, body_1) {
+            if let Some(intersection) = self.find_intersection(body_0.form(), body_1.form()) {
                 println!("Found contact: {:?}", intersection);
                 contacts.push(
                     Contact {
@@ -119,7 +119,7 @@ impl Space for MachSpace {
             let rigid_body = &*rigid_body_rc_cell.borrow();
             let static_body = &*static_body_rc_cell.borrow();
 
-            if let Some(intersection) = self.find_intersection(rigid_body, static_body) {
+            if let Some(intersection) = self.find_intersection(rigid_body.form(), static_body.form()) {
                 contacts.push(
                     Contact {
                         pair: ContactPair::RigidStatic(rigid_body_rc_cell.clone(), static_body_rc_cell.clone()),

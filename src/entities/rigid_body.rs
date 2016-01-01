@@ -43,6 +43,11 @@ impl RigidBody {
         self.form.shape()
     }
 
+    #[inline]
+    pub fn form(&self) -> &Form {
+        &self.form
+    }
+
     /// Returns the associated `Transform` object.
     #[inline]
     pub fn transform(&self) -> &Transform {
@@ -148,14 +153,8 @@ impl RigidBody {
 }
 
 impl Body for RigidBody {
-    #[inline(always)]
-    fn shape(&self) -> &Shape {
-        (self as &RigidBody).shape()
-    }
-
-    #[inline(always)]
-    fn transform(&self) -> &Transform {
-        (self as &RigidBody).transform()
+    fn form(&self) -> &Form {
+        RigidBody::form(self)
     }
 }
 

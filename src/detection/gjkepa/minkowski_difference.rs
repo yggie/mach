@@ -1,32 +1,24 @@
 use maths::Vect;
-use entities::Body;
+use entities::Form;
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct IndexPair(pub usize, pub usize);
 
 #[derive(Clone)]
-pub struct MinkowskiDifference<'a> {
-    pub bodies: (&'a Body, &'a Body)
-}
+pub struct MinkowskiDifference<'a>(pub &'a Form, pub &'a Form);
 
 impl<'a> MinkowskiDifference<'a> {
-    pub fn new(body_0: &'a Body, body_1: &'a Body) -> MinkowskiDifference<'a> {
-        MinkowskiDifference {
-            bodies: (body_0, body_1),
-        }
-    }
-
     pub fn vertex(&self, support_point: &IndexPair) -> Vect {
-        let shapes = (self.bodies.0.shape(), self.bodies.1.shape());
-        let transforms = (self.bodies.0.transform(), self.bodies.1.transform());
+        let shapes = (self.0.shape(), self.1.shape());
+        let transforms = (self.0.transform(), self.1.transform());
 
         return transforms.0.apply_to_point(shapes.0.vertex(support_point.0)) -
             transforms.1.apply_to_point(shapes.1.vertex(support_point.1));
     }
 
     pub fn support_index_pairs(&self, direction: &Vect) -> Vec<IndexPair> {
-        let shapes = (self.bodies.0.shape(), self.bodies.1.shape());
-        let transforms = (self.bodies.0.transform(), self.bodies.1.transform());
+        let shapes = (self.0.shape(), self.1.shape());
+        let transforms = (self.0.transform(), self.1.transform());
 
         let direction_in_body_coordinates = (
             transforms.0.apply_inverse_to_direction(*direction),
