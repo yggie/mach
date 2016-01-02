@@ -120,7 +120,7 @@ impl ExamplesRenderer {
         let m33 = instance.scale.2 * r33 as f32;
         let m34 = instance.scale.2 * transform.translation().z as f32;
 
-        let model_matrix: [[f32; 4]; 4] = [
+        let mut model_matrix: [[f32; 4]; 4] = [
             [m11, m21, m31, 0.0],
             [m12, m22, m32, 0.0],
             [m13, m23, m33, 0.0],
@@ -139,6 +139,31 @@ impl ExamplesRenderer {
                 surface_color: instance.color.clone(),
             },
             &glium::DrawParameters {
+                depth: glium::Depth {
+                    test: glium::draw_parameters::DepthTest::IfLess,
+                    write: true,
+                    .. Default::default()
+                },
+                .. Default::default()
+            },
+        ).unwrap();
+
+        model_matrix[3][2] = model_matrix[3][2] + 0.001;
+
+        surface.draw(
+            (&instance.polygon_model.vertices, &instance.polygon_model.normals),
+            &instance.polygon_model.indices,
+            &self.program,
+            &uniform! {
+                projection_matrix: *env.camera.projection_matrix(),
+                view_matrix: env.camera.view_matrix(),
+                model_matrix: model_matrix,
+                light_direction: [1.0, 2.0, 1.0f32],
+                surface_color: [1.0, 1.0, 1.0, 1.0f32],
+            },
+            &glium::DrawParameters {
+                polygon_mode: glium::draw_parameters::PolygonMode::Line,
+                line_width: Some(2.0f32),
                 depth: glium::Depth {
                     test: glium::draw_parameters::DepthTest::IfLess,
                     write: true,
