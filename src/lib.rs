@@ -12,6 +12,7 @@ mod mach_world;
 mod custom_world;
 
 pub mod utils;
+#[macro_use]
 pub mod maths;
 pub mod shapes;
 pub mod dynamics;

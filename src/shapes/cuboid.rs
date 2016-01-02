@@ -35,7 +35,7 @@ impl Cuboid {
     }
 
     /// Constructs a new `Cuboid` with equally sized edges.
-    pub fn new_cube(size: Scalar) -> Cuboid {
+    pub fn cube(size: Scalar) -> Cuboid {
         Cuboid::new(size, size, size)
     }
 

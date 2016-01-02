@@ -5,7 +5,7 @@ use entities::{BodyType, Form};
 /// This trait describes a physical entity which has both geometric and spatial
 /// configurations.
 pub trait Body {
-    fn body_type<'a>(&'a self) -> BodyType<'a>;
+    fn downcast<'a>(&'a self) -> BodyType<'a>;
 
     fn form(&self) -> &Form;
 

@@ -124,22 +124,22 @@ impl<'a> Polytope<'a> {
 
             (IntersectionType::Edge(_), IntersectionType::Edge(_)) => {
                 println!("UNHANDLED CONTACT TYPE [EDGE|EDGE]");
-                Vect::new_zero()
+                Vect::zero()
             },
 
             (IntersectionType::Face, IntersectionType::Edge(_)) => {
                 println!("UNHANDLED CONTACT TYPE [FACE|EDGE]");
-                Vect::new_zero()
+                Vect::zero()
             },
 
             (IntersectionType::Edge(_), IntersectionType::Face) => {
                 println!("UNHANDLED CONTACT TYPE [EDGE|FACE]");
-                Vect::new_zero()
+                Vect::zero()
             },
 
             (IntersectionType::Face, IntersectionType::Face) => {
                 println!("UNHANDLED CONTACT TYPE [FACE|FACE]");
-                Vect::new_zero()
+                Vect::zero()
             },
         };
 

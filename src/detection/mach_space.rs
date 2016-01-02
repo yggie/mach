@@ -37,7 +37,7 @@ impl MachSpace {
 impl Space for MachSpace {
     fn create_rigid_body(&mut self, params: &BodyParams) -> ID {
         let new_id = self.generate_id();
-        let new_body = RigidBody::new_with_id(new_id, params);
+        let new_body = RigidBody::with_id(new_id, params);
         let new_shared_cell = Rc::new(RefCell::new(new_body));
 
         for shared_cell in self.registry.values() {
@@ -50,7 +50,7 @@ impl Space for MachSpace {
 
     fn create_static_body(&mut self, params: &BodyParams) -> ID {
         let new_id = self.generate_id();
-        let new_static_body = StaticBody::new_with_id(new_id, params);
+        let new_static_body = StaticBody::with_id(new_id, params);
         let new_rc_cell = Rc::new(RefCell::new(new_static_body));
 
         for shared_cell in self.registry.values() {

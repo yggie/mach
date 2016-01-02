@@ -32,19 +32,19 @@ impl Quat {
 
     /// Creates a new `Quat` representing an identity transformation.
     #[inline(always)]
-    pub fn new_identity() -> Quat {
+    pub fn identity() -> Quat {
         Quat::new(1.0, 0.0, 0.0, 0.0)
     }
 
     /// Creates a new `Quat` taking the input `Vect` as the components
     /// of the complex part of the `Quat`.
     #[inline]
-    pub fn new_from_vector(vector: Vect) -> Quat {
+    pub fn from_vector(vector: Vect) -> Quat {
         Quat::new(0.0, vector.x, vector.y, vector.z)
     }
 
     /// Creates a new `Quat` representing a rotation about an axis.
-    pub fn new_from_axis_angle(axis: Vect, angle_in_radians: Scalar) -> Quat {
+    pub fn from_axis_angle(axis: Vect, angle_in_radians: Scalar) -> Quat {
         let length = axis.length();
         let half_radians = angle_in_radians / 2.0;
         let sl = half_radians.sin() / length;

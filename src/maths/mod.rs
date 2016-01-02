@@ -4,6 +4,7 @@
 mod quat;
 mod vect;
 mod matrix;
+#[macro_use]
 mod motion;
 mod approx_eq;
 mod transform;

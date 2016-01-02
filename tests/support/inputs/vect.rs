@@ -2,33 +2,29 @@ extern crate quickcheck;
 
 use std::fmt;
 
-use Scalar;
+use {maths, Scalar};
 
 #[derive(Clone)]
-pub struct Vect {
-    pub values: (Scalar, Scalar, Scalar),
-}
+pub struct Vect(pub Scalar, pub Scalar, pub Scalar);
 
-impl Vect {
-    pub fn to_value(self) -> super::super::super::Vect {
-        super::super::super::Vect::new(self.values.0, self.values.1, self.values.2)
+impl Into<maths::Vect> for Vect {
+    fn into(self) -> maths::Vect {
+        maths::Vect::new(self.0, self.1, self.2)
     }
 }
 
 impl quickcheck::Arbitrary for Vect {
     fn arbitrary<G: quickcheck::Gen>(random: &mut G) -> Self {
-        Vect {
-            values: (
-                random.gen_range(-100.0, 100.0),
-                random.gen_range(-100.0, 100.0),
-                random.gen_range(-100.0, 100.0),
-            ),
-        }
+        Vect(
+            random.gen_range(-100.0, 100.0),
+            random.gen_range(-100.0, 100.0),
+            random.gen_range(-100.0, 100.0),
+        )
     }
 }
 
 impl fmt::Debug for Vect {
     fn fmt(&self, formatter: &mut fmt::Formatter) -> Result<(), fmt::Error> {
-        write!(formatter, "Vect({}, {}, {})", self.values.0, self.values.1, self.values.2)
+        write!(formatter, "Vect({}, {}, {})", self.0, self.1, self.2)
     }
 }

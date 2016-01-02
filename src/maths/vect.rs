@@ -29,7 +29,7 @@ impl Vect {
     }
 
     /// Constructs a zero vector.
-    pub fn new_zero() -> Vect {
+    pub fn zero() -> Vect {
         Vect::new(0.0, 0.0, 0.0)
     }
 

@@ -13,8 +13,8 @@ use support::{inputs, EntityBuilder};
 #[test]
 fn it_should_not_generate_incomplete_shells() {
     fn property(rot: inputs::UnitQuat) {
-        let control = EntityBuilder::new_cube(1.0).build_body();
-        let body = EntityBuilder::new_cube(1.0)
+        let control = EntityBuilder::cube(1.0).build_body();
+        let body = EntityBuilder::cube(1.0)
             .with_rotation(rot)
             .build_body();
 
@@ -28,7 +28,7 @@ fn it_should_not_generate_incomplete_shells() {
         let polytope = Polytope::new(simplex);
 
         let mid_point = polytope.support_points.iter()
-            .fold(Vect::new_zero(), |total, &(vertex, _index_pair)| {
+            .fold(Vect::zero(), |total, &(vertex, _index_pair)| {
                 total + vertex
             }) / polytope.support_points.len() as Scalar;
 

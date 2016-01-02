@@ -1,6 +1,7 @@
 use std::mem;
 
 use Scalar;
+use maths::Vect;
 use entities::{BodyParams, Material, RigidBody, Body};
 
 use support::inputs;
@@ -13,7 +14,7 @@ pub struct EntityBuilder {
 }
 
 impl EntityBuilder {
-    pub fn new_cube(size: Scalar) -> EntityBuilder {
+    pub fn cube(size: Scalar) -> EntityBuilder {
         EntityBuilder {
             shape: inputs::ShapeDesc::Cuboid(size, size, size),
             .. EntityBuilder::default()
@@ -22,9 +23,7 @@ impl EntityBuilder {
 
     pub fn with_translation(self, x: Scalar, y: Scalar, z: Scalar) -> EntityBuilder {
         EntityBuilder {
-            translation: inputs::Vect {
-                values: (x, y, z)
-            },
+            translation: inputs::Vect(x, y, z),
             .. self
         }
     }
@@ -37,13 +36,14 @@ impl EntityBuilder {
     }
 
     pub fn build_body(self) -> Box<Body> {
-        Box::new(RigidBody::new_with_id(
+        let translation: Vect = self.translation.into();
+
+        Box::new(RigidBody::with_id(
             unsafe { mem::transmute(0u32) },
-            &BodyParams::default()
-                .as_shape(self.shape.to_value())
+            &BodyParams::shape(self.shape.into())
                 .with_material(Material::default())
-                .with_translation(self.translation.to_value())
-                .with_rotation(self.rotation.to_value()),
+                .with_translation(translation.x, translation.y, translation.z)
+                .with_rotation(self.rotation.into()),
         ))
     }
 }
@@ -53,9 +53,7 @@ impl Default for EntityBuilder {
         EntityBuilder {
             shape: inputs::ShapeDesc::Cuboid(1.0, 1.0, 1.0),
             rotation: inputs::UnitQuat::identity(),
-            translation: inputs::Vect {
-                values: (0.0, 0.0, 0.0)
-            }
+            translation: inputs::Vect(0.0, 0.0, 0.0),
         }
     }
 }

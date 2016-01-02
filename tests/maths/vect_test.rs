@@ -10,7 +10,7 @@ fn it_can_be_instantiated_with_scalars() {
 
 #[test]
 fn it_can_be_instatiated_as_the_zero_vector() {
-    let v = Vect::new_zero();
+    let v = Vect::zero();
 
     assert_approx_eq!(v, Vect::new(0.0, 0.0, 0.0));
 }
@@ -158,7 +158,7 @@ fn computing_distance_between_vectors() {
 #[test]
 fn rotating_by_a_quaternion() {
     let v = Vect::new(1.0, 0.0, 0.0);
-    let q = Quat::new_from_axis_angle(Vect::new(1.0, 0.5, 0.5), PI/3.0);
+    let q = Quat::from_axis_angle(Vect::new(1.0, 0.5, 0.5), PI/3.0);
 
     let res = v.rotate_by_quaternion(q);
 

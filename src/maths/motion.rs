@@ -16,8 +16,43 @@ impl Motion {
 
     pub fn stationary() -> Motion {
         Motion {
-            velocity: Vect::new_zero(),
-            angular_velocity: Vect::new_zero(),
+            velocity: Vect::zero(),
+            angular_velocity: Vect::zero(),
         }
     }
+}
+
+#[macro_export]
+macro_rules! motion_field_accessors {
+    (field_name: $field_name:ident) => {
+        #[inline]
+        pub fn motion(&self) -> &Motion {
+            &self.$field_name
+        }
+
+        #[inline]
+        pub fn motion_mut(&mut self) -> &mut Motion {
+            &mut self.$field_name
+        }
+
+        #[inline]
+        pub fn velocity(&self) -> &Vect {
+            &self.$field_name.velocity
+        }
+
+        #[inline]
+        pub fn velocity_mut(&mut self) -> &mut Vect {
+            &mut self.$field_name.velocity
+        }
+
+        #[inline]
+        pub fn angular_velocity(&self) -> &Vect {
+            &self.$field_name.angular_velocity
+        }
+
+        #[inline]
+        pub fn angular_velocity_mut(&mut self) -> &mut Vect {
+            &mut self.$field_name.angular_velocity
+        }
+    };
 }

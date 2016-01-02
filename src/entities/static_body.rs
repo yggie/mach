@@ -11,13 +11,15 @@ pub struct StaticBody {
     id: ID,
     form: Form,
     coefficient_of_restitution: Scalar,
-    _friction_coefficient: Scalar,
+    friction_coefficient: Scalar,
 }
 
 impl StaticBody {
+    form_field_accessors!(field_name: form);
+
     /// Creates a new `StaticBody` instance using the components provided to
     /// construct the entity.
-    pub fn new_with_id(id: ID, params: &BodyParams) -> StaticBody {
+    pub fn with_id(id: ID, params: &BodyParams) -> StaticBody {
         let shape = params.shape_desc.build();
         let material = &params.material;
 
@@ -25,7 +27,7 @@ impl StaticBody {
             id: id,
             form: Form::new(shape, params.transform.clone()),
             coefficient_of_restitution: material.coefficient_of_restitution(),
-            _friction_coefficient: material.friction_coefficient(),
+            friction_coefficient: material.friction_coefficient(),
         }
     }
 
@@ -33,17 +35,6 @@ impl StaticBody {
     #[inline]
     pub fn id(&self) -> ID {
         self.id
-    }
-
-    /// Returns the associated `Shape` object for the entity.
-    #[inline]
-    pub fn shape(&self) -> &Shape {
-        self.form.shape()
-    }
-
-    #[inline]
-    pub fn form(&self) -> &Form {
-        &self.form
     }
 
     /// Returns the coefficient of restitution associated with the `RigidBody`.
@@ -55,30 +46,12 @@ impl StaticBody {
     /// Returns the friction coefficient associated with the `RigidBody`.
     #[inline]
     pub fn friction_coefficient(&self) -> Scalar {
-        self._friction_coefficient
-    }
-
-    /// Returns the associated `Transform` object for the entity.
-    #[inline]
-    pub fn transform(&self) -> &Transform {
-        &self.form.transform()
-    }
-
-    /// Returns the position of the `StaticBody`.
-    #[inline]
-    pub fn position(&self) -> &Vect {
-        self.form.translation()
-    }
-
-    /// Returns the rotation of the `StaticBody` expressed as a `Quat`.
-    #[inline]
-    pub fn rotation(&self) -> &Quat {
-        self.form.rotation()
+        self.friction_coefficient
     }
 }
 
 impl Body for StaticBody {
-    fn body_type<'a>(&'a self) -> BodyType<'a> {
+    fn downcast<'a>(&'a self) -> BodyType<'a> {
         BodyType::Static(self as &StaticBody)
     }
 
@@ -92,7 +65,7 @@ impl fmt::Display for StaticBody {
         write!(f,
             "StaticBody[{}]: Pos={}, Rot={}",
             self.id(),
-            self.position(),
+            self.translation(),
             self.rotation(),
         )
     }

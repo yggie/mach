@@ -14,7 +14,7 @@ impl MachDynamics {
     /// Instantiates a new `MachDynamics` object.
     pub fn new() -> MachDynamics {
         MachDynamics {
-            gravity: Vect::new_zero(),
+            gravity: Vect::zero(),
             integrator: SemiImplicitEuler,
         }
     }
@@ -26,13 +26,13 @@ impl MachDynamics {
         let M = [rigid_body_0.mass(), rigid_body_1.mass()];
         let Jinv = [rigid_body_0.inertia().inverse(), rigid_body_1.inertia().inverse()];
         // body velocities
-        let v = [rigid_body_0.vel(), rigid_body_1.vel()];
+        let v = [rigid_body_0.velocity(), rigid_body_1.velocity()];
         // body angular velocities
-        let w = [rigid_body_0.ang_vel(), rigid_body_1.ang_vel()];
+        let w = [rigid_body_0.angular_velocity(), rigid_body_1.angular_velocity()];
         // relative vector from position to contact center
         let to_contact_center = [
-            contact_center - rigid_body_0.pos(),
-            contact_center - rigid_body_1.pos(),
+            contact_center - rigid_body_0.translation(),
+            contact_center - rigid_body_1.translation(),
         ];
         // axis of rotation for the impulse introduced by the contact. The axis
         // has been scaled by the distance to the contact.
@@ -64,14 +64,14 @@ impl MachDynamics {
     fn solve_for_contact_with_static(&mut self, rigid_body: &RigidBody, static_body: &StaticBody, contact_center: &Vect, contact_normal: &Vect) -> (Vect, Vect) {
         let epsilon = rigid_body.coefficient_of_restitution() * static_body.coefficient_of_restitution();
         // relative vector from position to contact center
-        let to_contact_center = contact_center - rigid_body.pos();
+        let to_contact_center = contact_center - rigid_body.translation();
         // axis of rotation for the impulse introduced by the contact. The axis
         // has been scaled by the distance to the contact.
         let k_scaled = to_contact_center.cross(contact_normal.clone());
 
         let m = rigid_body.mass();
-        let v = rigid_body.vel();
-        let w = rigid_body.ang_vel();
+        let v = rigid_body.velocity();
+        let w = rigid_body.angular_velocity();
         let Jinv = rigid_body.inertia().inverse();
 
         let impulse = - (1.0 + epsilon) *
@@ -149,13 +149,13 @@ impl MachDynamics {
     }
 
     fn update_rigid_body(&self, rigid_body: &mut RigidBody, change: (Vect, Vect), remaining_time: Scalar, correction: Vect) {
-        let v = rigid_body.vel().clone();
-        let w = rigid_body.ang_vel().clone();
-        rigid_body.set_vel(&(v + change.0));
-        rigid_body.set_ang_vel(&(w + change.1));
+        let v = rigid_body.velocity().clone();
+        let w = rigid_body.angular_velocity().clone();
+        *rigid_body.velocity_mut() = v + change.0;
+        *rigid_body.angular_velocity_mut() = w + change.1;
 
-        let position = rigid_body.pos().clone();
-        rigid_body.set_pos(&(position + correction));
+        let position = rigid_body.translation().clone();
+        *rigid_body.translation_mut() = position + correction;
 
         self.integrator.integrate(rigid_body, remaining_time, self.gravity);
     }

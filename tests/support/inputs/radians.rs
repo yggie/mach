@@ -7,8 +7,8 @@ use {PI, Scalar};
 #[derive(Clone, Copy)]
 pub struct Radians(pub Scalar);
 
-impl Radians {
-    pub fn to_value(self) -> Scalar {
+impl Into<Scalar> for Radians {
+    fn into(self) -> Scalar {
         self.0 * PI
     }
 }

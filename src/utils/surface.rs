@@ -14,7 +14,7 @@ impl Surface {
     /// Creates a new `Surface` from the point cloud and indices provided.
     pub fn new(vertices: &Vec<Vect>, index_0: usize, index_1: usize, index_2: usize) -> Surface {
         let reference_point = vertices.iter()
-            .fold(Vect::new_zero(), |total, &vector| {
+            .fold(Vect::zero(), |total, &vector| {
                 total + vector
             }) / (vertices.len() as Scalar);
 
@@ -38,7 +38,7 @@ impl Surface {
     /// `Surface` and the point cloud provided.
     pub fn compute_centroid(surface: &Surface, vertices: &Vec<Vect>) -> Vect {
         return surface.nodes.iter()
-            .fold(Vect::new_zero(), |total, &index| {
+            .fold(Vect::zero(), |total, &index| {
                 total + vertices[index]
             }) / 3.0;
     }

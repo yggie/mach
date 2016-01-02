@@ -10,14 +10,14 @@ fn it_can_be_instantiated_with_scalars() {
 
 #[test]
 fn it_can_be_instantiated_as_the_identity_quaternion() {
-    let q = Quat::new_identity();
+    let q = Quat::identity();
 
     assert_approx_eq!(q, Quat::new(1.0, 0.0, 0.0, 0.0));
 }
 
 #[test]
 fn it_can_be_instantiated_from_a_vector() {
-    let q = Quat::new_from_vector(Vect::new(0.1, 0.5, 0.6));
+    let q = Quat::from_vector(Vect::new(0.1, 0.5, 0.6));
 
     assert_approx_eq!(q, Quat::new(0.0, 0.1, 0.5, 0.6));
 }
@@ -27,7 +27,7 @@ fn it_can_be_instantiated_using_the_axis_angle_formulation() {
     let radians = 2.5;
     let hr = radians / 2.0;
 
-    let q = Quat::new_from_axis_angle(Vect::new(2.0, 3.0, 6.0), radians);
+    let q = Quat::from_axis_angle(Vect::new(2.0, 3.0, 6.0), radians);
 
     let chr = hr.cos();
     let shr = hr.sin();

@@ -35,7 +35,7 @@ impl<'a> Simplex<'a> {
 
     pub fn centroid(&self) -> Vect {
         self.support_points.iter()
-            .fold(Vect::new_zero(), |total, &(vertex, _index_pair)| {
+            .fold(Vect::zero(), |total, &(vertex, _index_pair)| {
                 total + vertex
             }) / 4.0
     }

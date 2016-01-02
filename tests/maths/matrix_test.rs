@@ -12,7 +12,7 @@ fn instantiating_with_components() {
 
 #[test]
 fn instantiating_from_a_slice() {
-    let m = Matrix::new_from_slice(&[1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]);
+    let m = Matrix::from_slice(&[1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]);
 
     assert_eq!((m[0], m[1], m[2]), (1.0, 2.0, 3.0));
     assert_eq!((m[3], m[4], m[5]), (4.0, 5.0, 6.0));
@@ -21,7 +21,7 @@ fn instantiating_from_a_slice() {
 
 #[test]
 fn instantiating_as_the_identity_matrix() {
-    let m = Matrix::new_identity();
+    let m = Matrix::identity();
 
     assert_eq!((m[0], m[1], m[2]), (1.0, 0.0, 0.0));
     assert_eq!((m[3], m[4], m[5]), (0.0, 1.0, 0.0));
@@ -30,7 +30,7 @@ fn instantiating_as_the_identity_matrix() {
 
 #[test]
 fn instantiating_as_a_diagonal_matrix() {
-    let m = Matrix::new_diag(1.0, 2.0, 3.0);
+    let m = Matrix::diag(1.0, 2.0, 3.0);
 
     assert_eq!((m[0], m[1], m[2]), (1.0, 0.0, 0.0));
     assert_eq!((m[3], m[4], m[5]), (0.0, 2.0, 0.0));
@@ -39,7 +39,7 @@ fn instantiating_as_a_diagonal_matrix() {
 
 #[test]
 fn instantiating_as_a_skew_matrix() {
-    let m = Matrix::new_skew(1.0, 2.0, 3.0);
+    let m = Matrix::skew(1.0, 2.0, 3.0);
 
     assert_eq!((m[0], m[1], m[2]), ( 0.0, -3.0,  2.0));
     assert_eq!((m[3], m[4], m[5]), ( 3.0,  0.0, -1.0));
@@ -52,7 +52,7 @@ fn instantiating_from_axis_angle() {
     let radians: Scalar = 3.0;
     let c = radians.cos();
     let s = radians.sin();
-    let r = Matrix::new_rotation(radians, a);
+    let r = Matrix::rotation(radians, a);
 
     assert_eq!((r[0], r[1], r[2]), (  c,  -s, 0.0));
     assert_eq!((r[3], r[4], r[5]), (  s,   c, 0.0));
@@ -61,7 +61,7 @@ fn instantiating_from_axis_angle() {
 
 #[test]
 fn getting_elements_by_element_position() {
-    let m = Matrix::new_diag(4.0, 5.0, 2.0);
+    let m = Matrix::diag(4.0, 5.0, 2.0);
 
     assert_eq!((m.get(0, 0), m.get(0, 1), m.get(0, 2)), (4.0, 0.0, 0.0));
     assert_eq!((m.get(1, 0), m.get(1, 1), m.get(1, 2)), (0.0, 5.0, 0.0));
@@ -113,7 +113,7 @@ fn negating() {
 #[test]
 fn adding_a_matrix() {
     let a = Matrix::new(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0);
-    let b = Matrix::new_diag(3.0, 2.0, 1.0);
+    let b = Matrix::diag(3.0, 2.0, 1.0);
 
     let m = a + b;
 
@@ -125,7 +125,7 @@ fn adding_a_matrix() {
 #[test]
 fn subtrating_by_a_matrix() {
     let a = Matrix::new(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0);
-    let b = Matrix::new_diag(1.0, 2.0, 3.0);
+    let b = Matrix::diag(1.0, 2.0, 3.0);
 
     let m = a - b;
 

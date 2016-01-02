@@ -76,7 +76,8 @@ impl Shape for TriangleMesh {
     }
 
     fn inertia(&self) -> Matrix {
-        Matrix::new_identity()
+        // TODO implement this properly (somehow?)
+        Matrix::identity()
     }
 
     fn vertex(&self, index: usize) -> Vect {

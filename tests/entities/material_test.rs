@@ -5,18 +5,18 @@ use mach::entities::Material;
 fn it_can_be_instantiated_with_constant_density() {
     let material = Material::default().with_density(1.5);
 
-    assert_eq!(material.density_of(&Cuboid::new_cube(2.0)), 1.5);
-    assert_eq!(material.density_of(&Cuboid::new_cube(3.0)), 1.5);
-    assert_eq!(material.density_of(&Cuboid::new_cube(4.0)), 1.5);
+    assert_eq!(material.density_of(&Cuboid::cube(2.0)), 1.5);
+    assert_eq!(material.density_of(&Cuboid::cube(3.0)), 1.5);
+    assert_eq!(material.density_of(&Cuboid::cube(4.0)), 1.5);
 }
 
 #[test]
 fn it_can_be_instantiated_with_constant_mass() {
     let material = Material::default().with_mass(2.5);
 
-    assert_eq!(material.mass_of(&Cuboid::new_cube(2.0)), 2.5);
-    assert_eq!(material.mass_of(&Cuboid::new_cube(3.0)), 2.5);
-    assert_eq!(material.mass_of(&Cuboid::new_cube(4.0)), 2.5);
+    assert_eq!(material.mass_of(&Cuboid::cube(2.0)), 2.5);
+    assert_eq!(material.mass_of(&Cuboid::cube(3.0)), 2.5);
+    assert_eq!(material.mass_of(&Cuboid::cube(4.0)), 2.5);
 }
 
 #[test]

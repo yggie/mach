@@ -7,8 +7,8 @@ pub enum ShapeDesc {
     Cuboid(Scalar, Scalar, Scalar),
 }
 
-impl ShapeDesc {
-    pub fn to_value(self) -> entities::ShapeDesc {
+impl Into<entities::ShapeDesc> for ShapeDesc {
+    fn into(self) -> entities::ShapeDesc {
         match self {
             ShapeDesc::Cuboid(x, y, z) => {
                 entities::ShapeDesc::Cuboid(x, y, z)

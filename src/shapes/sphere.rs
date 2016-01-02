@@ -41,12 +41,12 @@ impl Shape for Sphere {
 
     fn inertia(&self) -> Matrix {
         let i = self.radius() * self.radius() * 2.0 / 5.0;
-        Matrix::new_diag(i, i, i)
+        Matrix::diag(i, i, i)
     }
 
     fn vertex(&self, index: usize) -> Vect {
         debug_assert_eq!(index, 0);
-        Vect::new_zero()
+        Vect::zero()
     }
 
     fn vertices_len(&self) -> usize {
@@ -54,7 +54,7 @@ impl Shape for Sphere {
     }
 
     fn vertices_iter<'a>(&'a self) -> Box<Iterator<Item=Vect> + 'a> {
-        Box::new(Defer::new(Vect::new_zero()))
+        Box::new(Defer::new(Vect::zero()))
     }
 
     fn support_indices_for(&self, _: Vect) -> Vec<usize> {

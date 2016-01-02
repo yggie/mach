@@ -20,14 +20,14 @@ impl Transform {
 
     /// Creates a new `Transform` instance with the given translation and no
     /// rotation.
-    pub fn new_with_translation(x: Scalar, y: Scalar, z: Scalar) -> Transform {
-        Transform::new(Vect::new(x, y, z), Quat::new_identity())
+    pub fn with_translation(x: Scalar, y: Scalar, z: Scalar) -> Transform {
+        Transform::new(Vect::new(x, y, z), Quat::identity())
     }
 
     /// Creates a new `Transform` instance representing the identity
     /// transformation.
-    pub fn new_identity() -> Transform {
-        Transform::new(Vect::new_zero(), Quat::new_identity())
+    pub fn identity() -> Transform {
+        Transform::new(Vect::zero(), Quat::identity())
     }
 
     /// The positional translation component of the transform.

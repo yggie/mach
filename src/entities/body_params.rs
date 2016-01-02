@@ -41,6 +41,18 @@ pub struct BodyParams {
 }
 
 impl BodyParams {
+    pub fn cube(size: Scalar) -> BodyParams {
+        BodyParams::default().as_cube(size)
+    }
+
+    pub fn cuboid(x: Scalar, y: Scalar, z: Scalar) -> BodyParams {
+        BodyParams::default().as_cuboid(x, y, z)
+    }
+
+    pub fn shape(shape_desc: ShapeDesc) -> BodyParams {
+        BodyParams::default().as_shape(shape_desc)
+    }
+
     pub fn as_shape(self, shape_desc: ShapeDesc) -> BodyParams {
         BodyParams {
             shape_desc: shape_desc,
@@ -59,9 +71,9 @@ impl BodyParams {
         self.as_cuboid(size, size, size)
     }
 
-    pub fn as_cuboid(self, width: Scalar, height: Scalar, depth: Scalar) -> BodyParams {
+    pub fn as_cuboid(self, x: Scalar, y: Scalar, z: Scalar) -> BodyParams {
         BodyParams {
-            shape_desc: ShapeDesc::Cuboid(width, height, depth),
+            shape_desc: ShapeDesc::Cuboid(x, y, z),
             .. self
         }
     }
@@ -94,18 +106,14 @@ impl BodyParams {
         }
     }
 
-    pub fn with_translation(self, translation: Vect) -> BodyParams {
+    pub fn with_translation(self, x: Scalar, y: Scalar, z: Scalar) -> BodyParams {
         BodyParams {
             transform: Transform {
-                translation: translation,
+                translation: Vect::new(x, y, z),
                 .. self.transform
             },
             .. self
         }
-    }
-
-    pub fn with_pos(self, x: Scalar, y: Scalar, z: Scalar) -> BodyParams {
-        self.with_translation(Vect::new(x, y, z))
     }
 
     pub fn with_rotation(self, rotation: Quat) -> BodyParams {
@@ -121,7 +129,7 @@ impl BodyParams {
     pub fn with_axis_angle(self, axis: Vect, angle: Scalar) -> BodyParams {
         BodyParams {
             transform: Transform {
-                rotation: Quat::new_from_axis_angle(axis, angle),
+                rotation: Quat::from_axis_angle(axis, angle),
                 .. self.transform
             },
             .. self
@@ -135,7 +143,7 @@ impl BodyParams {
         }
     }
 
-    pub fn with_vel(self, vx: Scalar, vy: Scalar, vz: Scalar) -> BodyParams {
+    pub fn with_velocity(self, vx: Scalar, vy: Scalar, vz: Scalar) -> BodyParams {
         BodyParams {
             motion: Motion {
                 velocity: Vect::new(vx, vy, vz),
@@ -145,7 +153,7 @@ impl BodyParams {
         }
     }
 
-    pub fn with_ang_vel(self, vx: Scalar, vy: Scalar, vz: Scalar) -> BodyParams {
+    pub fn with_angular_velocity(self, vx: Scalar, vy: Scalar, vz: Scalar) -> BodyParams {
         BodyParams {
             motion: Motion {
                 angular_velocity: Vect::new(vx, vy, vz),
@@ -175,7 +183,7 @@ impl Default for BodyParams {
         BodyParams {
             motion: Motion::stationary(),
             material: Material::default(),
-            transform: Transform::new_identity(),
+            transform: Transform::identity(),
             shape_desc: ShapeDesc::Cuboid(1.0, 1.0, 1.0),
         }
     }

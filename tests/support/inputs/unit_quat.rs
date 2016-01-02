@@ -19,9 +19,11 @@ impl UnitQuat {
             angle: inputs::Radians(0.0),
         }
     }
+}
 
-    pub fn to_value(self) -> Quat {
-        Quat::new_from_axis_angle(self.axis.to_value(), self.angle.to_value())
+impl Into<Quat> for UnitQuat {
+    fn into(self) -> Quat {
+        Quat::from_axis_angle(self.axis.into(), self.angle.into())
     }
 }
 

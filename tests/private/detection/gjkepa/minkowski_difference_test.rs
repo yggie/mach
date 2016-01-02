@@ -9,14 +9,14 @@ use support::{inputs, EntityBuilder};
 #[test]
 fn it_always_returns_at_least_one_support_point_at_an_offset_from_the_origin() {
     fn property(rotation: inputs::UnitQuat, direction: inputs::UnitVect) {
-        let control = EntityBuilder::new_cube(1.0).build_body();
-        let body = EntityBuilder::new_cube(1.0)
+        let control = EntityBuilder::cube(1.0).build_body();
+        let body = EntityBuilder::cube(1.0)
             .with_rotation(rotation)
             .build_body();
 
         let diff = MinkowskiDifference(control.form(), body.form());
 
-        let direction = direction.to_value();
+        let direction = direction.into();
         let index_pairs = diff.support_index_pairs(&direction);
 
         assert!(index_pairs.len() > 0, "Expected the Minkowski Difference to always return at least one support point, but got none");
