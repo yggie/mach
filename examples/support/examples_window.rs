@@ -8,7 +8,7 @@ use self::glium::backend::glutin_backend::GlutinFacade;
 use mach::dynamics::Dynamics;
 use mach::detection::Space;
 
-use support::{Camera, ExamplesRenderer, FrameMetadata, SceneEnv, WorldRenderer};
+use support::{Camera, ExamplesRenderer, FrameMetadata, SceneEnv, WindowEventHandler, WorldRenderer};
 
 pub struct ExamplesWindow<S: Space, D: Dynamics> {
     world: WorldRenderer<S, D>,
@@ -27,16 +27,13 @@ impl<S, D> ExamplesWindow<S, D> where S: Space, D: Dynamics {
                 .map_err(|err| format!("{}", err))
         );
 
-        let mut camera = Camera::default();
-
         let (w, h) = display.get_max_viewport_dimensions();
-        camera.set_viewport_dimensions(w, h);
 
         let renderer = try!(ExamplesRenderer::new(&display));
 
         Ok(ExamplesWindow {
             world: WorldRenderer::new(world),
-            camera: camera,
+            camera: Camera::new(w, h),
             display: display,
             temp_renderer: renderer,
             frame_metadata: FrameMetadata::new(),
@@ -76,18 +73,16 @@ impl<S, D> ExamplesWindow<S, D> where S: Space, D: Dynamics {
     }
 
     fn handle_window_events(&mut self) -> Option<Result<(), String>> {
-        for event in self.display.poll_events() {
+        for ref event in self.display.poll_events() {
             match event {
-                glutin::Event::Closed |
-                glutin::Event::KeyboardInput(glutin::ElementState::Pressed, _, Some(glutin::VirtualKeyCode::Escape)) => {
+                &glutin::Event::Closed |
+                &glutin::Event::KeyboardInput(glutin::ElementState::Pressed, _, Some(glutin::VirtualKeyCode::Escape)) => {
                     return Some(Ok(()));
                 },
 
-                glutin::Event::MouseMoved((x, y)) => {
-                    self.camera.on_mouse_move(x as f32, y as f32);
+                _otherwise => {
+                    self.camera.handle_event(event);
                 },
-
-                _ => ()
             }
         }
 

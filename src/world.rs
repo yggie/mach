@@ -2,7 +2,7 @@ use std::cell::Ref;
 
 use {ID, Scalar};
 use maths::Vect;
-use entities::{BodyParams, RigidBody};
+use entities::{BodyParams, RigidBody, StaticBody};
 use detection::Contact;
 
 /// The `World` trait should be implemented by objects capable of behaving as a
@@ -25,6 +25,8 @@ pub trait World {
 
     /// Returns an iterator over unique `RigidBody` instances in the `World`.
     fn rigid_bodies_iter<'a>(&'a self) -> Box<Iterator<Item=Ref<RigidBody>> + 'a>;
+
+    fn static_bodies_iter<'a>(&'a self) -> Box<Iterator<Item=Ref<StaticBody>> + 'a>;
 
     /// Steps the `World` forward in time by the specified amount.
     fn update(&mut self, time_step: Scalar) -> Option<Vec<Contact>>;

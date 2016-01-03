@@ -33,6 +33,11 @@ where S: mach::Space, D: mach::Dynamics {
     }
 
     #[inline(always)]
+    fn static_bodies_iter<'a>(&'a self) -> Box<Iterator<Item=Ref<mach::StaticBody>> + 'a> {
+        self.0.static_bodies_iter()
+    }
+
+    #[inline(always)]
     fn update(&mut self, time_step: mach::Scalar) -> Option<Vec<mach::detection::Contact>> {
         return self.0.update(time_step);
     }

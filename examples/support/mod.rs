@@ -7,6 +7,7 @@ mod world_renderer;
 mod examples_window;
 mod examples_runner;
 mod examples_renderer;
+mod window_event_handler;
 
 pub mod polygons;
 
@@ -14,7 +15,7 @@ pub mod polygons;
 #[path="../../tests/support/simulation.rs"]
 pub mod simulation;
 
-pub use self::camera::{Camera, CameraDef};
+pub use self::camera::Camera;
 pub use self::instance::{Instance, InstanceFactory};
 pub use self::primitives::{Normal, Vertex};
 pub use self::simulation::Simulation;
@@ -24,6 +25,7 @@ pub use self::world_renderer::WorldRenderer;
 pub use self::examples_window::ExamplesWindow;
 pub use self::examples_runner::ExamplesRunner;
 pub use self::examples_renderer::ExamplesRenderer;
+pub use self::window_event_handler::{EventResponse, WindowEventHandler};
 
 pub struct SceneEnv<'a> {
     camera: &'a Camera,

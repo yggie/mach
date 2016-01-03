@@ -2,7 +2,7 @@ use std::cell::Ref;
 
 use {CustomWorld, ID, Scalar, World};
 use maths::Vect;
-use entities::{BodyParams, RigidBody};
+use entities::{BodyParams, RigidBody, StaticBody};
 use dynamics::MachDynamics;
 use detection::{Contact, MachSpace};
 
@@ -35,6 +35,11 @@ impl World for MachWorld {
     #[inline(always)]
     fn rigid_bodies_iter<'a>(&'a self) -> Box<Iterator<Item=Ref<RigidBody>> + 'a> {
         self.0.rigid_bodies_iter()
+    }
+
+    #[inline(always)]
+    fn static_bodies_iter<'a>(&'a self) -> Box<Iterator<Item=Ref<StaticBody>> + 'a> {
+        self.0.static_bodies_iter()
     }
 
     #[inline(always)]

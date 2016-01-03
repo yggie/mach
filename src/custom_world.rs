@@ -2,7 +2,7 @@ use std::cell::Ref;
 
 use {ID, Scalar, World};
 use maths::Vect;
-use entities::{BodyParams, RigidBody};
+use entities::{BodyParams, RigidBody, StaticBody};
 use dynamics::Dynamics;
 use detection::{Contact, Space};
 
@@ -44,6 +44,11 @@ impl<S, D> World for CustomWorld<S, D> where S: Space, D: Dynamics {
     #[inline(always)]
     fn rigid_bodies_iter<'a>(&'a self) -> Box<Iterator<Item=Ref<RigidBody>> + 'a> {
         self.space.rigid_bodies_iter()
+    }
+
+    #[inline(always)]
+    fn static_bodies_iter<'a>(&'a self) -> Box<Iterator<Item=Ref<StaticBody>> + 'a> {
+        self.space.static_bodies_iter()
     }
 
     #[inline(always)]

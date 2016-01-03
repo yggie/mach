@@ -53,6 +53,16 @@ impl ExamplesRenderer {
             }
         }
 
+        for body in world.static_bodies_iter() {
+            if let Some(instance) = old_instances.remove(&body.id()) {
+                self.render_and_save(surface, instance, body.transform(), env);
+            } else {
+                let instance = self.generate_new_instance(body.id(), body.shape());
+
+                self.render_and_save(surface, instance, body.transform(), env);
+            }
+        }
+
         try!(self.render_contacts(surface, &frame_metadata.contacts, env));
         return Ok(());
     }
