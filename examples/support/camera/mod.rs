@@ -24,8 +24,8 @@ impl Camera {
         Camera {
             lens: CameraLens::new(width, height),
             view: CameraView::new(CameraViewParams {
-                up: na::Vec3::new(0.0, 1.0, 0.0),
-                eye: na::Vec3::new(0.0, 0.0, 2.5),
+                up: na::Vec3::new(0.0, 0.0, 1.0),
+                eye: na::Vec3::new(0.0, 3.0, 0.0),
                 center: na::Vec3::new(0.0, 0.0, 0.0),
             }),
             last_drag_point: None,

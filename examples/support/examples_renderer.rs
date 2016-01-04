@@ -88,6 +88,7 @@ impl ExamplesRenderer {
                     projection_matrix: *env.camera.projection_matrix(),
                     view_matrix: env.camera.view_matrix(),
                     model_matrix: model_matrix,
+                    is_contact: true,
                     light_direction: [1.0, 2.0, 1.0f32],
                     surface_color: [1.0, 1.0, 0.0, 1.0f32],
                 },
@@ -120,17 +121,17 @@ impl ExamplesRenderer {
         let m11 = instance.scale.0 * r11 as f32;
         let m12 = instance.scale.0 * r12 as f32;
         let m13 = instance.scale.0 * r13 as f32;
-        let m14 = instance.scale.0 * transform.translation().x as f32;
+        let m14 = transform.translation().x as f32;
         let m21 = instance.scale.1 * r21 as f32;
         let m22 = instance.scale.1 * r22 as f32;
         let m23 = instance.scale.1 * r23 as f32;
-        let m24 = instance.scale.1 * transform.translation().y as f32;
+        let m24 = transform.translation().y as f32;
         let m31 = instance.scale.2 * r31 as f32;
         let m32 = instance.scale.2 * r32 as f32;
         let m33 = instance.scale.2 * r33 as f32;
-        let m34 = instance.scale.2 * transform.translation().z as f32;
+        let m34 = transform.translation().z as f32;
 
-        let mut model_matrix: [[f32; 4]; 4] = [
+        let model_matrix: [[f32; 4]; 4] = [
             [m11, m21, m31, 0.0],
             [m12, m22, m32, 0.0],
             [m13, m23, m33, 0.0],
@@ -145,6 +146,7 @@ impl ExamplesRenderer {
                 projection_matrix: *env.camera.projection_matrix(),
                 view_matrix: env.camera.view_matrix(),
                 model_matrix: model_matrix,
+                is_contact: false,
                 light_direction: [1.0, 2.0, 1.0f32],
                 surface_color: instance.color.clone(),
             },
@@ -158,8 +160,6 @@ impl ExamplesRenderer {
             },
         ).unwrap();
 
-        model_matrix[3][2] = model_matrix[3][2] + 0.001;
-
         surface.draw(
             (&instance.polygon_model.vertices, &instance.polygon_model.normals),
             &instance.polygon_model.indices,
@@ -168,6 +168,7 @@ impl ExamplesRenderer {
                 projection_matrix: *env.camera.projection_matrix(),
                 view_matrix: env.camera.view_matrix(),
                 model_matrix: model_matrix,
+                is_contact: false,
                 light_direction: [1.0, 2.0, 1.0f32],
                 surface_color: [1.0, 1.0, 1.0, 1.0f32],
             },

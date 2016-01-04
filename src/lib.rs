@@ -23,9 +23,9 @@ pub mod geometries;
 pub use self::maths::Vect;
 pub use self::world::World;
 pub use self::shapes::{Shape, ShapeSpec};
-pub use self::dynamics::Dynamics;
+pub use self::dynamics::{Dynamics, MachDynamics};
 pub use self::entities::{RigidBody, StaticBody};
-pub use self::detection::Space;
+pub use self::detection::{MachSpace, Space};
 pub use self::mach_world::MachWorld;
 pub use self::custom_world::CustomWorld;
 

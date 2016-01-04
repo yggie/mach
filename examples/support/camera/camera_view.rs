@@ -24,7 +24,7 @@ impl CameraView {
     pub fn new(params: CameraViewParams) -> CameraView {
         let center_to_eye = params.eye - params.center;
         let direction = center_to_eye.normalize();
-        let zenith_axis = params.up.normalize();
+        let zenith_axis = -params.up.normalize();
         let polar_axis = na::cross(&direction, &zenith_axis);
         let polar_radians = 0.5 * PI - f32::acos(na::dot(&direction, &zenith_axis));
 
