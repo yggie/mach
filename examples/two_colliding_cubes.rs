@@ -19,16 +19,16 @@ impl Simulation for TwoCollidingCubes {
         world.create_rigid_body(
             &params.clone()
                 .with_density(1.0)
-                .with_translation(0.0,  3.0, 0.0)
-                .with_velocity(0.0, -1.0, 0.0)
+                .with_translation(0.0, 0.0, 3.0)
+                .with_velocity(0.0, 0.0, -1.0)
         );
 
         world.create_rigid_body(
             &params.clone()
                 .with_density(2.0)
-                .with_translation(0.0, -3.0, 0.0)
-                .with_axis_angle(mach::Vect::new(1.0, 1.0, 0.0), 1.0)
-                .with_velocity(0.0,  1.0, 0.0)
+                .with_translation(0.0, 0.0, -3.0)
+                .with_axis_angle(mach::Vect::new(1.0, 0.0, 1.0), 1.0)
+                .with_velocity(0.0, 0.0, 1.0)
         );
 
         return Ok(());

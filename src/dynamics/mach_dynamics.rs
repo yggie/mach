@@ -1,6 +1,7 @@
 use {Scalar, TOLERANCE};
 use maths::Vect;
 use dynamics::{Dynamics, Integrator, SemiImplicitEuler};
+use dynamics::solvers::ImpulseSolver;
 use entities::{RigidBody, StaticBody};
 use detection::{Contact, ContactPair, Space, Intersection};
 
@@ -20,31 +21,28 @@ impl MachDynamics {
     }
 
     #[allow(non_snake_case)]
-    fn solve_for_contact(&mut self, rigid_body_0: &RigidBody, rigid_body_1: &RigidBody, contact_center: &Vect, contact_normal: &Vect) -> ((Vect, Vect), (Vect, Vect)) {
-        let epsilon = rigid_body_0.coefficient_of_restitution() * rigid_body_1.coefficient_of_restitution();
-        // body masses
-        let M = [rigid_body_0.mass(), rigid_body_1.mass()];
-        let Jinv = [rigid_body_0.inertia().inverse(), rigid_body_1.inertia().inverse()];
-        // body velocities
-        let v = [rigid_body_0.velocity(), rigid_body_1.velocity()];
-        // body angular velocities
-        let w = [rigid_body_0.angular_velocity(), rigid_body_1.angular_velocity()];
-        // relative vector from position to contact center
-        let to_contact_center = [
-            contact_center - rigid_body_0.translation(),
-            contact_center - rigid_body_1.translation(),
-        ];
-        // axis of rotation for the impulse introduced by the contact. The axis
-        // has been scaled by the distance to the contact.
-        let k_scaled = [
-            // TODO use traits for common vector methods
-            to_contact_center[0].cross(contact_normal.clone()),
-            to_contact_center[1].cross(contact_normal.clone()),
-        ];
+    fn solve_for_contact(&mut self, contact: &Contact) -> ((Vect, Vect), (Vect, Vect)) {
+        let impulse = ImpulseSolver::compute_impulse_for(contact);
 
-        let impulse = - (1.0 + epsilon) *
-            (contact_normal.dot(v[0] - v[1]) + w[0].dot(k_scaled[0]) - w[1].dot(k_scaled[1])) /
-            (1.0/M[0] + 1.0/M[1] + k_scaled[0].dot(Jinv[0]*k_scaled[0]) + k_scaled[1].dot(Jinv[1]*k_scaled[1]));
+        let M;
+        let Jinv;
+        let to_contact_center;
+
+        match &contact.pair {
+            &ContactPair::RigidRigid(ref cell_0, ref cell_1) => {
+                let rigid_body_0 = &cell_0.borrow();
+                let rigid_body_1 = &cell_1.borrow();
+                M = [rigid_body_0.mass(), rigid_body_1.mass()];
+                Jinv = [rigid_body_0.inertia().inverse(), rigid_body_1.inertia().inverse()];
+                // relative vector from position to contact center
+                to_contact_center = [
+                    contact.center - rigid_body_0.translation(),
+                    contact.center - rigid_body_1.translation(),
+                ];
+            },
+
+            _otherwise => panic!("Should never have come here"),
+        }
 
         let impulse = if impulse > TOLERANCE {
             println!("[WARNING] NON-SEPARATING IMPULSE! = {}", impulse);
@@ -53,7 +51,7 @@ impl MachDynamics {
             impulse
         };
 
-        let velocity_change = contact_normal * impulse;
+        let velocity_change = contact.normal * impulse;
         let angular_velocity_change_0 = Jinv[0]*to_contact_center[0].cross( velocity_change);
         let angular_velocity_change_1 = Jinv[1]*to_contact_center[1].cross(-velocity_change);
 
@@ -61,22 +59,8 @@ impl MachDynamics {
     }
 
     #[allow(non_snake_case)]
-    fn solve_for_contact_with_static(&mut self, rigid_body: &RigidBody, static_body: &StaticBody, contact_center: &Vect, contact_normal: &Vect) -> (Vect, Vect) {
-        let epsilon = rigid_body.coefficient_of_restitution() * static_body.coefficient_of_restitution();
-        // relative vector from position to contact center
-        let to_contact_center = contact_center - rigid_body.translation();
-        // axis of rotation for the impulse introduced by the contact. The axis
-        // has been scaled by the distance to the contact.
-        let k_scaled = to_contact_center.cross(contact_normal.clone());
-
-        let m = rigid_body.mass();
-        let v = rigid_body.velocity();
-        let w = rigid_body.angular_velocity();
-        let Jinv = rigid_body.inertia().inverse();
-
-        let impulse = - (1.0 + epsilon) *
-            (contact_normal.dot(*v) + w.dot(k_scaled)) /
-            (1.0/m + k_scaled.dot(Jinv*k_scaled));
+    fn solve_for_contact_with_static(&mut self, contact: &Contact) -> (Vect, Vect) {
+        let impulse = ImpulseSolver::compute_impulse_for(contact);
 
         let impulse = if impulse > TOLERANCE {
             println!("[WARNING] NON-SEPARATING IMPULSE! = {}", impulse);
@@ -85,7 +69,22 @@ impl MachDynamics {
             impulse
         };
 
-        let velocity_change = contact_normal * impulse;
+        let m;
+        let Jinv;
+        let to_contact_center;
+
+        match &contact.pair {
+            &ContactPair::RigidStatic(ref cell_0, ref _cell_1) => {
+                let rigid_body = &cell_0.borrow();
+                m = rigid_body.mass();
+                to_contact_center = contact.center - rigid_body.translation();
+                Jinv = rigid_body.inertia().inverse();
+            },
+
+            _otherwise => panic!("Should never have come here"),
+        }
+
+        let velocity_change = contact.normal * impulse;
         let angular_velocity_change = Jinv*to_contact_center.cross(velocity_change);
 
         return (velocity_change / m, angular_velocity_change);
@@ -172,12 +171,13 @@ impl Dynamics for MachDynamics {
             for contact in contacts.iter() {
                 match contact.pair {
                     ContactPair::RigidRigid(ref cell_0, ref cell_1) => {
+                        let changes = self.solve_for_contact(contact);
+
                         let rigid_body_0 = &mut cell_0.borrow_mut();
                         let rigid_body_1 = &mut cell_1.borrow_mut();
                         let current_intersection = Intersection::new(contact.center, contact.normal, contact.penetration_depth);
 
-                        let (intersection, remaining_time) = self.revert_to_time_of_contact(space, current_intersection, rigid_body_0, rigid_body_1, time_step);
-                        let changes = self.solve_for_contact(rigid_body_0, rigid_body_1, intersection.point(), intersection.normal());
+                        let (_intersection, remaining_time) = self.revert_to_time_of_contact(space, current_intersection, rigid_body_0, rigid_body_1, time_step);
 
                         let correction = 0.5 * contact.penetration_depth * contact.normal;
                         self.update_rigid_body(rigid_body_0, changes.0, remaining_time,  correction);
@@ -185,12 +185,13 @@ impl Dynamics for MachDynamics {
                     },
 
                     ContactPair::RigidStatic(ref cell_0, ref cell_1) => {
+                        let change = self.solve_for_contact_with_static(contact);
+
                         let rigid_body = &mut cell_0.borrow_mut();
                         let static_body = &cell_1.borrow();
                         let current_intersection = Intersection::new(contact.center, contact.normal, contact.penetration_depth);
 
                         let (intersection, remaining_time) = self.revert_to_time_of_contact_with_static(space, current_intersection, rigid_body, static_body, time_step);
-                        let change = self.solve_for_contact_with_static(rigid_body, static_body, intersection.point(), intersection.normal());
 
                         let correction = 0.5 * contact.penetration_depth * contact.normal;
                         self.update_rigid_body(rigid_body, change, remaining_time, correction);

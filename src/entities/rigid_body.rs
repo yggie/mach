@@ -46,6 +46,11 @@ impl RigidBody {
         self.mass
     }
 
+    #[inline]
+    pub fn mass_inverse(&self) -> Scalar {
+        1.0 / self.mass
+    }
+
     /// Returns the coefficient of restitution associated with the `RigidBody`.
     #[inline]
     pub fn coefficient_of_restitution(&self) -> Scalar {
@@ -62,6 +67,11 @@ impl RigidBody {
     #[inline]
     pub fn inertia(&self) -> Matrix {
         self.shape().inertia() * self.mass
+    }
+
+    #[inline]
+    pub fn inertia_inverse(&self) -> Matrix {
+        self.inertia().inverse()
     }
 }
 
