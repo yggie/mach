@@ -7,6 +7,26 @@
 // TODO: renable this, undergoing lots of changes, docs will just slow me down
 // #![warn(missing_docs)]
 
+#[macro_use]
+#[cfg(test)]
+pub mod support {
+    // TODO there seems to be a bug with #[path="..."] when using inline modules
+    #[macro_use]
+    mod assert_approx_eq {
+        include!("../tests/support/assert_approx_eq.rs");
+    }
+    mod entity_builder {
+        include!("../tests/support/entity_builder.rs");
+    }
+
+    pub use self::entity_builder::EntityBuilder;
+
+    #[cfg(test)]
+    pub mod inputs {
+        include!("../tests/support/inputs/mod.rs");
+    }
+}
+
 mod world;
 mod mach_world;
 mod custom_world;
@@ -71,19 +91,5 @@ pub struct ID(u32);
 impl fmt::Display for ID {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "ID({})", self.0)
-    }
-}
-
-#[cfg(test)]
-pub mod support {
-    mod entity_builder {
-        include!("../tests/support/entity_builder.rs");
-    }
-
-    pub use self::entity_builder::EntityBuilder;
-
-    #[cfg(test)]
-    pub mod inputs {
-        include!("../tests/support/inputs/mod.rs");
     }
 }

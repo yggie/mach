@@ -1,5 +1,5 @@
-use mach::maths::Vect;
-use mach::shapes::{ Shape, Cuboid };
+use maths::Vect;
+use shapes::{Shape, Cuboid};
 
 #[test]
 fn instantiating_with_dimensions() {

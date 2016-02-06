@@ -1,4 +1,4 @@
-use mach::maths::SparseMatrix;
+use maths::SparseMatrix;
 
 #[test]
 fn it_zeroes_all_entries_by_default() {

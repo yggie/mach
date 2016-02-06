@@ -1,5 +1,5 @@
-use mach::shapes::Cuboid;
-use mach::entities::Material;
+use shapes::Cuboid;
+use entities::Material;
 
 #[test]
 fn it_can_be_instantiated_with_constant_density() {

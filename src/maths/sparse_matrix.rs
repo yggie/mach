@@ -1,3 +1,7 @@
+#[cfg(test)]
+#[path="../../tests/maths/sparse_matrix_test.rs"]
+mod sparse_matrix_test;
+
 use std;
 
 use std::ops::{Index, IndexMut};

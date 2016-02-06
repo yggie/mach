@@ -1,3 +1,7 @@
+#[cfg(test)]
+#[path="../../tests/entities/material_test.rs"]
+mod material_test;
+
 use Scalar;
 use maths::Matrix;
 use shapes::Shape;

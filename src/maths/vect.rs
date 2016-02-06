@@ -1,3 +1,7 @@
+#[cfg(test)]
+#[path="../../tests/maths/vect_test.rs"]
+mod vect_test;
+
 use std::fmt;
 use std::mem;
 use std::ops::{Add, Deref, DerefMut, Div, Mul, Neg, Sub};

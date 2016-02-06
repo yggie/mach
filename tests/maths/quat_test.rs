@@ -1,5 +1,5 @@
-use mach::Scalar;
-use mach::maths::{Quat, Vect};
+use Scalar;
+use maths::{Quat, Vect};
 
 #[test]
 fn it_can_be_instantiated_with_scalars() {

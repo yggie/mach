@@ -1,3 +1,7 @@
+#[cfg(test)]
+#[path="../../tests/shapes/cuboid_test.rs"]
+mod cuboid_test;
+
 use std::fmt;
 
 use {Scalar, TOLERANCE};

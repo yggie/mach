@@ -1,3 +1,7 @@
+#[cfg(test)]
+#[path="../../tests/maths/matrix_test.rs"]
+mod matrix_test;
+
 use std::fmt;
 use std::ops::{ Add, Div, Index, IndexMut, Mul, Neg, Sub };
 

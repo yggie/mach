@@ -1,5 +1,5 @@
-use mach::Scalar;
-use mach::maths::{Vect, Matrix};
+use Scalar;
+use maths::{Vect, Matrix};
 
 #[test]
 fn instantiating_with_components() {

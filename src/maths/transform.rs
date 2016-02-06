@@ -1,3 +1,7 @@
+#[cfg(test)]
+#[path="../../tests/maths/transform_test.rs"]
+mod transform_test;
+
 use Scalar;
 use maths::{Quat, Vect};
 

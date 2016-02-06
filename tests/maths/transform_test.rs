@@ -1,5 +1,5 @@
-use mach::PI;
-use mach::maths::{Transform, Quat, Vect};
+use PI;
+use maths::{Transform, Quat, Vect};
 
 #[test]
 fn it_can_be_instantiated_as_the_identity_transform() {

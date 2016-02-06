@@ -2,7 +2,7 @@
 macro_rules! assert_approx_eq {
     ($left:expr, $right:expr) => {
         {
-            use mach::maths::ApproxEq;
+            use maths::ApproxEq;
 
             let left = $left;
             let right = $right;
