@@ -35,6 +35,12 @@ impl Simulation for TwoCollidingCubes {
     }
 
     fn update(&mut self, world: &mut mach::World) -> Result<Option<Vec<mach::detection::Contact>>, String> {
+        let total_kinetic_energy = world.rigid_bodies_iter().fold(0.0, |total, rigid_body| {
+            total + rigid_body.mass() * rigid_body.velocity().length_sq()
+        });
+
+        println!("TOTAL KE: {}", total_kinetic_energy);
+
         return Ok(world.update(0.05));
     }
 }

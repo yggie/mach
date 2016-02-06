@@ -28,6 +28,10 @@ impl EntityBuilder {
         }
     }
 
+    pub fn with_translation_vect(self, vect: Vect) -> EntityBuilder {
+        self.with_translation(vect.x, vect.y, vect.z)
+    }
+
     pub fn with_rotation(self, unit_quat: inputs::UnitQuat) -> EntityBuilder {
         EntityBuilder {
             rotation: unit_quat,

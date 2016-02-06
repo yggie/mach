@@ -118,8 +118,8 @@ impl<'a> Polytope<'a> {
             },
 
             (_other, IntersectionType::Vertex(index)) => {
-                let correction = closest_plane.normal() * penetration_depth / -2.0;
-                self.diff.1.vertex(index) + correction
+                let correction = closest_plane.normal() * penetration_depth / 2.0;
+                self.diff.1.vertex(index) - correction
             },
 
             (IntersectionType::Edge(_), IntersectionType::Edge(_)) => {
@@ -143,7 +143,7 @@ impl<'a> Polytope<'a> {
             },
         };
 
-        return Intersection::new(contact_point, closest_plane.normal().clone(), penetration_depth);
+        return Intersection::new(contact_point, -closest_plane.normal().clone(), penetration_depth);
     }
 
     fn infer_contact_type(&self, index_0: usize, index_1: usize, index_2: usize) -> IntersectionType {

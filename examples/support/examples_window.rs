@@ -75,7 +75,7 @@ impl<S> ExamplesWindow<S> where S: Simulation {
 
             let time_taken = time::precise_time_ns() - start_time;
             if time_taken < nanoseconds_per_frame {
-                std::thread::sleep_ms(((nanoseconds_per_frame - time_taken) / 1_000_000) as u32);
+                std::thread::sleep(std::time::Duration::new(0, (nanoseconds_per_frame - time_taken) as u32));
             }
 
             let time_taken = time::precise_time_ns() - start_time;

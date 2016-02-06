@@ -4,7 +4,12 @@ macro_rules! assert_space_behaviour(
         $( $lines )+
 
         mod collision_space_behaviour {
+            extern crate rand;
+            extern crate quickcheck;
+
             use super::test_subject;
+
+            use support::{inputs, EntityBuilder};
 
             use mach::{ID, PI, Scalar};
             use mach::maths::{ApproxEq, Vect};
@@ -263,7 +268,7 @@ macro_rules! assert_space_behaviour(
 
                 assert_eq!(contacts.len(), 1);
                 let contact = contacts.first().expect("Expected at least one contact");
-                assert_eq!(contact.normal, Vect::new(1.0, 0.0, 0.0));
+                assert_eq!(contact.normal, Vect::new(-1.0, 0.0, 0.0));
                 // TODO officially support face - face contacts
                 // assert_eq!(contact.point, Vect::new(0.995, 0.750, 0.750));
             }
@@ -298,7 +303,7 @@ macro_rules! assert_space_behaviour(
 
                 assert_eq!(contacts.len(), 1);
                 let contact = contacts.first().expect("Expected at least one contact");
-                assert_eq!(contact.normal, Vect::new(1.0, 0.0, 0.0));
+                assert_eq!(contact.normal, Vect::new(-1.0, 0.0, 0.0));
                 // TODO officially support edge - face contacts
                 // assert_eq!(contact.point, Vect::new(0.5, 0.0, 0.0));
             }
@@ -340,9 +345,33 @@ macro_rules! assert_space_behaviour(
                     ExpectedContact {
                         ids: (id_0, id_1),
                         point: Vect::new(0.495, 0.1, 0.0),
-                        normal: Vect::new(1.0, 0.0, 0.0),
+                        normal: Vect::new(-1.0, 0.0, 0.0),
                     }
                 ));
+            }
+
+            #[test]
+            fn when_computing_intersection_the_normal_always_point_towards_the_first_body() {
+                fn property(dir: inputs::UnitVect, rot: inputs::UnitQuat) {
+                    let space = validate(test_subject());
+                    let control = EntityBuilder::cube(1.0).build_body();
+                    let offset: Vect = dir.into();
+                    let body = EntityBuilder::cube(1.0)
+                        .with_rotation(rot)
+                        .with_translation_vect(0.5 * offset)
+                        .build_body();
+
+                    let intersection = space.find_intersection(control.form(), body.form())
+                        .expect("Expected an intersection to be found, but was not");
+
+                    let projection = intersection.normal().dot(control.translation() - body.translation());
+
+                    assert!(projection > 0.0, format!("Expected the projected relative distance in the direction of the normal to always be positive, but got {}", projection));
+                }
+
+                let mut std_gen = quickcheck::StdGen::new(rand::thread_rng(), 1);
+                property(quickcheck::Arbitrary::arbitrary(&mut std_gen), quickcheck::Arbitrary::arbitrary(&mut std_gen));
+                quickcheck::quickcheck(property as fn(inputs::UnitVect, inputs::UnitQuat));
             }
         }
     );

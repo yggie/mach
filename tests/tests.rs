@@ -37,6 +37,7 @@ mod maths_tests {
     mod vect_test;
     mod matrix_test;
     mod transform_test;
+    mod sparse_matrix_test;
 }
 
 #[cfg(test)]
