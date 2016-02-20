@@ -2,20 +2,21 @@ extern crate quickcheck;
 
 use Scalar;
 use maths::Vect;
+use utils::StandaloneEntityBuilder;
 use geometries::PlaneLocation;
 
 use super::polytope::Polytope;
 use super::simplex_cache::SimplexCache;
 use super::minkowski_difference::MinkowskiDifference;
 
-use support::{inputs, EntityBuilder};
+use support::inputs;
 
 #[test]
 fn it_should_not_generate_incomplete_shells() {
     fn property(rot: inputs::UnitQuat) {
-        let control = EntityBuilder::cube(1.0).build_body();
-        let body = EntityBuilder::cube(1.0)
-            .with_rotation(rot)
+        let control = StandaloneEntityBuilder::cube(1.0).build_body();
+        let body = StandaloneEntityBuilder::cube(1.0)
+            .with_rotation(rot.into())
             .build_body();
 
         let diff = MinkowskiDifference(control.form(), body.form());

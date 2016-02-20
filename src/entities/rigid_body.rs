@@ -83,6 +83,10 @@ impl Body for RigidBody {
     fn form(&self) -> &Form {
         RigidBody::form(self)
     }
+
+    fn form_mut(&mut self) -> &mut Form {
+        RigidBody::form_mut(self)
+    }
 }
 
 impl Moveable for RigidBody {

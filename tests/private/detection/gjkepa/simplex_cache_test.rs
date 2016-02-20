@@ -2,13 +2,14 @@ extern crate quickcheck;
 
 use std::collections::HashSet;
 
+use utils::StandaloneEntityBuilder;
 use geometries::PlaneLocation;
 
 use super::simplex::Simplex;
 use super::simplex_cache::SimplexCache;
 use super::minkowski_difference::MinkowskiDifference;
 
-use support::{inputs, EntityBuilder};
+use support::inputs;
 
 pub fn assert_valid_simplex(cache: &SimplexCache, diff: &MinkowskiDifference) {
     let simplex = Simplex::new(cache, diff.clone());
@@ -49,10 +50,10 @@ pub fn assert_valid_simplex(cache: &SimplexCache, diff: &MinkowskiDifference) {
 #[test]
 fn it_can_handle_arbitrary_rotations_for_non_intersecting_bodies() {
     fn property(rot: inputs::UnitQuat) {
-        let control = EntityBuilder::cube(1.0).build_body();
-        let body = EntityBuilder::cube(1.0)
+        let control = StandaloneEntityBuilder::cube(1.0).build_body();
+        let body = StandaloneEntityBuilder::cube(1.0)
             .with_translation(4.0, 4.0, 4.0)
-            .with_rotation(rot)
+            .with_rotation(rot.into())
             .build_body();
         let diff = MinkowskiDifference(control.form(), body.form());
 
@@ -73,9 +74,9 @@ fn it_can_handle_arbitrary_rotations_for_non_intersecting_bodies() {
 #[test]
 fn it_can_handle_arbitrary_rotations_for_intersecting_bodies() {
     fn property(rot: inputs::UnitQuat) {
-        let control = EntityBuilder::cube(1.0).build_body();
-        let body = EntityBuilder::cube(1.0)
-            .with_rotation(rot)
+        let control = StandaloneEntityBuilder::cube(1.0).build_body();
+        let body = StandaloneEntityBuilder::cube(1.0)
+            .with_rotation(rot.into())
             .build_body();
         let diff = MinkowskiDifference(control.form(), body.form());
 

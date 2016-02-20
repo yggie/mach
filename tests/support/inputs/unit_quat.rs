@@ -12,15 +12,6 @@ pub struct UnitQuat {
     pub angle: inputs::Radians,
 }
 
-impl UnitQuat {
-    pub fn identity() -> UnitQuat {
-        UnitQuat {
-            axis: inputs::UnitVect { values: (1.0, 0.0, 0.0) },
-            angle: inputs::Radians(0.0),
-        }
-    }
-}
-
 impl Into<Quat> for UnitQuat {
     fn into(self) -> Quat {
         Quat::from_axis_angle(self.axis.into(), self.angle.into())

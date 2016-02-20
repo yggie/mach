@@ -58,6 +58,10 @@ impl Body for StaticBody {
     fn form(&self) -> &Form {
         StaticBody::form(self)
     }
+
+    fn form_mut(&mut self) -> &mut Form {
+        StaticBody::form_mut(self)
+    }
 }
 
 impl fmt::Display for StaticBody {

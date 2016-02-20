@@ -9,10 +9,11 @@ macro_rules! assert_space_behaviour(
 
             use super::test_subject;
 
-            use support::{inputs, EntityBuilder};
+            use support::inputs;
 
             use mach::{ID, PI, Scalar};
             use mach::maths::{ApproxEq, Vect};
+            use mach::utils::StandaloneEntityBuilder;
             use mach::entities::{BodyParams, RigidBody};
             use mach::detection::{Space, ContactPair};
 
@@ -354,10 +355,10 @@ macro_rules! assert_space_behaviour(
             fn when_computing_intersection_the_normal_always_point_towards_the_first_body() {
                 fn property(dir: inputs::UnitVect, rot: inputs::UnitQuat) {
                     let space = validate(test_subject());
-                    let control = EntityBuilder::cube(1.0).build_body();
+                    let control = StandaloneEntityBuilder::cube(1.0).build_body();
                     let offset: Vect = dir.into();
-                    let body = EntityBuilder::cube(1.0)
-                        .with_rotation(rot)
+                    let body = StandaloneEntityBuilder::cube(1.0)
+                        .with_rotation(rot.into())
                         .with_translation_vect(0.5 * offset)
                         .build_body();
 

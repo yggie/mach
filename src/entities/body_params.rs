@@ -105,9 +105,23 @@ impl BodyParams {
     }
 
     pub fn with_translation(self, x: Scalar, y: Scalar, z: Scalar) -> BodyParams {
+        self.with_translation_vect(Vect::new(x, y, z))
+    }
+
+    pub fn with_translation_vect(self, vect: Vect) -> BodyParams {
         BodyParams {
             transform: Transform {
-                translation: Vect::new(x, y, z),
+                translation: vect,
+                .. self.transform
+            },
+            .. self
+        }
+    }
+
+    pub fn with_no_rotation(self) -> BodyParams {
+        BodyParams {
+            transform: Transform {
+                rotation: Quat::identity(),
                 .. self.transform
             },
             .. self

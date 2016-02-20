@@ -1,12 +1,12 @@
 use std::cell::{Ref, RefMut};
 
-use maths::{Motion, Transform};
+use maths::{Motion, Quat, Vect};
 use entities::{Body, BodyType};
 
 pub struct Integratable<'a> {
     // TODO remove dependency on RefMut once #cell_extras has stabilized:
     // https://github.com/rust-lang/rust/issues/27746
-    body: Ref<'a, Box<Body>>,
+    _body: Ref<'a, Box<Body>>,
 }
 
 pub struct IntegratableMut<'a> {
@@ -28,11 +28,35 @@ impl<'a> IntegratableMut<'a> {
         }
     }
 
+    pub fn translation(&self) -> &Vect {
+        self.body.translation()
+    }
+
+    pub fn rotation(&self) -> &Quat {
+        self.body.rotation()
+    }
+
+    pub fn rotation_mut(&mut self) -> &mut Quat {
+        self.body.rotation_mut()
+    }
+
+    pub fn translation_mut(&mut self) -> &mut Vect {
+        self.body.translation_mut()
+    }
+
     pub fn motion(&self) -> &Motion {
         match self.body.downcast() {
             BodyType::Rigid(rigid_body) => rigid_body.motion(),
 
             _otherwise => panic!("Unexpected body type as integratable!"),
         }
+    }
+
+    pub fn velocity(&self) -> &Vect {
+        &self.motion().velocity
+    }
+
+    pub fn angular_velocity(&self) -> &Vect {
+        &self.motion().angular_velocity
     }
 }

@@ -85,7 +85,7 @@ pub mod temp {
     use std;
 
     use {ID, Scalar};
-    use maths::IntegratableMut;
+    use maths::Integrator;
     use entities::EntityStore;
 
     struct World<B: Broadphase, N: Narrowphase, C: ContactDetector, S: EntityStore, I: Integrator> {
@@ -101,8 +101,8 @@ pub mod temp {
     impl<B: Broadphase, N: Narrowphase, C: ContactDetector, S: EntityStore, I: Integrator> World<B, N, C, S, I> {
         fn update(&mut self, time_step: Scalar) {
             // update entity positions
-            for integratable in self.entity_store.integratable_iter_mut() {
-                self.integrator.integrate_in_place(integratable, time_step);
+            for mut integratable in self.entity_store.integratable_iter_mut() {
+                self.integrator.integrate_in_place(&mut integratable, time_step);
             }
 
             self.narrowphase.update(&self.entity_store);
@@ -135,9 +135,5 @@ pub mod temp {
     trait ContactDetector {
         fn update(&mut self);
         fn contacts_iter(&mut self, (ID, ID)) -> Box<Iterator<Item=Contact>>;
-    }
-
-    pub trait Integrator {
-        fn integrate_in_place(&self, integratable: IntegratableMut, time_step: Scalar);
     }
 }

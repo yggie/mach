@@ -1,8 +1,8 @@
 //! The `entities` module comprises of objects with a physical presence in the
 //! simulation environment.
 
-#[macro_use]
-mod form;
+#[macro_use] mod form;
+
 mod material;
 mod body_type;
 mod mach_store;
