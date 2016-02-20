@@ -47,11 +47,12 @@ impl EntityStore for MachStore {
         self.bodies.get(id.0 as usize).map(|cell| cell.borrow())
     }
 
-    fn bodies_iter_mut<'a>(&'a mut self) -> Box<Iterator<Item=RefMut<Box<Body>>> + 'a> {
-        let iterator = self.bodies.iter()
-            .map(|cell| cell.borrow_mut());
+    fn bodies_iter<'a>(&'a self) -> Box<Iterator<Item=Ref<Box<Body>>> + 'a> {
+        Box::new(self.bodies.iter().map(|cell| cell.borrow()))
+    }
 
-        return Box::new(iterator);
+    fn bodies_iter_mut<'a>(&'a mut self) -> Box<Iterator<Item=RefMut<Box<Body>>> + 'a> {
+        Box::new(self.bodies.iter().map(|cell| cell.borrow_mut()))
     }
 
     fn integratable_iter_mut<'a>(&'a mut self) -> Box<Iterator<Item=IntegratableMut> + 'a> {

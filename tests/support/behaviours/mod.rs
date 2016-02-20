@@ -8,6 +8,10 @@ pub mod dynamics_behaviour;
 
 #[macro_use]
 #[cfg(test)]
+pub mod broadphase_behaviour;
+
+#[macro_use]
+#[cfg(test)]
 pub mod integrator_behaviour;
 
 #[macro_use]

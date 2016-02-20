@@ -1,6 +1,6 @@
 use {ID, Scalar};
 use maths::{Quat, Vect};
-use entities::{Body, BodyParams, RigidBody, ShapeDesc};
+use entities::{Body, BodyParams, RigidBody, ShapeDesc, StaticBody};
 
 #[derive(Clone)]
 pub struct StandaloneEntityBuilder {
@@ -28,6 +28,10 @@ impl StandaloneEntityBuilder {
 
     pub fn build_rigid_body(self) -> RigidBody {
         RigidBody::with_id(ID(0), &self.params)
+    }
+
+    pub fn build_static_body(self) -> StaticBody {
+        StaticBody::with_id(ID(0), &self.params)
     }
 }
 

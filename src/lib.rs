@@ -23,6 +23,7 @@ pub mod shapes;
 pub mod dynamics;
 pub mod entities;
 pub mod detection;
+pub mod broadphase;
 pub mod geometries;
 
 pub use self::maths::Vect;
@@ -83,32 +84,35 @@ impl fmt::Display for ID {
 
 pub mod temp {
     use std;
+    use std::cell::{Ref, RefMut};
 
     use {ID, Scalar};
-    use maths::Integrator;
-    use entities::EntityStore;
+    use maths::{IntegratableMut, Integrator, Vect};
+    use entities::{Body, BodyParams, EntityStore};
+    use broadphase::Broadphase;
 
-    struct World<B: Broadphase, N: Narrowphase, C: ContactDetector, S: EntityStore, I: Integrator> {
+    struct World<B: Broadphase<EntityStore=ES>, N: Narrowphase, CD: ContactDetection, ES: EntityStore, I: Integrator, CS: ConstraintSolver> {
         broadphase: B,
         narrowphase: N,
-        contact_detector: C,
-        entity_store: S,
+        contact_detector: CD,
+        entity_store: ES,
         integrator: I,
+        constraint_solver: CS,
     }
 
     struct Contact(u32);
 
-    impl<B: Broadphase, N: Narrowphase, C: ContactDetector, S: EntityStore, I: Integrator> World<B, N, C, S, I> {
-        fn update(&mut self, time_step: Scalar) {
+    impl<B, N, CD, ES, I, CS> World<B, N, CD, ES, I, CS> where B: Broadphase<EntityStore=ES>, N: Narrowphase, CD: ContactDetection, ES: EntityStore, I: Integrator, CS: ConstraintSolver {
+        pub fn update(&mut self, time_step: Scalar) -> Vec<Contact> {
             // update entity positions
             for mut integratable in self.entity_store.integratable_iter_mut() {
-                self.integrator.integrate_in_place(&mut integratable, time_step);
+                self.integrator.integrate_in_place(&mut integratable, time_step, Vect::zero());
             }
 
             self.narrowphase.update(&self.entity_store);
             self.broadphase.update(&self.entity_store, &self.narrowphase);
 
-            let entity_pairs: Vec<(ID, ID)> = self.broadphase.entity_pairs_iter()
+            let entity_pairs: Vec<(ID, ID)> = self.broadphase.contact_candidate_pairs_iter(&self.entity_store)
                 // TODO something like: .map(|pair| self.entity_store.preload_transform(pair))
                 .filter(|&pair| self.narrowphase.test(pair))
                 .collect();
@@ -118,22 +122,73 @@ pub mod temp {
                     Box::new(iter.chain(self.contact_detector.contacts_iter(*pair)))
                 })
                 .collect();
+
+            if contacts.len() > 0 {
+                self.constraint_solver.solve_in_place(&mut self.entity_store, time_step, &contacts);
+
+                self.narrowphase.update(&self.entity_store);
+                self.broadphase.update(&self.entity_store, &self.narrowphase);
+            }
+
+            return contacts;
+        }
+
+        fn notify_body_created(&mut self, id: ID) {
+            let body = self.entity_store.find_body(id)
+                .expect("expected to find body that was just created, but failed!");
+
+            self.narrowphase.notify_body_created(&self.entity_store, &**body);
+            self.broadphase.notify_body_created(&self.entity_store, &**body);
         }
     }
 
-    trait Broadphase {
-        fn update<S: EntityStore, N: Narrowphase>(&mut self, &S, &N);
-        fn entity_pairs_iter(&self) -> Box<Iterator<Item=(ID, ID)>>;
+    impl<B, N, CD, ES, I, CS> EntityStore for World<B, N, CD, ES, I, CS> where B: Broadphase<EntityStore=ES>, N: Narrowphase, CD: ContactDetection, ES: EntityStore, I: Integrator, CS: ConstraintSolver {
+        fn create_rigid_body(&mut self, params: &BodyParams) -> ID {
+            let id = self.entity_store.create_rigid_body(params);
+
+            self.notify_body_created(id);
+
+            return id;
+        }
+
+        fn create_static_body(&mut self, params: &BodyParams) -> ID {
+            let id = self.entity_store.create_static_body(params);
+
+            self.notify_body_created(id);
+
+            return id;
+        }
+
+        fn find_body(&self, id: ID) -> Option<Ref<Box<Body>>> {
+            self.entity_store.find_body(id)
+        }
+
+        fn bodies_iter<'a>(&'a self) -> Box<Iterator<Item=Ref<Box<Body>>> + 'a> {
+            self.entity_store.bodies_iter()
+        }
+
+        fn bodies_iter_mut<'a>(&'a mut self) -> Box<Iterator<Item=RefMut<Box<Body>>> + 'a> {
+            self.entity_store.bodies_iter_mut()
+        }
+
+        fn integratable_iter_mut<'a, 'b>(&'a mut self) -> Box<Iterator<Item=IntegratableMut> + 'a> {
+            self.entity_store.integratable_iter_mut()
+        }
     }
 
-    trait Narrowphase {
+    pub trait Narrowphase {
+        fn notify_body_created<ES: EntityStore>(&mut self, &ES, &Body);
         fn update<S: EntityStore>(&mut self, &S);
         // possibly could be preloaded with positional data
         fn test(&self, (ID, ID)) -> bool;
     }
 
-    trait ContactDetector {
+    trait ContactDetection {
         fn update(&mut self);
         fn contacts_iter(&mut self, (ID, ID)) -> Box<Iterator<Item=Contact>>;
+    }
+
+    trait ConstraintSolver {
+        fn solve_in_place<ES: EntityStore>(&self, store: &mut ES, time_step: Scalar, contacts: &Vec<Contact>);
     }
 }

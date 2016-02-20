@@ -1,13 +1,15 @@
+use ID;
 use maths::{Quat, Transform, Vect};
 use shapes::Shape;
-use entities::{BodyType, Form};
+use entities::{BodyType, BodyTypeMut, Form};
 
 /// This trait describes a physical entity which has both geometric and spatial
 /// configurations.
 pub trait Body {
     fn downcast<'a>(&'a self) -> BodyType<'a>;
-    // fn downcast_mut<'a>(&'a mut self) -> BodyTypeMut<'a>;
+    fn downcast_mut<'a>(&'a mut self) -> BodyTypeMut<'a>;
 
+    fn id(&self) -> ID;
     fn form(&self) -> &Form;
     fn form_mut(&mut self) -> &mut Form;
 

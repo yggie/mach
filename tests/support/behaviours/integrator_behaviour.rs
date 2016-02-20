@@ -28,7 +28,7 @@ macro_rules! assert_integrator_behaviour(
                 {
                     let mut integratable = cell.build_integratable_mut();
 
-                    integrator.integrate_in_place(&mut integratable, 1.0);
+                    integrator.integrate_in_place(&mut integratable, 0.5, Vect::zero());
                 }
 
                 let body = cell.borrow();
@@ -41,7 +41,7 @@ macro_rules! assert_integrator_behaviour(
             }
 
             #[test]
-            fn it_does_not_change_velocity_or_angular_velocity() {
+            fn it_does_not_change_velocity_or_angular_velocity_with_no_applied_force() {
                 let integrator = validate(test_subject());
                 let cell = StandaloneEntityBuilder::cube(1.0)
                     .with_translation(0.0, 0.0, 0.0)
@@ -53,8 +53,8 @@ macro_rules! assert_integrator_behaviour(
                 {
                     let mut integratable = cell.build_integratable_mut();
 
-                    integrator.integrate_in_place(&mut integratable, 1.0);
-                    integrator.integrate_in_place(&mut integratable, 1.0);
+                    integrator.integrate_in_place(&mut integratable, 0.5, Vect::zero());
+                    integrator.integrate_in_place(&mut integratable, 0.5, Vect::zero());
                 }
 
                 let body = cell.borrow();
@@ -65,7 +65,7 @@ macro_rules! assert_integrator_behaviour(
             }
 
             #[test]
-            fn it_correctly_integrates_simple_linear_motion() {
+            fn it_correctly_integrates_simple_constant_velocity_linear_motion() {
                 let integrator = validate(test_subject());
                 let cell = StandaloneEntityBuilder::cube(1.0)
                     .with_translation(0.0, 0.0, 0.0)
@@ -75,14 +75,35 @@ macro_rules! assert_integrator_behaviour(
                 {
                     let mut integratable = cell.build_integratable_mut();
 
-                    integrator.integrate_in_place(&mut integratable, 1.0);
+                    integrator.integrate_in_place(&mut integratable, 0.5, Vect::zero());
                 }
 
                 let body = cell.borrow();
                 let rigid_body = body.to_rigid_body();
 
-                assert_approx_eq!(rigid_body.translation(), Vect::new(1.0, 0.0, 0.0));
+                assert_approx_eq!(rigid_body.translation(), Vect::new(0.5, 0.0, 0.0));
                 assert_approx_eq!(rigid_body.velocity(), Vect::new(1.0, 0.0, 0.0));
+            }
+
+            #[test]
+            fn it_correctly_integrates_simple_constant_force_linear_motion() {
+                let integrator = validate(test_subject());
+                let cell = StandaloneEntityBuilder::cube(1.0)
+                    .with_translation(0.0, 0.0, 0.0)
+                    .with_velocity(1.0, 0.0, 0.0)
+                    .build_cell();
+
+                {
+                    let mut integratable = cell.build_integratable_mut();
+
+                    integrator.integrate_in_place(&mut integratable, 0.5, Vect::new(1.0, 0.0, 0.0));
+                }
+
+                let body = cell.borrow();
+                let rigid_body = body.to_rigid_body();
+
+                assert_approx_eq!(rigid_body.translation().normalize(), Vect::new(1.0, 0.0, 0.0));
+                assert_approx_eq!(rigid_body.velocity(), Vect::new(1.5, 0.0, 0.0));
             }
 
             trait BuildIntegratableMut {

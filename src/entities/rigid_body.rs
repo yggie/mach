@@ -3,7 +3,7 @@ use std::fmt;
 use {ID, Scalar};
 use maths::{Matrix, Motion, Transform, Quat, Vect};
 use shapes::Shape;
-use entities::{Body, BodyParams, BodyType, Form, Moveable};
+use entities::{Body, BodyParams, BodyType, BodyTypeMut, Form, Moveable};
 
 /// Represents a physical entity in the world.
 pub struct RigidBody {
@@ -78,6 +78,14 @@ impl RigidBody {
 impl Body for RigidBody {
     fn downcast<'a>(&'a self) -> BodyType<'a> {
         BodyType::Rigid(self as &RigidBody)
+    }
+
+    fn downcast_mut<'a>(&'a mut self) -> BodyTypeMut<'a> {
+        BodyTypeMut::Rigid(self as &mut RigidBody)
+    }
+
+    fn id(&self) -> ID {
+        RigidBody::id(self)
     }
 
     fn form(&self) -> &Form {

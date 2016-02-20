@@ -1,7 +1,7 @@
 use std::cell::{Ref, RefMut};
 
 use maths::{Motion, Quat, Vect};
-use entities::{Body, BodyType};
+use entities::{Body, BodyType, BodyTypeMut};
 
 pub struct Integratable<'a> {
     // TODO remove dependency on RefMut once #cell_extras has stabilized:
@@ -52,8 +52,20 @@ impl<'a> IntegratableMut<'a> {
         }
     }
 
+    pub fn motion_mut(&mut self) -> &mut Motion {
+        match self.body.downcast_mut() {
+            BodyTypeMut::Rigid(rigid_body) => rigid_body.motion_mut(),
+
+            _otherwise => panic!("Unexpected body type as integratable!"),
+        }
+    }
+
     pub fn velocity(&self) -> &Vect {
         &self.motion().velocity
+    }
+
+    pub fn velocity_mut(&mut self) -> &mut Vect {
+        &mut self.motion_mut().velocity
     }
 
     pub fn angular_velocity(&self) -> &Vect {

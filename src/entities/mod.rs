@@ -21,7 +21,7 @@ pub use self::body::Body;
 pub use self::form::Form;
 pub use self::material::Material;
 pub use self::moveable::Moveable;
-pub use self::body_type::BodyType;
+pub use self::body_type::{BodyType, BodyTypeMut};
 pub use self::mach_store::MachStore;
 pub use self::rigid_body::RigidBody;
 pub use self::body_params::{BodyParams, ShapeDesc};
