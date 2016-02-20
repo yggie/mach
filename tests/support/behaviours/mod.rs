@@ -6,3 +6,7 @@ pub mod space_behaviour;
 #[cfg(test)]
 pub mod dynamics_behaviour;
 
+#[macro_use]
+#[cfg(test)]
+pub mod entity_store_behaviour;
+

@@ -11,7 +11,7 @@ mod window_event_handler;
 pub mod polygons;
 
 /// TODO temporary workaround for the issue of rexporting traits, see https://github.com/rust-lang/rust/issues/16264
-#[path="../../tests/support/simulation.rs"]
+#[path="../../support/simulation.rs"]
 pub mod simulation;
 
 pub use self::camera::Camera;

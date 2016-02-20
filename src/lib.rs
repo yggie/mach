@@ -9,23 +9,8 @@
 
 #[macro_use]
 #[cfg(test)]
-pub mod support {
-    // TODO there seems to be a bug with #[path="..."] when using inline modules
-    #[macro_use]
-    mod assert_approx_eq {
-        include!("../tests/support/assert_approx_eq.rs");
-    }
-    mod entity_builder {
-        include!("../tests/support/entity_builder.rs");
-    }
-
-    pub use self::entity_builder::EntityBuilder;
-
-    #[cfg(test)]
-    pub mod inputs {
-        include!("../tests/support/inputs/mod.rs");
-    }
-}
+#[path="../tests/support/mod.rs"]
+pub mod support;
 
 mod world;
 mod mach_world;
@@ -91,5 +76,68 @@ pub struct ID(u32);
 impl fmt::Display for ID {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "ID({})", self.0)
+    }
+}
+
+// TODO will this be the future design?
+
+pub mod temp {
+    use std;
+
+    use {ID, Scalar};
+    use maths::IntegratableMut;
+    use entities::EntityStore;
+
+    struct World<B: Broadphase, N: Narrowphase, C: ContactDetector, S: EntityStore, I: Integrator> {
+        broadphase: B,
+        narrowphase: N,
+        contact_detector: C,
+        entity_store: S,
+        integrator: I,
+    }
+
+    struct Contact(u32);
+
+    impl<B: Broadphase, N: Narrowphase, C: ContactDetector, S: EntityStore, I: Integrator> World<B, N, C, S, I> {
+        fn update(&mut self, time_step: Scalar) {
+            // update entity positions
+            for integratable in self.entity_store.integratable_iter_mut() {
+                self.integrator.integrate_in_place(integratable, time_step);
+            }
+
+            self.narrowphase.update(&self.entity_store);
+            self.broadphase.update(&self.entity_store, &self.narrowphase);
+
+            let entity_pairs: Vec<(ID, ID)> = self.broadphase.entity_pairs_iter()
+                // TODO something like: .map(|pair| self.entity_store.preload_transform(pair))
+                .filter(|&pair| self.narrowphase.test(pair))
+                .collect();
+
+            let contacts: Vec<Contact> = entity_pairs.iter()
+                .fold(Box::new(std::iter::empty()) as Box<Iterator<Item=Contact>>, |iter: Box<Iterator<Item=Contact>>, pair: &(ID, ID)| -> Box<Iterator<Item=Contact>> {
+                    Box::new(iter.chain(self.contact_detector.contacts_iter(*pair)))
+                })
+                .collect();
+        }
+    }
+
+    trait Broadphase {
+        fn update<S: EntityStore, N: Narrowphase>(&mut self, &S, &N);
+        fn entity_pairs_iter(&self) -> Box<Iterator<Item=(ID, ID)>>;
+    }
+
+    trait Narrowphase {
+        fn update<S: EntityStore>(&mut self, &S);
+        // possibly could be preloaded with positional data
+        fn test(&self, (ID, ID)) -> bool;
+    }
+
+    trait ContactDetector {
+        fn update(&mut self);
+        fn contacts_iter(&mut self, (ID, ID)) -> Box<Iterator<Item=Contact>>;
+    }
+
+    pub trait Integrator {
+        fn integrate_in_place(&self, integratable: IntegratableMut, time_step: Scalar);
     }
 }

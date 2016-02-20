@@ -6,6 +6,7 @@ use entities::{BodyType, Form};
 /// configurations.
 pub trait Body {
     fn downcast<'a>(&'a self) -> BodyType<'a>;
+    // fn downcast_mut<'a>(&'a mut self) -> BodyTypeMut<'a>;
 
     fn form(&self) -> &Form;
 

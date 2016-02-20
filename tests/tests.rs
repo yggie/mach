@@ -8,11 +8,6 @@ pub use mach::*;
 mod support;
 
 #[cfg(test)]
-mod integration_tests {
-    mod cube_systems_test;
-}
-
-#[cfg(test)]
 #[path="detection"]
 mod detection_tests {
     mod mach_space_test;

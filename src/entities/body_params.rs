@@ -32,8 +32,6 @@ impl ShapeDesc {
 
 #[derive(Clone)]
 pub struct BodyParams {
-    // TODO application specified IDs?
-    // pub id: Option<ID>,
     pub motion: Motion,
     pub material: Material,
     pub transform: Transform,
