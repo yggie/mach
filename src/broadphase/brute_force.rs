@@ -7,8 +7,7 @@ use std::marker::PhantomData;
 use ID;
 use entities::{Body, BodyType, EntityStore};
 use broadphase::Broadphase;
-
-use temp::Narrowphase;
+use narrowphase::Narrowphase;
 
 pub struct BruteForce<ES: EntityStore> {
     pairs: Vec<(ID, ID)>,

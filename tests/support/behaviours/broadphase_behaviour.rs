@@ -18,23 +18,23 @@ macro_rules! assert_broadphase_behaviour {
             fn it_generates_contact_candidates_for_intersecting_rigid_bodies() {
                 let mut store = MachStore::new();
                 let mut broadphase = validate(test_subject(&store));
-                let template = EntityBuilder::from_store(&mut store)
+                let prototype = EntityBuilder::from_store(&mut store)
                     .as_cube(1.0)
                     .with_translation(0.0, 0.0, 0.0);
 
-                let number_of_contact_candidate_pairs = template.clone()
+                let number_of_contact_candidate_pairs = prototype.clone()
                     .create_rigid_body_and_notify_then_count(&mut broadphase);
                 assert_eq!(number_of_contact_candidate_pairs, 0);
 
-                let number_of_contact_candidate_pairs = template.clone()
+                let number_of_contact_candidate_pairs = prototype.clone()
                     .create_rigid_body_and_notify_then_count(&mut broadphase);
                 assert_eq!(number_of_contact_candidate_pairs, 1);
 
-                let number_of_contact_candidate_pairs = template.clone()
+                let number_of_contact_candidate_pairs = prototype.clone()
                     .create_rigid_body_and_notify_then_count(&mut broadphase);
                 assert_eq!(number_of_contact_candidate_pairs, 3);
 
-                let number_of_contact_candidate_pairs = template.clone()
+                let number_of_contact_candidate_pairs = prototype.clone()
                     .create_rigid_body_and_notify_then_count(&mut broadphase);
                 assert_eq!(number_of_contact_candidate_pairs, 6);
             }
@@ -43,19 +43,19 @@ macro_rules! assert_broadphase_behaviour {
             fn it_does_not_generate_contact_candidates_for_intersecting_static_bodies() {
                 let mut store = MachStore::new();
                 let mut broadphase = validate(test_subject(&store));
-                let template = EntityBuilder::from_store(&mut store)
+                let prototype = EntityBuilder::from_store(&mut store)
                     .as_cube(1.0)
                     .with_translation(0.0, 0.0, 0.0);
 
-                let number_of_contact_candidate_pairs = template.clone()
+                let number_of_contact_candidate_pairs = prototype.clone()
                     .create_static_body_and_notify_then_count(&mut broadphase);
                 assert_eq!(number_of_contact_candidate_pairs, 0);
 
-                let number_of_contact_candidate_pairs = template.clone()
+                let number_of_contact_candidate_pairs = prototype.clone()
                     .create_static_body_and_notify_then_count(&mut broadphase);
                 assert_eq!(number_of_contact_candidate_pairs, 0);
 
-                let number_of_contact_candidate_pairs = template.clone()
+                let number_of_contact_candidate_pairs = prototype.clone()
                     .create_rigid_body_and_notify_then_count(&mut broadphase);
                 assert_eq!(number_of_contact_candidate_pairs, 2);
             }

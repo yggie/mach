@@ -16,5 +16,9 @@ pub mod integrator_behaviour;
 
 #[macro_use]
 #[cfg(test)]
+pub mod narrowphase_behaviour;
+
+#[macro_use]
+#[cfg(test)]
 pub mod entity_store_behaviour;
 

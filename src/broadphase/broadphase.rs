@@ -1,7 +1,6 @@
 use ID;
 use entities::{Body, EntityStore};
-
-use temp::Narrowphase;
+use narrowphase::Narrowphase;
 
 pub trait Broadphase {
     type EntityStore: EntityStore;
