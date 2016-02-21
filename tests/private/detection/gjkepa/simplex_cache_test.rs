@@ -3,7 +3,7 @@ extern crate quickcheck;
 use std::collections::HashSet;
 
 use utils::StandaloneEntityBuilder;
-use geometries::PlaneLocation;
+use shapes::PlaneLocation;
 
 use super::simplex::Simplex;
 use super::simplex_cache::SimplexCache;

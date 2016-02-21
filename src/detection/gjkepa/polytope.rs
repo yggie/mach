@@ -1,8 +1,8 @@
 use NEG_INFINITY;
 use maths::Vect;
 use utils::compute_surfaces_for_convex_hull;
+use shapes::{PlaneLocation, Plane};
 use detection::Intersection;
-use geometries::{PlaneLocation, Plane};
 
 use super::simplex::Simplex;
 use super::minkowski_difference::{MinkowskiDifference, IndexPair};

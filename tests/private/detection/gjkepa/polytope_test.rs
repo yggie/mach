@@ -3,7 +3,7 @@ extern crate quickcheck;
 use Scalar;
 use maths::Vect;
 use utils::StandaloneEntityBuilder;
-use geometries::PlaneLocation;
+use shapes::PlaneLocation;
 
 use super::polytope::Polytope;
 use super::simplex_cache::SimplexCache;

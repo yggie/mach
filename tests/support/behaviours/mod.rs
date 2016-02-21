@@ -8,6 +8,10 @@ pub mod dynamics_behaviour;
 
 #[macro_use]
 #[cfg(test)]
+pub mod detection_behaviour;
+
+#[macro_use]
+#[cfg(test)]
 pub mod broadphase_behaviour;
 
 #[macro_use]
@@ -21,4 +25,3 @@ pub mod narrowphase_behaviour;
 #[macro_use]
 #[cfg(test)]
 pub mod entity_store_behaviour;
-
