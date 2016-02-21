@@ -76,7 +76,7 @@ macro_rules! assert_broadphase_behaviour {
                     let id = self.clone().create_rigid_body();
                     let store = &**self.entity_store();
 
-                    broadphase.notify_body_created(store, &**store.find_body(id).unwrap());
+                    broadphase.notify_body_created(store, store.find_body_handle(id).unwrap());
 
                     return id;
                 }
@@ -92,7 +92,7 @@ macro_rules! assert_broadphase_behaviour {
                     let id = self.clone().create_static_body();
                     let store = &**self.entity_store();
 
-                    broadphase.notify_body_created(store, &**store.find_body(id).unwrap());
+                    broadphase.notify_body_created(store, store.find_body_handle(id).unwrap());
 
                     return id;
                 }

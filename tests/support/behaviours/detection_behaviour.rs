@@ -15,8 +15,8 @@ macro_rules! assert_detection_behaviour {
             // TODO move tests from space_behaviour and the like into this file
             #[test]
             fn it_will_eventually_work() {
-                let store = MachStore::new();
-                let _detection = validate(test_subject(&store));
+                let _store = MachStore::new();
+                let _detection = validate(test_subject());
                 // do nothing, but it will be fine
             }
         }

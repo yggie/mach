@@ -5,7 +5,7 @@ mod tests;
 use std::marker::PhantomData;
 
 use ID;
-use entities::{Body, BodyType, EntityStore};
+use entities::{BodyHandle, BodyType, EntityStore};
 use broadphase::Broadphase;
 use narrowphase::Narrowphase;
 
@@ -40,7 +40,9 @@ impl<ES: EntityStore> BruteForce<ES> {
 impl<ES: EntityStore> Broadphase for BruteForce<ES> {
     type EntityStore = ES;
 
-    fn notify_body_created(&mut self, store: &Self::EntityStore, body: &Body) {
+    fn notify_body_created(&mut self, store: &Self::EntityStore, handle: &BodyHandle) {
+        let body = handle.borrow();
+
         match body.downcast() {
             BodyType::Rigid(_rigid_body) => {
                 for other_body in store.bodies_iter() {
@@ -60,11 +62,19 @@ impl<ES: EntityStore> Broadphase for BruteForce<ES> {
         }
     }
 
-    fn update<N: Narrowphase>(&mut self, _store: &Self::EntityStore, _narrowphase: &N) {
+    fn update<N: Narrowphase>(&mut self, _narrowphase: &N) {
         // do nothing
     }
 
-    fn contact_candidate_pairs_iter<'a>(&'a self, _store: &'a Self::EntityStore) -> Box<Iterator<Item=(ID, ID)> + 'a> {
-        Box::new(self.pairs.iter().map(|pair| pair.clone()))
+    fn contact_candidate_pairs_iter<'a>(&'a self, store: &'a Self::EntityStore) -> Box<Iterator<Item=(BodyHandle, BodyHandle)> + 'a> {
+        let iterator = self.pairs.iter()
+            .map(move |pair| {
+                let handle_0 = store.find_body_handle(pair.0).unwrap();
+                let handle_1 = store.find_body_handle(pair.1).unwrap();
+
+                (handle_0.clone(), handle_1.clone())
+            });
+
+        Box::new(iterator)
     }
 }

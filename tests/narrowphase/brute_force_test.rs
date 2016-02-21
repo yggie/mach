@@ -1,8 +1,7 @@
 assert_narrowphase_behaviour! {
-    use entities::EntityStore;
     use narrowphase::BruteForce;
 
-    pub fn test_subject<ES: EntityStore>(_store: &ES) -> BruteForce<ES> {
+    pub fn test_subject() -> BruteForce {
         BruteForce::new()
     }
 }

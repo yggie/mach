@@ -30,7 +30,7 @@ pub use self::maths::Vect;
 pub use self::world::World;
 pub use self::shapes::{Shape, ShapeSpec};
 pub use self::dynamics::{Dynamics, MachDynamics};
-pub use self::entities::{RigidBody, StaticBody};
+pub use self::entities::{Body, RigidBody, StaticBody};
 pub use self::detection::{MachSpace, Space};
 pub use self::mach_world::MachWorld;
 pub use self::custom_world::CustomWorld;
@@ -87,12 +87,12 @@ pub mod temp {
 
     use {ID, Scalar};
     use maths::{IntegratableMut, Integrator, Vect};
-    use entities::{Body, BodyParams, EntityStore};
+    use entities::{Body, BodyHandle, BodyParams, EntityStore};
     use detection::{ContactEvent, Detection};
     use broadphase::Broadphase;
     use narrowphase::Narrowphase;
 
-    struct World<B: Broadphase<EntityStore=ES>, N: Narrowphase<EntityStore=ES>, D: Detection<EntityStore=ES>, ES: EntityStore, I: Integrator, CS: ConstraintSolver> {
+    struct World<B: Broadphase<EntityStore=ES>, N: Narrowphase, D: Detection, ES: EntityStore, I: Integrator, CS: ConstraintSolver> {
         broadphase: B,
         narrowphase: N,
         detection: D,
@@ -101,55 +101,47 @@ pub mod temp {
         constraint_solver: CS,
     }
 
-    impl<B, N, D, ES, I, CS> World<B, N, D, ES, I, CS> where B: Broadphase<EntityStore=ES>, N: Narrowphase<EntityStore=ES>, D: Detection<EntityStore=ES>, ES: EntityStore, I: Integrator, CS: ConstraintSolver {
+    impl<B, N, D, ES, I, CS> World<B, N, D, ES, I, CS> where B: Broadphase<EntityStore=ES>, N: Narrowphase, D: Detection, ES: EntityStore, I: Integrator, CS: ConstraintSolver {
         pub fn update(&mut self, time_step: Scalar) -> Vec<ContactEvent> {
             // update entity positions
             for mut integratable in self.entity_store.integratable_iter_mut() {
-                // NOTE Transform and Motion required
                 self.integrator.integrate_in_place(&mut integratable, time_step, Vect::zero());
             }
 
-            // NOTE Form required
-            self.narrowphase.update(&self.entity_store);
-            // NOTE Form required
-            self.broadphase.update(&self.entity_store, &self.narrowphase);
+            self.narrowphase.update();
+            self.broadphase.update(&self.narrowphase);
 
-            let entity_pairs: Vec<(ID, ID)> = self.broadphase.contact_candidate_pairs_iter(&self.entity_store)
+            let potentially_colliding_pairs: Vec<(BodyHandle, BodyHandle)> = self.broadphase.contact_candidate_pairs_iter(&self.entity_store)
                 // TODO something like: .map(|pair| self.entity_store.preload_transform(pair))
-                // NOTE Form required
-                .filter(|&(id_0, id_1)| self.narrowphase.test(id_0, id_1))
+                .filter(|handles| self.narrowphase.test(&handles.0, &handles.1))
                 .collect();
 
-            let contact_events: Vec<ContactEvent> = entity_pairs.iter()
+            let contact_events: Vec<ContactEvent> = potentially_colliding_pairs.iter()
                 .filter_map(|pair| {
-                    // NOTE Form required
-                    self.detection.compute_contacts(&self.entity_store, pair.0, pair.1)
+                    self.detection.compute_contacts(&pair.0, &pair.1)
                 })
                 .collect();
 
             if contact_events.len() > 0 {
-                // NOTE Properties, Transform and Motion required
                 self.constraint_solver.solve_in_place(&mut self.entity_store, time_step, &contact_events);
 
-                // NOTE Form required
-                self.narrowphase.update(&self.entity_store);
-                // NOTE Form required
-                self.broadphase.update(&self.entity_store, &self.narrowphase);
+                self.narrowphase.update();
+                self.broadphase.update(&self.narrowphase);
             }
 
             return contact_events;
         }
 
         fn notify_body_created(&mut self, id: ID) {
-            let body = self.entity_store.find_body(id)
+            let body_handle = self.entity_store.find_body_handle(id)
                 .expect("expected to find body that was just created, but failed!");
 
-            self.narrowphase.notify_body_created(&self.entity_store, &**body);
-            self.broadphase.notify_body_created(&self.entity_store, &**body);
+            self.narrowphase.notify_body_created(body_handle);
+            self.broadphase.notify_body_created(&self.entity_store, body_handle);
         }
     }
 
-    impl<B, N, D, ES, I, CS> EntityStore for World<B, N, D, ES, I, CS> where B: Broadphase<EntityStore=ES>, N: Narrowphase<EntityStore=ES>, D: Detection<EntityStore=ES>, ES: EntityStore, I: Integrator, CS: ConstraintSolver {
+    impl<B, N, D, ES, I, CS> EntityStore for World<B, N, D, ES, I, CS> where B: Broadphase<EntityStore=ES>, N: Narrowphase, D: Detection, ES: EntityStore, I: Integrator, CS: ConstraintSolver {
         fn create_rigid_body(&mut self, params: &BodyParams) -> ID {
             let id = self.entity_store.create_rigid_body(params);
 
@@ -168,6 +160,10 @@ pub mod temp {
 
         fn find_body(&self, id: ID) -> Option<Ref<Box<Body>>> {
             self.entity_store.find_body(id)
+        }
+
+        fn find_body_handle(&self, id: ID) -> Option<&BodyHandle> {
+            self.entity_store.find_body_handle(id)
         }
 
         fn bodies_iter<'a>(&'a self) -> Box<Iterator<Item=Ref<Box<Body>>> + 'a> {

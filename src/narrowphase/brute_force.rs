@@ -2,36 +2,27 @@
 #[path="../../tests/narrowphase/brute_force_test.rs"]
 mod tests;
 
-use std::marker::PhantomData;
-
-use ID;
-use entities::{Body, EntityStore};
+use entities::BodyHandle;
 use narrowphase::Narrowphase;
 
-pub struct BruteForce<ES: EntityStore> {
-    _phantom: PhantomData<ES>
-}
+pub struct BruteForce;
 
-impl<ES: EntityStore> BruteForce<ES> {
-    pub fn new() -> BruteForce<ES> {
-        BruteForce {
-            _phantom: PhantomData,
-        }
+impl BruteForce {
+    pub fn new() -> BruteForce {
+        BruteForce
     }
 }
 
-impl<ES: EntityStore> Narrowphase for BruteForce<ES> {
-    type EntityStore = ES;
-
-    fn notify_body_created(&mut self, _store: &Self::EntityStore, _body: &Body) {
+impl Narrowphase for BruteForce {
+    fn notify_body_created(&mut self, _body: &BodyHandle) {
         // do nothing
     }
 
-    fn update(&mut self, _store: &Self::EntityStore) {
+    fn update(&mut self) {
         // do nothing
     }
 
-    fn test(&self, _id_0: ID, _id_1: ID) -> bool {
+    fn test(&self, _handle_0: &BodyHandle, _handle_1: &BodyHandle) -> bool {
         true
     }
 }

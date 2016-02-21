@@ -7,6 +7,7 @@ mod material;
 mod body_type;
 mod mach_store;
 mod rigid_body;
+mod body_handle;
 mod body_params;
 mod static_body;
 
@@ -24,6 +25,7 @@ pub use self::moveable::Moveable;
 pub use self::body_type::{BodyType, BodyTypeMut};
 pub use self::mach_store::MachStore;
 pub use self::rigid_body::RigidBody;
+pub use self::body_handle::{BodyHandle, Rc, Ref, RefMut};
 pub use self::body_params::{BodyParams, ShapeDesc};
 pub use self::static_body::StaticBody;
 pub use self::entity_store::EntityStore;

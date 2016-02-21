@@ -1,11 +1,8 @@
-use ID;
-use entities::{Body, EntityStore};
+use entities::BodyHandle;
 
 pub trait Narrowphase {
-    type EntityStore: EntityStore;
-
-    fn notify_body_created(&mut self, &Self::EntityStore, &Body);
-    fn update(&mut self, &Self::EntityStore);
+    fn notify_body_created(&mut self, &BodyHandle);
+    fn update(&mut self);
     // possibly could be preloaded with positional data
-    fn test(&self, ID, ID) -> bool;
+    fn test(&self, &BodyHandle, &BodyHandle) -> bool;
 }

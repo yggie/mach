@@ -6,7 +6,7 @@ macro_rules! assert_entity_store_behaviour {
             use super::test_subject;
 
             use utils::EntityBuilder;
-            use entities::{BodyParams, EntityStore};
+            use entities::EntityStore;
 
             fn validate<S: EntityStore>(input: S) -> S {
                 input
