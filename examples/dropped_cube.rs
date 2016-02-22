@@ -13,7 +13,7 @@ impl Simulation for DroppedCube {
         "Dropped Cube"
     }
 
-    fn setup(&mut self, world: &mut mach::World) -> Result<(), String> {
+    fn setup(&mut self, world: &mut mach::temp::World) -> Result<(), String> {
         world.set_gravity(mach::Vect::new(0.0, 0.0, -0.5));
 
         let entity_desc = mach::entities::BodyParams::default()
@@ -37,7 +37,7 @@ impl Simulation for DroppedCube {
         return Ok(());
     }
 
-    fn update(&mut self, world: &mut mach::World) -> Result<Option<Vec<mach::detection::Contact>>, String> {
+    fn update(&mut self, world: &mut mach::temp::World) -> Result<Vec<mach::detection::ContactEvent>, String> {
         return Ok(world.update(0.05));
     }
 }

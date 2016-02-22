@@ -3,9 +3,9 @@ extern crate mach;
 pub trait Simulation {
     fn name(&self) -> &'static str;
 
-    fn setup(&mut self, _world: &mut mach::World) -> Result<(), String> {
+    fn setup(&mut self, _world: &mut mach::temp::World) -> Result<(), String> {
         Ok(())
     }
 
-    fn update(&mut self, _world: &mut mach::World) -> Result<Option<Vec<mach::detection::Contact>>, String>;
+    fn update(&mut self, _world: &mut mach::temp::World) -> Result<Vec<mach::detection::ContactEvent>, String>;
 }

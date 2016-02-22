@@ -15,7 +15,7 @@ pub struct BruteForce<ES: EntityStore> {
 }
 
 impl<ES: EntityStore> BruteForce<ES> {
-    fn new() -> BruteForce<ES> {
+    pub fn new() -> BruteForce<ES> {
         BruteForce {
             pairs: Vec::new(),
             _phantom: PhantomData,

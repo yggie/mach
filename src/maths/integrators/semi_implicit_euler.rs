@@ -8,6 +8,12 @@ use maths::{IntegratableMut, Integrator, Quat, Vect};
 /// An implementation of the Semi-Implicit Euler integration strategy.
 pub struct SemiImplicitEuler;
 
+impl SemiImplicitEuler {
+    pub fn new() -> SemiImplicitEuler {
+        SemiImplicitEuler
+    }
+}
+
 impl Integrator for SemiImplicitEuler {
     fn integrate_in_place(&self, integratable: &mut IntegratableMut, time_step: Scalar, linear_acceleration: Vect) {
         let t = time_step;

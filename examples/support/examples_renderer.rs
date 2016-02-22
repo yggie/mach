@@ -36,24 +36,14 @@ impl ExamplesRenderer {
         })
     }
 
-    pub fn render<S: glium::Surface>(&mut self, surface: &mut S, world: &mach::World, frame_metadata: &FrameMetadata, env: &SceneEnv) -> Result<(), String> {
+    pub fn render<S: glium::Surface>(&mut self, surface: &mut S, world: &mach::temp::World, frame_metadata: &FrameMetadata, env: &SceneEnv) -> Result<(), String> {
         surface.clear_color_and_depth((0.0, 0.0, 0.0, 1.0), 1.0);
 
         let mut old_instances = HashMap::new();
 
         mem::swap(&mut old_instances, &mut self.instances);
 
-        for body in world.rigid_bodies_iter() {
-            if let Some(instance) = old_instances.remove(&body.id()) {
-                self.render_and_save(surface, instance, body.transform(), env);
-            } else {
-                let instance = self.generate_new_instance(body.id(), body.shape());
-
-                self.render_and_save(surface, instance, body.transform(), env);
-            }
-        }
-
-        for body in world.static_bodies_iter() {
+        for body in world.bodies_iter() {
             if let Some(instance) = old_instances.remove(&body.id()) {
                 self.render_and_save(surface, instance, body.transform(), env);
             } else {

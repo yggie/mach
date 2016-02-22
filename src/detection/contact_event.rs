@@ -1,7 +1,7 @@
-use ID;
+use entities::BodyHandle;
 use detection::ContactSet;
 
 pub struct ContactEvent {
-    pub bodies: (ID, ID),
+    pub bodies: (BodyHandle, BodyHandle),
     pub contact_set: ContactSet,
 }

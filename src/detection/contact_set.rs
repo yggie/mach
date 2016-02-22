@@ -1,3 +1,4 @@
+use Scalar;
 use maths::Vect;
 use shapes::Plane;
 
@@ -15,5 +16,19 @@ impl ContactSet {
             plane: plane,
             points: points,
         }
+    }
+
+    #[inline]
+    pub fn point(&self, index: usize) -> &Vect {
+        &self.points[index]
+    }
+
+    #[inline]
+    pub fn surface_normal(&self) -> &Vect {
+        self.plane.normal()
+    }
+
+    pub fn penetration_depth(&self, index: usize) -> Scalar {
+        self.plane.offset_for(self.point(index))
     }
 }

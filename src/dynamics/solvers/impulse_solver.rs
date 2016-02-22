@@ -1,11 +1,30 @@
 use Scalar;
 use maths::Vect;
-use entities::{RigidBody, StaticBody};
-use detection::{Contact, ContactPair};
+use entities::{BodyType, RigidBody, StaticBody};
+use detection::{Contact, ContactEvent, ContactPair};
 
 pub struct ImpulseSolver;
 
 impl ImpulseSolver {
+    pub fn compute_impulse_for_event(contact_event: &ContactEvent) -> Scalar {
+        let contact_center = contact_event.contact_set.point(0);
+        let contact_normal = contact_event.contact_set.surface_normal();
+        let body_0 = contact_event.bodies.0.borrow();
+        let body_1 = contact_event.bodies.1.borrow();
+
+        match (body_0.downcast(), body_1.downcast()) {
+            (BodyType::Rigid(rigid_body_0), BodyType::Rigid(rigid_body_1)) => {
+                ImpulseSolver::compute_rigid_rigid_impulse((&rigid_body_0, &rigid_body_1), &contact_center, &contact_normal)
+            },
+
+            (BodyType::Rigid(rigid_body), BodyType::Static(static_body)) => {
+                ImpulseSolver::compute_rigid_static_impulse((&rigid_body, &static_body), &contact_center, &contact_normal)
+            },
+
+            _otherwise => panic!("unhandled body combination"),
+        }
+    }
+
     pub fn compute_impulse_for(contact: &Contact) -> Scalar {
         match contact.pair {
             ContactPair::RigidRigid(ref cell_0, ref cell_1) => {

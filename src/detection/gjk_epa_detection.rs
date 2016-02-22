@@ -31,7 +31,7 @@ impl Detection for GjkEpaDetection {
                 let point_on_plane = intersection.point() - intersection.normal() * intersection.penetration_depth();
                 let contact_plane = Plane::from_point(&point_on_plane, intersection.normal());
                 ContactEvent {
-                    bodies: (body_0.id(), body_1.id()),
+                    bodies: (handle_0.clone(), handle_1.clone()),
                     contact_set: ContactSet::new(contact_plane, vec!(intersection.point().clone())),
                 }
             })

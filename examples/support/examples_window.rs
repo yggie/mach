@@ -17,14 +17,14 @@ macro_rules! key_released {
 }
 
 pub struct ExamplesWindow<S: Simulation> {
-    world: Box<mach::World>,
+    world: Box<mach::temp::World>,
     camera: Camera,
     display: GlutinFacade,
     renderer: ExamplesRenderer,
     simulation: S,
     desired_fps: u8,
     frame_metadata: FrameMetadata,
-    world_constructor: Box<Fn() -> Box<mach::World>>,
+    world_constructor: Box<Fn() -> Box<mach::temp::World>>,
 }
 
 impl<S> ExamplesWindow<S> where S: Simulation {
@@ -95,12 +95,10 @@ impl<S> ExamplesWindow<S> where S: Simulation {
         return target.finish().map_err(|err| format!("{:?}", err));
     }
 
-    fn handle_contact_events(&mut self, events: Option<Vec<mach::detection::Contact>>) {
-        self.frame_metadata.contacts = events.map_or(Vec::new(), |contacts: Vec<mach::detection::Contact>| -> Vec<mach::maths::Vect> {
-            return contacts.into_iter()
-                .map(|contact| contact.center.clone())
-                .collect();
-        });
+    fn handle_contact_events(&mut self, contacts: Vec<mach::detection::ContactEvent>) {
+        self.frame_metadata.contacts = contacts.into_iter()
+            .map(|contact| contact.contact_set.point(0).clone())
+            .collect();
     }
 
     fn handle_window_events(&mut self) -> Option<Result<(), String>> {
