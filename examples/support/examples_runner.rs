@@ -6,7 +6,7 @@ use support::{Simulation, ExamplesWindow};
 pub struct ExamplesRunner<S: Simulation> {
     pub simulation: S,
     pub desired_fps: u8,
-    pub world_constructor: Box<Fn() -> Box<mach::temp::World>>,
+    pub world_constructor: Box<Fn() -> Box<mach::World>>,
 }
 
 impl<S> ExamplesRunner<S> where S: Simulation {
@@ -14,7 +14,7 @@ impl<S> ExamplesRunner<S> where S: Simulation {
         ExamplesRunner {
             simulation: simulation,
             desired_fps: 30,
-            world_constructor: Box::new(|| Box::new(mach::temp::MachWorld::new())),
+            world_constructor: Box::new(|| Box::new(mach::MachWorld::new())),
         }
     }
 

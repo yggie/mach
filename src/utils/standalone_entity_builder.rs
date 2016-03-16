@@ -1,6 +1,6 @@
 use {ID, Scalar};
 use maths::{Quat, Vect};
-use entities::{Body, BodyParams, RigidBody, ShapeDesc, StaticBody};
+use entities::{Body, BodyHandle, BodyParams, RigidBody, ShapeDesc, StaticBody};
 
 #[derive(Clone)]
 pub struct StandaloneEntityBuilder {
@@ -22,6 +22,10 @@ impl StandaloneEntityBuilder {
         StandaloneEntityBuilder::default().as_cube(size)
     }
 
+    pub fn cuboid(x: Scalar, y: Scalar, z: Scalar) -> StandaloneEntityBuilder {
+        StandaloneEntityBuilder::default().as_cuboid(x, y, z)
+    }
+
     pub fn build_body(self) -> Box<Body> {
         Box::new(self.build_rigid_body())
     }
@@ -32,6 +36,10 @@ impl StandaloneEntityBuilder {
 
     pub fn build_static_body(self) -> StaticBody {
         StaticBody::with_id(ID(0), &self.params)
+    }
+
+    pub fn build_body_handle(self) -> BodyHandle {
+        BodyHandle::new(self.build_body())
     }
 }
 

@@ -24,7 +24,12 @@ impl ContactSet {
     }
 
     #[inline]
-    pub fn surface_normal(&self) -> &Vect {
+    pub fn points(&self) -> &Vec<Vect> {
+        &self.points
+    }
+
+    #[inline]
+    pub fn normal(&self) -> &Vect {
         self.plane.normal()
     }
 

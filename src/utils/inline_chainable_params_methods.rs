@@ -19,12 +19,16 @@ macro_rules! inline_chainable_params_methods {
         chain_method!($S, $s, $f, as_shape(self, shape_desc: ShapeDesc));
         chain_method!($S, $s, $f, as_sphere(self, radius: Scalar));
         chain_method!($S, $s, $f, as_cube(self, size: Scalar));
+        chain_method!($S, $s, $f, as_cuboid(self, x: Scalar, y: Scalar, z: Scalar));
         chain_method!($S, $s, $f, with_translation(self, x: Scalar, y: Scalar, z: Scalar));
         chain_method!($S, $s, $f, with_translation_vect(self, vect: Vect));
+        chain_method!($S, $s, $f, with_axis_angle(self, axis: Vect, angle: Scalar));
         chain_method!($S, $s, $f, with_rotation(self, rotation: Quat));
         chain_method!($S, $s, $f, with_no_rotation(self));
         chain_method!($S, $s, $f, with_velocity(self, vx: Scalar, vy: Scalar, vz: Scalar));
         chain_method!($S, $s, $f, with_angular_velocity(self, wx: Scalar, wy: Scalar, wz: Scalar));
+        chain_method!($S, $s, $f, with_mass(self, mass: Scalar));
+        chain_method!($S, $s, $f, with_restitution_coefficient(self, coef: Scalar));
     };
 
     (struct_name: $struct_name:ident, field_name: $field_name:ident) => {

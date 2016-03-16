@@ -5,10 +5,9 @@ use std::mem;
 use self::rand::Rng;
 
 use Scalar;
-use maths::{lcp_solvers, LCP, LCPSolver, Matrix, Vect};
-use solvers::ConstraintSolver;
-use dynamics::{Integrator, SemiImplicitEuler};
-use dynamics::solvers::ImpulseSolver;
+use maths::{lcp_solvers, Integrator, LCP, LCPSolver, Matrix, Vect};
+use maths::integrators::SemiImplicitEuler;
+use solvers::{ConstraintSolver, ImpulseSolver};
 use entities::{BodyType, BodyTypeMut, RigidBody};
 use detection::ContactEvent;
 
@@ -27,10 +26,10 @@ impl MachConstraintSolver {
 
         for (i, contact_event) in contacts.iter().enumerate() {
             // TODO handle more than one contact point
-            let contact_center = contact_event.contact_set.point(0);
-            let contact_normal = contact_event.contact_set.surface_normal();
-            let body_0 = contact_event.bodies.0.borrow();
-            let body_1 = contact_event.bodies.1.borrow();
+            let contact_center = contact_event.point(0);
+            let contact_normal = contact_event.normal();
+            let body_0 = contact_event.bodies().0.borrow();
+            let body_1 = contact_event.bodies().1.borrow();
 
             let (mu, mass_inverse, inertia_inverse, rel_vel, contact_offset) = match (body_0.downcast(), body_1.downcast()) {
                 (BodyType::Rigid(rigid_body_0), BodyType::Rigid(rigid_body_1)) => {
@@ -164,11 +163,11 @@ impl MachConstraintSolver {
 
             let friction_direction = &friction_directions[i];
 
-            let contact_normal = contact_event.contact_set.surface_normal();
-            let contact_center = contact_event.contact_set.point(0);
-            let penetration_depth = contact_event.contact_set.penetration_depth(0);
-            let mut body_0 = contact_event.bodies.0.borrow_mut();
-            let mut body_1 = contact_event.bodies.1.borrow_mut();
+            let contact_normal = contact_event.normal();
+            let contact_center = contact_event.point(0);
+            let penetration_depth = contact_event.penetration_depth(0);
+            let mut body_0 = contact_event.bodies().0.borrow_mut();
+            let mut body_1 = contact_event.bodies().1.borrow_mut();
 
             match (body_0.downcast_mut(), body_1.downcast_mut()) {
                 (BodyTypeMut::Rigid(rigid_body_0), BodyTypeMut::Rigid(rigid_body_1)) => {
@@ -224,7 +223,7 @@ impl MachConstraintSolver {
         *rigid_body.translation_mut() = position + correction;
 
         // TODO missing gravity!
-        SemiImplicitEuler.integrate(rigid_body, remaining_time, Vect::zero());
+        SemiImplicitEuler.integrate_in_place(&mut rigid_body.as_integratable_mut(), remaining_time, Vect::zero());
     }
 }
 

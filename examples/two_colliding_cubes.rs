@@ -13,7 +13,7 @@ impl Simulation for TwoCollidingCubes {
         "Two Colliding Cubes"
     }
 
-    fn setup(&mut self, world: &mut mach::temp::World) -> Result<(), String> {
+    fn setup(&mut self, world: &mut mach::World) -> Result<(), String> {
         let params = mach::entities::BodyParams::cube(1.0);
 
         world.create_rigid_body(
@@ -34,7 +34,7 @@ impl Simulation for TwoCollidingCubes {
         return Ok(());
     }
 
-    fn update(&mut self, world: &mut mach::temp::World) -> Result<Vec<mach::detection::ContactEvent>, String> {
+    fn update(&mut self, world: &mut mach::World) -> Result<Vec<mach::detection::ContactEvent>, String> {
         // let total_kinetic_energy = world.rigid_bodies_iter().fold(0.0, |total, rigid_body| {
         //     total + rigid_body.mass() * rigid_body.velocity().length_sq()
         // });

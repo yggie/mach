@@ -1,4 +1,4 @@
-use { Scalar, TOLERANCE };
+use {Scalar, TOLERANCE};
 
 /// This trait is implemented by types without infinite precision.
 pub trait ApproxEq<T = Self> {

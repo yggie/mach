@@ -1,9 +1,9 @@
 use std::fmt;
 
 use {ID, Scalar};
-use maths::{Matrix, Motion, Transform, Quat, Vect};
+use maths::{IntegratableMut, Matrix, Motion, Transform, Quat, Vect};
 use shapes::Shape;
-use entities::{Body, BodyParams, BodyType, BodyTypeMut, Form, Moveable};
+use entities::{Body, BodyParams, BodyType, BodyTypeMut, Form};
 
 /// Represents a physical entity in the world.
 pub struct RigidBody {
@@ -73,6 +73,10 @@ impl RigidBody {
     pub fn inertia_inverse(&self) -> Matrix {
         self.inertia().inverse()
     }
+
+    pub fn as_integratable_mut<'a>(&'a mut self) -> IntegratableMut<'a> {
+        IntegratableMut::new(self.form.transform_mut(), &mut self.motion)
+    }
 }
 
 impl Body for RigidBody {
@@ -94,24 +98,6 @@ impl Body for RigidBody {
 
     fn form_mut(&mut self) -> &mut Form {
         RigidBody::form_mut(self)
-    }
-}
-
-impl Moveable for RigidBody {
-    fn transform(&self) -> &Transform {
-        RigidBody::transform(self)
-    }
-
-    fn transform_mut(&mut self) -> &mut Transform {
-        RigidBody::transform_mut(self)
-    }
-
-    fn motion(&self) -> &Motion {
-        RigidBody::motion(self)
-    }
-
-    fn motion_mut(&mut self) -> &mut Motion {
-        RigidBody::motion_mut(self)
     }
 }
 

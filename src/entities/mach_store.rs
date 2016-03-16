@@ -2,8 +2,9 @@
 #[path="../../tests/entities/mach_store_test.rs"]
 mod mach_store_test;
 
+use std::mem;
+
 use ID;
-use maths::IntegratableMut;
 use entities::{Body, BodyHandle, BodyParams, BodyType, EntityStore, Ref, RefMut, RigidBody, StaticBody};
 
 pub struct MachStore {
@@ -45,6 +46,19 @@ impl EntityStore for MachStore {
         self.bodies.get(id.0 as usize).map(|rc_cell| rc_cell.borrow())
     }
 
+    fn find_rigid_body(&self, id: ID) -> Option<Ref<Box<RigidBody>>> {
+        self.find_body(id).and_then(|body| {
+            match body.downcast() {
+                BodyType::Rigid(_rigid_body) => (),
+                _otherwise => return None,
+            }
+
+            // TODO use the safe approach once #cell_extras has stabilized:
+            // https://github.com/rust-lang/rust/issues/27746
+            return unsafe { Some(mem::transmute(body)) };
+        })
+    }
+
     fn find_body_handle(&self, id: ID) -> Option<&BodyHandle> {
         self.bodies.get(id.0 as usize)
     }
@@ -57,17 +71,20 @@ impl EntityStore for MachStore {
         Box::new(self.bodies.iter().map(|rc_cell| rc_cell.borrow_mut()))
     }
 
-    fn integratable_iter_mut<'a>(&'a mut self) -> Box<Iterator<Item=IntegratableMut> + 'a> {
+    fn rigid_body_iter_mut<'a>(&'a mut self) -> Box<Iterator<Item=RefMut<Box<RigidBody>>> + 'a> {
         let iterator = self.bodies.iter()
             .filter_map(|rc_cell| {
                 let body_ref = rc_cell.borrow_mut();
+
                 match body_ref.downcast() {
                     BodyType::Rigid(_rigid_body) => (),
 
                     _otherwise => return None,
                 }
 
-                return Some(IntegratableMut::new(body_ref));
+                // TODO use the safe approach once #cell_extras has stabilized:
+                // https://github.com/rust-lang/rust/issues/27746
+                return unsafe { Some(mem::transmute(body_ref)) };
             });
 
         return Box::new(iterator);

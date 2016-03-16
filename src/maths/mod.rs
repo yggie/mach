@@ -7,11 +7,12 @@ mod vect;
 mod matrix;
 #[macro_use]
 mod motion;
-mod approx_eq;
 mod transform;
 mod integratable;
 mod sparse_matrix;
 
+/// TODO temporary workaround for the issue of rexporting traits, see https://github.com/rust-lang/rust/issues/16264
+pub mod approx_eq;
 /// TODO temporary workaround for the issue of rexporting traits, see https://github.com/rust-lang/rust/issues/16264
 pub mod lcp_solver;
 /// TODO temporary workaround for the issue of rexporting traits, see https://github.com/rust-lang/rust/issues/16264
@@ -29,5 +30,5 @@ pub use self::approx_eq::ApproxEq;
 pub use self::transform::Transform;
 pub use self::lcp_solver::LCPSolver;
 pub use self::integrator::Integrator;
-pub use self::integratable::{Integratable, IntegratableMut};
+pub use self::integratable::IntegratableMut;
 pub use self::sparse_matrix::SparseMatrix;

@@ -1,3 +1,4 @@
+use Scalar;
 use maths::Vect;
 
 #[derive(Clone, Debug)]
@@ -18,6 +19,20 @@ impl Motion {
         Motion {
             velocity: Vect::zero(),
             angular_velocity: Vect::zero(),
+        }
+    }
+
+    pub fn with_velocity(self, x: Scalar, y: Scalar, z: Scalar) -> Motion {
+        Motion {
+            velocity: Vect::new(x, y, z),
+            .. self
+        }
+    }
+
+    pub fn with_angular_velocity(self, x: Scalar, y: Scalar, z: Scalar) -> Motion {
+        Motion {
+            angular_velocity: Vect::new(x, y, z),
+            .. self
         }
     }
 }

@@ -9,6 +9,12 @@ pub struct UnitVect {
     pub values: (Scalar, Scalar, Scalar),
 }
 
+impl UnitVect {
+    pub fn as_vect(self) -> Vect {
+        Into::<Vect>::into(self)
+    }
+}
+
 impl Into<Vect> for UnitVect {
     fn into(self) -> Vect {
         Vect::new(self.values.0, self.values.1, self.values.2).normalize()

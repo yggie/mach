@@ -1,24 +1,43 @@
-use std::cell::Ref;
+#[cfg(test)]
+#[path="../tests/worlds/mach_world_test.rs"]
+mod tests;
 
-use {CustomWorld, ID, Scalar, World};
+use std::cell::{Ref, RefMut};
+
+use {broadphase, narrowphase, CustomWorld, ID, Scalar, World};
 use maths::Vect;
-use entities::{BodyParams, RigidBody, StaticBody};
-use dynamics::MachDynamics;
-use detection::{Contact, MachSpace};
+use maths::integrators::SemiImplicitEuler;
+use solvers::MachConstraintSolver;
+use entities::{Body, BodyHandle, BodyParams, EntityStore, MachStore, RigidBody};
+use detection::{ContactEvent, GjkEpaDetection};
 
-/// The default implementation of a `World` object, using all the engine’s core
-/// trait implementations to function.
-pub struct MachWorld(CustomWorld<MachSpace, MachDynamics>);
+pub struct MachWorld(CustomWorld<broadphase::BruteForce<MachStore>, narrowphase::BruteForce, GjkEpaDetection, MachStore, SemiImplicitEuler, MachConstraintSolver>);
 
 impl MachWorld {
-    /// Creates a new `MachWorld` with the default configuration.
     pub fn new() -> MachWorld {
-        MachWorld(CustomWorld::new(MachSpace::new(), MachDynamics::new()))
+        MachWorld(CustomWorld {
+            broadphase: broadphase::BruteForce::new(),
+            narrowphase: narrowphase::BruteForce::new(),
+            detection: GjkEpaDetection::new(),
+            entity_store: MachStore::new(),
+            integrator: SemiImplicitEuler::new(),
+            constraint_solver: MachConstraintSolver::new(),
+            gravity: Vect::zero(),
+        })
     }
 }
 
 impl World for MachWorld {
-    #[inline(always)]
+    fn update(&mut self, time_step: Scalar) -> Vec<ContactEvent> {
+        self.0.update(time_step)
+    }
+
+    fn set_gravity(&mut self, gravity: Vect) {
+        self.0.set_gravity(gravity)
+    }
+}
+
+impl EntityStore for MachWorld {
     fn create_rigid_body(&mut self, params: &BodyParams) -> ID {
         self.0.create_rigid_body(params)
     }
@@ -27,33 +46,27 @@ impl World for MachWorld {
         self.0.create_static_body(params)
     }
 
-    #[inline(always)]
-    fn find_rigid_body(&self, id: ID) -> Option<Ref<RigidBody>> {
+    fn find_body(&self, id: ID) -> Option<Ref<Box<Body>>> {
+        self.0.find_body(id)
+    }
+
+    fn find_rigid_body(&self, id: ID) -> Option<Ref<Box<RigidBody>>> {
         self.0.find_rigid_body(id)
     }
 
-    #[inline(always)]
-    fn rigid_bodies_iter<'a>(&'a self) -> Box<Iterator<Item=Ref<RigidBody>> + 'a> {
-        self.0.rigid_bodies_iter()
+    fn find_body_handle(&self, id: ID) -> Option<&BodyHandle> {
+        self.0.find_body_handle(id)
     }
 
-    #[inline(always)]
-    fn static_bodies_iter<'a>(&'a self) -> Box<Iterator<Item=Ref<StaticBody>> + 'a> {
-        self.0.static_bodies_iter()
+    fn bodies_iter<'a>(&'a self) -> Box<Iterator<Item=Ref<Box<Body>>> + 'a> {
+        self.0.bodies_iter()
     }
 
-    #[inline(always)]
-    fn update(&mut self, time_step: Scalar) -> Option<Vec<Contact>> {
-        return self.0.update(time_step);
+    fn bodies_iter_mut<'a>(&'a mut self) -> Box<Iterator<Item=RefMut<Box<Body>>> + 'a> {
+        self.0.bodies_iter_mut()
     }
 
-    #[inline(always)]
-    fn gravity(&self) -> Vect {
-        self.0.gravity()
-    }
-
-    #[inline(always)]
-    fn set_gravity(&mut self, gravity: Vect) {
-        self.0.set_gravity(gravity);
+    fn rigid_body_iter_mut<'a>(&'a mut self) -> Box<Iterator<Item=RefMut<Box<RigidBody>>> + 'a> {
+        self.0.rigid_body_iter_mut()
     }
 }

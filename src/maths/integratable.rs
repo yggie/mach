@@ -1,63 +1,50 @@
-use std::cell::{Ref, RefMut};
-
-use maths::{Motion, Quat, Vect};
-use entities::{Body, BodyType, BodyTypeMut};
-
-pub struct Integratable<'a> {
-    // TODO remove dependency on RefMut once #cell_extras has stabilized:
-    // https://github.com/rust-lang/rust/issues/27746
-    _body: Ref<'a, Box<Body>>,
-}
+use maths::{Motion, Quat, Transform, Vect};
 
 pub struct IntegratableMut<'a> {
-    // TODO remove dependency on RefMut once #cell_extras has stabilized:
-    // https://github.com/rust-lang/rust/issues/27746
-    body: RefMut<'a, Box<Body>>,
+    transform: &'a mut Transform,
+    motion: &'a mut Motion,
 }
 
-// TODO how it should have looked:
-// pub struct IntegratableMut<'a> {
-//     transform: &'a mut Transform,
-//     motion: &'a mut Motion,
-// }
-
 impl<'a> IntegratableMut<'a> {
-    pub fn new(body_ref: RefMut<'a, Box<Body>>) -> IntegratableMut<'a> {
+    pub fn new(transform: &'a mut Transform, motion: &'a mut Motion) -> IntegratableMut<'a> {
         IntegratableMut {
-            body: body_ref,
+            transform: transform,
+            motion: motion,
         }
+    }
+
+    #[inline]
+    pub fn transform(&self) -> &Transform {
+        &self.transform
+    }
+
+    #[inline]
+    pub fn transform_mut(&mut self) -> &mut Transform {
+        &mut self.transform
     }
 
     pub fn translation(&self) -> &Vect {
-        self.body.translation()
-    }
-
-    pub fn rotation(&self) -> &Quat {
-        self.body.rotation()
-    }
-
-    pub fn rotation_mut(&mut self) -> &mut Quat {
-        self.body.rotation_mut()
+        &self.transform().translation
     }
 
     pub fn translation_mut(&mut self) -> &mut Vect {
-        self.body.translation_mut()
+        &mut self.transform_mut().translation
+    }
+
+    pub fn rotation(&self) -> &Quat {
+        &self.transform().rotation
+    }
+
+    pub fn rotation_mut(&mut self) -> &mut Quat {
+        &mut self.transform_mut().rotation
     }
 
     pub fn motion(&self) -> &Motion {
-        match self.body.downcast() {
-            BodyType::Rigid(rigid_body) => rigid_body.motion(),
-
-            _otherwise => panic!("Unexpected body type as integratable!"),
-        }
+        &self.motion
     }
 
     pub fn motion_mut(&mut self) -> &mut Motion {
-        match self.body.downcast_mut() {
-            BodyTypeMut::Rigid(rigid_body) => rigid_body.motion_mut(),
-
-            _otherwise => panic!("Unexpected body type as integratable!"),
-        }
+        &mut self.motion
     }
 
     pub fn velocity(&self) -> &Vect {
