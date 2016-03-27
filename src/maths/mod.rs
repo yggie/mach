@@ -7,6 +7,7 @@ mod vect;
 mod matrix;
 #[macro_use]
 mod motion;
+#[macro_use]
 mod transform;
 mod integratable;
 mod sparse_matrix;

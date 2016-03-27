@@ -9,8 +9,9 @@ macro_rules! assert_detection_behaviour {
 
             use {PI, Scalar};
             use maths::Vect;
-            use utils::StandaloneEntityBuilder;
+            use shapes::Cuboid;
             use support::inputs;
+            use entities::{Body, BodyHandle, RigidBody};
             use detection::Detection;
 
             fn validate<D: Detection>(input: D) -> D {
@@ -21,14 +22,14 @@ macro_rules! assert_detection_behaviour {
             fn it_does_not_return_false_positives() {
                 fn property(offset: inputs::UnitVect, rot: inputs::UnitQuat) {
                     let mut detection = validate(test_subject());
-                    let control = StandaloneEntityBuilder::cube(1.0)
-                        .build_body_handle();
-                    let body = StandaloneEntityBuilder::cube(1.0)
+                    let control = RigidBody::default()
+                        .with_shape(Cuboid::cube(1.0));
+                    let rigid_body = RigidBody::default()
+                        .with_shape(Cuboid::cube(1.0))
                         .with_rotation(rot.into())
-                        .with_translation_vect(2.0 * offset.as_vect())
-                        .build_body_handle();
+                        .with_translation_vect(2.0 * offset.as_vect());
 
-                    let result = detection.compute_contacts(&control, &body);
+                    let result = detection.compute_contacts(&handle(control), &handle(rigid_body));
 
                     assert!(result.is_none());
                 }
@@ -39,13 +40,13 @@ macro_rules! assert_detection_behaviour {
             #[test]
             fn it_handles_vertex_vertex_collisions() {
                 let mut detection = validate(test_subject());
-                let control = StandaloneEntityBuilder::cuboid(1.0, 2.0, 1.0)
-                    .build_body_handle();
-                let body = StandaloneEntityBuilder::cuboid(2.0, 1.0, 1.0)
-                    .with_translation(1.49, 1.49, 0.99)
-                    .build_body_handle();
+                let control = RigidBody::default()
+                    .with_shape(Cuboid::new(1.0, 2.0, 1.0));
+                let rigid_body = RigidBody::default()
+                    .with_shape(Cuboid::new(2.0, 1.0, 1.0))
+                    .with_translation(1.49, 1.49, 0.99);
 
-                let result = detection.compute_contacts(&control, &body);
+                let result = detection.compute_contacts(&handle(control), &handle(rigid_body));
 
                 assert!(result.is_some());
 
@@ -60,13 +61,13 @@ macro_rules! assert_detection_behaviour {
             #[test]
             fn it_handles_edge_edge_collisions() {
                 let mut detection = validate(test_subject());
-                let control = StandaloneEntityBuilder::cuboid(1.0, 2.0, 3.0)
-                    .build_body_handle();
-                let body = StandaloneEntityBuilder::cuboid(1.0, 2.0, 3.0)
-                    .with_translation(0.99, 1.49, 0.00)
-                    .build_body_handle();
+                let control = RigidBody::default()
+                    .with_shape(Cuboid::new(1.0, 2.0, 3.0));
+                let rigid_body = RigidBody::default()
+                    .with_shape(Cuboid::new(1.0, 2.0, 3.0))
+                    .with_translation(0.99, 1.49, 0.00);
 
-                let result = detection.compute_contacts(&control, &body);
+                let result = detection.compute_contacts(&handle(control), &handle(rigid_body));
 
                 assert!(result.is_some());
 
@@ -81,13 +82,13 @@ macro_rules! assert_detection_behaviour {
             #[test]
             fn it_handles_face_face_collisions() {
                 let mut detection = validate(test_subject());
-                let control = StandaloneEntityBuilder::cube(1.0)
-                    .build_body_handle();
-                let body = StandaloneEntityBuilder::cube(1.0)
-                    .with_translation(0.99, 0.50, 0.50)
-                    .build_body_handle();
+                let control = RigidBody::default()
+                    .with_shape(Cuboid::cube(1.0));
+                let rigid_body = RigidBody::default()
+                    .with_shape(Cuboid::cube(1.0))
+                    .with_translation(0.99, 0.50, 0.50);
 
-                let result = detection.compute_contacts(&control, &body);
+                let result = detection.compute_contacts(&handle(control), &handle(rigid_body));
 
                 assert!(result.is_some());
 
@@ -101,14 +102,14 @@ macro_rules! assert_detection_behaviour {
             #[test]
             fn it_handles_edge_face_collisions() {
                 let mut detection = validate(test_subject());
-                let control = StandaloneEntityBuilder::cube(1.0)
-                    .build_body_handle();
-                let body = StandaloneEntityBuilder::cube(1.0)
+                let control = RigidBody::default()
+                    .with_shape(Cuboid::cube(1.0));
+                let rigid_body = RigidBody::default()
+                    .with_shape(Cuboid::cube(1.0))
                     .with_translation(0.49 + 0.5*(2.0 as Scalar).sqrt(), 0.00, 0.00)
-                    .with_axis_angle(Vect::new(0.0, 0.0, 1.0), PI/4.0)
-                    .build_body_handle();
+                    .with_axis_angle(Vect::new(0.0, 0.0, 1.0), PI/4.0);
 
-                let result = detection.compute_contacts(&control, &body);
+                let result = detection.compute_contacts(&handle(control), &handle(rigid_body));
 
                 assert!(result.is_some());
 
@@ -122,17 +123,17 @@ macro_rules! assert_detection_behaviour {
             #[test]
             fn it_handles_vertex_face_collisions() {
                 let mut detection = validate(test_subject());
-                let control = StandaloneEntityBuilder::cube(1.0)
-                    .build_body_handle();
+                let control = RigidBody::default()
+                    .with_shape(Cuboid::cube(1.0));
                 let initial_axis = Vect::new(1.0, 1.0, 1.0).normalize();
                 let final_axis = Vect::new(1.0, 0.0, 0.0);
                 let rotation = initial_axis.cross(final_axis);
-                let body = StandaloneEntityBuilder::cube(1.0)
+                let rigid_body = RigidBody::default()
+                    .with_shape(Cuboid::cube(1.0))
                     .with_translation((0.98 + (3.0 as Scalar).sqrt())/2.0, 0.1, 0.0)
-                    .with_axis_angle(rotation, rotation.length().asin())
-                    .build_body_handle();
+                    .with_axis_angle(rotation, rotation.length().asin());
 
-                let result = detection.compute_contacts(&control, &body);
+                let result = detection.compute_contacts(&handle(control), &handle(rigid_body));
 
                 assert!(result.is_some());
 
@@ -147,19 +148,21 @@ macro_rules! assert_detection_behaviour {
             fn it_always_has_the_normal_pointing_towards_the_first_body() {
                 fn property(offset: inputs::UnitVect, rot: inputs::UnitQuat) {
                     let mut detection = validate(test_subject());
-                    let control = StandaloneEntityBuilder::cube(1.0)
-                        .build_body_handle();
-                    let body = StandaloneEntityBuilder::cube(1.0)
+                    let control = RigidBody::default()
+                        .with_shape(Cuboid::cube(1.0));
+                    let rigid_body = RigidBody::default()
+                        .with_shape(Cuboid::cube(1.0))
                         .with_rotation(rot.into())
-                        .with_translation_vect(0.45 * offset.as_vect())
-                        .build_body_handle();
+                        .with_translation_vect(0.45 * offset.as_vect());
+                    let control_handle = handle(control);
+                    let rigid_body_handle = handle(rigid_body);
 
-                    let contact_event = detection.compute_contacts(&control, &body)
+                    let contact_event = detection.compute_contacts(&control_handle, &rigid_body_handle)
                         .expect("Test was setup to always have an intersection, but that didn't happen");
 
                     let projection = {
-                        let control_obj = control.borrow();
-                        let body_obj = body.borrow();
+                        let control_obj = control_handle.borrow();
+                        let body_obj = rigid_body_handle.borrow();
 
                         contact_event.normal()
                             .dot(control_obj.translation() - body_obj.translation())
@@ -169,6 +172,10 @@ macro_rules! assert_detection_behaviour {
                 }
 
                 quickcheck::quickcheck(property as fn(inputs::UnitVect, inputs::UnitQuat));
+            }
+
+            fn handle<B: Body + 'static>(body: B) -> BodyHandle {
+                BodyHandle::new(Box::new(body))
             }
         }
     };

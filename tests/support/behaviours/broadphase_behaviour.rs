@@ -5,9 +5,8 @@ macro_rules! assert_broadphase_behaviour {
         mod broadphase_behaviour {
             use super::test_subject;
 
-            use ID;
-            use utils::EntityBuilder;
-            use entities::{EntityStore, MachStore};
+            use shapes::Cuboid;
+            use entities::{EntityStore, MachStore, RigidBody, StaticBody};
             use broadphase::Broadphase;
 
             fn validate<B: Broadphase>(input: B) -> B {
@@ -18,91 +17,58 @@ macro_rules! assert_broadphase_behaviour {
             fn it_generates_contact_candidates_for_intersecting_rigid_bodies() {
                 let mut store = MachStore::new();
                 let mut broadphase = validate(test_subject(&store));
-                let prototype = EntityBuilder::from_store(&mut store)
-                    .as_cube(1.0)
-                    .with_translation(0.0, 0.0, 0.0);
+                let prototype = RigidBody::default()
+                    .with_shape(Cuboid::cube(1.0))
+                    .with_zero_translation();
 
-                let number_of_contact_candidate_pairs = prototype.clone()
-                    .create_rigid_body_and_notify_then_count(&mut broadphase);
-                assert_eq!(number_of_contact_candidate_pairs, 0);
+                let count = count_after_adding(&mut store, &mut broadphase, prototype.clone());
+                assert_eq!(count, 0);
 
-                let number_of_contact_candidate_pairs = prototype.clone()
-                    .create_rigid_body_and_notify_then_count(&mut broadphase);
-                assert_eq!(number_of_contact_candidate_pairs, 1);
+                let count = count_after_adding(&mut store, &mut broadphase, prototype.clone());
+                assert_eq!(count, 1);
 
-                let number_of_contact_candidate_pairs = prototype.clone()
-                    .create_rigid_body_and_notify_then_count(&mut broadphase);
-                assert_eq!(number_of_contact_candidate_pairs, 3);
+                let count = count_after_adding(&mut store, &mut broadphase, prototype.clone());
+                assert_eq!(count, 3);
 
-                let number_of_contact_candidate_pairs = prototype.clone()
-                    .create_rigid_body_and_notify_then_count(&mut broadphase);
-                assert_eq!(number_of_contact_candidate_pairs, 6);
+                let count = count_after_adding(&mut store, &mut broadphase, prototype.clone());
+                assert_eq!(count, 6);
             }
 
             #[test]
             fn it_does_not_generate_contact_candidates_for_intersecting_static_bodies() {
                 let mut store = MachStore::new();
                 let mut broadphase = validate(test_subject(&store));
-                let prototype = EntityBuilder::from_store(&mut store)
-                    .as_cube(1.0)
+                let static_body_prototype = StaticBody::default()
+                    .with_shape(Cuboid::cube(1.0))
+                    .with_translation(0.0, 0.0, 0.0);
+                let rigid_body_prototype = RigidBody::default()
+                    .with_shape(Cuboid::cube(1.0))
                     .with_translation(0.0, 0.0, 0.0);
 
-                let number_of_contact_candidate_pairs = prototype.clone()
-                    .create_static_body_and_notify_then_count(&mut broadphase);
-                assert_eq!(number_of_contact_candidate_pairs, 0);
+                let count = count_after_adding_static(&mut store, &mut broadphase, static_body_prototype.clone());
+                assert_eq!(count, 0);
 
-                let number_of_contact_candidate_pairs = prototype.clone()
-                    .create_static_body_and_notify_then_count(&mut broadphase);
-                assert_eq!(number_of_contact_candidate_pairs, 0);
+                let count = count_after_adding_static(&mut store, &mut broadphase, static_body_prototype.clone());
+                assert_eq!(count, 0);
 
-                let number_of_contact_candidate_pairs = prototype.clone()
-                    .create_rigid_body_and_notify_then_count(&mut broadphase);
-                assert_eq!(number_of_contact_candidate_pairs, 2);
+                let count = count_after_adding(&mut store, &mut broadphase, rigid_body_prototype.clone());
+                assert_eq!(count, 2);
             }
 
-            trait EntityBuilderExtension {
-                type EntityStore: EntityStore;
+            fn count_after_adding<E: EntityStore, B: Broadphase<EntityStore=E>>(store: &mut E, broadphase: &mut B, rigid_body: RigidBody) -> usize {
+                let id = store.add_rigid_body(rigid_body);
+                let handle = store.find_body_handle(id).unwrap();
+                broadphase.notify_body_created(&store, handle);
 
-                fn create_rigid_body_and_notify<B: Broadphase<EntityStore=Self::EntityStore>>(self, broadphase: &mut B) -> ID;
-                fn create_rigid_body_and_notify_then_count<B: Broadphase<EntityStore=Self::EntityStore>>(self, broadphase: &mut B) -> usize;
-                fn create_static_body_and_notify<B: Broadphase<EntityStore=Self::EntityStore>>(self, broadphase: &mut B) -> ID;
-                fn create_static_body_and_notify_then_count<B: Broadphase<EntityStore=Self::EntityStore>>(self, broadphase: &mut B) -> usize;
+                return broadphase.contact_candidate_pairs_iter(&store).count();
             }
 
-            impl<'a, ES> EntityBuilderExtension for EntityBuilder<'a, ES> where ES: EntityStore {
-                type EntityStore = ES;
+            fn count_after_adding_static<E: EntityStore, B: Broadphase<EntityStore=E>>(store: &mut E, broadphase: &mut B, static_body: StaticBody) -> usize {
+                let id = store.add_static_body(static_body);
+                let handle = store.find_body_handle(id).unwrap();
+                broadphase.notify_body_created(&store, handle);
 
-                fn create_rigid_body_and_notify<B: Broadphase<EntityStore=Self::EntityStore>>(self, broadphase: &mut B) -> ID {
-                    let id = self.clone().create_rigid_body();
-                    let store = &**self.entity_store();
-
-                    broadphase.notify_body_created(store, store.find_body_handle(id).unwrap());
-
-                    return id;
-                }
-
-                fn create_rigid_body_and_notify_then_count<B: Broadphase<EntityStore=Self::EntityStore>>(self, broadphase: &mut B) -> usize {
-                    let _id = self.clone().create_rigid_body_and_notify(broadphase);
-                    let store = &**self.entity_store();
-
-                    return broadphase.contact_candidate_pairs_iter(store).count();
-                }
-
-                fn create_static_body_and_notify<B: Broadphase<EntityStore=Self::EntityStore>>(self, broadphase: &mut B) -> ID {
-                    let id = self.clone().create_static_body();
-                    let store = &**self.entity_store();
-
-                    broadphase.notify_body_created(store, store.find_body_handle(id).unwrap());
-
-                    return id;
-                }
-
-                fn create_static_body_and_notify_then_count<B: Broadphase<EntityStore=Self::EntityStore>>(self, broadphase: &mut B) -> usize {
-                    let _id = self.clone().create_static_body_and_notify(broadphase);
-                    let store = &**self.entity_store();
-
-                    return broadphase.contact_candidate_pairs_iter(store).count();
-                }
+                return broadphase.contact_candidate_pairs_iter(&store).count();
             }
         }
     };

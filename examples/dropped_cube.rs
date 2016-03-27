@@ -16,23 +16,18 @@ impl Simulation for DroppedCube {
     fn setup(&mut self, world: &mut mach::World) -> Result<(), String> {
         world.set_gravity(mach::Vect::new(0.0, 0.0, -0.5));
 
-        let entity_desc = mach::entities::BodyParams::default()
-            .with_density(1.0)
-            .with_restitution_coefficient(0.5);
+        world.add_rigid_body(mach::RigidBody::default()
+            .with_shape(mach::shapes::Cuboid::cube(1.0))
+            .with_mass(1.0)
+            .with_restitution_coefficient(0.5)
+            .with_translation(0.0, 0.0, 3.0)
+            .with_velocity(0.5, 0.0, -1.0)
+            .with_angular_velocity(0.3, 0.5, 0.4));
 
-        world.create_rigid_body(
-            &entity_desc.clone()
-                .as_cube(1.0)
-                .with_translation(0.0, 0.0, 3.0)
-                .with_velocity(0.5, 0.0, -1.0)
-                .with_angular_velocity(0.3, 0.5, 0.4)
-        );
-
-        world.create_static_body(
-            &entity_desc.clone()
-                .as_cuboid(10.0, 10.0, 0.1)
-                .with_translation(0.0, 0.0, -1.0)
-        );
+        world.add_static_body(mach::StaticBody::default()
+            .with_shape(mach::shapes::Cuboid::new(10.0, 10.0, 0.1))
+            .with_restitution_coefficient(0.5)
+            .with_translation(0.0, 0.0, -1.0));
 
         return Ok(());
     }

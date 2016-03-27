@@ -128,4 +128,8 @@ impl Shape for Cuboid {
 
         return max_indices;
     }
+
+    fn box_clone(&self) -> Box<Shape> {
+        Box::new(self.clone())
+    }
 }

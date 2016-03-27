@@ -1,9 +1,9 @@
 use ID;
-use entities::{Body, BodyHandle, BodyParams, Ref, RefMut, RigidBody};
+use entities::{Body, BodyHandle, Ref, RefMut, RigidBody, StaticBody};
 
 pub trait EntityStore {
-    fn create_rigid_body(&mut self, &BodyParams) -> ID;
-    fn create_static_body(&mut self, &BodyParams) -> ID;
+    fn add_rigid_body(&mut self, RigidBody) -> ID;
+    fn add_static_body(&mut self, StaticBody) -> ID;
     fn find_body(&self, ID) -> Option<Ref<Box<Body>>>;
     fn find_rigid_body(&self, ID) -> Option<Ref<Box<RigidBody>>>;
     fn find_body_handle(&self, ID) -> Option<&BodyHandle>;

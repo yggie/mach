@@ -3,32 +3,21 @@ use std::fmt;
 use {ID, Scalar};
 use maths::{Transform, Quat, Vect};
 use shapes::Shape;
-use entities::{Body, BodyParams, BodyType, BodyTypeMut, Form};
+use entities::{Body, BodyType, BodyTypeMut, Form};
 
 /// Represents a physical entity which cannot move. Within the engine, the
 /// object is simply treated as if it has infinite mass.
+#[derive(Clone)]
 pub struct StaticBody {
     id: ID,
     form: Form,
-    coefficient_of_restitution: Scalar,
+    restitution_coefficient: Scalar,
     friction_coefficient: Scalar,
 }
 
 impl StaticBody {
-    form_field_accessors!(field_name: form);
-
-    /// Creates a new `StaticBody` instance using the components provided to
-    /// construct the entity.
-    pub fn with_id(id: ID, params: &BodyParams) -> StaticBody {
-        let shape = params.shape_desc.build();
-        let material = &params.material;
-
-        StaticBody {
-            id: id,
-            form: Form::new(shape, params.transform.clone()),
-            coefficient_of_restitution: material.coefficient_of_restitution(),
-            friction_coefficient: material.friction_coefficient(),
-        }
+    include_form_helpers! {
+        struct_name: StaticBody,
     }
 
     /// Returns the identifier for the `StaticBody` instance.
@@ -37,16 +26,43 @@ impl StaticBody {
         self.id
     }
 
-    /// Returns the coefficient of restitution associated with the `RigidBody`.
+    /// Returns the coefficient of restitution associated with the `StaticBody`.
     #[inline]
-    pub fn coefficient_of_restitution(&self) -> Scalar {
-        self.coefficient_of_restitution
+    pub fn restitution_coefficient(&self) -> Scalar {
+        self.restitution_coefficient
     }
 
-    /// Returns the friction coefficient associated with the `RigidBody`.
+    /// Returns the friction coefficient associated with the `StaticBody`.
     #[inline]
     pub fn friction_coefficient(&self) -> Scalar {
         self.friction_coefficient
+    }
+
+    #[inline]
+    pub fn with_id_(self, id: ID) -> StaticBody {
+        StaticBody {
+            id: id,
+            .. self
+        }
+    }
+
+    #[inline]
+    pub fn with_restitution_coefficient(self, coefficient: Scalar) -> StaticBody {
+        StaticBody {
+            restitution_coefficient: coefficient,
+            .. self
+        }
+    }
+}
+
+impl Default for StaticBody {
+    fn default() -> StaticBody {
+        StaticBody {
+            id: ID(0),
+            form: Form::default(),
+            restitution_coefficient: 0.8,
+            friction_coefficient: 0.6,
+        }
     }
 }
 

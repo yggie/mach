@@ -3,7 +3,7 @@ use std::cell::{Ref, RefMut};
 use {ID, Scalar, World};
 use maths::{Integrator, Vect};
 use solvers::ConstraintSolver;
-use entities::{Body, BodyHandle, BodyParams, EntityStore, RigidBody};
+use entities::{Body, BodyHandle, EntityStore, RigidBody, StaticBody};
 use detection::{ContactEvent, Detection};
 use broadphase::Broadphase;
 use narrowphase::Narrowphase;
@@ -65,16 +65,16 @@ impl<B, N, D, ES, I, CS> CustomWorld<B, N, D, ES, I, CS> where B: Broadphase<Ent
 }
 
 impl<B, N, D, ES, I, CS> EntityStore for CustomWorld<B, N, D, ES, I, CS> where B: Broadphase<EntityStore=ES>, N: Narrowphase, D: Detection, ES: EntityStore, I: Integrator, CS: ConstraintSolver {
-    fn create_rigid_body(&mut self, params: &BodyParams) -> ID {
-        let id = self.entity_store.create_rigid_body(params);
+    fn add_rigid_body(&mut self, rigid_body: RigidBody) -> ID {
+        let id = self.entity_store.add_rigid_body(rigid_body);
 
         self.notify_body_created(id);
 
         return id;
     }
 
-    fn create_static_body(&mut self, params: &BodyParams) -> ID {
-        let id = self.entity_store.create_static_body(params);
+    fn add_static_body(&mut self, static_body: StaticBody) -> ID {
+        let id = self.entity_store.add_static_body(static_body);
 
         self.notify_body_created(id);
 

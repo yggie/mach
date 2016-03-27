@@ -22,24 +22,36 @@ impl Motion {
         }
     }
 
-    pub fn with_velocity(self, x: Scalar, y: Scalar, z: Scalar) -> Motion {
+    #[inline]
+    pub fn with_velocity_vect(self, velocity: Vect) -> Motion {
         Motion {
-            velocity: Vect::new(x, y, z),
+            velocity: velocity,
             .. self
         }
     }
 
-    pub fn with_angular_velocity(self, x: Scalar, y: Scalar, z: Scalar) -> Motion {
+    #[inline]
+    pub fn with_velocity(self, x: Scalar, y: Scalar, z: Scalar) -> Motion {
+        self.with_velocity_vect(Vect::new(x, y, z))
+    }
+
+    #[inline]
+    pub fn with_angular_velocity_vect(self, angular_velocity: Vect) -> Motion {
         Motion {
-            angular_velocity: Vect::new(x, y, z),
+            angular_velocity: angular_velocity,
             .. self
         }
+    }
+
+    #[inline]
+    pub fn with_angular_velocity(self, x: Scalar, y: Scalar, z: Scalar) -> Motion {
+        self.with_angular_velocity_vect(Vect::new(x, y, z))
     }
 }
 
 #[macro_export]
-macro_rules! motion_field_accessors {
-    (field_name: $field_name:ident) => {
+macro_rules! include_motion_helpers {
+    (struct_signature: $S:ty, struct_name: $s:ident, field_name: $field_name:ident,) => {
         #[inline]
         pub fn motion(&self) -> &Motion {
             &self.$field_name
@@ -68,6 +80,19 @@ macro_rules! motion_field_accessors {
         #[inline]
         pub fn angular_velocity_mut(&mut self) -> &mut Vect {
             &mut self.$field_name.angular_velocity
+        }
+
+        chain_method!($S, $s, $field_name, with_velocity(self, vx: Scalar, vy: Scalar, vz: Scalar));
+        chain_method!($S, $s, $field_name, with_velocity_vect(self, velocity: Vect));
+        chain_method!($S, $s, $field_name, with_angular_velocity(self, wx: Scalar, wy: Scalar, wz: Scalar));
+        chain_method!($S, $s, $field_name, with_angular_velocity_vect(self, angular_velocity: Vect));
+    };
+
+    (struct_name: $struct_name:ident,) => {
+        include_motion_helpers! {
+            struct_signature: $struct_name,
+            struct_name: $struct_name,
+            field_name: motion,
         }
     };
 }

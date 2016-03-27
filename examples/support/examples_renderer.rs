@@ -5,6 +5,8 @@ use std::rc::Rc;
 use std::mem;
 use std::collections::HashMap;
 
+use mach::entities::EntityStore;
+
 use self::glium::backend::glutin_backend::GlutinFacade;
 
 use support::{SceneEnv, Instance, InstanceFactory, FrameMetadata, PolygonModel};

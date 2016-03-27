@@ -2,8 +2,8 @@ extern crate quickcheck;
 
 use Scalar;
 use maths::Vect;
-use utils::StandaloneEntityBuilder;
-use shapes::PlaneLocation;
+use shapes::{Cuboid, PlaneLocation};
+use entities::RigidBody;
 
 use super::polytope::Polytope;
 use super::simplex_cache::SimplexCache;
@@ -14,12 +14,13 @@ use support::inputs;
 #[test]
 fn it_should_not_generate_incomplete_shells() {
     fn property(rot: inputs::UnitQuat) {
-        let control = StandaloneEntityBuilder::cube(1.0).build_body();
-        let body = StandaloneEntityBuilder::cube(1.0)
-            .with_rotation(rot.into())
-            .build_body();
+        let control = RigidBody::default()
+            .with_shape(Cuboid::cube(1.0));
+        let rigid_body = RigidBody::default()
+            .with_shape(Cuboid::cube(1.0))
+            .with_rotation(rot.into());
 
-        let diff = MinkowskiDifference(control.form(), body.form());
+        let diff = MinkowskiDifference(control.form(), rigid_body.form());
 
         let mut simplex_cache = SimplexCache::new(&diff);
 

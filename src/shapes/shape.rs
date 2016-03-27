@@ -5,7 +5,7 @@ use maths::{Matrix, Vect};
 use shapes::ShapeSpec;
 
 /// Defines the traits for all geometric property descriptions.
-pub trait Shape: fmt::Display + 'static {
+pub trait Shape: fmt::Debug {
     fn spec<'a>(&'a self) -> ShapeSpec<'a>;
 
     /// Computes the volume for the shape.
@@ -35,5 +35,13 @@ pub trait Shape: fmt::Display + 'static {
     #[inline]
     fn surface_radius(&self) -> Scalar {
         TOLERANCE
+    }
+
+    fn box_clone(&self) -> Box<Shape>;
+}
+
+impl Clone for Box<Shape> {
+    fn clone(&self) -> Box<Shape> {
+        self.box_clone()
     }
 }

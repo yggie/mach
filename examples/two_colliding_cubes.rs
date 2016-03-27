@@ -14,22 +14,19 @@ impl Simulation for TwoCollidingCubes {
     }
 
     fn setup(&mut self, world: &mut mach::World) -> Result<(), String> {
-        let params = mach::entities::BodyParams::cube(1.0);
+        let prototype = mach::RigidBody::default()
+            .with_shape(mach::shapes::Cuboid::cube(1.0));
 
-        world.create_rigid_body(
-            &params.clone()
-                .with_density(1.0)
-                .with_translation(0.0, 0.0, 3.0)
-                .with_velocity(0.0, 0.0, -1.0)
-        );
+        world.add_rigid_body(prototype.clone()
+            .with_mass(1.0)
+            .with_translation(0.0, 0.0, 3.0)
+            .with_velocity(0.0, 0.0, -1.0));
 
-        world.create_rigid_body(
-            &params.clone()
-                .with_density(2.0)
-                .with_translation(0.0, 0.0, -3.0)
-                .with_axis_angle(mach::Vect::new(1.0, 0.0, 1.0), 1.0)
-                .with_velocity(0.0, 0.0, 1.0)
-        );
+        world.add_rigid_body(prototype.clone()
+            .with_mass(2.0)
+            .with_translation(0.0, 0.0, -3.0)
+            .with_axis_angle(mach::Vect::new(1.0, 0.0, 1.0), 1.0)
+            .with_velocity(0.0, 0.0, 1.0));
 
         return Ok(());
     }

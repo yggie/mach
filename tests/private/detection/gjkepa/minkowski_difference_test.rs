@@ -4,18 +4,20 @@ use super::minkowski_difference::MinkowskiDifference;
 
 use Scalar;
 use maths::ApproxEq;
-use utils::StandaloneEntityBuilder;
+use shapes::Cuboid;
 use support::inputs;
+use entities::RigidBody;
 
 #[test]
 fn it_always_returns_at_least_one_support_point_at_an_offset_from_the_origin() {
     fn property(rotation: inputs::UnitQuat, direction: inputs::UnitVect) {
-        let control = StandaloneEntityBuilder::cube(1.0).build_body();
-        let body = StandaloneEntityBuilder::cube(1.0)
-            .with_rotation(rotation.into())
-            .build_body();
+        let control = RigidBody::default()
+            .with_shape(Cuboid::cube(1.0));
+        let rigid_body = RigidBody::default()
+            .with_shape(Cuboid::cube(1.0))
+            .with_rotation(rotation.into());
 
-        let diff = MinkowskiDifference(control.form(), body.form());
+        let diff = MinkowskiDifference(control.form(), rigid_body.form());
 
         let direction = direction.into();
         let index_pairs = diff.support_index_pairs(&direction);

@@ -65,6 +65,10 @@ impl Shape for Sphere {
     fn surface_radius(&self) -> Scalar {
         self.radius() + TOLERANCE
     }
+
+    fn box_clone(&self) -> Box<Shape> {
+        Box::new(self.clone())
+    }
 }
 
 struct Defer<T> {

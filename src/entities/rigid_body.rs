@@ -3,35 +3,25 @@ use std::fmt;
 use {ID, Scalar};
 use maths::{IntegratableMut, Matrix, Motion, Transform, Quat, Vect};
 use shapes::Shape;
-use entities::{Body, BodyParams, BodyType, BodyTypeMut, Form};
+use entities::{Body, BodyType, BodyTypeMut, Form};
 
 /// Represents a physical entity in the world.
+#[derive(Clone)]
 pub struct RigidBody {
     id: ID,
     mass: Scalar,
     form: Form,
     motion: Motion,
-    coefficient_of_restitution: Scalar,
+    restitution_coefficient: Scalar,
     friction_coefficient: Scalar,
 }
 
 impl RigidBody {
-    form_field_accessors!(field_name: form);
-    motion_field_accessors!(field_name: motion);
-
-    /// Creates a new instance of a `RigidBody` object
-    pub fn with_id(id: ID, params: &BodyParams) -> RigidBody {
-        let shape = params.shape_desc.build();
-        let material = &params.material;
-
-        RigidBody {
-            id: id,
-            mass: material.mass_of(&*shape),
-            form: Form::new(shape, params.transform.clone()),
-            motion: params.motion.clone(),
-            coefficient_of_restitution: material.coefficient_of_restitution(),
-            friction_coefficient: material.friction_coefficient(),
-        }
+    include_form_helpers! {
+        struct_name: RigidBody,
+    }
+    include_motion_helpers! {
+        struct_name: RigidBody,
     }
 
     /// Returns the handle associated with the `RigidBody`.
@@ -53,8 +43,8 @@ impl RigidBody {
 
     /// Returns the coefficient of restitution associated with the `RigidBody`.
     #[inline]
-    pub fn coefficient_of_restitution(&self) -> Scalar {
-        self.coefficient_of_restitution
+    pub fn restitution_coefficient(&self) -> Scalar {
+        self.restitution_coefficient
     }
 
     /// Returns the friction coefficient associated with the `RigidBody`.
@@ -76,6 +66,43 @@ impl RigidBody {
 
     pub fn as_integratable_mut<'a>(&'a mut self) -> IntegratableMut<'a> {
         IntegratableMut::new(self.form.transform_mut(), &mut self.motion)
+    }
+
+    #[inline]
+    pub fn with_id_(self, id: ID) -> RigidBody {
+        RigidBody {
+            id: id,
+            .. self
+        }
+    }
+
+    #[inline]
+    pub fn with_mass(self, mass: Scalar) -> RigidBody {
+        RigidBody {
+            mass: mass,
+            .. self
+        }
+    }
+
+    #[inline]
+    pub fn with_restitution_coefficient(self, coefficient: Scalar) -> RigidBody {
+        RigidBody {
+            restitution_coefficient: coefficient,
+            .. self
+        }
+    }
+}
+
+impl Default for RigidBody {
+    fn default() -> RigidBody {
+        RigidBody {
+            id: ID(0),
+            mass: 1.0,
+            form: Form::default(),
+            motion: Motion::stationary(),
+            restitution_coefficient: 0.8,
+            friction_coefficient: 0.6,
+        }
     }
 }
 

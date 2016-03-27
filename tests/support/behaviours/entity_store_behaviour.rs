@@ -6,17 +6,14 @@ macro_rules! assert_entity_store_behaviour {
             use super::test_subject;
 
             use ID;
-            use utils::EntityBuilder;
-            use entities::EntityStore;
+            use shapes::Cuboid;
+            use entities::{EntityStore, RigidBody};
 
             #[test]
             fn it_can_create_rigid_bodies() {
                 let mut store = validate(test_subject());
 
-                let id = {
-                    let builder = EntityBuilder::from_store(&mut store);
-                    builder.create_rigid_body()
-                };
+                let id = store.add_rigid_body(RigidBody::default());
 
                 // TODO assert properties of the resulting body?
                 let _body = store.find_body(id)
@@ -47,17 +44,14 @@ macro_rules! assert_entity_store_behaviour {
             fn it_can_mutate_all_bodies() {
                 let mut store = validate(test_subject());
 
-                let ids = {
-                    let builder = EntityBuilder::from_store(&mut store);
-                    let builder = builder.as_cube(1.0)
-                            .with_mass(3.0);
-
-                    vec!(
-                        builder.clone().create_rigid_body(),
-                        builder.clone().create_rigid_body(),
-                        builder.clone().create_rigid_body(),
-                    )
-                };
+                let prototype = RigidBody::default()
+                    .with_shape(Cuboid::cube(1.0))
+                    .with_mass(3.0);
+                let ids = vec![
+                    store.add_rigid_body(prototype.clone()),
+                    store.add_rigid_body(prototype.clone()),
+                    store.add_rigid_body(prototype.clone()),
+                ];
 
                 let iterated_ids: Vec<ID> = store.rigid_body_iter_mut()
                     .map(|body| body.id())

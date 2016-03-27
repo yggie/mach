@@ -117,4 +117,8 @@ impl Shape for TriangleMesh {
             })
             .collect()
     }
+
+    fn box_clone(&self) -> Box<Shape> {
+        Box::new(self.clone())
+    }
 }

@@ -12,10 +12,13 @@
 #[path="../tests/support/mod.rs"]
 pub mod support;
 
-mod world;
 mod mach_world;
 mod custom_world;
 
+/// TODO temporary workaround for the issue of rexporting traits, see https://github.com/rust-lang/rust/issues/16264
+pub mod world;
+
+#[macro_use]
 pub mod utils;
 #[macro_use]
 pub mod maths;

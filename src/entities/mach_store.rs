@@ -5,7 +5,7 @@ mod mach_store_test;
 use std::mem;
 
 use ID;
-use entities::{Body, BodyHandle, BodyParams, BodyType, EntityStore, Ref, RefMut, RigidBody, StaticBody};
+use entities::{Body, BodyHandle, BodyType, EntityStore, Ref, RefMut, RigidBody, StaticBody};
 
 pub struct MachStore {
     bodies: Vec<BodyHandle>,
@@ -22,20 +22,18 @@ impl MachStore {
 }
 
 impl EntityStore for MachStore {
-    fn create_rigid_body(&mut self, params: &BodyParams) -> ID {
+    fn add_rigid_body(&mut self, rigid_body: RigidBody) -> ID {
         let id = self.gen_id();
-        let rigid_body = RigidBody::with_id(id, params);
-        let rc_cell = BodyHandle::new(Box::new(rigid_body) as Box<Body>);
+        let rc_cell = BodyHandle::new(Box::new(rigid_body.with_id_(id)) as Box<Body>);
 
         self.bodies.push(rc_cell);
 
         return id;
     }
 
-    fn create_static_body(&mut self, params: &BodyParams) -> ID {
+    fn add_static_body(&mut self, static_body: StaticBody) -> ID {
         let id = self.gen_id();
-        let static_body = StaticBody::with_id(id, params);
-        let rc_cell = BodyHandle::new(Box::new(static_body) as Box<Body>);
+        let rc_cell = BodyHandle::new(Box::new(static_body.with_id_(id)) as Box<Body>);
 
         self.bodies.push(rc_cell);
 

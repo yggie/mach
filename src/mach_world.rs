@@ -8,7 +8,7 @@ use {broadphase, narrowphase, CustomWorld, ID, Scalar, World};
 use maths::Vect;
 use maths::integrators::SemiImplicitEuler;
 use solvers::MachConstraintSolver;
-use entities::{Body, BodyHandle, BodyParams, EntityStore, MachStore, RigidBody};
+use entities::{Body, BodyHandle, EntityStore, MachStore, RigidBody, StaticBody};
 use detection::{ContactEvent, GjkEpaDetection};
 
 pub struct MachWorld(CustomWorld<broadphase::BruteForce<MachStore>, narrowphase::BruteForce, GjkEpaDetection, MachStore, SemiImplicitEuler, MachConstraintSolver>);
@@ -38,12 +38,12 @@ impl World for MachWorld {
 }
 
 impl EntityStore for MachWorld {
-    fn create_rigid_body(&mut self, params: &BodyParams) -> ID {
-        self.0.create_rigid_body(params)
+    fn add_rigid_body(&mut self, rigid_body: RigidBody) -> ID {
+        self.0.add_rigid_body(rigid_body)
     }
 
-    fn create_static_body(&mut self, params: &BodyParams) -> ID {
-        self.0.create_static_body(params)
+    fn add_static_body(&mut self, static_body: StaticBody) -> ID {
+        self.0.add_static_body(static_body)
     }
 
     fn find_body(&self, id: ID) -> Option<Ref<Box<Body>>> {

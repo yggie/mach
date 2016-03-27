@@ -26,8 +26,8 @@ impl ImpulseSolver {
     }
 
     fn compute_rigid_rigid_impulse(bodies: (&RigidBody, &RigidBody), center: &Vect, normal: &Vect) -> Scalar {
-        let epsilon = bodies.0.coefficient_of_restitution() *
-            bodies.1.coefficient_of_restitution();
+        let epsilon = bodies.0.restitution_coefficient() *
+            bodies.1.restitution_coefficient();
         let mass_inverse = (bodies.0.mass_inverse(), bodies.1.mass_inverse());
         let inertia_inverse = (bodies.0.inertia_inverse(), bodies.1.inertia_inverse());
         let velocities = (bodies.0.velocity(), bodies.1.velocity());
@@ -54,8 +54,8 @@ impl ImpulseSolver {
     }
 
     fn compute_rigid_static_impulse((rigid_body, static_body): (&RigidBody, &StaticBody), center: &Vect, normal: &Vect) -> Scalar {
-        let epsilon = rigid_body.coefficient_of_restitution() *
-            static_body.coefficient_of_restitution();
+        let epsilon = rigid_body.restitution_coefficient() *
+            static_body.restitution_coefficient();
         let to_contact_center = center - rigid_body.translation();
         let k_scaled = to_contact_center.cross(normal.clone());
         let velocity_due_to_rotation = rigid_body.angular_velocity().dot(k_scaled);
