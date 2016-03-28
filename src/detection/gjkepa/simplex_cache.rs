@@ -1,3 +1,7 @@
+#[cfg(test)]
+#[path="../../../tests/detection/gjkepa/simplex_cache_test.rs"]
+mod simplex_cache_test;
+
 extern crate rand;
 
 use self::rand::Rng;

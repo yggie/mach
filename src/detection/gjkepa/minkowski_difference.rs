@@ -1,3 +1,7 @@
+#[cfg(test)]
+#[path="../../../tests/detection/gjkepa/minkowski_difference_test.rs"]
+mod minkowski_difference_test;
+
 use maths::Vect;
 use entities::Form;
 

@@ -1,3 +1,7 @@
+#[cfg(test)]
+#[path="../../../tests/detection/gjkepa/polytope_test.rs"]
+mod polytope_test;
+
 use NEG_INFINITY;
 use maths::Vect;
 use utils::compute_surfaces_for_convex_hull;

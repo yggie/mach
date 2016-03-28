@@ -5,9 +5,9 @@ use maths::Vect;
 use shapes::{Cuboid, PlaneLocation};
 use entities::RigidBody;
 
-use super::polytope::Polytope;
-use super::simplex_cache::SimplexCache;
-use super::minkowski_difference::MinkowskiDifference;
+use super::Polytope;
+use super::super::simplex_cache::SimplexCache;
+use super::super::minkowski_difference::MinkowskiDifference;
 
 use support::inputs;
 

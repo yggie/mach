@@ -5,9 +5,9 @@ use std::collections::HashSet;
 use shapes::{Cuboid, PlaneLocation};
 use entities::RigidBody;
 
-use super::simplex::Simplex;
-use super::simplex_cache::SimplexCache;
-use super::minkowski_difference::MinkowskiDifference;
+use super::SimplexCache;
+use super::super::simplex::Simplex;
+use super::super::minkowski_difference::MinkowskiDifference;
 
 use support::inputs;
 

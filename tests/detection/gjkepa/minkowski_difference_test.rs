@@ -1,6 +1,6 @@
 extern crate quickcheck;
 
-use super::minkowski_difference::MinkowskiDifference;
+use super::MinkowskiDifference;
 
 use Scalar;
 use maths::ApproxEq;
