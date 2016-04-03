@@ -22,12 +22,14 @@ macro_rules! assert_detection_behaviour {
             fn it_does_not_return_false_positives() {
                 fn property(offset: inputs::UnitVect, rot: inputs::UnitQuat) {
                     let mut detection = validate(test_subject());
+                    let cube_size = 1.0;
+                    let margin_ratio = 0.05;
                     let control = RigidBody::default()
-                        .with_shape(Cuboid::cube(1.0));
+                        .with_shape(Cuboid::cube(cube_size));
                     let rigid_body = RigidBody::default()
-                        .with_shape(Cuboid::cube(1.0))
+                        .with_shape(Cuboid::cube(cube_size))
                         .with_rotation(rot.into())
-                        .with_translation_vect(2.0 * offset.as_vect());
+                        .with_translation_vect((2.0 * ((1.0 + margin_ratio) * cube_size) * Scalar::sqrt(2.0)) * offset.as_vect());
 
                     let result = detection.compute_contacts(&handle(control), &handle(rigid_body));
 
@@ -38,87 +40,44 @@ macro_rules! assert_detection_behaviour {
             }
 
             #[test]
-            fn it_handles_vertex_vertex_collisions() {
-                let mut detection = validate(test_subject());
-                let control = RigidBody::default()
-                    .with_shape(Cuboid::new(1.0, 2.0, 1.0));
-                let rigid_body = RigidBody::default()
-                    .with_shape(Cuboid::new(2.0, 1.0, 1.0))
-                    .with_translation(1.49, 1.49, 0.99);
+            fn it_does_not_return_false_negatives() {
+                fn property(offset: inputs::UnitVect, rot: inputs::UnitQuat) {
+                    let mut detection = validate(test_subject());
+                    let control = RigidBody::default()
+                        .with_shape(Cuboid::cube(1.0));
+                    let rigid_body = RigidBody::default()
+                        .with_shape(Cuboid::cube(1.0))
+                        .with_rotation(rot.into())
+                        .with_translation_vect(0.49 * offset.as_vect());
 
-                let result = detection.compute_contacts(&handle(control), &handle(rigid_body));
+                    let result = detection.compute_contacts(&handle(control), &handle(rigid_body));
 
-                assert!(result.is_some());
+                    assert!(result.is_some());
+                }
 
-                let contact_event = result.unwrap();
-
-                assert_eq!(contact_event.points().len(), 1);
-                // TODO officially support vertex – vertex contacts
-                // assert_approx_eq!(contact_event.normal(), Vect::new(1.0, 0.0, 0.0));
-                // assert_approx_eq!(contact_event.points().first(), Vect::new(0.5, 0.0, 0.0));
+                quickcheck::quickcheck(property as fn(inputs::UnitVect, inputs::UnitQuat));
             }
 
-            #[test]
-            fn it_handles_edge_edge_collisions() {
-                let mut detection = validate(test_subject());
-                let control = RigidBody::default()
-                    .with_shape(Cuboid::new(1.0, 2.0, 3.0));
-                let rigid_body = RigidBody::default()
-                    .with_shape(Cuboid::new(1.0, 2.0, 3.0))
-                    .with_translation(0.99, 1.49, 0.00);
-
-                let result = detection.compute_contacts(&handle(control), &handle(rigid_body));
-
-                assert!(result.is_some());
-
-                let contact_event = result.unwrap();
-
-                assert_eq!(contact_event.points().len(), 1);
-                // TODO officially support edge - edge contacts
-                // assert_approx_eq!(contact_event.points(0), Vect::new(0.5, 0.0, 0.0));
-                // assert_approx_eq!(contact_event.normal(), Vect::new(1.0, 0.0, 0.0));
-            }
-
-            #[test]
-            fn it_handles_face_face_collisions() {
-                let mut detection = validate(test_subject());
-                let control = RigidBody::default()
-                    .with_shape(Cuboid::cube(1.0));
-                let rigid_body = RigidBody::default()
-                    .with_shape(Cuboid::cube(1.0))
-                    .with_translation(0.99, 0.50, 0.50);
-
-                let result = detection.compute_contacts(&handle(control), &handle(rigid_body));
-
-                assert!(result.is_some());
-
-                let contact_event = result.unwrap();
-
-                // TODO officially support face - face contacts
-                // assert_eq!(contact_event.points().len(), 4);
-                assert_approx_eq!(*contact_event.normal(), Vect::new(-1.0, 0.0, 0.0));
-            }
-
-            #[test]
-            fn it_handles_edge_face_collisions() {
-                let mut detection = validate(test_subject());
-                let control = RigidBody::default()
-                    .with_shape(Cuboid::cube(1.0));
-                let rigid_body = RigidBody::default()
-                    .with_shape(Cuboid::cube(1.0))
-                    .with_translation(0.49 + 0.5*(2.0 as Scalar).sqrt(), 0.00, 0.00)
-                    .with_axis_angle(Vect::new(0.0, 0.0, 1.0), PI/4.0);
-
-                let result = detection.compute_contacts(&handle(control), &handle(rigid_body));
-
-                assert!(result.is_some());
-
-                let contact_event = result.unwrap();
-
-                // TODO officially support edge - face contacts
-                // assert_eq!(contact_event.points().len(), 2);
-                assert_approx_eq!(*contact_event.normal(), Vect::new(-1.0, 0.0, 0.0));
-            }
+            // #[test]
+            // fn it_handles_vertex_vertex_collisions() {
+            //     let mut detection = validate(test_subject());
+            //     let control = RigidBody::default()
+            //         .with_shape(Cuboid::new(1.0, 2.0, 1.0));
+            //     let rigid_body = RigidBody::default()
+            //         .with_shape(Cuboid::new(2.0, 1.0, 1.0))
+            //         .with_translation(1.49, 1.49, 0.99);
+            //
+            //     let result = detection.compute_contacts(&handle(control), &handle(rigid_body));
+            //
+            //     assert!(result.is_some());
+            //
+            //     let contact_event = result.unwrap();
+            //
+            //     assert_eq!(contact_event.points().len(), 1);
+            //     // TODO officially support vertex – vertex contacts
+            //     // assert_approx_eq!(contact_event.normal(), Vect::new(1.0, 0.0, 0.0));
+            //     // assert_approx_eq!(contact_event.points().first(), Vect::new(0.5, 0.0, 0.0));
+            // }
 
             #[test]
             fn it_handles_vertex_face_collisions() {
@@ -144,6 +103,70 @@ macro_rules! assert_detection_behaviour {
                 assert_approx_eq!(*contact_event.point(0), Vect::new(0.495, 0.1, 0.0));
             }
 
+            #[test]
+            fn it_handles_edge_edge_collisions() {
+                let mut detection = validate(test_subject());
+                let control = RigidBody::default()
+                    .with_shape(Cuboid::cube(1.0));
+                let rigid_body = RigidBody::default()
+                    .with_shape(Cuboid::cube(1.0))
+                    .with_axis_angle(Vect::new(1.0, 1.0, 0.0), PI / 2.0)
+                    .with_translation(0.99, 0.99, 0.00);
+
+                let result = detection.compute_contacts(&handle(control), &handle(rigid_body));
+
+                assert!(result.is_some());
+
+                let contact_event = result.unwrap();
+
+                assert_eq!(contact_event.points().len(), 1);
+                assert_approx_eq!(contact_event.points()[0], Vect::new(0.495, 0.495, 0.0));
+                assert_approx_eq!(contact_event.normal(), -Vect::new(1.0, 1.0, 0.0).normalize());
+            }
+
+            // #[test]
+            // fn it_handles_edge_face_collisions() {
+            //     let mut detection = validate(test_subject());
+            //     let control = RigidBody::default()
+            //         .with_shape(Cuboid::cube(1.0));
+            //     let rigid_body = RigidBody::default()
+            //         .with_shape(Cuboid::cube(1.0))
+            //         .with_translation(0.49 + 0.5*(2.0 as Scalar).sqrt(), 0.00, 0.00)
+            //         .with_axis_angle(Vect::new(0.0, 0.0, 1.0), PI/4.0);
+            //
+            //     let result = detection.compute_contacts(&handle(control), &handle(rigid_body));
+            //
+            //     assert!(result.is_some());
+            //
+            //     let contact_event = result.unwrap();
+            //
+            //     // TODO officially support edge - face contacts
+            //     // assert_eq!(contact_event.points().len(), 2);
+            //     assert_approx_eq!(*contact_event.normal(), Vect::new(-1.0, 0.0, 0.0));
+            // }
+
+            // #[test]
+            // fn it_handles_face_face_collisions() {
+            //     let mut detection = validate(test_subject());
+            //     let control = RigidBody::default()
+            //         .with_shape(Cuboid::cube(1.0));
+            //     let rigid_body = RigidBody::default()
+            //         .with_shape(Cuboid::cube(1.0))
+            //         .with_translation(0.99, 0.50, 0.50);
+            //
+            //     let result = detection.compute_contacts(&handle(control), &handle(rigid_body));
+            //
+            //     assert!(result.is_some());
+            //
+            //     let contact_event = result.unwrap();
+            //
+            //     // TODO officially support face - face contacts
+            //     // assert_eq!(contact_event.points().len(), 4);
+            //     assert_approx_eq!(*contact_event.normal(), Vect::new(-1.0, 0.0, 0.0));
+            // }
+
+            // TODO maybe it should be pointing towards the second body, to be
+            // consistent with the start-end principle
             #[test]
             fn it_always_has_the_normal_pointing_towards_the_first_body() {
                 fn property(offset: inputs::UnitVect, rot: inputs::UnitQuat) {

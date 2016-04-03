@@ -5,15 +5,15 @@ mod polytope_test;
 use NEG_INFINITY;
 use maths::Vect;
 use utils::compute_surfaces_for_convex_hull;
-use shapes::{PlaneLocation, Plane};
-use detection::Intersection;
+use geometry::{Line, Plane, PlaneLocation};
+use detection::ContactSet;
 
 use super::simplex::Simplex;
 use super::minkowski_difference::{MinkowskiDifference, IndexPair};
 
-enum IntersectionType {
+enum FeatureType {
     Vertex(usize),
-    Edge(usize),
+    Edge(usize, usize),
     Face,
 }
 
@@ -89,12 +89,11 @@ impl<'a> Polytope<'a> {
         panic!("Took more than 1000 iterations to create an expanded polytope from the simplex");
     }
 
-    /// TODO return more than 1 point
-    pub fn compute_contact_points(&self) -> Intersection {
-        let fake_plane = Plane::from_point(&Vect::new(1.0, 0.0, 0.0), &Vect::new(0.0, 0.0, 0.0));
+    pub fn compute_contact_points(&self) -> ContactSet {
+        let dummy_plane = Plane::from_point(&Vect::new(1.0, 0.0, 0.0), &Vect::new(0.0, 0.0, 0.0));
 
-        let (penetration_depth, closest_plane, closest_vertex_indices) = self.surfaces.iter()
-            .fold((NEG_INFINITY, fake_plane, (0, 0, 0)), |(origin_to_closest_plane_offset, closest_plane, closest_vertex_indices), &(ref plane, vertex_indices)| {
+        let (penetration_depth, closest_plane, closest_vertex_indices) = self.surfaces.iter().skip(1)
+            .fold((NEG_INFINITY, dummy_plane, (0, 0, 0)), |(origin_to_closest_plane_offset, closest_plane, closest_vertex_indices), &(ref plane, vertex_indices)| {
                 let offset = plane.offset_for_origin();
 
                 if offset > origin_to_closest_plane_offset {
@@ -116,49 +115,55 @@ impl<'a> Polytope<'a> {
         );
 
         let contact_point = match contact_types {
-            (IntersectionType::Vertex(index), _other) => {
+            (FeatureType::Vertex(index), _other) => {
                 let correction = closest_plane.normal() * penetration_depth / 2.0;
                 self.diff.0.vertex(index) + correction
             },
 
-            (_other, IntersectionType::Vertex(index)) => {
+            (_other, FeatureType::Vertex(index)) => {
                 let correction = closest_plane.normal() * penetration_depth / 2.0;
                 self.diff.1.vertex(index) - correction
             },
 
-            (IntersectionType::Edge(_), IntersectionType::Edge(_)) => {
-                println!("UNHANDLED CONTACT TYPE [EDGE|EDGE]");
-                Vect::zero()
+            (FeatureType::Edge(index_00, index_01), FeatureType::Edge(index_10, index_11)) => {
+                let vertex_00 = self.diff.0.vertex(index_00);
+                let vertex_01 = self.diff.0.vertex(index_01);
+                let vertex_10 = self.diff.1.vertex(index_10);
+                let vertex_11 = self.diff.1.vertex(index_11);
+
+                let line_0 = Line::from_points(vertex_00, vertex_01);
+                let line_1 = Line::from_points(vertex_10, vertex_11);
+
+                line_0.closest_point_to_line(&line_1)
             },
 
-            (IntersectionType::Face, IntersectionType::Edge(_)) => {
-                println!("UNHANDLED CONTACT TYPE [FACE|EDGE]");
-                Vect::zero()
+            (FeatureType::Face, FeatureType::Edge(_index_10, _index_11)) => {
+                panic!("UNHANDLED CONTACT TYPE [FACE|EDGE]");
             },
 
-            (IntersectionType::Edge(_), IntersectionType::Face) => {
-                println!("UNHANDLED CONTACT TYPE [EDGE|FACE]");
-                Vect::zero()
+            (FeatureType::Edge(_index_00, _index_01), FeatureType::Face) => {
+                panic!("UNHANDLED CONTACT TYPE [EDGE|FACE]");
             },
 
-            (IntersectionType::Face, IntersectionType::Face) => {
-                println!("UNHANDLED CONTACT TYPE [FACE|FACE]");
-                Vect::zero()
+            (FeatureType::Face, FeatureType::Face) => {
+                panic!("UNHANDLED CONTACT TYPE [FACE|FACE]");
             },
         };
 
-        return Intersection::new(contact_point, -closest_plane.normal().clone(), penetration_depth);
+        let contact_normal = -closest_plane.normal();
+        return ContactSet::new(
+            Plane::from_point(&(contact_point - contact_normal * penetration_depth), &contact_normal),
+            vec!(contact_point),
+        );
     }
 
-    fn infer_contact_type(&self, index_0: usize, index_1: usize, index_2: usize) -> IntersectionType {
-        if index_0 == index_1 && index_1 == index_2 {
-            IntersectionType::Vertex(index_0)
-        } else if index_0 == index_1 || index_0 == index_2 {
-            IntersectionType::Edge(index_0)
-        } else if index_1 == index_2 {
-            IntersectionType::Edge(index_1)
-        } else {
-            IntersectionType::Face
+    fn infer_contact_type(&self, index_0: usize, index_1: usize, index_2: usize) -> FeatureType {
+        match (index_0, index_1, index_2) {
+            (a, b, c) if a == b && b == c => FeatureType::Vertex(a),
+            (a, b, c) if b == c => FeatureType::Edge(a, b),
+            (a, b, c) if a == c => FeatureType::Edge(a, b),
+            (a, b, c) if a == b => FeatureType::Edge(a, c),
+            _otherwise => FeatureType::Face,
         }
     }
 }

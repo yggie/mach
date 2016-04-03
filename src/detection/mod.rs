@@ -4,19 +4,14 @@
 
 mod gjkepa;
 mod contact_set;
-mod intersection;
 mod contact_event;
 mod gjk_epa_detection;
 
 /// TODO temporary workaround for the issue of rexporting traits, see https://github.com/rust-lang/rust/issues/16264
 pub mod detection;
-/// TODO temporary workaround for the issue of rexporting traits, see https://github.com/rust-lang/rust/issues/16264
-pub mod contact_detector;
 
 pub use self::gjkepa::ContactCache;
 pub use self::detection::Detection;
 pub use self::contact_set::ContactSet;
-pub use self::intersection::Intersection;
 pub use self::contact_event::ContactEvent;
-pub use self::contact_detector::ContactDetector;
 pub use self::gjk_epa_detection::GjkEpaDetection;

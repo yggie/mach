@@ -1,6 +1,6 @@
 use Scalar;
 use maths::Vect;
-use shapes::Plane;
+use geometry::Plane;
 
 #[derive(Clone)]
 pub struct ContactSet {

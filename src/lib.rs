@@ -25,6 +25,7 @@ pub mod maths;
 pub mod shapes;
 pub mod solvers;
 pub mod entities;
+pub mod geometry;
 pub mod detection;
 pub mod broadphase;
 pub mod narrowphase;

@@ -1,6 +1,6 @@
 use maths::Vect;
 
-use shapes::Plane;
+use geometry::Plane;
 
 use super::simplex_cache::SimplexCache;
 use super::minkowski_difference::{MinkowskiDifference, IndexPair};

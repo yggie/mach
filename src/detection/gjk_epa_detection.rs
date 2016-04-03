@@ -2,9 +2,8 @@
 #[path="../../tests/detection/gjk_epa_detection_test.rs"]
 mod tests;
 
-use shapes::Plane;
 use entities::BodyHandle;
-use detection::{ContactCache, ContactDetector, ContactEvent, ContactSet, Detection};
+use detection::{ContactCache, ContactEvent, Detection};
 
 pub struct GjkEpaDetection;
 
@@ -27,11 +26,7 @@ impl Detection for GjkEpaDetection {
 
         ContactCache::new(form_0, form_1)
             .compute_contacts(form_0, form_1)
-            .map(|intersection| {
-                let point_on_plane = intersection.point() - intersection.normal() * intersection.penetration_depth();
-                let contact_plane = Plane::from_point(&point_on_plane, intersection.normal());
-                let contact_set = ContactSet::new(contact_plane, vec!(intersection.point().clone()));
-
+            .map(|contact_set| {
                 ContactEvent::new((handle_0.clone(), handle_1.clone()), contact_set)
             })
     }

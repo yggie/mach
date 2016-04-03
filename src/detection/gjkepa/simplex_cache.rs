@@ -8,7 +8,7 @@ use self::rand::Rng;
 
 use {Scalar, TOLERANCE};
 use maths::Vect;
-use shapes::PlaneLocation;
+use geometry::PlaneLocation;
 
 use super::simplex::Simplex;
 use super::minkowski_difference::{MinkowskiDifference, IndexPair};

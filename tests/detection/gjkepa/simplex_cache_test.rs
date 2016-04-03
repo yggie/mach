@@ -2,8 +2,9 @@ extern crate quickcheck;
 
 use std::collections::HashSet;
 
-use shapes::{Cuboid, PlaneLocation};
+use shapes::Cuboid;
 use entities::RigidBody;
+use geometry::PlaneLocation;
 
 use super::SimplexCache;
 use super::super::simplex::Simplex;

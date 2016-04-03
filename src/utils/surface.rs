@@ -1,4 +1,4 @@
-use { Scalar, TOLERANCE };
+use {Scalar, TOLERANCE};
 use maths::Vect;
 
 /// Represents a `Surface` for a given set of points.

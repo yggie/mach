@@ -2,8 +2,9 @@ extern crate quickcheck;
 
 use Scalar;
 use maths::Vect;
-use shapes::{Cuboid, PlaneLocation};
+use shapes::Cuboid;
 use entities::RigidBody;
+use geometry::PlaneLocation;
 
 use super::Polytope;
 use super::super::simplex_cache::SimplexCache;
