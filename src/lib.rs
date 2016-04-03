@@ -27,6 +27,7 @@ pub mod solvers;
 pub mod entities;
 pub mod geometry;
 pub mod detection;
+pub mod algorithms;
 pub mod broadphase;
 pub mod narrowphase;
 

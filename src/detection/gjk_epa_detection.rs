@@ -3,7 +3,8 @@
 mod tests;
 
 use entities::BodyHandle;
-use detection::{ContactCache, ContactEvent, Detection};
+use detection::{ContactEvent, Detection};
+use detection::gjkepa::ContactCache;
 
 pub struct GjkEpaDetection;
 

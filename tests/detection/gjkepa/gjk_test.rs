@@ -5,14 +5,26 @@ use std::collections::HashSet;
 use shapes::Cuboid;
 use entities::RigidBody;
 use geometry::PlaneLocation;
+use algorithms::{IterativeAlgorithmExecutor, PanicOnIteration};
 
-use super::SimplexCache;
+use detection::gjkepa::GJK;
 use super::super::simplex::Simplex;
+use super::super::simplex_cache::SimplexCache;
 use super::super::minkowski_difference::MinkowskiDifference;
 
 use support::inputs;
 
-pub fn assert_valid_simplex(cache: &SimplexCache, diff: &MinkowskiDifference) {
+fn find_origin<'a>(cache: &'a mut SimplexCache, diff: &'a MinkowskiDifference) -> Option<Simplex<'a>> {
+    let algorithm = PanicOnIteration::new(
+        GJK::new(cache, diff.clone()),
+        1000,
+        "looking for origin (in tests)",
+    );
+
+    return IterativeAlgorithmExecutor::execute(algorithm);
+}
+
+fn assert_valid_simplex(cache: &SimplexCache, diff: &MinkowskiDifference) {
     let simplex = Simplex::new(cache, diff.clone());
 
     let indices = {
@@ -62,7 +74,7 @@ fn it_can_handle_arbitrary_rotations_for_non_intersecting_bodies() {
 
         assert_valid_simplex(&simplex_cache, &diff);
 
-        if let Some(_simplex) = simplex_cache.update_to_contain_origin(diff.clone()) {
+        if let Some(_simplex) = find_origin(&mut simplex_cache, &diff) {
             panic!("Expected the simplex not to contain the origin, but it did");
         }
 
@@ -85,7 +97,7 @@ fn it_can_handle_arbitrary_rotations_for_intersecting_bodies() {
 
         assert_valid_simplex(&simplex_cache, &diff);
 
-        if let None = simplex_cache.update_to_contain_origin(diff.clone()) {
+        if let None = find_origin(&mut simplex_cache, &diff) {
             panic!("Expected the simplex not to contain the origin, but it did");
         }
 

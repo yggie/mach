@@ -1,23 +1,15 @@
-#[cfg(test)]
-#[path="../../../tests/detection/gjkepa/simplex_cache_test.rs"]
-mod simplex_cache_test;
-
 extern crate rand;
 
 use self::rand::Rng;
 
 use {Scalar, TOLERANCE};
 use maths::Vect;
-use geometry::PlaneLocation;
 
-use super::simplex::Simplex;
 use super::minkowski_difference::{MinkowskiDifference, IndexPair};
-
-static NOT_ON_SURFACE: [usize; 4] = [0, 1, 2, 3];
 
 #[derive(Clone, Debug)]
 pub struct SimplexCache {
-    index_pairs: [IndexPair; 4],
+    pub index_pairs: [IndexPair; 4],
 }
 
 impl SimplexCache {
@@ -57,7 +49,6 @@ impl SimplexCache {
             [1.0, -1.0 as Scalar].iter()
                 .filter_map(|&multiplier| {
                     diff.support_index_pairs(&(norm * multiplier)).iter()
-                        .take(1)
                         .find(|support_point| {
                             Vect::dot(&norm, diff.vertex(support_point) - datum).abs() > TOLERANCE
                         })
@@ -75,46 +66,6 @@ impl SimplexCache {
                 support_point_3,
             ],
         };
-    }
-
-    pub fn update_to_contain_origin<'a>(&mut self, diff: MinkowskiDifference<'a>) -> Option<Simplex<'a>> {
-        let surface_radius = diff.0.shape().surface_radius() +
-            diff.1.shape().surface_radius();
-
-        let mut history = self.index_pairs.clone().to_vec();
-        let mut simplex = Simplex::new(self, diff);
-
-        for _iteration in 0..1000 {
-            let next_guess = simplex.surfaces_iter()
-                .zip(NOT_ON_SURFACE.iter())
-                .find(|&((ref plane, _vertex_indices), _not_on_surface)| {
-                    plane.offset_for_origin() > surface_radius + TOLERANCE
-                });
-
-            let ((plane, _vertex_indices), &not_on_surface) = match next_guess {
-                Some(data) => data,
-                None => return Some(simplex),
-            };
-
-            let new_support_points = simplex.diff.support_index_pairs(plane.normal());
-            let new_support_point_option = new_support_points.into_iter()
-                .find(|candidate_point| {
-                    !history.iter().any(|pt| pt == candidate_point) &&
-                        plane.location_of(&simplex.diff.vertex(&candidate_point)) == PlaneLocation::Above
-                });
-
-            let new_support_point = match new_support_point_option {
-                Some(new_support_point) => new_support_point,
-                _ => return None,
-            };
-
-            let vertex = simplex.diff.vertex(&new_support_point);
-            simplex.support_points[not_on_surface] = (vertex, new_support_point);
-            self.index_pairs[not_on_surface] = new_support_point.clone();
-            history.push(new_support_point);
-        }
-
-        panic!("Took over 1000 iterations while seeking the origin");
     }
 
     #[inline]
