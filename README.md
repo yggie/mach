@@ -34,42 +34,16 @@ The documentation can be viewed locally. Simply run the following command in the
 project directory:
 
 ```
-make docs
+cargo doc --open
 ```
 
 # Testing
 
-Tests are written using the standard library tools. All are under the `tests/`
-directory, and can be run using the command:
+Tests are compiled and run using `Cargo`:
 
 ```
-make test
+cargo test
 ```
-
-Some tests can be visualized using the
-[mach-test-browser-standalone](https://github.com/yggie/mach-test-browser-standalone).
-To visualize the results, the test browser must first be running. Do that with
-the command:
-
-```
-make debug-server
-```
-
-This starts the debugging server on http://localhost:8888. Test visualization is
-disabled by default, therefore to run the visualization, you will need a special
-command:
-
-```
-make debug
-```
-
-This will re-compile the tests with the visualization flag active. Once
-complete, the task automatically opens the browser with the visualization.
-
-# Dependencies
-
-This library has no dependencies.
-
 
 # License
 
