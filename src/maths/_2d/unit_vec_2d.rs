@@ -1,0 +1,90 @@
+use std::ops::{Mul, Neg};
+
+use Scalar;
+use maths::DotProduct;
+use maths::_2d::Vec2D;
+
+#[derive(Clone, Debug)]
+pub struct UnitVec2D(Vec2D);
+
+impl UnitVec2D {
+    pub fn from_vec(vec: &Vec2D) -> UnitVec2D {
+        let length = vec.length();
+        UnitVec2D(Vec2D::new(vec.x / length, vec.y / length))
+    }
+
+    pub fn from_radians(radians: Scalar) -> UnitVec2D {
+        UnitVec2D(Vec2D::new(radians.cos(), radians.sin()))
+    }
+
+    pub fn rotate_90(&self) -> UnitVec2D {
+        self.0.rotate_90().normalize()
+    }
+
+    pub fn reversed(self) -> UnitVec2D {
+        UnitVec2D(-self.0)
+    }
+
+    pub fn as_vec(&self) -> Vec2D {
+        self.0.clone()
+    }
+}
+
+impl DotProduct<Vec2D> for UnitVec2D {
+    #[inline(always)]
+    fn dot(&self, other: &Vec2D) -> Scalar {
+        self.0.dot(other)
+    }
+}
+
+impl DotProduct<UnitVec2D> for UnitVec2D {
+    #[inline(always)]
+    fn dot(&self, other: &UnitVec2D) -> Scalar {
+        self.dot(&other.0)
+    }
+}
+
+impl DotProduct<UnitVec2D> for Vec2D {
+    #[inline(always)]
+    fn dot(&self, other: &UnitVec2D) -> Scalar {
+        self.dot(&other.0)
+    }
+}
+
+impl<'a, 'b> Mul<&'a Scalar> for &'b UnitVec2D {
+    type Output = Vec2D;
+
+    #[inline]
+    fn mul(self, scalar: &'a Scalar) -> Self::Output {
+        scalar * (&self.0)
+    }
+}
+implement_op_overload_variants!(Mul, mul, UnitVec2D, Scalar, Vec2D);
+
+impl<'a, 'b> Mul<&'a UnitVec2D> for &'b Scalar {
+    type Output = Vec2D;
+
+    #[inline]
+    fn mul(self, vec: &'a UnitVec2D) -> Self::Output {
+        vec * self
+    }
+}
+implement_op_overload_variants!(Mul, mul, Scalar, UnitVec2D, Vec2D);
+
+impl<'a> Neg for &'a UnitVec2D {
+    type Output = UnitVec2D;
+
+    #[inline]
+    fn neg(self) -> UnitVec2D {
+        UnitVec2D(-&self.0)
+    }
+}
+
+impl Neg for UnitVec2D {
+    type Output = UnitVec2D;
+
+    #[inline]
+    fn neg(self) -> UnitVec2D {
+        -&self
+    }
+}

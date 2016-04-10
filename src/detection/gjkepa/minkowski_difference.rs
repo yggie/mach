@@ -44,4 +44,8 @@ impl<'a> MinkowskiDifference<'a> {
 
         return support_index_pairs;
     }
+
+    pub fn reversed(self) -> MinkowskiDifference<'a> {
+        MinkowskiDifference(self.1, self.0)
+    }
 }

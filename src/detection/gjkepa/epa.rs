@@ -4,7 +4,7 @@ mod tests;
 
 use maths::Vect;
 use utils::compute_surfaces_for_convex_hull;
-use geometry::{Plane, PlaneLocation};
+use geometry::Plane;
 use algorithms::IterativeAlgorithm;
 
 use super::simplex::Simplex;
@@ -55,7 +55,7 @@ impl<'a> IterativeAlgorithm for EPA<'a> {
                 if any_points_already_tested || {
                     let point = self.polytope.diff.vertex(&new_index_pairs[0]);
 
-                    plane.location_of(&point) != PlaneLocation::Above
+                    !plane.location_of(&point).is_above_plane()
                 } {
                     return None;
                 }

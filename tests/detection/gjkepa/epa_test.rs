@@ -4,7 +4,6 @@ use Scalar;
 use maths::Vect;
 use shapes::Cuboid;
 use entities::RigidBody;
-use geometry::PlaneLocation;
 use detection::gjkepa::{EPA, GJK};
 use algorithms::{IterativeAlgorithmExecutor, PanicOnIteration};
 
@@ -53,7 +52,7 @@ fn it_should_not_generate_incomplete_shells() {
             }) / polytope.support_points.len() as Scalar;
 
         for &(ref surface, _vertex_indices) in polytope.surfaces.iter() {
-            if surface.location_of(&mid_point) != PlaneLocation::Below {
+            if !surface.location_of(&mid_point).is_below_plane() {
                 panic!(format!("The Polytope has a surface ({:?}) facing the wrong way!", surface.normal()));
             }
         }

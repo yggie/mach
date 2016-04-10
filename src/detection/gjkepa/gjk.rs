@@ -3,7 +3,6 @@
 mod tests;
 
 use {Scalar, TOLERANCE};
-use geometry::PlaneLocation;
 use algorithms::IterativeAlgorithm;
 
 use super::simplex::Simplex;
@@ -75,7 +74,7 @@ impl<'a> IterativeAlgorithm for GJK<'a> {
         let new_support_point_option = new_support_points.into_iter()
             .find(|candidate_point| {
                 !self.history.iter().any(|pt| pt == candidate_point) &&
-                    plane.location_of(&self.simplex.diff.vertex(&candidate_point)) == PlaneLocation::Above
+                    plane.location_of(&self.simplex.diff.vertex(&candidate_point)).is_above_plane()
             });
 
         let new_support_point = match new_support_point_option {

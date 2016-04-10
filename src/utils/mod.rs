@@ -2,6 +2,8 @@
 
 #[macro_use]
 mod chain_method;
+#[macro_use]
+mod implement_op_overload_variants;
 
 mod energy;
 mod surface;

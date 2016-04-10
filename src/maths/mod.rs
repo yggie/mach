@@ -18,7 +18,10 @@ pub mod approx_eq;
 pub mod lcp_solver;
 /// TODO temporary workaround for the issue of rexporting traits, see https://github.com/rust-lang/rust/issues/16264
 pub mod integrator;
+/// TODO temporary workaround for the issue of rexporting traits, see https://github.com/rust-lang/rust/issues/16264
+pub mod dot_product;
 
+pub mod _2d;
 pub mod integrators;
 pub mod lcp_solvers;
 
@@ -31,5 +34,6 @@ pub use self::approx_eq::ApproxEq;
 pub use self::transform::Transform;
 pub use self::lcp_solver::LCPSolver;
 pub use self::integrator::Integrator;
+pub use self::dot_product::DotProduct;
 pub use self::integratable::IntegratableMut;
 pub use self::sparse_matrix::SparseMatrix;

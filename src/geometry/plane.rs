@@ -1,24 +1,18 @@
 use {Scalar, TOLERANCE};
 use maths::Vect;
-
-#[derive(Clone, Debug, Eq, PartialEq)]
-pub enum PlaneLocation {
-    Above,
-    Plane,
-    Below,
-}
+use geometry::PlaneLocation;
 
 #[derive(Clone)]
 pub struct Plane {
     normal: Vect,
-    point_on_plane: Vect,
+    reference_point: Vect,
 }
 
 impl Plane {
     pub fn from_point(point: &Vect, normal: &Vect) -> Plane {
         Plane {
             normal: normal.normalize(),
-            point_on_plane: point.clone(),
+            reference_point: point.clone(),
         }
     }
 
@@ -36,34 +30,43 @@ impl Plane {
 
         return Plane {
             normal: normal,
-            point_on_plane: vertices.0,
+            reference_point: vertices.0,
         };
     }
 
     #[inline]
+    pub fn reversed(self) -> Plane {
+        Plane {
+            normal: -self.normal,
+            .. self
+        }
+    }
+
+    #[inline]
     pub fn offset_for_origin(&self) -> Scalar {
-        -Vect::dot(&self.normal, self.point_on_plane)
+        -Vect::dot(&self.normal, self.reference_point)
     }
 
     #[inline]
     pub fn offset_for(&self, point: &Vect) -> Scalar {
-        Vect::dot(&self.normal, point - self.point_on_plane)
+        Vect::dot(&self.normal, point - self.reference_point)
     }
 
     pub fn location_of(&self, point: &Vect) -> PlaneLocation {
-        let offset = self.offset_for(point);
-
-        if offset > TOLERANCE {
-            PlaneLocation::Above
-        } else if offset < TOLERANCE {
-            PlaneLocation::Below
-        } else {
-            PlaneLocation::Plane
+        match self.offset_for(point) {
+            x if x > TOLERANCE => PlaneLocation::Above(x),
+            x if -x > TOLERANCE => PlaneLocation::Below(x),
+            x => PlaneLocation::OnPlane(x),
         }
     }
 
     #[inline]
     pub fn normal(&self) -> &Vect {
         &self.normal
+    }
+
+    #[inline]
+    pub fn reference(&self) -> &Vect {
+        &self.reference_point
     }
 }
