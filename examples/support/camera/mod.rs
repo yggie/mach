@@ -24,9 +24,9 @@ impl Camera {
         Camera {
             lens: CameraLens::new(width, height),
             view: CameraView::new(CameraViewParams {
-                up: na::Vec3::new(0.0, 0.0, 1.0),
-                eye: na::Vec3::new(0.0, 3.0, 0.0),
-                center: na::Vec3::new(0.0, 0.0, 0.0),
+                up: na::Vector3::new(0.0, 0.0, 1.0),
+                eye: na::Vector3::new(0.0, 3.0, 0.0),
+                center: na::Vector3::new(0.0, 0.0, 0.0),
             }),
             last_drag_point: None,
             did_receive_drag_event: false,
@@ -83,15 +83,15 @@ impl Camera {
 impl WindowEventHandler for Camera {
     fn handle_event(&mut self, event: &glutin::Event) -> EventResponse {
         match event {
-            &glutin::Event::MouseMoved((x, y)) => {
+            &glutin::Event::MouseMoved(x, y) => {
                 self.on_mouse_move(x as f32, y as f32);
             },
 
-            &glutin::Event::MouseWheel(glutin::MouseScrollDelta::LineDelta(x, y)) => {
+            &glutin::Event::MouseWheel(glutin::MouseScrollDelta::LineDelta(x, y), _touch_phase) => {
                 self.on_mouse_wheel_line(x, y);
             },
 
-            &glutin::Event::MouseWheel(glutin::MouseScrollDelta::PixelDelta(x, y)) => {
+            &glutin::Event::MouseWheel(glutin::MouseScrollDelta::PixelDelta(x, y), _touch_phase) => {
                 self.on_mouse_wheel_pixel(x, y);
             },
 

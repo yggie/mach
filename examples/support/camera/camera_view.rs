@@ -6,16 +6,16 @@ use std::f32::consts::PI;
 use self::na::{Dot, Norm};
 
 pub struct CameraViewParams {
-    pub up: na::Vec3<f32>,
-    pub eye: na::Vec3<f32>,
-    pub center: na::Vec3<f32>,
+    pub up: na::Vector3<f32>,
+    pub eye: na::Vector3<f32>,
+    pub center: na::Vector3<f32>,
 }
 
 pub struct CameraView {
-    polar_axis: na::Vec3<f32>,
+    polar_axis: na::Vector3<f32>,
     zoom_level: f32,
-    zenith_axis: na::Vec3<f32>,
-    anchor_point: na::Vec3<f32>,
+    zenith_axis: na::Vector3<f32>,
+    anchor_point: na::Vector3<f32>,
     polar_radians: f32,
     azimuth_radians: f32,
 }
@@ -32,7 +32,7 @@ impl CameraView {
             polar_axis: polar_axis,
             zoom_level: center_to_eye.norm(),
             zenith_axis: zenith_axis,
-            anchor_point: na::Vec3::new(0.0, 0.0, 0.0),
+            anchor_point: na::Vector3::new(0.0, 0.0, 0.0),
             polar_radians: CameraView::constrain_polar_radians(polar_radians),
             azimuth_radians: 0.0,
         };
@@ -45,7 +45,7 @@ impl CameraView {
         let camera_position = self.anchor_point + z_axis * self.zoom_level;
 
         unsafe {
-            mem::transmute(na::Mat4::new(
+            mem::transmute(na::Matrix4::new(
                 x_axis.x, -x_axis.y, x_axis.z, -x_axis.dot(&camera_position),
                 y_axis.x, -y_axis.y, y_axis.z, -y_axis.dot(&camera_position),
                 z_axis.x, -z_axis.y, z_axis.z, -z_axis.dot(&camera_position),
@@ -69,9 +69,9 @@ impl CameraView {
         // no-op
     }
 
-    fn camera_direction(&self) -> na::Vec3<f32> {
-        let polar_rotation = na::Rot3::new(self.polar_axis * (0.5 * PI - self.polar_radians));
-        let azimuth_rotation = na::Rot3::new(self.zenith_axis * self.azimuth_radians);
+    fn camera_direction(&self) -> na::Vector3<f32> {
+        let polar_rotation = na::Rotation3::new(self.polar_axis * (0.5 * PI - self.polar_radians));
+        let azimuth_rotation = na::Rotation3::new(self.zenith_axis * self.azimuth_radians);
 
         return azimuth_rotation * polar_rotation * self.zenith_axis;
     }
