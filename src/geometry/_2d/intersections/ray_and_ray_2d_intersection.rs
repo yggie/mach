@@ -8,7 +8,7 @@ impl Intersection<Ray2D> for Ray2D {
     fn intersection(&self, other_ray: &Ray2D) -> Option<Self::Output> {
         let rays = (self, other_ray);
         let sources = (rays.0.source(), rays.1.source());
-        let directions = (rays.0.direction().as_vec(), rays.1.direction().as_vec());
+        let directions = (rays.0.direction().vec().clone(), rays.1.direction().vec().clone());
 
         let denominator = directions.0.x * directions.1.y - directions.0.y * directions.1.x;
 

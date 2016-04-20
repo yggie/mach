@@ -121,15 +121,6 @@ impl Violations {
     }
 }
 
-impl quickcheck::Arbitrary for Vec2D {
-    fn arbitrary<G: quickcheck::Gen>(random: &mut G) -> Self {
-        Vec2D::new(
-            quickcheck::Arbitrary::arbitrary(random),
-            quickcheck::Arbitrary::arbitrary(random),
-        )
-    }
-}
-
 #[derive(Clone, Debug)]
 pub struct PointCloud2D(Vec<Vec2D>);
 

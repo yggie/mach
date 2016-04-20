@@ -1,7 +1,15 @@
+#[cfg(test)]
+#[path="../../../tests/maths/_2d/vec_2d_test.rs"]
+mod tests;
+
+#[cfg(test)]
+#[path="../../../tests/support/maths/_2d/arbitrary_vec_2d.rs"]
+mod arbitrary;
+
 use std::ops::{Add, Mul, Neg, Sub};
 
-use Scalar;
-use maths::DotProduct;
+use {Scalar, TOLERANCE};
+use maths::{ApproxEq, DotProduct};
 use maths::_2d::UnitVec2D;
 
 #[derive(Clone, Debug, PartialEq)]
@@ -24,12 +32,6 @@ impl Vec2D {
 
     pub fn rotate_90(&self) -> Vec2D {
         Vec2D::new(-self.y, self.x)
-    }
-
-    #[inline]
-    pub fn set_to_vec2(&mut self, other: &Vec2D) {
-        self.x = other.x;
-        self.y = other.y;
     }
 
     #[inline]
@@ -110,5 +112,11 @@ impl DotProduct<Vec2D> for Vec2D {
     #[inline]
     fn dot(&self, other: &Vec2D) -> Scalar {
         self.x * other.x + self.y * other.y
+    }
+}
+
+impl<'a> ApproxEq for &'a Vec2D {
+    fn approx_eq(self, other: Self) -> bool {
+        (self.squared_length() - other.squared_length()).abs() < TOLERANCE
     }
 }

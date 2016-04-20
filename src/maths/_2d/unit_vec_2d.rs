@@ -1,3 +1,11 @@
+#[cfg(test)]
+#[path="../../../tests/maths/_2d/unit_vec_2d_test.rs"]
+mod tests;
+
+#[cfg(test)]
+#[path="../../../tests/support/maths/_2d/arbitrary_unit_vec_2d.rs"]
+mod arbitrary;
+
 use std::ops::{Mul, Neg};
 
 use Scalar;
@@ -13,6 +21,11 @@ impl UnitVec2D {
         UnitVec2D(Vec2D::new(vec.x / length, vec.y / length))
     }
 
+    #[inline(always)]
+    pub fn vec(&self) -> &Vec2D {
+        &self.0
+    }
+
     pub fn from_radians(radians: Scalar) -> UnitVec2D {
         UnitVec2D(Vec2D::new(radians.cos(), radians.sin()))
     }
@@ -23,10 +36,6 @@ impl UnitVec2D {
 
     pub fn reversed(self) -> UnitVec2D {
         UnitVec2D(-self.0)
-    }
-
-    pub fn as_vec(&self) -> Vec2D {
-        self.0.clone()
     }
 }
 
