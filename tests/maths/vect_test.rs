@@ -1,5 +1,5 @@
-use {Scalar, PI};
-use maths::{Vect, Quat};
+use Scalar;
+use maths::Vect;
 
 #[test]
 fn it_can_be_instantiated_with_scalars() {
@@ -153,16 +153,6 @@ fn computing_distance_between_vectors() {
     let d = a.distance_to(b);
 
     assert_approx_eq!(d, 5.0);
-}
-
-#[test]
-fn rotating_by_a_quaternion() {
-    let v = Vect::new(1.0, 0.0, 0.0);
-    let q = Quat::from_axis_angle(Vect::new(1.0, 0.5, 0.5), PI/3.0);
-
-    let res = v.rotate_by_quaternion(q);
-
-    assert_approx_eq!(res, Vect::new(0.8333333333333335, 0.5202200572599405, -0.18688672392660716));
 }
 
 #[test]

@@ -7,10 +7,10 @@ use std::mem;
 use std::ops::{Add, Deref, DerefMut, Div, Mul, Neg, Sub};
 
 use {Scalar, TOLERANCE};
-use maths::{ApproxEq, Vect};
+use maths::{ApproxEq, UnitQuat, Vect};
 
 /// A representation of a quaternion.
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Quat {
     /// The real component of the `Quat`.
     pub r: Scalar,
@@ -47,39 +47,29 @@ impl Quat {
         Quat::new(0.0, vector.x, vector.y, vector.z)
     }
 
-    /// Creates a new `Quat` representing a rotation about an axis.
-    pub fn from_axis_angle(axis: Vect, angle_in_radians: Scalar) -> Quat {
-        let length = axis.length();
-        let half_radians = angle_in_radians / 2.0;
-        let sl = half_radians.sin() / length;
-        let c = half_radians.cos();
-
-        return Quat::new(c, sl*axis.x, sl*axis.y, sl*axis.z);
-    }
-
     /// Computes the squared length of the `Quat`.
     #[inline(always)]
-    pub fn length_sq(&self) -> Scalar {
+    pub fn squared_length(&self) -> Scalar {
         self.r*self.r + self.i*self.i + self.j*self.j + self.k*self.k
     }
 
     /// Computes the length of the `Quat`.
     #[inline]
     pub fn length(&self) -> Scalar {
-        self.length_sq().sqrt()
+        self.squared_length().sqrt()
     }
 
     /// Computes a unit `Quat` with the same direction as the current
     /// `Quat`.
     #[inline]
-    pub fn normalize(&self) -> Quat {
-        *self / self.length()
+    pub fn normalize(&self) -> UnitQuat {
+        UnitQuat::from_quat(self.clone())
     }
 
     /// Computes the inverse of the `Quat`.
     #[inline]
     pub fn inverse(&self) -> Quat {
-        let denom = self.length_sq();
+        let denom = self.squared_length();
         Quat::new(self.r/denom, -self.i/denom, -self.j/denom, -self.k/denom)
     }
 
@@ -158,16 +148,6 @@ impl fmt::Display for Quat {
 
 /// Guarantees that equality satisfies the equivalence relations.
 impl Eq for Quat { }
-
-/// Implements the equality operators: `==` and `!=`.
-impl PartialEq for Quat {
-    /// Implements the equality operator for a `Quat`. Two `Quat`s
-    /// are equal if the Euclidean distance between the two is below a
-    /// threshold.
-    fn eq(&self, other: &Quat) -> bool {
-        (*self - *other).length_sq() < TOLERANCE*TOLERANCE
-    }
-}
 
 /// Implements the unary negation operator.
 impl Neg for Quat {
@@ -349,7 +329,7 @@ impl Div<Scalar> for Quat {
 /// `Quat`s to perform the comparison.
 impl<'a> ApproxEq<&'a Quat> for &'a Quat {
     fn approx_eq(self, other: &'a Quat) -> bool {
-        (self - other).length_sq() < TOLERANCE*TOLERANCE
+        (self - other).squared_length() < TOLERANCE*TOLERANCE
     }
 }
 

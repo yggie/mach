@@ -1,13 +1,17 @@
 #[cfg(test)]
 #[path="../../tests/maths/vect_test.rs"]
-mod vect_test;
+mod tests;
+
+#[cfg(test)]
+#[path="../../tests/support/maths/arbitrary_vect.rs"]
+mod arbitrary;
 
 use std::fmt;
 use std::mem;
 use std::ops::{Add, Deref, DerefMut, Div, Mul, Neg, Sub};
 
 use {Scalar, TOLERANCE};
-use maths::{ApproxEq, Matrix, Quat};
+use maths::{ApproxEq, Matrix};
 
 /// A representation of a 3-dimensional column vector.
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -105,13 +109,6 @@ impl Vect {
     /// Computes the distance to the `Vect` specified.
     pub fn distance_to(&self, other: Vect) -> Scalar {
         (*self - other).length()
-    }
-
-    /// Computes the `Vect` that is the result of being rotated by the input
-    /// `Quat`.
-    pub fn rotate_by_quaternion(&self, q: Quat) -> Vect {
-        let result = q * Quat::new(0.0, self.x, self.y, self.z) * q.inverse();
-        return Vect::new(result.i, result.j, result.k);
     }
 }
 

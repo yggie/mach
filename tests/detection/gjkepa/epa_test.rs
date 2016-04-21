@@ -1,7 +1,7 @@
 extern crate quickcheck;
 
 use Scalar;
-use maths::Vect;
+use maths::{UnitQuat, Vect};
 use shapes::Cuboid;
 use entities::RigidBody;
 use detection::gjkepa::{EPA, GJK};
@@ -10,8 +10,6 @@ use algorithms::{IterativeAlgorithmExecutor, PanicOnIteration};
 use super::super::simplex::Simplex;
 use super::super::simplex_cache::SimplexCache;
 use super::super::minkowski_difference::MinkowskiDifference;
-
-use support::inputs;
 
 fn find_origin<'a>(cache: &'a mut SimplexCache, diff: &'a MinkowskiDifference) -> Option<Simplex<'a>> {
     let algorithm = PanicOnIteration::new(
@@ -25,7 +23,7 @@ fn find_origin<'a>(cache: &'a mut SimplexCache, diff: &'a MinkowskiDifference) -
 
 #[test]
 fn it_should_not_generate_incomplete_shells() {
-    fn property(rot: inputs::UnitQuat) {
+    fn property(rot: UnitQuat) {
         let control = RigidBody::default()
             .with_shape(Cuboid::cube(1.0));
         let rigid_body = RigidBody::default()
@@ -58,5 +56,5 @@ fn it_should_not_generate_incomplete_shells() {
         }
     }
 
-    quickcheck::quickcheck(property as fn(inputs::UnitQuat));
+    quickcheck::quickcheck(property as fn(UnitQuat));
 }

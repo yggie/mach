@@ -99,7 +99,7 @@ impl ExamplesRenderer {
     }
 
     fn render_and_save<S: glium::Surface>(&mut self, surface: &mut S, instance: Instance, transform: &mach::maths::Transform, env: &SceneEnv) {
-        let quat = transform.rotation().normalize();
+        let quat = transform.rotation().to_quat();
         let r11 = 1.0 - 2.0*quat.j*quat.j - 2.0*quat.k*quat.k;
         let r12 = 2.0*quat.i*quat.j - 2.0*quat.r*quat.k;
         let r13 = 2.0*quat.i*quat.k + 2.0*quat.r*quat.j;

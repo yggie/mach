@@ -5,7 +5,7 @@ macro_rules! assert_integrator_behaviour(
         mod integrator_behaviour {
             use super::test_subject;
 
-            use maths::{IntegratableMut, Integrator, Motion, Quat, Transform, Vect};
+            use maths::{IntegratableMut, Integrator, Motion, Transform, UnitQuat, Vect};
 
             fn validate<I: Integrator>(input: I) -> I {
                 input
@@ -24,7 +24,7 @@ macro_rules! assert_integrator_behaviour(
                 }
 
                 assert_approx_eq!(transform.translation, Vect::zero());
-                assert_approx_eq!(transform.rotation, Quat::identity());
+                assert_approx_eq!(transform.rotation, UnitQuat::identity());
                 assert_approx_eq!(motion.velocity, Vect::zero());
                 assert_approx_eq!(motion.angular_velocity, Vect::zero());
             }

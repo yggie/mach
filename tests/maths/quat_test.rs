@@ -1,5 +1,5 @@
 use Scalar;
-use maths::{Quat, Vect};
+use maths::{Quat, UnitQuat, Vect};
 
 #[test]
 fn it_can_be_instantiated_with_scalars() {
@@ -23,22 +23,10 @@ fn it_can_be_instantiated_from_a_vector() {
 }
 
 #[test]
-fn it_can_be_instantiated_using_the_axis_angle_formulation() {
-    let radians = 2.5;
-    let hr = radians / 2.0;
-
-    let q = Quat::from_axis_angle(Vect::new(2.0, 3.0, 6.0), radians);
-
-    let chr = hr.cos();
-    let shr = hr.sin();
-    assert_approx_eq!(q, Quat::new(chr, 2.0*shr/7.0, 3.0*shr/7.0, 6.0*shr/7.0));
-}
-
-#[test]
 fn it_can_compute_the_squared_length() {
     let q = Quat::new(1.0, 2.0, 3.0, -4.0);
 
-    assert_approx_eq!(q.length_sq(), 30.0);
+    assert_approx_eq!(q.squared_length(), 30.0);
 }
 
 #[test]
@@ -52,7 +40,7 @@ fn it_can_compute_the_length() {
 fn it_can_be_normalized() {
     let q = Quat::new(12.0, 0.0, -9.0, 20.0);
 
-    assert_approx_eq!(q.normalize(), Quat::new(0.48, 0.0, -0.36, 0.80));
+    assert_approx_eq!(q.normalize(), UnitQuat::from_quat(Quat::new(0.48, 0.0, -0.36, 0.80)));
 }
 
 #[test]

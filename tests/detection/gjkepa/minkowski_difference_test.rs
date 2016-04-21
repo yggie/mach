@@ -3,14 +3,14 @@ extern crate quickcheck;
 use super::MinkowskiDifference;
 
 use Scalar;
-use maths::ApproxEq;
+use maths::{ApproxEq, UnitQuat};
 use shapes::Cuboid;
 use support::inputs;
 use entities::RigidBody;
 
 #[test]
 fn it_always_returns_at_least_one_support_point_at_an_offset_from_the_origin() {
-    fn property(rotation: inputs::UnitQuat, direction: inputs::UnitVect) {
+    fn property(rotation: UnitQuat, direction: inputs::UnitVect) {
         let control = RigidBody::default()
             .with_shape(Cuboid::cube(1.0));
         let rigid_body = RigidBody::default()
@@ -34,5 +34,5 @@ fn it_always_returns_at_least_one_support_point_at_an_offset_from_the_origin() {
         }
     }
 
-    quickcheck::quickcheck(property as fn(inputs::UnitQuat, inputs::UnitVect));
+    quickcheck::quickcheck(property as fn(UnitQuat, inputs::UnitVect));
 }

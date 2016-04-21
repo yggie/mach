@@ -1,4 +1,4 @@
-use maths::{Motion, Quat, Transform, Vect};
+use maths::{Motion, UnitQuat, Transform, Vect};
 
 pub struct IntegratableMut<'a> {
     transform: &'a mut Transform,
@@ -31,11 +31,11 @@ impl<'a> IntegratableMut<'a> {
         &mut self.transform_mut().translation
     }
 
-    pub fn rotation(&self) -> &Quat {
-        &self.transform().rotation
+    pub fn rotation(&self) -> UnitQuat {
+        self.transform().rotation
     }
 
-    pub fn rotation_mut(&mut self) -> &mut Quat {
+    pub fn rotation_mut(&mut self) -> &mut UnitQuat {
         &mut self.transform_mut().rotation
     }
 

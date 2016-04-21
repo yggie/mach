@@ -2,6 +2,7 @@ extern crate quickcheck;
 
 use std::collections::HashSet;
 
+use maths::UnitQuat;
 use shapes::Cuboid;
 use entities::RigidBody;
 use geometry::PlaneLocation;
@@ -11,8 +12,6 @@ use detection::gjkepa::GJK;
 use super::super::simplex::Simplex;
 use super::super::simplex_cache::SimplexCache;
 use super::super::minkowski_difference::MinkowskiDifference;
-
-use support::inputs;
 
 fn find_origin<'a>(cache: &'a mut SimplexCache, diff: &'a MinkowskiDifference) -> Option<Simplex<'a>> {
     let algorithm = PanicOnIteration::new(
@@ -62,7 +61,7 @@ fn assert_valid_simplex(cache: &SimplexCache, diff: &MinkowskiDifference) {
 
 #[test]
 fn it_can_handle_arbitrary_rotations_for_non_intersecting_bodies() {
-    fn property(rot: inputs::UnitQuat) {
+    fn property(rot: UnitQuat) {
         let control = RigidBody::default().with_shape(Cuboid::cube(1.0));
         let rigid_body = RigidBody::default()
             .with_shape(Cuboid::cube(1.0))
@@ -81,12 +80,12 @@ fn it_can_handle_arbitrary_rotations_for_non_intersecting_bodies() {
         assert_valid_simplex(&simplex_cache, &diff);
     }
 
-    quickcheck::quickcheck(property as fn(inputs::UnitQuat));
+    quickcheck::quickcheck(property as fn(UnitQuat));
 }
 
 #[test]
 fn it_can_handle_arbitrary_rotations_for_intersecting_bodies() {
-    fn property(rot: inputs::UnitQuat) {
+    fn property(rot: UnitQuat) {
         let control = RigidBody::default().with_shape(Cuboid::cube(1.0));
         let rigid_body = RigidBody::default()
             .with_shape(Cuboid::cube(1.0))
@@ -104,5 +103,5 @@ fn it_can_handle_arbitrary_rotations_for_intersecting_bodies() {
         assert_valid_simplex(&simplex_cache, &diff);
     }
 
-    quickcheck::quickcheck(property as fn(inputs::UnitQuat));
+    quickcheck::quickcheck(property as fn(UnitQuat));
 }

@@ -1,5 +1,5 @@
 use ID;
-use maths::{Quat, Transform, Vect};
+use maths::{Transform, UnitQuat, Vect};
 use shapes::Shape;
 use entities::{BodyType, BodyTypeMut, Form};
 
@@ -31,11 +31,11 @@ pub trait Body {
         self.form_mut().translation_mut()
     }
 
-    fn rotation(&self) -> &Quat {
+    fn rotation(&self) -> UnitQuat {
         self.form().rotation()
     }
 
-    fn rotation_mut(&mut self) -> &mut Quat {
+    fn rotation_mut(&mut self) -> &mut UnitQuat {
         self.form_mut().rotation_mut()
     }
 

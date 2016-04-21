@@ -1,7 +1,5 @@
-use std::fmt;
-
 use {ID, Scalar};
-use maths::{Transform, Quat, Vect};
+use maths::{Transform, UnitQuat, Vect};
 use shapes::Shape;
 use entities::{Body, BodyType, BodyTypeMut, Form};
 
@@ -85,16 +83,5 @@ impl Body for StaticBody {
 
     fn form_mut(&mut self) -> &mut Form {
         StaticBody::form_mut(self)
-    }
-}
-
-impl fmt::Display for StaticBody {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f,
-            "StaticBody[{}]: Pos={}, Rot={}",
-            self.id(),
-            self.translation(),
-            self.rotation(),
-        )
     }
 }

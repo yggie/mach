@@ -1,18 +1,18 @@
 use PI;
-use maths::{Transform, Quat, Vect};
+use maths::{Transform, UnitQuat, Vect};
 
 #[test]
 fn it_can_be_instantiated_as_the_identity_transform() {
     let transform = Transform::identity();
 
     assert_approx_eq!(transform.translation(), Vect::zero());
-    assert_approx_eq!(transform.rotation(), Quat::identity());
+    assert_approx_eq!(transform.rotation(), UnitQuat::identity());
 }
 
 #[test]
 fn it_can_be_instantiated_with_translation_and_rotation() {
     let translation = Vect::new(1.0, 2.0, 3.0);
-    let rotation = Quat::from_axis_angle(Vect::new(1.0, 0.3, 0.5), 0.3 * PI);
+    let rotation = UnitQuat::from_axis_angle(Vect::new(1.0, 0.3, 0.5), 0.3 * PI);
 
     let transform = Transform::new(translation, rotation);
 
@@ -23,7 +23,7 @@ fn it_can_be_instantiated_with_translation_and_rotation() {
 #[test]
 fn it_can_be_apply_itself_to_a_point() {
     let translation = Vect::new(1.0, 2.0, 3.0);
-    let rotation = Quat::from_axis_angle(Vect::new(1.0, 0.0, 0.0), 0.5 * PI);
+    let rotation = UnitQuat::from_axis_angle(Vect::new(1.0, 0.0, 0.0), 0.5 * PI);
     let transform = Transform::new(translation, rotation);
     let point = Vect::new(0.0, 1.0, 0.0);
 
@@ -33,7 +33,7 @@ fn it_can_be_apply_itself_to_a_point() {
 #[test]
 fn it_can_be_apply_itself_to_a_direction() {
     let translation = Vect::new(1.0, 2.0, 3.0);
-    let rotation = Quat::from_axis_angle(Vect::new(1.0, 0.0, 0.0), 0.5 * PI);
+    let rotation = UnitQuat::from_axis_angle(Vect::new(1.0, 0.0, 0.0), 0.5 * PI);
     let transform = Transform::new(translation, rotation);
     let direction = Vect::new(0.0, 1.0, 0.0);
 
@@ -43,7 +43,7 @@ fn it_can_be_apply_itself_to_a_direction() {
 #[test]
 fn it_can_be_apply_its_inverse_to_a_direction() {
     let translation = Vect::new(1.0, 2.0, 3.0);
-    let rotation = Quat::from_axis_angle(Vect::new(1.0, 0.0, 0.0), 0.5 * PI);
+    let rotation = UnitQuat::from_axis_angle(Vect::new(1.0, 0.0, 0.0), 0.5 * PI);
     let transform = Transform::new(translation, rotation);
     let direction = Vect::new(0.0, 1.0, 0.0);
 

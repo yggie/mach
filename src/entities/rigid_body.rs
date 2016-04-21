@@ -1,7 +1,5 @@
-use std::fmt;
-
 use {ID, Scalar};
-use maths::{IntegratableMut, Matrix, Motion, Transform, Quat, Vect};
+use maths::{IntegratableMut, Matrix, Motion, Transform, UnitQuat, Vect};
 use shapes::Shape;
 use entities::{Body, BodyType, BodyTypeMut, Form};
 
@@ -125,18 +123,5 @@ impl Body for RigidBody {
 
     fn form_mut(&mut self) -> &mut Form {
         RigidBody::form_mut(self)
-    }
-}
-
-impl fmt::Display for RigidBody {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f,
-            "RigidBody[{}]: Pos={}, Rot={}, Vel={}, AngVel={}",
-            self.id(),
-            self.translation(),
-            self.rotation(),
-            self.velocity(),
-            self.angular_velocity(),
-        )
     }
 }

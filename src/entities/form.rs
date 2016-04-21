@@ -1,5 +1,5 @@
 use Scalar;
-use maths::{Transform, Quat, Vect};
+use maths::{Transform, UnitQuat, Vect};
 use shapes::{Cuboid, Shape};
 
 #[derive(Clone, Debug)]
@@ -100,12 +100,12 @@ macro_rules! include_form_helpers {
         }
 
         #[inline]
-        pub fn rotation(&self) -> &Quat {
+        pub fn rotation(&self) -> UnitQuat {
             self.$field_name.rotation()
         }
 
         #[inline]
-        pub fn rotation_mut(&mut self) -> &mut Quat {
+        pub fn rotation_mut(&mut self) -> &mut UnitQuat {
             self.$field_name.rotation_mut()
         }
 
@@ -139,7 +139,7 @@ macro_rules! include_form_helpers {
         chain_method!($S, $s, $field_name, with_translation_vect(self, vect: Vect));
         chain_method!($S, $s, $field_name, with_zero_translation(self));
         chain_method!($S, $s, $field_name, with_axis_angle(self, axis: Vect, angle: Scalar));
-        chain_method!($S, $s, $field_name, with_rotation(self, rotation: Quat));
+        chain_method!($S, $s, $field_name, with_rotation(self, rotation: UnitQuat));
         chain_method!($S, $s, $field_name, with_zero_rotation(self));
     };
 

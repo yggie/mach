@@ -8,7 +8,7 @@ macro_rules! assert_detection_behaviour {
             use super::test_subject;
 
             use {PI, Scalar};
-            use maths::Vect;
+            use maths::{UnitQuat, Vect};
             use shapes::Cuboid;
             use support::inputs;
             use entities::{Body, BodyHandle, RigidBody};
@@ -20,7 +20,7 @@ macro_rules! assert_detection_behaviour {
 
             #[test]
             fn it_does_not_return_false_positives() {
-                fn property(offset: inputs::UnitVect, rot: inputs::UnitQuat) {
+                fn property(offset: inputs::UnitVect, rot: UnitQuat) {
                     let mut detection = validate(test_subject());
                     let cube_size = 1.0;
                     let margin_ratio = 0.05;
@@ -36,12 +36,12 @@ macro_rules! assert_detection_behaviour {
                     assert!(result.is_none());
                 }
 
-                quickcheck::quickcheck(property as fn(inputs::UnitVect, inputs::UnitQuat));
+                quickcheck::quickcheck(property as fn(inputs::UnitVect, UnitQuat));
             }
 
             #[test]
             fn it_does_not_return_false_negatives() {
-                fn property(offset: inputs::UnitVect, rot: inputs::UnitQuat) {
+                fn property(offset: inputs::UnitVect, rot: UnitQuat) {
                     let mut detection = validate(test_subject());
                     let control = RigidBody::default()
                         .with_shape(Cuboid::cube(1.0));
@@ -55,7 +55,7 @@ macro_rules! assert_detection_behaviour {
                     assert!(result.is_some());
                 }
 
-                quickcheck::quickcheck(property as fn(inputs::UnitVect, inputs::UnitQuat));
+                quickcheck::quickcheck(property as fn(inputs::UnitVect, UnitQuat));
             }
 
             // #[test]
@@ -175,7 +175,7 @@ macro_rules! assert_detection_behaviour {
             // consistent with the start-end principle
             #[test]
             fn it_always_has_the_normal_pointing_towards_the_first_body() {
-                fn property(offset: inputs::UnitVect, rot: inputs::UnitQuat) {
+                fn property(offset: inputs::UnitVect, rot: UnitQuat) {
                     let mut detection = validate(test_subject());
                     let control = RigidBody::default()
                         .with_shape(Cuboid::cube(1.0));
@@ -200,7 +200,7 @@ macro_rules! assert_detection_behaviour {
                     assert!(projection > 0.0, format!("Expected the projected relative distance in the direction of the normal to always be positive, but got {}", projection));
                 }
 
-                quickcheck::quickcheck(property as fn(inputs::UnitVect, inputs::UnitQuat));
+                quickcheck::quickcheck(property as fn(inputs::UnitVect, UnitQuat));
             }
 
             fn handle<B: Body + 'static>(body: B) -> BodyHandle {
