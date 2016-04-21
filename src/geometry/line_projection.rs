@@ -1,3 +1,7 @@
+#[cfg(test)]
+#[path="../../tests/geometry/_2d/line_2d_test.rs"]
+mod tests;
+
 use Scalar;
 
 #[derive(Clone, Debug, PartialEq)]

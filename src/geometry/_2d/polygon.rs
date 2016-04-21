@@ -12,7 +12,7 @@ use geometry::_2d::{Edge2D, Plane2D};
 #[derive(Clone, Debug)]
 pub struct Polygon(Vec<Vec2D>);
 
-pub fn index_and_projection_of_furthest_along(points: &Vec<Vec2D>, normal: &UnitVec2D) -> (usize, Scalar) {
+fn index_and_projection_of_furthest_along(points: &Vec<Vec2D>, normal: &UnitVec2D) -> (usize, Scalar) {
     let initial_projection = normal.dot(&points[0]);
 
     return points.iter()
@@ -27,7 +27,7 @@ pub fn index_and_projection_of_furthest_along(points: &Vec<Vec2D>, normal: &Unit
 
 }
 
-pub fn index_of_furthest_along(points: &Vec<Vec2D>, normal: &UnitVec2D) -> usize {
+fn index_of_furthest_along(points: &Vec<Vec2D>, normal: &UnitVec2D) -> usize {
     let (index, _projection) = index_and_projection_of_furthest_along(points, normal);
 
     return index;
@@ -114,15 +114,15 @@ impl Polygon {
         Box::new(iterator)
     }
 
+    pub fn separating_planes_iter<'a>(&'a self) -> Box<Iterator<Item=Plane2D> + 'a> {
+        Box::new(self.edges_iter().map(|edge| edge.counter_clockwise_plane()))
+    }
+
     pub fn separating_edges_and_planes_iter<'a>(&'a self) -> Box<Iterator<Item=(Edge2D<'a>, Plane2D)> + 'a> {
         Box::new(self.edges_iter().map(|edge| {
             let plane = edge.counter_clockwise_plane();
 
             (edge, plane)
         }))
-    }
-
-    pub fn separating_planes_iter<'a>(&'a self) -> Box<Iterator<Item=Plane2D> + 'a> {
-        Box::new(self.edges_iter().map(|edge| edge.counter_clockwise_plane()))
     }
 }

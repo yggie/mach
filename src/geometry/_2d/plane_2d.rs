@@ -1,3 +1,7 @@
+#[cfg(test)]
+#[path="../../../tests/geometry/_2d/plane_2d_test.rs"]
+mod tests;
+
 use {Scalar, TOLERANCE};
 use maths::DotProduct;
 use maths::_2d::{UnitVec2D, Vec2D};
@@ -17,14 +21,7 @@ impl Plane2D {
         }
     }
 
-    pub fn from_points(a: &Vec2D, b: &Vec2D) -> Plane2D {
-        Plane2D {
-            normal: (b - a).rotate_90().normalize(),
-            reference_point: a.clone(),
-        }
-    }
-
-    #[inline]
+    #[inline(always)]
     pub fn normal(&self) -> &UnitVec2D {
         &self.normal
     }
@@ -37,7 +34,7 @@ impl Plane2D {
     pub fn projection_of(&self, vec2: &Vec2D) -> PlaneLocation {
         match self.project_along_normal(vec2) {
             x if x > TOLERANCE => PlaneLocation::Above(x),
-            x if -x > TOLERANCE => PlaneLocation::Below(x),
+            x if x < -TOLERANCE => PlaneLocation::Below(x),
             x => PlaneLocation::OnPlane(x),
         }
     }

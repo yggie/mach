@@ -52,7 +52,7 @@ macro_rules! impl_line_2d_for {
 
         pub fn projection_of(&self, vec: &Vec2D) -> LineProjection {
             match self.project_along_direction(vec) {
-                x if -x > TOLERANCE => LineProjection::Before(x),
+                x if x < -TOLERANCE => LineProjection::Before(x),
                 x if x * x + TOLERANCE > self.squared_length() => LineProjection::After(x),
                 x => LineProjection::OnLine(x),
             }
