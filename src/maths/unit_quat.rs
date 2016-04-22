@@ -9,7 +9,7 @@ mod arbitrary;
 use std::ops::Mul;
 
 use Scalar;
-use maths::{ApproxEq, Quat, Vect};
+use maths::{ApproxEq, Quat, Vec3D};
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct UnitQuat(Quat);
@@ -24,7 +24,7 @@ impl UnitQuat {
         UnitQuat(quat / quat.length())
     }
 
-    pub fn from_axis_angle(axis: Vect, angle_in_radians: Scalar) -> UnitQuat {
+    pub fn from_axis_angle(axis: Vec3D, angle_in_radians: Scalar) -> UnitQuat {
         let length = axis.length();
         let half_radians = angle_in_radians / 2.0;
         let sl = half_radians.sin() / length;
@@ -33,9 +33,9 @@ impl UnitQuat {
         return UnitQuat(Quat::new(c, sl*axis.x, sl*axis.y, sl*axis.z));
     }
 
-    pub fn rotate(&self, vect: Vect) -> Vect {
+    pub fn rotate(&self, vect: Vec3D) -> Vec3D {
         let result = self * Quat::new(0.0, vect.x, vect.y, vect.z) * self.inverse();
-        return Vect::new(result.i, result.j, result.k);
+        return Vec3D::new(result.i, result.j, result.k);
     }
 
     #[inline]

@@ -1,5 +1,5 @@
 use Scalar;
-use maths::{Quat, UnitQuat, Vect};
+use maths::{Quat, UnitQuat, Vec3D};
 
 #[test]
 fn it_can_be_instantiated_with_scalars() {
@@ -17,7 +17,7 @@ fn it_can_be_instantiated_as_the_identity_quaternion() {
 
 #[test]
 fn it_can_be_instantiated_from_a_vector() {
-    let q = Quat::from_vector(Vect::new(0.1, 0.5, 0.6));
+    let q = Quat::from_vector(Vec3D::new(0.1, 0.5, 0.6));
 
     assert_approx_eq!(q, Quat::new(0.0, 0.1, 0.5, 0.6));
 }

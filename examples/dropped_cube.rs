@@ -17,7 +17,7 @@ impl Simulation for DroppedCube {
     }
 
     fn setup(&mut self, world: &mut mach::World) -> Result<(), String> {
-        world.set_gravity(mach::Vect::new(0.0, 0.0, -0.5));
+        world.set_gravity(mach::Vec3D::new(0.0, 0.0, -0.5));
         let prototype = mach::RigidBody::default()
             .with_mass(1.0);
 
@@ -28,7 +28,7 @@ impl Simulation for DroppedCube {
 
         let limit = 10;
         for index in 0..limit {
-            let direction = mach::Vect::new(
+            let direction = mach::Vec3D::new(
                 rng.gen_range(-1.0, 1.0),
                 rng.gen_range(-1.0, 1.0),
                 rng.gen_range(-1.0, 1.0),

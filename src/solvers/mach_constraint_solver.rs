@@ -5,7 +5,7 @@ use std::mem;
 use self::rand::Rng;
 
 use Scalar;
-use maths::{lcp_solvers, Integrator, LCP, LCPSolver, Matrix, Vect};
+use maths::{lcp_solvers, Integrator, LCP, LCPSolver, Matrix, Vec3D};
 use maths::integrators::SemiImplicitEuler;
 use solvers::{ConstraintSolver, ImpulseSolver};
 use entities::{BodyType, BodyTypeMut, RigidBody};
@@ -18,11 +18,11 @@ impl MachConstraintSolver {
         MachConstraintSolver
     }
 
-    fn formuate_lcp(time_step: Scalar, contacts: &Vec<ContactEvent>) -> (LCP, Vec<Vect>) {
+    fn formuate_lcp(time_step: Scalar, contacts: &Vec<ContactEvent>) -> (LCP, Vec<Vec3D>) {
         let number_of_contacts = contacts.len();
         let size = number_of_contacts * 2;
         let mut problem = LCP::new(size);
-        let mut friction_directions: Vec<Vect> = Vec::new();
+        let mut friction_directions: Vec<Vec3D> = Vec::new();
 
         for (i, contact_event) in contacts.iter().enumerate() {
             // TODO handle more than one contact point
@@ -92,7 +92,7 @@ impl MachConstraintSolver {
                 // pick any arbitrary direction to avoid the singularity when
                 // relative velocity is aligned  with the contact normal
                 let mut rng = rand::thread_rng();
-                let guess = Vect::new(
+                let guess = Vec3D::new(
                     rng.gen_range(-1.0, 1.0),
                     rng.gen_range(-1.0, 1.0),
                     rng.gen_range(-1.0, 1.0),
@@ -155,7 +155,7 @@ impl MachConstraintSolver {
         return (problem, friction_directions);
     }
 
-    fn apply_lcp_solution(problem: LCP, friction_directions: Vec<Vect>, time_step: Scalar, contact_events: &Vec<ContactEvent>) {
+    fn apply_lcp_solution(problem: LCP, friction_directions: Vec<Vec3D>, time_step: Scalar, contact_events: &Vec<ContactEvent>) {
         let number_of_contacts = contact_events.len();
         for (i, contact_event) in contact_events.iter().enumerate() {
             let impulse_offset = number_of_contacts * i;
@@ -213,7 +213,7 @@ impl MachConstraintSolver {
         }
     }
 
-    fn update_rigid_body(rigid_body: &mut RigidBody, change: (Vect, Vect), remaining_time: Scalar, correction: Vect) {
+    fn update_rigid_body(rigid_body: &mut RigidBody, change: (Vec3D, Vec3D), remaining_time: Scalar, correction: Vec3D) {
         let v = rigid_body.velocity().clone();
         let w = rigid_body.angular_velocity().clone();
         *rigid_body.velocity_mut() = v + change.0;
@@ -223,7 +223,7 @@ impl MachConstraintSolver {
         *rigid_body.translation_mut() = position + correction;
 
         // TODO missing gravity!
-        SemiImplicitEuler.integrate_in_place(&mut rigid_body.as_integratable_mut(), remaining_time, Vect::zero());
+        SemiImplicitEuler.integrate_in_place(&mut rigid_body.as_integratable_mut(), remaining_time, Vec3D::zero());
     }
 }
 

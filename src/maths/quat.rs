@@ -7,7 +7,7 @@ use std::mem;
 use std::ops::{Add, Deref, DerefMut, Div, Mul, Neg, Sub};
 
 use {Scalar, TOLERANCE};
-use maths::{ApproxEq, UnitQuat, Vect};
+use maths::{ApproxEq, UnitQuat, Vec3D};
 
 /// A representation of a quaternion.
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -40,10 +40,10 @@ impl Quat {
         Quat::new(1.0, 0.0, 0.0, 0.0)
     }
 
-    /// Creates a new `Quat` taking the input `Vect` as the components
+    /// Creates a new `Quat` taking the input `Vec3D` as the components
     /// of the complex part of the `Quat`.
     #[inline]
-    pub fn from_vector(vector: Vect) -> Quat {
+    pub fn from_vector(vector: Vec3D) -> Quat {
         Quat::new(0.0, vector.x, vector.y, vector.z)
     }
 

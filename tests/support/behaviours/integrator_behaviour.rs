@@ -5,7 +5,7 @@ macro_rules! assert_integrator_behaviour(
         mod integrator_behaviour {
             use super::test_subject;
 
-            use maths::{IntegratableMut, Integrator, Motion, Transform, UnitQuat, Vect};
+            use maths::{IntegratableMut, Integrator, Motion, Transform, UnitQuat, Vec3D};
 
             fn validate<I: Integrator>(input: I) -> I {
                 input
@@ -20,13 +20,13 @@ macro_rules! assert_integrator_behaviour(
                 {
                     let mut integratable = IntegratableMut::new(&mut transform, &mut motion);
 
-                    integrator.integrate_in_place(&mut integratable, 0.5, Vect::zero());
+                    integrator.integrate_in_place(&mut integratable, 0.5, Vec3D::zero());
                 }
 
-                assert_approx_eq!(transform.translation, Vect::zero());
+                assert_approx_eq!(transform.translation, Vec3D::zero());
                 assert_approx_eq!(transform.rotation, UnitQuat::identity());
-                assert_approx_eq!(motion.velocity, Vect::zero());
-                assert_approx_eq!(motion.angular_velocity, Vect::zero());
+                assert_approx_eq!(motion.velocity, Vec3D::zero());
+                assert_approx_eq!(motion.angular_velocity, Vec3D::zero());
             }
 
             #[test]
@@ -40,12 +40,12 @@ macro_rules! assert_integrator_behaviour(
                 {
                     let mut integratable = IntegratableMut::new(&mut transform, &mut motion);
 
-                    integrator.integrate_in_place(&mut integratable, 0.5, Vect::zero());
-                    integrator.integrate_in_place(&mut integratable, 0.5, Vect::zero());
+                    integrator.integrate_in_place(&mut integratable, 0.5, Vec3D::zero());
+                    integrator.integrate_in_place(&mut integratable, 0.5, Vec3D::zero());
                 }
 
-                assert_approx_eq!(motion.velocity, Vect::new(1.0, 0.0, 0.0));
-                assert_approx_eq!(motion.angular_velocity, Vect::new(0.0, 1.0, 0.0));
+                assert_approx_eq!(motion.velocity, Vec3D::new(1.0, 0.0, 0.0));
+                assert_approx_eq!(motion.angular_velocity, Vec3D::new(0.0, 1.0, 0.0));
             }
 
             #[test]
@@ -58,11 +58,11 @@ macro_rules! assert_integrator_behaviour(
                 {
                     let mut integratable = IntegratableMut::new(&mut transform, &mut motion);
 
-                    integrator.integrate_in_place(&mut integratable, 0.5, Vect::zero());
+                    integrator.integrate_in_place(&mut integratable, 0.5, Vec3D::zero());
                 }
 
-                assert_approx_eq!(transform.translation, Vect::new(0.5, 0.0, 0.0));
-                assert_approx_eq!(motion.velocity, Vect::new(1.0, 0.0, 0.0));
+                assert_approx_eq!(transform.translation, Vec3D::new(0.5, 0.0, 0.0));
+                assert_approx_eq!(motion.velocity, Vec3D::new(1.0, 0.0, 0.0));
             }
 
             #[test]
@@ -75,11 +75,11 @@ macro_rules! assert_integrator_behaviour(
                 {
                     let mut integratable = IntegratableMut::new(&mut transform, &mut motion);
 
-                    integrator.integrate_in_place(&mut integratable, 0.5, Vect::new(1.0, 0.0, 0.0));
+                    integrator.integrate_in_place(&mut integratable, 0.5, Vec3D::new(1.0, 0.0, 0.0));
                 }
 
-                assert_approx_eq!(transform.translation.normalize(), Vect::new(1.0, 0.0, 0.0));
-                assert_approx_eq!(motion.velocity, Vect::new(1.5, 0.0, 0.0));
+                assert_approx_eq!(transform.translation.normalize(), Vec3D::new(1.0, 0.0, 0.0));
+                assert_approx_eq!(motion.velocity, Vec3D::new(1.5, 0.0, 0.0));
             }
         }
     );

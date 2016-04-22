@@ -1,7 +1,7 @@
 extern crate quickcheck;
 
 use Scalar;
-use maths::{UnitQuat, Vect};
+use maths::{UnitQuat, Vec3D};
 use shapes::Cuboid;
 use entities::RigidBody;
 use detection::gjkepa::{EPA, GJK};
@@ -45,7 +45,7 @@ fn it_should_not_generate_incomplete_shells() {
         let polytope = IterativeAlgorithmExecutor::execute(algorithm);
 
         let mid_point = polytope.support_points.iter()
-            .fold(Vect::zero(), |total, &(vertex, _index_pair)| {
+            .fold(Vec3D::zero(), |total, &(vertex, _index_pair)| {
                 total + vertex
             }) / polytope.support_points.len() as Scalar;
 

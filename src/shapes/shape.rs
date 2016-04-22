@@ -1,7 +1,7 @@
 use std::fmt;
 
 use {Scalar, TOLERANCE};
-use maths::{Matrix, Vect};
+use maths::{Matrix, Vec3D};
 use shapes::ShapeSpec;
 
 /// Defines the traits for all geometric property descriptions.
@@ -15,17 +15,17 @@ pub trait Shape: fmt::Debug {
     fn inertia(&self) -> Matrix;
 
     /// Obtains the vertex with the index specified.
-    fn vertex(&self, usize) -> Vect;
+    fn vertex(&self, usize) -> Vec3D;
 
     /// Returns the number of vertices in the `Shape`.
     fn vertices_len(&self) -> usize;
 
     /// Returns an iterator over all the vertices in the shape.
-    fn vertices_iter<'a>(&'a self) -> Box<Iterator<Item=Vect> + 'a>;
+    fn vertices_iter<'a>(&'a self) -> Box<Iterator<Item=Vec3D> + 'a>;
 
     /// Returns the index of the vertex furthest in the direction specified,
     /// primarily used by collision detection routines.
-    fn support_indices_for(&self, Vect) -> Vec<usize>;
+    fn support_indices_for(&self, Vec3D) -> Vec<usize>;
 
     /// Returns the _surface radius_ of the Shape. The surface radius is the
     /// tolerance used to determine if a collision has occurred, it is useful to

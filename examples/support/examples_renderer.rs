@@ -59,7 +59,7 @@ impl ExamplesRenderer {
         return Ok(());
     }
 
-    fn render_contacts<S: glium::Surface>(&mut self, surface: &mut S, contacts: &Vec<mach::maths::Vect>, env: &SceneEnv) -> Result<(), String> {
+    fn render_contacts<S: glium::Surface>(&mut self, surface: &mut S, contacts: &Vec<mach::maths::Vec3D>, env: &SceneEnv) -> Result<(), String> {
         let mut model_matrix: [[f32; 4]; 4] = [
             [0.1, 0.0, 0.0, 0.0],
             [0.0, 0.1, 0.0, 0.0],

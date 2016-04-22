@@ -1,4 +1,4 @@
-use maths::Vect;
+use maths::Vec3D;
 
 use geometry::Plane;
 
@@ -15,7 +15,7 @@ static SURFACE_INDICES_COMBINATIONS: [(usize, usize, usize); 4] = [
 #[derive(Clone)]
 pub struct Simplex<'a> {
     pub diff: MinkowskiDifference<'a>,
-    pub support_points: [(Vect, IndexPair); 4],
+    pub support_points: [(Vec3D, IndexPair); 4],
 }
 
 impl<'a> Simplex<'a> {
@@ -33,9 +33,9 @@ impl<'a> Simplex<'a> {
         };
     }
 
-    pub fn centroid(&self) -> Vect {
+    pub fn centroid(&self) -> Vec3D {
         self.support_points.iter()
-            .fold(Vect::zero(), |total, &(vertex, _index_pair)| {
+            .fold(Vec3D::zero(), |total, &(vertex, _index_pair)| {
                 total + vertex
             }) / 4.0
     }

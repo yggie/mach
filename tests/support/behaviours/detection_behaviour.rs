@@ -8,7 +8,7 @@ macro_rules! assert_detection_behaviour {
             use super::test_subject;
 
             use {PI, Scalar};
-            use maths::{UnitQuat, Vect};
+            use maths::{UnitQuat, Vec3D};
             use shapes::Cuboid;
             use support::inputs;
             use entities::{Body, BodyHandle, RigidBody};
@@ -75,8 +75,8 @@ macro_rules! assert_detection_behaviour {
             //
             //     assert_eq!(contact_event.points().len(), 1);
             //     // TODO officially support vertex – vertex contacts
-            //     // assert_approx_eq!(contact_event.normal(), Vect::new(1.0, 0.0, 0.0));
-            //     // assert_approx_eq!(contact_event.points().first(), Vect::new(0.5, 0.0, 0.0));
+            //     // assert_approx_eq!(contact_event.normal(), Vec3D::new(1.0, 0.0, 0.0));
+            //     // assert_approx_eq!(contact_event.points().first(), Vec3D::new(0.5, 0.0, 0.0));
             // }
 
             #[test]
@@ -84,8 +84,8 @@ macro_rules! assert_detection_behaviour {
                 let mut detection = validate(test_subject());
                 let control = RigidBody::default()
                     .with_shape(Cuboid::cube(1.0));
-                let initial_axis = Vect::new(1.0, 1.0, 1.0).normalize();
-                let final_axis = Vect::new(1.0, 0.0, 0.0);
+                let initial_axis = Vec3D::new(1.0, 1.0, 1.0).normalize();
+                let final_axis = Vec3D::new(1.0, 0.0, 0.0);
                 let rotation = initial_axis.cross(final_axis);
                 let rigid_body = RigidBody::default()
                     .with_shape(Cuboid::cube(1.0))
@@ -99,8 +99,8 @@ macro_rules! assert_detection_behaviour {
                 let contact_event = result.unwrap();
 
                 assert_eq!(contact_event.points().len(), 1);
-                assert_approx_eq!(*contact_event.normal(), Vect::new(-1.0, 0.0, 0.0));
-                assert_approx_eq!(*contact_event.point(0), Vect::new(0.495, 0.1, 0.0));
+                assert_approx_eq!(*contact_event.normal(), Vec3D::new(-1.0, 0.0, 0.0));
+                assert_approx_eq!(*contact_event.point(0), Vec3D::new(0.495, 0.1, 0.0));
             }
 
             #[test]
@@ -110,7 +110,7 @@ macro_rules! assert_detection_behaviour {
                     .with_shape(Cuboid::cube(1.0));
                 let rigid_body = RigidBody::default()
                     .with_shape(Cuboid::cube(1.0))
-                    .with_axis_angle(Vect::new(1.0, 1.0, 0.0), PI / 2.0)
+                    .with_axis_angle(Vec3D::new(1.0, 1.0, 0.0), PI / 2.0)
                     .with_translation(0.99, 0.99, 0.00);
 
                 let result = detection.compute_contacts(&handle(control), &handle(rigid_body));
@@ -120,8 +120,8 @@ macro_rules! assert_detection_behaviour {
                 let contact_event = result.unwrap();
 
                 assert_eq!(contact_event.points().len(), 1);
-                assert_approx_eq!(contact_event.points()[0], Vect::new(0.495, 0.495, 0.0));
-                assert_approx_eq!(contact_event.normal(), -Vect::new(1.0, 1.0, 0.0).normalize());
+                assert_approx_eq!(contact_event.points()[0], Vec3D::new(0.495, 0.495, 0.0));
+                assert_approx_eq!(contact_event.normal(), -Vec3D::new(1.0, 1.0, 0.0).normalize());
             }
 
             #[test]
@@ -132,7 +132,7 @@ macro_rules! assert_detection_behaviour {
                 let rigid_body = RigidBody::default()
                     .with_shape(Cuboid::cube(1.0))
                     .with_translation(0.49 + 0.5*(2.0 as Scalar).sqrt(), 0.0, 0.5)
-                    .with_axis_angle(Vect::new(0.0, 0.0, 1.0), PI/4.0);
+                    .with_axis_angle(Vec3D::new(0.0, 0.0, 1.0), PI/4.0);
 
                 let result = detection.compute_contacts(&handle(control), &handle(rigid_body));
 
@@ -141,14 +141,14 @@ macro_rules! assert_detection_behaviour {
                 let contact_event = result.unwrap();
 
                 assert_eq!(contact_event.points().len(), 2);
-                assert_approx_eq!(*contact_event.normal(), Vect::new(-1.0, 0.0, 0.0));
+                assert_approx_eq!(*contact_event.normal(), Vec3D::new(-1.0, 0.0, 0.0));
 
                 let mut points = contact_event.points().clone();
                 points.sort_by(|a, b| a.z.partial_cmp(&b.z).unwrap());
                 let x = 0.49;
                 println!("POINTS: {:?}", points);
-                assert_approx_eq!(points[0], Vect::new(x, 0.0, 0.00));
-                assert_approx_eq!(points[1], Vect::new(x, 0.0, 0.50));
+                assert_approx_eq!(points[0], Vec3D::new(x, 0.0, 0.00));
+                assert_approx_eq!(points[1], Vec3D::new(x, 0.0, 0.50));
             }
 
             // #[test]
@@ -168,7 +168,7 @@ macro_rules! assert_detection_behaviour {
             //
             //     // TODO officially support face - face contacts
             //     // assert_eq!(contact_event.points().len(), 4);
-            //     assert_approx_eq!(*contact_event.normal(), Vect::new(-1.0, 0.0, 0.0));
+            //     assert_approx_eq!(*contact_event.normal(), Vec3D::new(-1.0, 0.0, 0.0));
             // }
 
             // TODO maybe it should be pointing towards the second body, to be

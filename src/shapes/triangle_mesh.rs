@@ -3,14 +3,14 @@ use std::fmt;
 use std::collections::HashMap;
 
 use {Scalar, NEG_INFINITY, TOLERANCE};
-use maths::{Matrix, Vect};
+use maths::{Matrix, Vec3D};
 use shapes::{Shape, ShapeSpec};
 
 /// A `TriangleMesh` object represents a mesh of triangles, built from a set of
 /// points and element connections.
 #[derive(Clone, Debug)]
 pub struct TriangleMesh {
-    vertices: Rc<Vec<Vect>>,
+    vertices: Rc<Vec<Vec3D>>,
     elements: Rc<Vec<(usize, usize, usize)>>,
     unique_nodes: Vec<usize>,
 }
@@ -19,7 +19,7 @@ impl TriangleMesh {
     /// Constructs a new `TriangleMesh` using the provided vertices and element
     /// indices, stored as an indexed array of triangle elements.
     // TODO run validations to ensure the triangle mesh is not malformed.
-    pub fn new(vertices: Rc<Vec<Vect>>, elements: Vec<(usize, usize, usize)>) -> TriangleMesh {
+    pub fn new(vertices: Rc<Vec<Vec3D>>, elements: Vec<(usize, usize, usize)>) -> TriangleMesh {
         let unique_nodes = elements.iter()
             .map(|&(i, j, k)| [i, j, k])
             .fold(HashMap::new(), |mut set, indices| {
@@ -80,7 +80,7 @@ impl Shape for TriangleMesh {
         Matrix::identity()
     }
 
-    fn vertex(&self, index: usize) -> Vect {
+    fn vertex(&self, index: usize) -> Vec3D {
         self.vertices[self.unique_nodes[index]]
     }
 
@@ -88,11 +88,11 @@ impl Shape for TriangleMesh {
         self.unique_nodes.len()
     }
 
-    fn vertices_iter<'a>(&'a self) -> Box<Iterator<Item=Vect> + 'a> {
+    fn vertices_iter<'a>(&'a self) -> Box<Iterator<Item=Vec3D> + 'a> {
         Box::new(self.unique_nodes.iter().map(move |&i| self.vertices[i]))
     }
 
-    fn support_indices_for(&self, direction: Vect) -> Vec<usize> {
+    fn support_indices_for(&self, direction: Vec3D) -> Vec<usize> {
         // TODO iterate by face really
         self.vertices_iter()
             .enumerate()

@@ -2,7 +2,7 @@ extern crate quickcheck;
 
 use std::fmt;
 
-use {Scalar, Vect};
+use {Scalar, Vec3D};
 
 #[derive(Clone)]
 pub struct UnitVect {
@@ -10,20 +10,20 @@ pub struct UnitVect {
 }
 
 impl UnitVect {
-    pub fn as_vect(self) -> Vect {
-        Into::<Vect>::into(self)
+    pub fn as_vect(self) -> Vec3D {
+        Into::<Vec3D>::into(self)
     }
 }
 
-impl Into<Vect> for UnitVect {
-    fn into(self) -> Vect {
-        Vect::new(self.values.0, self.values.1, self.values.2).normalize()
+impl Into<Vec3D> for UnitVect {
+    fn into(self) -> Vec3D {
+        Vec3D::new(self.values.0, self.values.1, self.values.2).normalize()
     }
 }
 
 impl quickcheck::Arbitrary for UnitVect {
     fn arbitrary<G: quickcheck::Gen>(random: &mut G) -> Self {
-        let value = Vect::new(
+        let value = Vec3D::new(
             random.gen_range(-1.0, 1.0),
             random.gen_range(-1.0, 1.0),
             random.gen_range(-1.0, 1.0),

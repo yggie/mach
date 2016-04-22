@@ -1,7 +1,7 @@
 extern crate mach;
 
 pub struct FrameMetadata {
-    pub contacts: Vec<mach::maths::Vect>,
+    pub contacts: Vec<mach::maths::Vec3D>,
 }
 
 impl FrameMetadata {

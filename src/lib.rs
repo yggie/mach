@@ -31,7 +31,7 @@ pub mod algorithms;
 pub mod broadphase;
 pub mod narrowphase;
 
-pub use self::maths::Vect;
+pub use self::maths::Vec3D;
 pub use self::world::World;
 pub use self::shapes::{Shape, ShapeSpec};
 pub use self::entities::{Body, RigidBody, StaticBody};

@@ -8,7 +8,7 @@ mod transform;
 
 mod lcp;
 mod quat;
-mod vect;
+mod vec_3d;
 mod matrix;
 mod unit_quat;
 mod integratable;
@@ -29,7 +29,7 @@ pub mod lcp_solvers;
 
 pub use self::lcp::LCP;
 pub use self::quat::Quat;
-pub use self::vect::Vect;
+pub use self::vec_3d::Vec3D;
 pub use self::matrix::Matrix;
 pub use self::motion::Motion;
 pub use self::approx_eq::ApproxEq;

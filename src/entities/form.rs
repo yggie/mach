@@ -1,5 +1,5 @@
 use Scalar;
-use maths::{Transform, UnitQuat, Vect};
+use maths::{Transform, UnitQuat, Vec3D};
 use shapes::{Cuboid, Shape};
 
 #[derive(Clone, Debug)]
@@ -39,11 +39,11 @@ impl Form {
     }
 
     #[inline]
-    pub fn vertex(&self, index: usize) -> Vect {
+    pub fn vertex(&self, index: usize) -> Vec3D {
         self.transform().apply_to_point(self.shape().vertex(index))
     }
 
-    pub fn vertices_iter<'a>(&'a self) -> Box<Iterator<Item=Vect> + 'a> {
+    pub fn vertices_iter<'a>(&'a self) -> Box<Iterator<Item=Vec3D> + 'a> {
         let transform = self.transform.clone();
         let iterator = self.shape.vertices_iter()
             .map(move |v| transform.apply_to_point(v));
@@ -90,12 +90,12 @@ macro_rules! include_form_helpers {
         }
 
         #[inline]
-        pub fn translation(&self) -> &Vect {
+        pub fn translation(&self) -> &Vec3D {
             self.$field_name.translation()
         }
 
         #[inline]
-        pub fn translation_mut(&mut self) -> &mut Vect {
+        pub fn translation_mut(&mut self) -> &mut Vec3D {
             self.$field_name.translation_mut()
         }
 
@@ -110,12 +110,12 @@ macro_rules! include_form_helpers {
         }
 
         #[inline]
-        pub fn vertex(&self, index: usize) -> Vect {
+        pub fn vertex(&self, index: usize) -> Vec3D {
             self.$field_name.vertex(index)
         }
 
         #[inline]
-        pub fn vertices_iter<'a>(&'a self) -> Box<Iterator<Item=Vect> + 'a> {
+        pub fn vertices_iter<'a>(&'a self) -> Box<Iterator<Item=Vec3D> + 'a> {
             self.$field_name.vertices_iter()
         }
 
@@ -136,9 +136,9 @@ macro_rules! include_form_helpers {
         }
 
         chain_method!($S, $s, $field_name, with_translation(self, x: Scalar, y: Scalar, z: Scalar));
-        chain_method!($S, $s, $field_name, with_translation_vect(self, vect: Vect));
+        chain_method!($S, $s, $field_name, with_translation_vect(self, vect: Vec3D));
         chain_method!($S, $s, $field_name, with_zero_translation(self));
-        chain_method!($S, $s, $field_name, with_axis_angle(self, axis: Vect, angle: Scalar));
+        chain_method!($S, $s, $field_name, with_axis_angle(self, axis: Vec3D, angle: Scalar));
         chain_method!($S, $s, $field_name, with_rotation(self, rotation: UnitQuat));
         chain_method!($S, $s, $field_name, with_zero_rotation(self));
     };

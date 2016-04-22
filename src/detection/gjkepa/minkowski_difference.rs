@@ -2,7 +2,7 @@
 #[path="../../../tests/detection/gjkepa/minkowski_difference_test.rs"]
 mod minkowski_difference_test;
 
-use maths::Vect;
+use maths::Vec3D;
 use entities::Form;
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -12,7 +12,7 @@ pub struct IndexPair(pub usize, pub usize);
 pub struct MinkowskiDifference<'a>(pub &'a Form, pub &'a Form);
 
 impl<'a> MinkowskiDifference<'a> {
-    pub fn vertex(&self, support_point: &IndexPair) -> Vect {
+    pub fn vertex(&self, support_point: &IndexPair) -> Vec3D {
         let shapes = (self.0.shape(), self.1.shape());
         let transforms = (self.0.transform(), self.1.transform());
 
@@ -20,7 +20,7 @@ impl<'a> MinkowskiDifference<'a> {
             transforms.1.apply_to_point(shapes.1.vertex(support_point.1));
     }
 
-    pub fn support_index_pairs(&self, direction: &Vect) -> Vec<IndexPair> {
+    pub fn support_index_pairs(&self, direction: &Vec3D) -> Vec<IndexPair> {
         let shapes = (self.0.shape(), self.1.shape());
         let transforms = (self.0.transform(), self.1.transform());
 

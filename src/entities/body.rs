@@ -1,5 +1,5 @@
 use ID;
-use maths::{Transform, UnitQuat, Vect};
+use maths::{Transform, UnitQuat, Vec3D};
 use shapes::Shape;
 use entities::{BodyType, BodyTypeMut, Form};
 
@@ -23,11 +23,11 @@ pub trait Body {
         self.form().transform()
     }
 
-    fn translation(&self) -> &Vect {
+    fn translation(&self) -> &Vec3D {
         self.form().translation()
     }
 
-    fn translation_mut(&mut self) -> &mut Vect {
+    fn translation_mut(&mut self) -> &mut Vec3D {
         self.form_mut().translation_mut()
     }
 
@@ -40,7 +40,7 @@ pub trait Body {
     }
 
     /// Returns the vertex at the given index for the entity.
-    fn vertex(&self, index: usize) -> Vect {
+    fn vertex(&self, index: usize) -> Vec3D {
         self.form().vertex(index)
     }
 }

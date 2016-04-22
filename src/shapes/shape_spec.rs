@@ -1,8 +1,8 @@
 use Scalar;
-use maths::Vect;
+use maths::Vec3D;
 
 pub enum ShapeSpec<'a> {
     Sphere(Scalar),
     Cuboid(Scalar, Scalar, Scalar),
-    TriangleMesh(&'a Vec<Vect>, &'a Vec<(usize, usize, usize)>),
+    TriangleMesh(&'a Vec<Vec3D>, &'a Vec<(usize, usize, usize)>),
 }

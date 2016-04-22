@@ -6,7 +6,7 @@ macro_rules! assert_world_behaviour {
             use super::test_subject;
 
             use {PI, Scalar, World};
-            use maths::Vect;
+            use maths::Vec3D;
             use shapes::Cuboid;
             use entities::{EntityStore, RigidBody, StaticBody};
 
@@ -26,8 +26,8 @@ macro_rules! assert_world_behaviour {
 
                 let rigid_body = world.find_rigid_body(id).unwrap();
 
-                assert_approx_eq!(rigid_body.translation(), Vect::new(0.30, -0.30, 0.15));
-                assert_approx_eq!(rigid_body.velocity(), Vect::new(1.0, -1.0, 0.5));
+                assert_approx_eq!(rigid_body.translation(), Vec3D::new(0.30, -0.30, 0.15));
+                assert_approx_eq!(rigid_body.velocity(), Vec3D::new(1.0, -1.0, 0.5));
             }
 
             #[test]
@@ -41,8 +41,8 @@ macro_rules! assert_world_behaviour {
                     .with_restitution_coefficient(1.0);
                 let id_0 = world.add_rigid_body(rigid_body_0);
 
-                let initial_axis = Vect::new(1.0, 1.0, 1.0).normalize();
-                let final_axis = Vect::new(1.0, 0.0, 0.0);
+                let initial_axis = Vec3D::new(1.0, 1.0, 1.0).normalize();
+                let final_axis = Vec3D::new(1.0, 0.0, 0.0);
                 let rotation = initial_axis.cross(final_axis);
                 let rigid_body_1 = prototype.clone()
                     .with_mass(1.0)
@@ -56,10 +56,10 @@ macro_rules! assert_world_behaviour {
 
                 let rigid_body_0 = world.find_rigid_body(id_0).unwrap();
                 let rigid_body_1 = world.find_rigid_body(id_1).unwrap();
-                assert_approx_eq!(rigid_body_0.velocity(), Vect::new(-1.0, 0.0, 0.0));
-                assert_approx_eq!(rigid_body_0.angular_velocity(), Vect::new(0.0, 0.0, 0.0));
-                assert_approx_eq!(rigid_body_1.velocity(), Vect::new(0.0, 0.0, 0.0));
-                assert_approx_eq!(rigid_body_1.angular_velocity(), Vect::new(0.0, 0.0, 0.0));
+                assert_approx_eq!(rigid_body_0.velocity(), Vec3D::new(-1.0, 0.0, 0.0));
+                assert_approx_eq!(rigid_body_0.angular_velocity(), Vec3D::new(0.0, 0.0, 0.0));
+                assert_approx_eq!(rigid_body_1.velocity(), Vec3D::new(0.0, 0.0, 0.0));
+                assert_approx_eq!(rigid_body_1.angular_velocity(), Vec3D::new(0.0, 0.0, 0.0));
             }
 
             #[test]
@@ -69,7 +69,7 @@ macro_rules! assert_world_behaviour {
                     .with_shape(Cuboid::new(1.0, 10.0, 1.0))
                     .with_mass(1.0)
                     .with_restitution_coefficient(1.0)
-                    .with_axis_angle(Vect::new(0.0, 1.0, 0.0), PI / 4.0)
+                    .with_axis_angle(Vec3D::new(0.0, 1.0, 0.0), PI / 4.0)
                     .with_angular_velocity(-1.0, 0.0, 0.0);
                 let rigid_body_id = world.add_rigid_body(rigid_body);
 
@@ -83,8 +83,8 @@ macro_rules! assert_world_behaviour {
 
                 // TODO quite a rough test, can be improved
                 let rigid_body = world.find_rigid_body(rigid_body_id).unwrap();
-                assert!(rigid_body.angular_velocity().dot(Vect::new(1.0, 0.0, 0.0)) > 0.0);
-                assert!(rigid_body.velocity().dot(Vect::new(0.0, 0.0, 1.0)) > 0.0);
+                assert!(rigid_body.angular_velocity().dot(Vec3D::new(1.0, 0.0, 0.0)) > 0.0);
+                assert!(rigid_body.velocity().dot(Vec3D::new(0.0, 0.0, 1.0)) > 0.0);
             }
         }
     );

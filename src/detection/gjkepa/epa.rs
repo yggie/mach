@@ -2,7 +2,7 @@
 #[path="../../../tests/detection/gjkepa/epa_test.rs"]
 mod tests;
 
-use maths::Vect;
+use maths::Vec3D;
 use utils::compute_surfaces_for_convex_hull;
 use geometry::Plane;
 use algorithms::IterativeAlgorithm;
@@ -72,7 +72,7 @@ impl<'a> IterativeAlgorithm for EPA<'a> {
             Some(index_pair) => {
                 self.polytope.support_points.push((self.polytope.diff.vertex(&index_pair), index_pair));
 
-                let vertex_positions: Vec<Vect> = self.polytope.support_points.iter()
+                let vertex_positions: Vec<Vec3D> = self.polytope.support_points.iter()
                     .map(|&(ref vertex, _index_pair)| vertex.clone())
                     .collect();
 

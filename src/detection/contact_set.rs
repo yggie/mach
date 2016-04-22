@@ -1,5 +1,5 @@
 use Scalar;
-use maths::Vect;
+use maths::Vec3D;
 use geometry::Plane;
 
 #[derive(Clone)]
@@ -7,11 +7,11 @@ pub struct ContactSet {
     plane: Plane,
     // at most, there will be 4 points (FACE-FACE), is there anything we can do
     // to optimise for this use case?
-    points: Vec<Vect>,
+    points: Vec<Vec3D>,
 }
 
 impl ContactSet {
-    pub fn new(plane: Plane, points: Vec<Vect>) -> ContactSet {
+    pub fn new(plane: Plane, points: Vec<Vec3D>) -> ContactSet {
         ContactSet {
             plane: plane,
             points: points,
@@ -19,17 +19,17 @@ impl ContactSet {
     }
 
     #[inline]
-    pub fn point(&self, index: usize) -> &Vect {
+    pub fn point(&self, index: usize) -> &Vec3D {
         &self.points[index]
     }
 
     #[inline]
-    pub fn points(&self) -> &Vec<Vect> {
+    pub fn points(&self) -> &Vec<Vec3D> {
         &self.points
     }
 
     #[inline]
-    pub fn normal(&self) -> &Vect {
+    pub fn normal(&self) -> &Vec3D {
         self.plane.normal()
     }
 

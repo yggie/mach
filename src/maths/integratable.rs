@@ -1,4 +1,4 @@
-use maths::{Motion, UnitQuat, Transform, Vect};
+use maths::{Motion, UnitQuat, Transform, Vec3D};
 
 pub struct IntegratableMut<'a> {
     transform: &'a mut Transform,
@@ -23,11 +23,11 @@ impl<'a> IntegratableMut<'a> {
         &mut self.transform
     }
 
-    pub fn translation(&self) -> &Vect {
+    pub fn translation(&self) -> &Vec3D {
         &self.transform().translation
     }
 
-    pub fn translation_mut(&mut self) -> &mut Vect {
+    pub fn translation_mut(&mut self) -> &mut Vec3D {
         &mut self.transform_mut().translation
     }
 
@@ -47,15 +47,15 @@ impl<'a> IntegratableMut<'a> {
         &mut self.motion
     }
 
-    pub fn velocity(&self) -> &Vect {
+    pub fn velocity(&self) -> &Vec3D {
         &self.motion().velocity
     }
 
-    pub fn velocity_mut(&mut self) -> &mut Vect {
+    pub fn velocity_mut(&mut self) -> &mut Vec3D {
         &mut self.motion_mut().velocity
     }
 
-    pub fn angular_velocity(&self) -> &Vect {
+    pub fn angular_velocity(&self) -> &Vec3D {
         &self.motion().angular_velocity
     }
 }

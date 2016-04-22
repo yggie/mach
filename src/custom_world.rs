@@ -1,7 +1,7 @@
 use std::cell::{Ref, RefMut};
 
 use {ID, Scalar, World};
-use maths::{Integrator, Vect};
+use maths::{Integrator, Vec3D};
 use solvers::ConstraintSolver;
 use entities::{Body, BodyHandle, EntityStore, RigidBody, StaticBody};
 use detection::{ContactEvent, Detection};
@@ -15,7 +15,7 @@ pub struct CustomWorld<B: Broadphase<EntityStore=ES>, N: Narrowphase, D: Detecti
     pub entity_store: ES,
     pub integrator: I,
     pub constraint_solver: CS,
-    pub gravity: Vect,
+    pub gravity: Vec3D,
 }
 
 impl<B, N, D, ES, I, CS> World for CustomWorld<B, N, D, ES, I, CS> where B: Broadphase<EntityStore=ES>, N: Narrowphase, D: Detection, ES: EntityStore, I: Integrator, CS: ConstraintSolver {
@@ -49,7 +49,7 @@ impl<B, N, D, ES, I, CS> World for CustomWorld<B, N, D, ES, I, CS> where B: Broa
         return contact_events;
     }
 
-    fn set_gravity(&mut self, gravity: Vect) {
+    fn set_gravity(&mut self, gravity: Vec3D) {
         self.gravity = gravity;
     }
 }

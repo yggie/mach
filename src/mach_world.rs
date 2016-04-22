@@ -5,7 +5,7 @@ mod tests;
 use std::cell::{Ref, RefMut};
 
 use {broadphase, narrowphase, CustomWorld, ID, Scalar, World};
-use maths::Vect;
+use maths::Vec3D;
 use maths::integrators::SemiImplicitEuler;
 use solvers::MachConstraintSolver;
 use entities::{Body, BodyHandle, EntityStore, MachStore, RigidBody, StaticBody};
@@ -22,7 +22,7 @@ impl MachWorld {
             entity_store: MachStore::new(),
             integrator: SemiImplicitEuler::new(),
             constraint_solver: MachConstraintSolver::new(),
-            gravity: Vect::zero(),
+            gravity: Vec3D::zero(),
         })
     }
 }
@@ -32,7 +32,7 @@ impl World for MachWorld {
         self.0.update(time_step)
     }
 
-    fn set_gravity(&mut self, gravity: Vect) {
+    fn set_gravity(&mut self, gravity: Vec3D) {
         self.0.set_gravity(gravity)
     }
 }

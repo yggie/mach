@@ -1,7 +1,7 @@
 use std::collections::HashSet;
 
 use {NEG_INFINITY, TOLERANCE};
-use maths::Vect;
+use maths::Vec3D;
 use maths::_2d::Vec2D;
 use geometry::{Intersection, Line, Plane};
 use geometry::_2d::{Line2D, Polygon};
@@ -19,7 +19,7 @@ enum Feature {
 pub struct Polytope<'a> {
     pub diff: MinkowskiDifference<'a>,
     pub surfaces: Vec<(Plane, (usize, usize, usize))>,
-    pub support_points: Vec<(Vect, IndexPair)>,
+    pub support_points: Vec<(Vec3D, IndexPair)>,
 }
 
 impl<'a> Polytope<'a> {
@@ -34,7 +34,7 @@ impl<'a> Polytope<'a> {
     }
 
     pub fn compute_contact_points(&self) -> ContactSet {
-        let dummy_plane = Plane::from_point(&Vect::new(1.0, 0.0, 0.0), &Vect::new(0.0, 0.0, 0.0));
+        let dummy_plane = Plane::from_point(&Vec3D::new(1.0, 0.0, 0.0), &Vec3D::new(0.0, 0.0, 0.0));
 
         let faces = vec!((0, 0, 0));
         let (penetration_depth, closest_plane, faces) = self.surfaces.iter().skip(1)
@@ -149,16 +149,16 @@ impl<'a> Polytope<'a> {
     }
 
     fn compute_contact_set_for_edge_face(diff: &MinkowskiDifference, contact_plane: Plane, edge_indices: (usize, usize), face_indices: HashSet<usize>) -> ContactSet {
-        let projected_x_axis = contact_plane.normal().cross(/* TODO pick a random vector */Vect::new(1.0, 1.0, 1.0)).normalize();
+        let projected_x_axis = contact_plane.normal().cross(/* TODO pick a random vector */Vec3D::new(1.0, 1.0, 1.0)).normalize();
         let projected_y_axis = contact_plane.normal().cross(projected_x_axis).normalize();
-        let project = |point: &Vect| -> Vec2D {
+        let project = |point: &Vec3D| -> Vec2D {
             Vec2D::new(
                 projected_x_axis.dot(*point),
                 projected_y_axis.dot(*point),
             )
         };
 
-        let unproject = |point: &Vec2D| -> Vect {
+        let unproject = |point: &Vec2D| -> Vec3D {
             point.x * projected_x_axis + point.y * projected_y_axis
         };
 

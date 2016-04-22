@@ -3,19 +3,19 @@
 mod transform_test;
 
 use Scalar;
-use maths::{UnitQuat, Vect};
+use maths::{UnitQuat, Vec3D};
 
 /// The `Transform` object represents a spatial transformation in 3D space.
 #[derive(Clone, Copy, Debug)]
 pub struct Transform {
-    pub translation: Vect,
+    pub translation: Vec3D,
     pub rotation: UnitQuat,
 }
 
 impl Transform {
     /// Creates a new `Transform` instance with the given translation and
     /// rotation.
-    pub fn new(translation: Vect, rotation: UnitQuat) -> Transform {
+    pub fn new(translation: Vec3D, rotation: UnitQuat) -> Transform {
         Transform {
             translation: translation,
             rotation: rotation,
@@ -25,18 +25,18 @@ impl Transform {
     /// Creates a new `Transform` instance representing the identity
     /// transformation.
     pub fn identity() -> Transform {
-        Transform::new(Vect::zero(), UnitQuat::identity())
+        Transform::new(Vec3D::zero(), UnitQuat::identity())
     }
 
     /// The positional translation component of the transform.
     #[inline(always)]
-    pub fn translation(&self) -> Vect {
+    pub fn translation(&self) -> Vec3D {
         self.translation
     }
 
-    /// Returns a mutable reference to the translation `Vect`.
+    /// Returns a mutable reference to the translation `Vec3D`.
     #[inline(always)]
-    pub fn translation_mut(&mut self) -> &mut Vect {
+    pub fn translation_mut(&mut self) -> &mut Vec3D {
         &mut self.translation
     }
 
@@ -53,7 +53,7 @@ impl Transform {
     }
 
     #[inline]
-    pub fn with_translation_vect(self, translation: Vect) -> Transform {
+    pub fn with_translation_vect(self, translation: Vec3D) -> Transform {
         Transform {
             translation: translation,
             .. self
@@ -62,12 +62,12 @@ impl Transform {
 
     #[inline]
     pub fn with_translation(self, x: Scalar, y: Scalar, z: Scalar) -> Transform {
-        self.with_translation_vect(Vect::new(x, y, z))
+        self.with_translation_vect(Vec3D::new(x, y, z))
     }
 
     #[inline]
     pub fn with_zero_translation(self) -> Transform {
-        self.with_translation_vect(Vect::zero())
+        self.with_translation_vect(Vec3D::zero())
     }
 
     #[inline]
@@ -79,7 +79,7 @@ impl Transform {
     }
 
     #[inline]
-    pub fn with_axis_angle(self, axis: Vect, angle: Scalar) -> Transform {
+    pub fn with_axis_angle(self, axis: Vec3D, angle: Scalar) -> Transform {
         self.with_rotation(UnitQuat::from_axis_angle(axis, angle))
     }
 
@@ -89,17 +89,17 @@ impl Transform {
     }
 
     /// Applies the transform to a point.
-    pub fn apply_to_point(&self, point: Vect) -> Vect {
+    pub fn apply_to_point(&self, point: Vec3D) -> Vec3D {
         self.rotation().rotate(point) + self.translation()
     }
 
-    /// Applies the `Transform` on the `Vect` treating it as a direction.
-    pub fn apply_to_direction(&self, direction: Vect) -> Vect {
+    /// Applies the `Transform` on the `Vec3D` treating it as a direction.
+    pub fn apply_to_direction(&self, direction: Vec3D) -> Vec3D {
         self.rotation().rotate(direction)
     }
 
     /// Applies the inverse of the transform to a direction.
-    pub fn apply_inverse_to_direction(&self, direction: Vect) -> Vect {
+    pub fn apply_inverse_to_direction(&self, direction: Vec3D) -> Vec3D {
         self.rotation().inverse().rotate(direction)
     }
 }
@@ -118,12 +118,12 @@ macro_rules! include_transform_helpers {
         }
 
         #[inline]
-        pub fn translation(&self) -> &Vect {
+        pub fn translation(&self) -> &Vec3D {
             &self.$field_name.translation
         }
 
         #[inline]
-        pub fn translation_mut(&mut self) -> &mut Vect {
+        pub fn translation_mut(&mut self) -> &mut Vec3D {
             &mut self.$field_name.translation
         }
 
@@ -138,9 +138,9 @@ macro_rules! include_transform_helpers {
         }
 
         chain_method!($S, $s, $field_name, with_translation(self, x: Scalar, y: Scalar, z: Scalar));
-        chain_method!($S, $s, $field_name, with_translation_vect(self, vect: Vect));
+        chain_method!($S, $s, $field_name, with_translation_vect(self, vect: Vec3D));
         chain_method!($S, $s, $field_name, with_zero_translation(self));
-        chain_method!($S, $s, $field_name, with_axis_angle(self, axis: Vect, angle: Scalar));
+        chain_method!($S, $s, $field_name, with_axis_angle(self, axis: Vec3D, angle: Scalar));
         chain_method!($S, $s, $field_name, with_rotation(self, rotation: UnitQuat));
         chain_method!($S, $s, $field_name, with_zero_rotation(self));
     };

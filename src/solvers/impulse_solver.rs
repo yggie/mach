@@ -1,5 +1,5 @@
 use Scalar;
-use maths::Vect;
+use maths::Vec3D;
 use entities::{BodyType, RigidBody, StaticBody};
 use detection::ContactEvent;
 
@@ -25,7 +25,7 @@ impl ImpulseSolver {
         }
     }
 
-    fn compute_rigid_rigid_impulse(bodies: (&RigidBody, &RigidBody), center: &Vect, normal: &Vect) -> Scalar {
+    fn compute_rigid_rigid_impulse(bodies: (&RigidBody, &RigidBody), center: &Vec3D, normal: &Vec3D) -> Scalar {
         let epsilon = bodies.0.restitution_coefficient() *
             bodies.1.restitution_coefficient();
         let mass_inverse = (bodies.0.mass_inverse(), bodies.1.mass_inverse());
@@ -53,7 +53,7 @@ impl ImpulseSolver {
         - (1.0 + epsilon) * numerator / denominator
     }
 
-    fn compute_rigid_static_impulse((rigid_body, static_body): (&RigidBody, &StaticBody), center: &Vect, normal: &Vect) -> Scalar {
+    fn compute_rigid_static_impulse((rigid_body, static_body): (&RigidBody, &StaticBody), center: &Vec3D, normal: &Vec3D) -> Scalar {
         let epsilon = rigid_body.restitution_coefficient() *
             static_body.restitution_coefficient();
         let to_contact_center = center - rigid_body.translation();

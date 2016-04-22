@@ -1,4 +1,4 @@
-use maths::Vect;
+use maths::Vec3D;
 use shapes::{Shape, Cuboid};
 
 #[test]
@@ -19,7 +19,7 @@ fn computing_the_number_of_vertices() {
 #[test]
 fn computing_the_support_indices() {
     let c = Cuboid::new(2.0, 3.0, 1.0);
-    let dir = Vect::new(-0.1, 1.0, 0.1);
+    let dir = Vec3D::new(-0.1, 1.0, 0.1);
 
     let indices = c.support_indices_for(dir);
     let v = c.vertex(indices[0]);
@@ -27,8 +27,8 @@ fn computing_the_support_indices() {
     assert_eq!(indices.len(), 1);
     assert_eq!((v.x, v.y, v.z), (-1.0, 1.5, 0.5));
 
-    let other_indices = c.support_indices_for(Vect::new(1.0, 0.0, 0.0));
-    let other_vertices: Vec<Vect> = other_indices.iter()
+    let other_indices = c.support_indices_for(Vec3D::new(1.0, 0.0, 0.0));
+    let other_vertices: Vec<Vec3D> = other_indices.iter()
         .map(|&i| c.vertex(i))
         .collect();
 

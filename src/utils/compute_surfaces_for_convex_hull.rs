@@ -1,10 +1,10 @@
 use {Scalar, TOLERANCE};
-use maths::Vect;
+use maths::Vec3D;
 use utils::Surface;
 
 /// Computes a set of `Surfaces` for the point cloud provided. The computation
 /// assumes that all points are on the convex hull of the point cloud.
-pub fn compute_surfaces_for_convex_hull(vertices: &Vec<Vect>) -> Vec<Surface> {
+pub fn compute_surfaces_for_convex_hull(vertices: &Vec<Vec3D>) -> Vec<Surface> {
     let mut surfaces: Vec<Surface> = Vec::new();
     let (initial_surface, mut available_nodes, mut free_edge_list) = initialize_surface(vertices);
     surfaces.push(initial_surface);
@@ -80,12 +80,12 @@ enum Result {
 #[derive(Clone, Copy)]
 struct Node {
     index: usize,
-    position: Vect,
+    position: Vec3D,
     on_edge: bool,
 }
 
 impl Node {
-    fn new(index: usize, position: Vect) -> Node {
+    fn new(index: usize, position: Vec3D) -> Node {
         Node {
             index: index,
             position: position,
@@ -97,13 +97,13 @@ impl Node {
 #[derive(Clone, Copy)]
 struct DirectedEdge {
     nodes: [usize; 2],
-    up_vector: Vect,
-    direction: Vect,
-    point_on_edge: Vect,
+    up_vector: Vec3D,
+    direction: Vec3D,
+    point_on_edge: Vec3D,
 }
 
 impl DirectedEdge {
-    fn new(vertices: &Vec<Vect>, surface: &Surface, index_0: usize, index_1: usize) -> DirectedEdge {
+    fn new(vertices: &Vec<Vec3D>, surface: &Surface, index_0: usize, index_1: usize) -> DirectedEdge {
         let node_index_0 = surface.nodes[index_0];
         let node_index_1 = surface.nodes[index_1];
 
@@ -134,7 +134,7 @@ impl DirectedEdge {
             self.nodes[1] == edge.nodes[1]
     }
 
-    fn project_to_directed_plane(&self, vertex: Vect) -> (Scalar, Scalar) {
+    fn project_to_directed_plane(&self, vertex: Vec3D) -> (Scalar, Scalar) {
         let relative_position = vertex - self.point_on_edge;
         let ref_x = relative_position.dot(self.direction);
         let ref_y = relative_position.dot(self.up_vector);
@@ -148,7 +148,7 @@ impl DirectedEdge {
     }
 }
 
-fn initialize_surface(vertices: &Vec<Vect>) -> (Surface, Vec<Node>, Vec<DirectedEdge>) {
+fn initialize_surface(vertices: &Vec<Vec3D>) -> (Surface, Vec<Node>, Vec<DirectedEdge>) {
     let mut available_nodes: Vec<Node> = vertices.iter()
         .enumerate()
         .map(|(index, v)| Node::new(index, *v))
@@ -239,7 +239,7 @@ fn select_best_node_for_edge(available_nodes: &Vec<Node>, edge_list: &Vec<Direct
         });
 }
 
-fn new_surface_from_edge(vertices: &Vec<Vect>, edge: DirectedEdge, vertex_index: usize) -> (Surface, [DirectedEdge; 2]) {
+fn new_surface_from_edge(vertices: &Vec<Vec3D>, edge: DirectedEdge, vertex_index: usize) -> (Surface, [DirectedEdge; 2]) {
     let new_surface = Surface::new(vertices, vertex_index, edge.nodes[0], edge.nodes[1]);
     let mut new_edges: Vec<DirectedEdge> = Vec::new();
     let combinations = [
