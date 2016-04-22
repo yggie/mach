@@ -3,7 +3,7 @@ extern crate rand;
 use self::rand::Rng;
 
 use {Scalar, TOLERANCE};
-use maths::{DotProduct, Vec3D};
+use maths::{CrossProduct, DotProduct, Vec3D};
 
 use super::minkowski_difference::{MinkowskiDifference, IndexPair};
 
@@ -24,7 +24,7 @@ impl SimplexCache {
                 rng.gen_range(-1.0, 1.0),
             );
 
-            let candidate_support_points = diff.support_index_pairs(&guess);
+            let candidate_support_points = diff.support_index_pairs(guess);
 
             if candidate_support_points.len() != 1 {
                 continue;
@@ -44,13 +44,13 @@ impl SimplexCache {
             let datum = diff.vertex(&support_point_0);
             let a = diff.vertex(&support_point_2) - datum;
             let b = diff.vertex(&support_point_1) - datum;
-            let norm = Vec3D::cross(&a, b).normalize();
+            let norm = a.cross(b).normalize();
 
             [1.0, -1.0 as Scalar].iter()
                 .filter_map(|&multiplier| {
-                    diff.support_index_pairs(&(norm * multiplier)).iter()
+                    diff.support_index_pairs(norm * multiplier).iter()
                         .find(|support_point| {
-                            Vec3D::dot(&norm, diff.vertex(support_point) - datum).abs() > TOLERANCE
+                            norm.dot(diff.vertex(support_point) - datum).abs() > TOLERANCE
                         })
                         .map(|support_point| support_point.clone())
                 })

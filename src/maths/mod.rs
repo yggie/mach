@@ -11,6 +11,7 @@ mod quat;
 mod vec_3d;
 mod matrix;
 mod unit_quat;
+mod unit_vec_3d;
 mod integratable;
 mod sparse_matrix;
 
@@ -22,6 +23,8 @@ pub mod lcp_solver;
 pub mod integrator;
 /// TODO temporary workaround for the issue of rexporting traits, see https://github.com/rust-lang/rust/issues/16264
 pub mod dot_product;
+/// TODO temporary workaround for the issue of rexporting traits, see https://github.com/rust-lang/rust/issues/16264
+pub mod cross_product;
 
 pub mod _2d;
 pub mod integrators;
@@ -38,5 +41,7 @@ pub use self::unit_quat::UnitQuat;
 pub use self::lcp_solver::LCPSolver;
 pub use self::integrator::Integrator;
 pub use self::dot_product::DotProduct;
+pub use self::unit_vec_3d::UnitVec3D;
 pub use self::integratable::IntegratableMut;
+pub use self::cross_product::CrossProduct;
 pub use self::sparse_matrix::SparseMatrix;

@@ -20,12 +20,12 @@ impl<'a> MinkowskiDifference<'a> {
             transforms.1.apply_to_point(shapes.1.vertex(support_point.1));
     }
 
-    pub fn support_index_pairs(&self, direction: &Vec3D) -> Vec<IndexPair> {
+    pub fn support_index_pairs(&self, direction: Vec3D) -> Vec<IndexPair> {
         let shapes = (self.0.shape(), self.1.shape());
         let transforms = (self.0.transform(), self.1.transform());
 
         let direction_in_body_coordinates = (
-            transforms.0.apply_inverse_to_direction(*direction),
+            transforms.0.apply_inverse_to_direction( direction),
             transforms.1.apply_inverse_to_direction(-direction),
         );
 

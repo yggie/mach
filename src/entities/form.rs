@@ -1,5 +1,5 @@
 use Scalar;
-use maths::{Transform, UnitQuat, Vec3D};
+use maths::{Transform, UnitQuat, UnitVec3D, Vec3D};
 use shapes::{Cuboid, Shape};
 
 #[derive(Clone, Debug)]
@@ -138,7 +138,7 @@ macro_rules! include_form_helpers {
         chain_method!($S, $s, $field_name, with_translation(self, x: Scalar, y: Scalar, z: Scalar));
         chain_method!($S, $s, $field_name, with_translation_vect(self, vect: Vec3D));
         chain_method!($S, $s, $field_name, with_zero_translation(self));
-        chain_method!($S, $s, $field_name, with_axis_angle(self, axis: Vec3D, angle: Scalar));
+        chain_method!($S, $s, $field_name, with_axis_angle(self, axis: UnitVec3D, angle: Scalar));
         chain_method!($S, $s, $field_name, with_rotation(self, rotation: UnitQuat));
         chain_method!($S, $s, $field_name, with_zero_rotation(self));
     };

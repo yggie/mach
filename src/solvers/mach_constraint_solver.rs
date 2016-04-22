@@ -5,7 +5,7 @@ use std::mem;
 use self::rand::Rng;
 
 use Scalar;
-use maths::{lcp_solvers, DotProduct, Integrator, LCP, LCPSolver, Matrix, Vec3D};
+use maths::{lcp_solvers, CrossProduct, DotProduct, Integrator, LCP, LCPSolver, Matrix, UnitVec3D, Vec3D};
 use maths::integrators::SemiImplicitEuler;
 use solvers::{ConstraintSolver, ImpulseSolver};
 use entities::{BodyType, BodyTypeMut, RigidBody};
@@ -18,11 +18,11 @@ impl MachConstraintSolver {
         MachConstraintSolver
     }
 
-    fn formuate_lcp(time_step: Scalar, contacts: &Vec<ContactEvent>) -> (LCP, Vec<Vec3D>) {
+    fn formuate_lcp(time_step: Scalar, contacts: &Vec<ContactEvent>) -> (LCP, Vec<UnitVec3D>) {
         let number_of_contacts = contacts.len();
         let size = number_of_contacts * 2;
         let mut problem = LCP::new(size);
-        let mut friction_directions: Vec<Vec3D> = Vec::new();
+        let mut friction_directions: Vec<UnitVec3D> = Vec::new();
 
         for (i, contact_event) in contacts.iter().enumerate() {
             // TODO handle more than one contact point
@@ -76,19 +76,19 @@ impl MachConstraintSolver {
             let impulse_offset = number_of_contacts * i;
             let friction_offset = impulse_offset + 1;
 
-            let generalized_mass_inverse = |vect| {
+            let generalized_mass_inverse = |vect: UnitVec3D| -> Vec3D {
                 (mass_inverse.0 + mass_inverse.1) * vect +
                     contact_offset.0.cross(inertia_inverse.0 * contact_offset.0.cross(vect)) +
                     contact_offset.1.cross(inertia_inverse.1 * contact_offset.1.cross(vect))
             };
 
-            let generalized_mass_inverse_norm = generalized_mass_inverse(contact_normal.clone());
+            let generalized_mass_inverse_norm = generalized_mass_inverse(contact_normal);
 
             // FRICTION
-            let mut perpendicular_direction = rel_vel.cross(contact_normal.clone()).normalize();
+            let mut perpendicular_direction = rel_vel.cross(contact_normal).normalize();
             // ASSUMPTION: Non-finite length means that the relative velocity
             // and contact normal directions are aligned
-            while !perpendicular_direction.length_sq().is_finite() {
+            while !perpendicular_direction.squared_length().is_finite() {
                 // pick any arbitrary direction to avoid the singularity when
                 // relative velocity is aligned  with the contact normal
                 let mut rng = rand::thread_rng();
@@ -99,7 +99,7 @@ impl MachConstraintSolver {
                 );
                 perpendicular_direction = rel_vel.cross(guess).normalize();
             };
-            let friction_direction = -contact_normal.cross(perpendicular_direction).normalize();
+            let friction_direction = -contact_normal.cross(perpendicular_direction);
             let generalized_mass_inverse_fric = generalized_mass_inverse(friction_direction);
 
             *problem.matrix_mut(friction_offset, friction_offset) = friction_direction.dot(generalized_mass_inverse_fric);
@@ -155,7 +155,7 @@ impl MachConstraintSolver {
         return (problem, friction_directions);
     }
 
-    fn apply_lcp_solution(problem: LCP, friction_directions: Vec<Vec3D>, time_step: Scalar, contact_events: &Vec<ContactEvent>) {
+    fn apply_lcp_solution(problem: LCP, friction_directions: Vec<UnitVec3D>, time_step: Scalar, contact_events: &Vec<ContactEvent>) {
         let number_of_contacts = contact_events.len();
         for (i, contact_event) in contact_events.iter().enumerate() {
             let impulse_offset = number_of_contacts * i;

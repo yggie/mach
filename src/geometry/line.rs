@@ -3,30 +3,30 @@
 mod tests;
 
 use Scalar;
-use maths::{DotProduct, Vec3D};
+use maths::{DotProduct, UnitVec3D, Vec3D};
 
 pub struct Line {
     datum: Vec3D,
-    direction: Vec3D,
+    direction: UnitVec3D,
 }
 
 impl Line {
     #[inline]
-    pub fn new(datum: Vec3D, direction: Vec3D) -> Line {
+    pub fn new(datum: Vec3D, direction: UnitVec3D) -> Line {
         Line {
             datum: datum,
-            direction: direction.normalize(),
+            direction: direction,
         }
     }
 
     #[inline]
     pub fn from_points(start: Vec3D, end: Vec3D) -> Line {
-        Line::new(start, end - start)
+        Line::new(start, (end - start).normalize())
     }
 
     #[inline]
-    pub fn direction(&self) -> &Vec3D {
-        &self.direction
+    pub fn direction(&self) -> UnitVec3D {
+        self.direction
     }
 
     #[inline]
@@ -40,11 +40,11 @@ impl Line {
 
     pub fn closest_point_to_line(&self, other: &Line) -> Vec3D {
         let w = self.datum() - other.datum();
-        let a = Vec3D::dot(self.direction(), self.direction().clone());
-        let b = Vec3D::dot(self.direction(), other.direction().clone());
-        let c = Vec3D::dot(other.direction(), other.direction().clone());
-        let d = Vec3D::dot(self.direction(), w);
-        let e = Vec3D::dot(other.direction(), w);
+        let a = self.direction().dot(self.direction());
+        let b = self.direction().dot(other.direction());
+        let c = other.direction().dot(other.direction());
+        let d = self.direction().dot(w);
+        let e = other.direction().dot(w);
 
         let denominator = a*c - b*b;
         let self_offset = (b*e - c*d) / denominator;

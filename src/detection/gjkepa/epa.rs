@@ -42,7 +42,7 @@ impl<'a> IterativeAlgorithm for EPA<'a> {
 
         let candidate_point = self.polytope.surfaces.iter()
             .filter_map(|&(ref plane, _vertex_indices)| {
-                let mut new_index_pairs = self.polytope.diff.support_index_pairs(plane.normal());
+                let mut new_index_pairs = self.polytope.diff.support_index_pairs(Vec3D::from(plane.normal()));
 
                 let any_points_already_tested = new_index_pairs.iter()
                     .any(|&index_pair| {
@@ -55,7 +55,7 @@ impl<'a> IterativeAlgorithm for EPA<'a> {
                 if any_points_already_tested || {
                     let point = self.polytope.diff.vertex(&new_index_pairs[0]);
 
-                    !plane.location_of(&point).is_above_plane()
+                    !plane.location_of(point).is_above_plane()
                 } {
                     return None;
                 }
@@ -81,7 +81,7 @@ impl<'a> IterativeAlgorithm for EPA<'a> {
                         let (_vertex, index_pair) = self.polytope.support_points[surface.nodes[0]];
                         let point_on_surface = self.polytope.diff.vertex(&index_pair);
 
-                        return (Plane::from_point(&point_on_surface, &surface.normal), (surface.nodes[0], surface.nodes[1], surface.nodes[2]));
+                        return (Plane::new(point_on_surface, surface.normal), (surface.nodes[0], surface.nodes[1], surface.nodes[2]));
                     })
                     .collect();
             },

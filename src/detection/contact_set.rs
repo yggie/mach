@@ -1,5 +1,5 @@
 use Scalar;
-use maths::Vec3D;
+use maths::{UnitVec3D, Vec3D};
 use geometry::Plane;
 
 #[derive(Clone)]
@@ -18,18 +18,18 @@ impl ContactSet {
         }
     }
 
-    #[inline]
-    pub fn point(&self, index: usize) -> &Vec3D {
-        &self.points[index]
+    #[inline(always)]
+    pub fn point(&self, index: usize) -> Vec3D {
+        self.points[index]
     }
 
-    #[inline]
+    #[inline(always)]
     pub fn points(&self) -> &Vec<Vec3D> {
         &self.points
     }
 
-    #[inline]
-    pub fn normal(&self) -> &Vec3D {
+    #[inline(always)]
+    pub fn normal(&self) -> UnitVec3D {
         self.plane.normal()
     }
 

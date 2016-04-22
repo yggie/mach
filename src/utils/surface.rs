@@ -1,11 +1,11 @@
 use {Scalar, TOLERANCE};
-use maths::{DotProduct, Vec3D};
+use maths::{CrossProduct, DotProduct, UnitVec3D, Vec3D};
 
 /// Represents a `Surface` for a given set of points.
 #[derive(Copy, Clone)]
 pub struct Surface {
     /// The `Surface` normal
-    pub normal: Vec3D,
+    pub normal: UnitVec3D,
     /// The node indices associated with the `Surface`
     pub nodes: [usize; 3],
 }

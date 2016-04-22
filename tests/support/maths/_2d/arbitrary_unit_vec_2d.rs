@@ -4,6 +4,6 @@ use maths::_2d::{UnitVec2D, Vec2D};
 
 impl quickcheck::Arbitrary for UnitVec2D {
     fn arbitrary<G: quickcheck::Gen>(random: &mut G) -> Self {
-        UnitVec2D::from_vec(&Vec2D::arbitrary(random))
+        Vec2D::arbitrary(random).normalize()
     }
 }

@@ -16,11 +16,6 @@ use maths::_2d::Vec2D;
 pub struct UnitVec2D(Vec2D);
 
 impl UnitVec2D {
-    pub fn from_vec(vec: &Vec2D) -> UnitVec2D {
-        let length = vec.length();
-        UnitVec2D(Vec2D::new(vec.x / length, vec.y / length))
-    }
-
     #[inline(always)]
     pub fn vec(&self) -> &Vec2D {
         &self.0
@@ -36,6 +31,19 @@ impl UnitVec2D {
 
     pub fn reversed(self) -> UnitVec2D {
         UnitVec2D(-self.0)
+    }
+}
+
+impl From<Vec2D> for UnitVec2D {
+    fn from(vec: Vec2D) -> UnitVec2D {
+        let length = vec.length();
+        UnitVec2D(Vec2D::new(vec.x / length, vec.y / length))
+    }
+}
+
+impl From<UnitVec2D> for Vec2D {
+    fn from(unit_vec: UnitVec2D) -> Vec2D {
+        unit_vec.0
     }
 }
 

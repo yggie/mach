@@ -6,7 +6,7 @@ macro_rules! assert_world_behaviour {
             use super::test_subject;
 
             use {PI, Scalar, World};
-            use maths::{DotProduct, Vec3D};
+            use maths::{CrossProduct, DotProduct, Vec3D};
             use shapes::Cuboid;
             use entities::{EntityStore, RigidBody, StaticBody};
 
@@ -48,7 +48,7 @@ macro_rules! assert_world_behaviour {
                     .with_mass(1.0)
                     .with_restitution_coefficient(1.0)
                     .with_translation((0.98 + (3.0 as Scalar).sqrt())/2.0, 0.0, 0.0)
-                    .with_axis_angle(rotation, rotation.length().asin())
+                    .with_axis_angle(rotation.normalize(), rotation.length().asin())
                     .with_velocity(-1.0, 0.0, 0.0);
                 let id_1 = world.add_rigid_body(rigid_body_1);
 
@@ -69,7 +69,7 @@ macro_rules! assert_world_behaviour {
                     .with_shape(Cuboid::new(1.0, 10.0, 1.0))
                     .with_mass(1.0)
                     .with_restitution_coefficient(1.0)
-                    .with_axis_angle(Vec3D::new(0.0, 1.0, 0.0), PI / 4.0)
+                    .with_axis_angle(Vec3D::new(0.0, 1.0, 0.0).normalize(), PI / 4.0)
                     .with_angular_velocity(-1.0, 0.0, 0.0);
                 let rigid_body_id = world.add_rigid_body(rigid_body);
 

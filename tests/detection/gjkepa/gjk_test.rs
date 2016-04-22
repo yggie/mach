@@ -46,7 +46,7 @@ fn assert_valid_simplex(cache: &SimplexCache, diff: &MinkowskiDifference) {
             .map(|i| i.clone())
             .unwrap();
 
-        let (ref vertex, _index_pair) = simplex.support_points[index];
+        let (vertex, _index_pair) = simplex.support_points[index];
         match surface.location_of(vertex) {
             PlaneLocation::Above(_height) =>
                 panic!(format!("{:?} is degenerate, a surface is pointing in the wrong direction", cache)),

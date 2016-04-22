@@ -3,7 +3,7 @@
 mod transform_test;
 
 use Scalar;
-use maths::{UnitQuat, Vec3D};
+use maths::{UnitQuat, UnitVec3D, Vec3D};
 
 /// The `Transform` object represents a spatial transformation in 3D space.
 #[derive(Clone, Copy, Debug)]
@@ -79,7 +79,7 @@ impl Transform {
     }
 
     #[inline]
-    pub fn with_axis_angle(self, axis: Vec3D, angle: Scalar) -> Transform {
+    pub fn with_axis_angle(self, axis: UnitVec3D, angle: Scalar) -> Transform {
         self.with_rotation(UnitQuat::from_axis_angle(axis, angle))
     }
 
@@ -140,7 +140,7 @@ macro_rules! include_transform_helpers {
         chain_method!($S, $s, $field_name, with_translation(self, x: Scalar, y: Scalar, z: Scalar));
         chain_method!($S, $s, $field_name, with_translation_vect(self, vect: Vec3D));
         chain_method!($S, $s, $field_name, with_zero_translation(self));
-        chain_method!($S, $s, $field_name, with_axis_angle(self, axis: Vec3D, angle: Scalar));
+        chain_method!($S, $s, $field_name, with_axis_angle(self, axis: UnitVec3D, angle: Scalar));
         chain_method!($S, $s, $field_name, with_rotation(self, rotation: UnitQuat));
         chain_method!($S, $s, $field_name, with_zero_rotation(self));
     };

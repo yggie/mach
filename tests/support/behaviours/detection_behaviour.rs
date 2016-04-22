@@ -8,9 +8,8 @@ macro_rules! assert_detection_behaviour {
             use super::test_subject;
 
             use {PI, Scalar};
-            use maths::{DotProduct, UnitQuat, Vec3D};
+            use maths::{CrossProduct, DotProduct, UnitVec3D, UnitQuat, Vec3D};
             use shapes::Cuboid;
-            use support::inputs;
             use entities::{Body, BodyHandle, RigidBody};
             use detection::Detection;
 
@@ -20,7 +19,7 @@ macro_rules! assert_detection_behaviour {
 
             #[test]
             fn it_does_not_return_false_positives() {
-                fn property(offset: inputs::UnitVect, rot: UnitQuat) {
+                fn property(random_direction: UnitVec3D, rot: UnitQuat) {
                     let mut detection = validate(test_subject());
                     let cube_size = 1.0;
                     let margin_ratio = 0.05;
@@ -29,33 +28,33 @@ macro_rules! assert_detection_behaviour {
                     let rigid_body = RigidBody::default()
                         .with_shape(Cuboid::cube(cube_size))
                         .with_rotation(rot.into())
-                        .with_translation_vect((2.0 * ((1.0 + margin_ratio) * cube_size) * Scalar::sqrt(2.0)) * offset.as_vect());
+                        .with_translation_vect((2.0 * ((1.0 + margin_ratio) * cube_size) * Scalar::sqrt(2.0)) * random_direction);
 
                     let result = detection.compute_contacts(&handle(control), &handle(rigid_body));
 
                     assert!(result.is_none());
                 }
 
-                quickcheck::quickcheck(property as fn(inputs::UnitVect, UnitQuat));
+                quickcheck::quickcheck(property as fn(UnitVec3D, UnitQuat));
             }
 
             #[test]
             fn it_does_not_return_false_negatives() {
-                fn property(offset: inputs::UnitVect, rot: UnitQuat) {
+                fn property(random_direction: UnitVec3D, rot: UnitQuat) {
                     let mut detection = validate(test_subject());
                     let control = RigidBody::default()
                         .with_shape(Cuboid::cube(1.0));
                     let rigid_body = RigidBody::default()
                         .with_shape(Cuboid::cube(1.0))
                         .with_rotation(rot.into())
-                        .with_translation_vect(0.49 * offset.as_vect());
+                        .with_translation_vect(0.49 * random_direction);
 
                     let result = detection.compute_contacts(&handle(control), &handle(rigid_body));
 
                     assert!(result.is_some());
                 }
 
-                quickcheck::quickcheck(property as fn(inputs::UnitVect, UnitQuat));
+                quickcheck::quickcheck(property as fn(UnitVec3D, UnitQuat));
             }
 
             // #[test]
@@ -90,7 +89,7 @@ macro_rules! assert_detection_behaviour {
                 let rigid_body = RigidBody::default()
                     .with_shape(Cuboid::cube(1.0))
                     .with_translation((0.98 + (3.0 as Scalar).sqrt())/2.0, 0.1, 0.0)
-                    .with_axis_angle(rotation, rotation.length().asin());
+                    .with_axis_angle(rotation.normalize(), rotation.length().asin());
 
                 let result = detection.compute_contacts(&handle(control), &handle(rigid_body));
 
@@ -99,8 +98,8 @@ macro_rules! assert_detection_behaviour {
                 let contact_event = result.unwrap();
 
                 assert_eq!(contact_event.points().len(), 1);
-                assert_approx_eq!(*contact_event.normal(), Vec3D::new(-1.0, 0.0, 0.0));
-                assert_approx_eq!(*contact_event.point(0), Vec3D::new(0.495, 0.1, 0.0));
+                assert_approx_eq!(contact_event.normal(), UnitVec3D::from(Vec3D::new(-1.0, 0.0, 0.0)));
+                assert_approx_eq!(contact_event.point(0), Vec3D::new(0.495, 0.1, 0.0));
             }
 
             #[test]
@@ -110,7 +109,7 @@ macro_rules! assert_detection_behaviour {
                     .with_shape(Cuboid::cube(1.0));
                 let rigid_body = RigidBody::default()
                     .with_shape(Cuboid::cube(1.0))
-                    .with_axis_angle(Vec3D::new(1.0, 1.0, 0.0), PI / 2.0)
+                    .with_axis_angle(Vec3D::new(1.0, 1.0, 0.0).normalize(), PI / 2.0)
                     .with_translation(0.99, 0.99, 0.00);
 
                 let result = detection.compute_contacts(&handle(control), &handle(rigid_body));
@@ -132,7 +131,7 @@ macro_rules! assert_detection_behaviour {
                 let rigid_body = RigidBody::default()
                     .with_shape(Cuboid::cube(1.0))
                     .with_translation(0.49 + 0.5*(2.0 as Scalar).sqrt(), 0.0, 0.5)
-                    .with_axis_angle(Vec3D::new(0.0, 0.0, 1.0), PI/4.0);
+                    .with_axis_angle(Vec3D::new(0.0, 0.0, 1.0).normalize(), PI/4.0);
 
                 let result = detection.compute_contacts(&handle(control), &handle(rigid_body));
 
@@ -141,7 +140,7 @@ macro_rules! assert_detection_behaviour {
                 let contact_event = result.unwrap();
 
                 assert_eq!(contact_event.points().len(), 2);
-                assert_approx_eq!(*contact_event.normal(), Vec3D::new(-1.0, 0.0, 0.0));
+                assert_approx_eq!(contact_event.normal(), UnitVec3D::from(Vec3D::new(-1.0, 0.0, 0.0)));
 
                 let mut points = contact_event.points().clone();
                 points.sort_by(|a, b| a.z.partial_cmp(&b.z).unwrap());
@@ -175,14 +174,14 @@ macro_rules! assert_detection_behaviour {
             // consistent with the start-end principle
             #[test]
             fn it_always_has_the_normal_pointing_towards_the_first_body() {
-                fn property(offset: inputs::UnitVect, rot: UnitQuat) {
+                fn property(random_direction: UnitVec3D, rot: UnitQuat) {
                     let mut detection = validate(test_subject());
                     let control = RigidBody::default()
                         .with_shape(Cuboid::cube(1.0));
                     let rigid_body = RigidBody::default()
                         .with_shape(Cuboid::cube(1.0))
                         .with_rotation(rot.into())
-                        .with_translation_vect(0.45 * offset.as_vect());
+                        .with_translation_vect(0.45 * random_direction);
                     let control_handle = handle(control);
                     let rigid_body_handle = handle(rigid_body);
 
@@ -200,7 +199,7 @@ macro_rules! assert_detection_behaviour {
                     assert!(projection > 0.0, format!("Expected the projected relative distance in the direction of the normal to always be positive, but got {}", projection));
                 }
 
-                quickcheck::quickcheck(property as fn(inputs::UnitVect, UnitQuat));
+                quickcheck::quickcheck(property as fn(UnitVec3D, UnitQuat));
             }
 
             fn handle<B: Body + 'static>(body: B) -> BodyHandle {

@@ -1,5 +1,5 @@
 use {Scalar, TOLERANCE};
-use maths::{DotProduct, Vec3D};
+use maths::{CrossProduct, DotProduct, UnitVec3D, Vec3D};
 use utils::Surface;
 
 /// Computes a set of `Surfaces` for the point cloud provided. The computation
@@ -97,8 +97,8 @@ impl Node {
 #[derive(Clone, Copy)]
 struct DirectedEdge {
     nodes: [usize; 2],
-    up_vector: Vec3D,
-    direction: Vec3D,
+    up_vector: UnitVec3D,
+    direction: UnitVec3D,
     point_on_edge: Vec3D,
 }
 
@@ -109,7 +109,7 @@ impl DirectedEdge {
 
         let edge_vector = (vertices[node_index_1] - vertices[node_index_0]).normalize();
         let from_surface_centroid = vertices[node_index_0] - Surface::compute_centroid(&surface, vertices);
-        let mut direction = edge_vector.cross(surface.normal).normalize();
+        let mut direction = edge_vector.cross(surface.normal);
 
         if direction.dot(from_surface_centroid.normalize()) < -TOLERANCE {
             direction = -direction;

@@ -70,11 +70,11 @@ impl<'a> IterativeAlgorithm for GJK<'a> {
             },
         };
 
-        let new_support_points = self.simplex.diff.support_index_pairs(plane.normal());
+        let new_support_points = self.simplex.diff.support_index_pairs(plane.normal().into());
         let new_support_point_option = new_support_points.into_iter()
             .find(|candidate_point| {
                 !self.history.iter().any(|pt| pt == candidate_point) &&
-                    plane.location_of(&self.simplex.diff.vertex(&candidate_point)).is_above_plane()
+                    plane.location_of(self.simplex.diff.vertex(&candidate_point)).is_above_plane()
             });
 
         let new_support_point = match new_support_point_option {

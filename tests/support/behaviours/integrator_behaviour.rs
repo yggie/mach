@@ -5,7 +5,7 @@ macro_rules! assert_integrator_behaviour(
         mod integrator_behaviour {
             use super::test_subject;
 
-            use maths::{IntegratableMut, Integrator, Motion, Transform, UnitQuat, Vec3D};
+            use maths::{IntegratableMut, Integrator, Motion, Transform, UnitQuat, UnitVec3D, Vec3D};
 
             fn validate<I: Integrator>(input: I) -> I {
                 input
@@ -78,7 +78,7 @@ macro_rules! assert_integrator_behaviour(
                     integrator.integrate_in_place(&mut integratable, 0.5, Vec3D::new(1.0, 0.0, 0.0));
                 }
 
-                assert_approx_eq!(transform.translation.normalize(), Vec3D::new(1.0, 0.0, 0.0));
+                assert_approx_eq!(transform.translation.normalize(), UnitVec3D::from(Vec3D::new(1.0, 0.0, 0.0)));
                 assert_approx_eq!(motion.velocity, Vec3D::new(1.5, 0.0, 0.0));
             }
         }

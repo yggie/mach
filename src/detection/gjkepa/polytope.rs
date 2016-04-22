@@ -1,7 +1,7 @@
 use std::collections::HashSet;
 
 use {NEG_INFINITY, TOLERANCE};
-use maths::{DotProduct, Vec3D};
+use maths::{CrossProduct, DotProduct, Vec3D};
 use maths::_2d::Vec2D;
 use geometry::{Intersection, Line, Plane};
 use geometry::_2d::{Line2D, Polygon};
@@ -34,7 +34,7 @@ impl<'a> Polytope<'a> {
     }
 
     pub fn compute_contact_points(&self) -> ContactSet {
-        let dummy_plane = Plane::from_point(&Vec3D::new(1.0, 0.0, 0.0), &Vec3D::new(0.0, 0.0, 0.0));
+        let dummy_plane = Plane::new(Vec3D::new(1.0, 0.0, 0.0), Vec3D::new(1.0, 0.0, 0.0).into());
 
         let faces = vec!((0, 0, 0));
         let (penetration_depth, closest_plane, faces) = self.surfaces.iter().skip(1)
@@ -80,7 +80,7 @@ impl<'a> Polytope<'a> {
                 let contact_normal = -closest_plane.normal();
 
                 ContactSet::new(
-                    Plane::from_point(&(contact_point - contact_normal * penetration_depth), &contact_normal),
+                    Plane::new(contact_point - contact_normal * penetration_depth, contact_normal),
                     vec!(contact_point),
                 )
             },
@@ -91,7 +91,7 @@ impl<'a> Polytope<'a> {
                 let contact_normal = -closest_plane.normal();
 
                 ContactSet::new(
-                    Plane::from_point(&(contact_point - contact_normal * penetration_depth), &contact_normal),
+                    Plane::new(contact_point - contact_normal * penetration_depth, contact_normal),
                     vec!(contact_point),
                 )
             },
@@ -109,7 +109,7 @@ impl<'a> Polytope<'a> {
                 let contact_normal = -closest_plane.normal();
 
                 ContactSet::new(
-                    Plane::from_point(&(contact_point - contact_normal * penetration_depth), &contact_normal),
+                    Plane::new(contact_point - contact_normal * penetration_depth, contact_normal),
                     vec!(contact_point),
                 )
             },
@@ -150,7 +150,7 @@ impl<'a> Polytope<'a> {
 
     fn compute_contact_set_for_edge_face(diff: &MinkowskiDifference, contact_plane: Plane, edge_indices: (usize, usize), face_indices: HashSet<usize>) -> ContactSet {
         let projected_x_axis = contact_plane.normal().cross(/* TODO pick a random vector */Vec3D::new(1.0, 1.0, 1.0)).normalize();
-        let projected_y_axis = contact_plane.normal().cross(projected_x_axis).normalize();
+        let projected_y_axis = contact_plane.normal().cross(projected_x_axis);
         let project = |point: &Vec3D| -> Vec2D {
             Vec2D::new(
                 projected_x_axis.dot(*point),
@@ -184,7 +184,7 @@ impl<'a> Polytope<'a> {
         let contact_point_1 = unproject(&intersection.end) + depth_1 * contact_plane.normal();
 
         return ContactSet::new(
-            Plane::from_point(&contact_point_0, &-contact_plane.normal()),
+            Plane::new(contact_point_0, -contact_plane.normal()),
             vec!(contact_point_0, contact_point_1),
         );
     }

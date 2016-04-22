@@ -46,7 +46,7 @@ impl Vec2D {
 
     #[inline]
     pub fn normalize(&self) -> UnitVec2D {
-        UnitVec2D::from_vec(self)
+        UnitVec2D::from(self.clone())
     }
 }
 

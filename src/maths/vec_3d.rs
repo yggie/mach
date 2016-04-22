@@ -11,7 +11,7 @@ use std::mem;
 use std::ops::{Add, Deref, DerefMut, Div, Mul, Neg, Sub};
 
 use {Scalar, TOLERANCE};
-use maths::{ApproxEq, DotProduct, Matrix};
+use maths::{ApproxEq, CrossProduct, DotProduct, Matrix, UnitVec3D};
 
 /// A representation of a 3-dimensional column vector.
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -49,32 +49,22 @@ impl Vec3D {
         self.z = other.2;
     }
 
-    /// Computes the cross product between two vectors.
-    #[inline]
-    pub fn cross(&self, other: Vec3D) -> Vec3D {
-        Vec3D::new(
-            self.y*other.z - self.z*other.y,
-            self.z*other.x - self.x*other.z,
-            self.x*other.y - self.y*other.x,
-        )
-    }
-
     /// Computes the direction vector of a Vec3D.
     #[inline]
-    pub fn normalize(&self) -> Vec3D {
-        *self / self.length()
+    pub fn normalize(&self) -> UnitVec3D {
+        UnitVec3D::from(self.clone())
     }
 
     /// Computes the squared length of a Vec3D.
     #[inline(always)]
-    pub fn length_sq(&self) -> Scalar {
+    pub fn squared_length(&self) -> Scalar {
         self.x*self.x + self.y*self.y + self.z*self.z
     }
 
     /// Computes the length of a Vec3D.
     #[inline(always)]
     pub fn length(&self) -> Scalar {
-        self.length_sq().sqrt()
+        self.squared_length().sqrt()
     }
 
     /// Computes the outer product between two Vectors.
@@ -134,7 +124,7 @@ impl Neg for Vec3D {
 /// `Vec3D`s to perform the comparison.
 impl<'a> ApproxEq<&'a Vec3D> for &'a Vec3D {
     fn approx_eq(self, other: &'a Vec3D) -> bool {
-        (self - other).length_sq() < TOLERANCE*TOLERANCE
+        (self - other).squared_length() < TOLERANCE*TOLERANCE
     }
 }
 
@@ -196,6 +186,21 @@ impl<'a, 'b> Sub<&'b Vec3D> for &'a Vec3D {
     }
 }
 implement_op_overload_variants!(Sub, sub, Vec3D, Vec3D, Vec3D);
+
+impl<'a, 'b> CrossProduct<&'a Vec3D> for &'b Vec3D {
+    type Output = Vec3D;
+
+    /// Computes the cross product between two vectors.
+    #[inline]
+    fn cross(self, other: &'a Vec3D) -> Self::Output {
+        Vec3D::new(
+            self.y*other.z - self.z*other.y,
+            self.z*other.x - self.x*other.z,
+            self.x*other.y - self.y*other.x,
+        )
+    }
+}
+implement_op_overload_variants!(CrossProduct, cross, Vec3D, Vec3D, Vec3D);
 
 /// Implement the `Mul` trait to allow using the `*` operator for a `Vec3D`
 /// with a `Scalar`.

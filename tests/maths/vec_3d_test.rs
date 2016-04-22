@@ -1,5 +1,5 @@
 use Scalar;
-use maths::{DotProduct, Vec3D};
+use maths::{CrossProduct, DotProduct, Vec3D};
 
 #[test]
 fn it_can_be_instantiated_with_scalars() {
@@ -111,17 +111,10 @@ fn computing_the_outer_product() {
 }
 
 #[test]
-fn computing_the_normalized_vector() {
-    let n = Vec3D::new(12.0, -20.0, 9.0).normalize();
-
-    assert_approx_eq!(n, Vec3D::new(0.48, -0.80, 0.36));
-}
-
-#[test]
 fn computing_the_squared_length() {
     let v = Vec3D::new(1.0, -2.0, 3.0);
 
-    assert_approx_eq!(v.length_sq(), 14.0);
+    assert_approx_eq!(v.squared_length(), 14.0);
 }
 
 #[test]

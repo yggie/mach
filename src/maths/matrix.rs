@@ -81,7 +81,7 @@ impl Matrix {
     pub fn rotation(radians: Scalar, axis: Vec3D) -> Matrix {
         let c = radians.cos();
         let s = radians.sin();
-        let a = axis.normalize();
+        let a = Vec3D::from(axis.normalize());
         let c1 = 1.0 - c;
         let aa = Vec3D::new(a.x*c1, a.y*c1, a.z*c1);
         Matrix::diag(c, c, c) + a.outer(aa) + Matrix::skew(a.x*s, a.y*s, a.z*s)

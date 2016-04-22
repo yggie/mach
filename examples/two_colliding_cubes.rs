@@ -25,7 +25,7 @@ impl Simulation for TwoCollidingCubes {
         world.add_rigid_body(prototype.clone()
             .with_mass(2.0)
             .with_translation(0.0, 0.0, -3.0)
-            .with_axis_angle(mach::Vec3D::new(1.0, 0.0, 1.0), 1.0)
+            .with_axis_angle(mach::Vec3D::new(1.0, 0.0, 1.0).normalize(), 1.0)
             .with_velocity(0.0, 0.0, 1.0));
 
         return Ok(());

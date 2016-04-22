@@ -1,5 +1,5 @@
 use {ID, Scalar};
-use maths::{Transform, UnitQuat, Vec3D};
+use maths::{Transform, UnitQuat, UnitVec3D, Vec3D};
 use shapes::Shape;
 use entities::{Body, BodyType, BodyTypeMut, Form};
 

@@ -6,7 +6,7 @@ fn it_can_be_instantiated_using_the_axis_angle_formulation() {
     let radians = 2.5;
     let hr = radians / 2.0;
 
-    let q = UnitQuat::from_axis_angle(Vec3D::new(2.0, 3.0, 6.0), radians);
+    let q = UnitQuat::from_axis_angle(Vec3D::new(2.0, 3.0, 6.0).normalize(), radians);
 
     let chr = hr.cos();
     let shr = hr.sin();
@@ -16,7 +16,7 @@ fn it_can_be_instantiated_using_the_axis_angle_formulation() {
 #[test]
 fn it_can_rotate_a_vector() {
     let v = Vec3D::new(1.0, 0.0, 0.0);
-    let q = UnitQuat::from_axis_angle(Vec3D::new(1.0, 0.5, 0.5), PI/3.0);
+    let q = UnitQuat::from_axis_angle(Vec3D::new(1.0, 0.5, 0.5).normalize(), PI/3.0);
 
     let res = q.rotate(v);
 

@@ -1,5 +1,5 @@
 use Scalar;
-use maths::Vec3D;
+use maths::{UnitVec3D, Vec3D};
 use entities::BodyHandle;
 use detection::ContactSet;
 
@@ -22,7 +22,7 @@ impl ContactEvent {
     }
 
     #[inline]
-    pub fn point(&self, index: usize) -> &Vec3D {
+    pub fn point(&self, index: usize) -> Vec3D {
         self.contact_set.point(index)
     }
 
@@ -31,8 +31,8 @@ impl ContactEvent {
         self.contact_set.points()
     }
 
-    #[inline]
-    pub fn normal(&self) -> &Vec3D {
+    #[inline(always)]
+    pub fn normal(&self) -> UnitVec3D {
         self.contact_set.normal()
     }
 
