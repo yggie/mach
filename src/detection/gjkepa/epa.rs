@@ -55,7 +55,7 @@ impl<'a> IterativeAlgorithm for EPA<'a> {
                 if any_points_already_tested || {
                     let point = self.polytope.diff.vertex(&new_index_pairs[0]);
 
-                    !plane.location_of(point).is_above_plane()
+                    !plane.projection_of(point).is_above_plane()
                 } {
                     return None;
                 }
