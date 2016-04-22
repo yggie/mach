@@ -1,5 +1,5 @@
 use {Scalar, TOLERANCE};
-use maths::Vec3D;
+use maths::{DotProduct, Vec3D};
 use geometry::PlaneLocation;
 
 #[derive(Clone)]

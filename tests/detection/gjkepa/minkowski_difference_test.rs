@@ -3,7 +3,7 @@ extern crate quickcheck;
 use super::MinkowskiDifference;
 
 use Scalar;
-use maths::{ApproxEq, UnitQuat};
+use maths::{ApproxEq, DotProduct, UnitQuat};
 use shapes::Cuboid;
 use support::inputs;
 use entities::RigidBody;

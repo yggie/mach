@@ -6,7 +6,7 @@ macro_rules! assert_world_behaviour {
             use super::test_subject;
 
             use {PI, Scalar, World};
-            use maths::Vec3D;
+            use maths::{DotProduct, Vec3D};
             use shapes::Cuboid;
             use entities::{EntityStore, RigidBody, StaticBody};
 

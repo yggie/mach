@@ -1,7 +1,7 @@
 use std::collections::HashSet;
 
 use {NEG_INFINITY, TOLERANCE};
-use maths::Vec3D;
+use maths::{DotProduct, Vec3D};
 use maths::_2d::Vec2D;
 use geometry::{Intersection, Line, Plane};
 use geometry::_2d::{Line2D, Polygon};

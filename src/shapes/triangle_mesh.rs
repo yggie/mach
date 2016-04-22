@@ -3,7 +3,7 @@ use std::fmt;
 use std::collections::HashMap;
 
 use {Scalar, NEG_INFINITY, TOLERANCE};
-use maths::{Matrix, Vec3D};
+use maths::{DotProduct, Matrix, Vec3D};
 use shapes::{Shape, ShapeSpec};
 
 /// A `TriangleMesh` object represents a mesh of triangles, built from a set of

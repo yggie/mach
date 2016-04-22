@@ -1,5 +1,5 @@
 use {Scalar, TOLERANCE};
-use maths::Vec3D;
+use maths::{DotProduct, Vec3D};
 use utils::Surface;
 
 /// Computes a set of `Surfaces` for the point cloud provided. The computation

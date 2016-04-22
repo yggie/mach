@@ -39,23 +39,44 @@ impl UnitVec2D {
     }
 }
 
+impl<'a> DotProduct<&'a Vec2D> for UnitVec2D {
+    #[inline(always)]
+    fn dot(&self, other: &'a Vec2D) -> Scalar {
+        self.0.dot(other)
+    }
+}
+
 impl DotProduct<Vec2D> for UnitVec2D {
     #[inline(always)]
-    fn dot(&self, other: &Vec2D) -> Scalar {
-        self.0.dot(other)
+    fn dot(&self, other: Vec2D) -> Scalar {
+        self.dot(&other)
+    }
+}
+
+impl<'a> DotProduct<&'a UnitVec2D> for UnitVec2D {
+    #[inline(always)]
+    fn dot(&self, other: &'a UnitVec2D) -> Scalar {
+        self.dot(&other.0)
     }
 }
 
 impl DotProduct<UnitVec2D> for UnitVec2D {
     #[inline(always)]
-    fn dot(&self, other: &UnitVec2D) -> Scalar {
+    fn dot(&self, other: UnitVec2D) -> Scalar {
+        self.dot(&other.0)
+    }
+}
+
+impl<'a> DotProduct<&'a UnitVec2D> for Vec2D {
+    #[inline(always)]
+    fn dot(&self, other: &'a UnitVec2D) -> Scalar {
         self.dot(&other.0)
     }
 }
 
 impl DotProduct<UnitVec2D> for Vec2D {
     #[inline(always)]
-    fn dot(&self, other: &UnitVec2D) -> Scalar {
+    fn dot(&self, other: UnitVec2D) -> Scalar {
         self.dot(&other.0)
     }
 }

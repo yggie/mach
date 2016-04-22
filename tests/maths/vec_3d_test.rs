@@ -1,5 +1,5 @@
 use Scalar;
-use maths::Vec3D;
+use maths::{DotProduct, Vec3D};
 
 #[test]
 fn it_can_be_instantiated_with_scalars() {

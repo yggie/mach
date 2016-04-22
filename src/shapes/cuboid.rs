@@ -5,7 +5,7 @@ mod cuboid_test;
 use std::fmt;
 
 use {Scalar, TOLERANCE};
-use maths::{ApproxEq, Matrix, Vec3D};
+use maths::{ApproxEq, DotProduct, Matrix, Vec3D};
 use shapes::{Shape, ShapeSpec};
 
 /// A representation of a cuboid in 3 dimensions.

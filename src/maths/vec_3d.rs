@@ -11,7 +11,7 @@ use std::mem;
 use std::ops::{Add, Deref, DerefMut, Div, Mul, Neg, Sub};
 
 use {Scalar, TOLERANCE};
-use maths::{ApproxEq, Matrix};
+use maths::{ApproxEq, DotProduct, Matrix};
 
 /// A representation of a 3-dimensional column vector.
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -47,12 +47,6 @@ impl Vec3D {
         self.x = other.0;
         self.y = other.1;
         self.z = other.2;
-    }
-
-    /// Computes the dot product between two vectors.
-    #[inline(always)]
-    pub fn dot(&self, other: Vec3D) -> Scalar {
-        self.x*other.x + self.y*other.y + self.z*other.z
     }
 
     /// Computes the cross product between two vectors.
@@ -162,6 +156,22 @@ impl<'a> ApproxEq<&'a Vec3D> for Vec3D {
 impl ApproxEq<Vec3D> for Vec3D {
     fn approx_eq(self, other: Vec3D) -> bool {
         (&self).approx_eq(&other)
+    }
+}
+
+impl<'a> DotProduct<&'a Vec3D> for Vec3D {
+    /// Computes the dot product between two vectors.
+    #[inline(always)]
+    fn dot(&self, other: &'a Vec3D) -> Scalar {
+        self.x*other.x + self.y*other.y + self.z*other.z
+    }
+}
+
+impl DotProduct<Vec3D> for Vec3D {
+    /// Computes the dot product between two vectors.
+    #[inline(always)]
+    fn dot(&self, other: Vec3D) -> Scalar {
+        self.dot(&other)
     }
 }
 

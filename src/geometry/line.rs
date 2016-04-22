@@ -3,7 +3,7 @@
 mod tests;
 
 use Scalar;
-use maths::Vec3D;
+use maths::{DotProduct, Vec3D};
 
 pub struct Line {
     datum: Vec3D,

@@ -1,4 +1,5 @@
 use Scalar;
+use maths::DotProduct;
 use entities::RigidBody;
 
 /// Computes the total kinetic energy for the `RigidBody`.

@@ -3,7 +3,7 @@ extern crate rand;
 use self::rand::Rng;
 
 use {Scalar, TOLERANCE};
-use maths::Vec3D;
+use maths::{DotProduct, Vec3D};
 
 use super::minkowski_difference::{MinkowskiDifference, IndexPair};
 

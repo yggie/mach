@@ -1,5 +1,5 @@
 use {Scalar, TOLERANCE};
-use maths::Vec3D;
+use maths::{DotProduct, Vec3D};
 
 /// Represents a `Surface` for a given set of points.
 #[derive(Copy, Clone)]

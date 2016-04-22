@@ -108,10 +108,17 @@ impl Neg for Vec2D {
     }
 }
 
-impl DotProduct<Vec2D> for Vec2D {
-    #[inline]
-    fn dot(&self, other: &Vec2D) -> Scalar {
+impl<'a> DotProduct<&'a Vec2D> for Vec2D {
+    #[inline(always)]
+    fn dot(&self, other: &'a Vec2D) -> Scalar {
         self.x * other.x + self.y * other.y
+    }
+}
+
+impl DotProduct<Vec2D> for Vec2D {
+    #[inline(always)]
+    fn dot(&self, other: Vec2D) -> Scalar {
+        self.dot(&other)
     }
 }
 

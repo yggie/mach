@@ -5,7 +5,7 @@ use std::mem;
 use self::rand::Rng;
 
 use Scalar;
-use maths::{lcp_solvers, Integrator, LCP, LCPSolver, Matrix, Vec3D};
+use maths::{lcp_solvers, DotProduct, Integrator, LCP, LCPSolver, Matrix, Vec3D};
 use maths::integrators::SemiImplicitEuler;
 use solvers::{ConstraintSolver, ImpulseSolver};
 use entities::{BodyType, BodyTypeMut, RigidBody};

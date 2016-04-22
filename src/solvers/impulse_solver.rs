@@ -1,5 +1,5 @@
 use Scalar;
-use maths::Vec3D;
+use maths::{DotProduct, Vec3D};
 use entities::{BodyType, RigidBody, StaticBody};
 use detection::ContactEvent;
 

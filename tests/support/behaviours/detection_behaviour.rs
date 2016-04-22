@@ -8,7 +8,7 @@ macro_rules! assert_detection_behaviour {
             use super::test_subject;
 
             use {PI, Scalar};
-            use maths::{UnitQuat, Vec3D};
+            use maths::{DotProduct, UnitQuat, Vec3D};
             use shapes::Cuboid;
             use support::inputs;
             use entities::{Body, BodyHandle, RigidBody};
