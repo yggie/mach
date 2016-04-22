@@ -25,7 +25,7 @@ impl Integrator for SemiImplicitEuler {
 
         let w = integratable.angular_velocity().clone();
         let w_as_quat = Quat::new(0.0, w.x * t, w.y * t, w.z * t);
-        let q = integratable.rotation().to_quat();
+        let q = Quat::from(integratable.rotation());
         *integratable.rotation_mut() = (q + w_as_quat * q * 0.5).normalize();
     }
 }

@@ -42,17 +42,12 @@ impl UnitQuat {
     pub fn inverse(&self) -> UnitQuat {
         UnitQuat(self.0.inverse())
     }
-
-    #[inline(always)]
-    pub fn to_quat(self) -> Quat {
-        Into::<Quat>::into(self)
-    }
 }
 
-impl Into<Quat> for UnitQuat {
+impl From<UnitQuat> for Quat {
     #[inline(always)]
-    fn into(self) -> Quat {
-        self.0
+    fn from(unit_quat: UnitQuat) -> Quat {
+        unit_quat.0
     }
 }
 

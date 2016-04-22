@@ -10,7 +10,7 @@ fn it_can_be_instantiated_using_the_axis_angle_formulation() {
 
     let chr = hr.cos();
     let shr = hr.sin();
-    assert_approx_eq!(q.to_quat(), Quat::new(chr, 2.0*shr/7.0, 3.0*shr/7.0, 6.0*shr/7.0));
+    assert_approx_eq!(Quat::from(q), Quat::new(chr, 2.0*shr/7.0, 3.0*shr/7.0, 6.0*shr/7.0));
 }
 
 #[test]
