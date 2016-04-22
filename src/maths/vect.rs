@@ -49,20 +49,6 @@ impl Vect {
         self.z = other.2;
     }
 
-    /// Computes the sum of the `Vect` and three scalars treated as components
-    /// of a `Vect`.
-    #[inline]
-    pub fn add(&self, x: Scalar, y: Scalar, z: Scalar) -> Vect {
-        Vect::new(self.x + x, self.y + y, self.z + z)
-    }
-
-    /// Computes the difference between a `Vect` and three scalars treated as
-    /// components of a `Vect`.
-    #[inline]
-    pub fn sub(&self, x: Scalar, y: Scalar, z: Scalar) -> Vect {
-        Vect::new(self.x - x, self.y - y, self.z - z)
-    }
-
     /// Computes the dot product between two vectors.
     #[inline(always)]
     pub fn dot(&self, other: Vect) -> Scalar {
@@ -185,39 +171,10 @@ impl<'a, 'b> Add<&'a Vect> for &'b Vect {
 
     #[inline]
     fn add(self, other: &'a Vect) -> Vect {
-        Vect::add(self, other.x, other.y, other.z)
+        Vect::new(self.x + other.x, self.y + other.y, self.z + other.z)
     }
 }
-
-/// Implement the `Add` trait to allow using the `+` operator between `Vect`s.
-impl<'a> Add<Vect> for &'a Vect {
-    type Output = Vect;
-
-    #[inline]
-    fn add(self, other: Vect) -> Vect {
-        self + &other
-    }
-}
-
-/// Implement the `Add` trait to allow using the `+` operator between `Vect`s.
-impl<'a> Add<&'a Vect> for Vect {
-    type Output = Vect;
-
-    #[inline]
-    fn add(self, other: &'a Vect) -> Vect {
-        &self + other
-    }
-}
-
-/// Implement the `Add` trait to allow using the `+` operator between `Vect`s.
-impl Add<Vect> for Vect {
-    type Output = Vect;
-
-    #[inline]
-    fn add(self, other: Vect) -> Vect {
-        &self + &other
-    }
-}
+implement_op_overload_variants!(Add, add, Vect, Vect, Vect);
 
 /// Implement the `Sub` trait to allow using the `-` operator between `Vect`s.
 impl<'a, 'b> Sub<&'b Vect> for &'a Vect {
@@ -225,39 +182,10 @@ impl<'a, 'b> Sub<&'b Vect> for &'a Vect {
 
     #[inline]
     fn sub(self, other: &'b Vect) -> Self::Output {
-        Vect::sub(self, other.x, other.y, other.z)
+        Vect::new(self.x - other.x, self.y - other.y, self.z - other.z)
     }
 }
-
-/// Implement the `Sub` trait to allow using the `-` operator between `Vect`s.
-impl<'a> Sub<&'a Vect> for Vect {
-    type Output = Vect;
-
-    #[inline]
-    fn sub(self, other: &'a Vect) -> Self::Output {
-        &self - other
-    }
-}
-
-/// Implement the `Sub` trait to allow using the `-` operator between `Vect`s.
-impl<'a> Sub<Vect> for &'a Vect {
-    type Output = Vect;
-
-    #[inline]
-    fn sub(self, other: Vect) -> Self::Output {
-        self - &other
-    }
-}
-
-/// Implement the `Sub` trait to allow using the `-` operator between `Vect`s.
-impl Sub<Vect> for Vect {
-    type Output = Vect;
-
-    #[inline]
-    fn sub(self, other: Vect) -> Self::Output {
-        &self - &other
-    }
-}
+implement_op_overload_variants!(Sub, sub, Vect, Vect, Vect);
 
 /// Implement the `Mul` trait to allow using the `*` operator for a `Vect`
 /// with a `Scalar`.

@@ -42,13 +42,6 @@ fn it_can_be_set_to_a_vector() {
 }
 
 #[test]
-fn it_can_add_scalar_components() {
-    let v = Vect::new(1.0, 2.0, 3.0).add(-1.0, 2.0, -3.0);
-
-    assert_approx_eq!(v, Vect::new(0.0, 4.0, 0.0));
-}
-
-#[test]
 fn it_supports_the_addition_operator_with_vectors() {
     let a = Vect::new(1.0, 3.0, -1.0);
     let b = Vect::new(2.0, 1.0, 1.0);
@@ -59,13 +52,6 @@ fn it_supports_the_addition_operator_with_vectors() {
     assert_approx_eq!(&a + b, expectation);
     assert_approx_eq!(a + &b, expectation);
     assert_approx_eq!(&a + &b, expectation);
-}
-
-#[test]
-fn it_can_subtract_scalar_components() {
-    let v = Vect::new(4.0, 5.0, 4.5).sub(4.0, 4.0, 5.0);
-
-    assert_approx_eq!(v, Vect::new(0.0, 1.0, -0.5));
 }
 
 #[test]

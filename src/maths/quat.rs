@@ -82,31 +82,6 @@ impl Quat {
         self.k = other.3;
     }
 
-    /// Computes the sum between the `Quat` and the input scalars treated
-    /// as components of a `Quat`.
-    #[inline]
-    pub fn add(&self, r: Scalar, i: Scalar, j: Scalar, k: Scalar) -> Quat {
-        Quat::new(
-            self.r + r,
-            self.i + i,
-            self.j + j,
-            self.k + k,
-        )
-
-    }
-
-    /// Computes the difference between the `Quat` and the input scalars
-    /// treated as components of a `Quat`.
-    #[inline]
-    pub fn sub(&self, r: Scalar, i: Scalar, j: Scalar, k: Scalar) -> Quat {
-        Quat::new(
-            self.r - r,
-            self.i - i,
-            self.j - j,
-            self.k - k,
-        )
-    }
-
     /// Multiples each component of the `Quat` by the scalar.
     #[inline]
     pub fn mult_scalar(&self, s: Scalar) -> Quat {
@@ -166,39 +141,15 @@ impl<'a, 'b> Add<&'a Quat> for &'b Quat {
 
     #[inline]
     fn add(self, other: &'a Quat) -> Quat {
-        Quat::add(self, other.r, other.i, other.j, other.k)
+        Quat::new(
+            self.r + other.r,
+            self.i + other.i,
+            self.j + other.j,
+            self.k + other.k,
+        )
     }
 }
-
-/// Implements the addition operator.
-impl<'a> Add<&'a Quat> for Quat {
-    type Output = Quat;
-
-    #[inline]
-    fn add(self, other: &'a Quat) -> Quat {
-        &self + other
-    }
-}
-
-/// Implements the addition operator.
-impl<'a> Add<Quat> for &'a Quat {
-    type Output = Quat;
-
-    #[inline]
-    fn add(self, other: Quat) -> Quat {
-        self + &other
-    }
-}
-
-/// Implements the addition operator.
-impl Add<Quat> for Quat {
-    type Output = Quat;
-
-    #[inline]
-    fn add(self, other: Quat) -> Quat {
-        &self + &other
-    }
-}
+implement_op_overload_variants!(Add, add, Quat, Quat, Quat);
 
 /// Implements the subtraction operator.
 impl<'a, 'b> Sub<&'a Quat> for &'b Quat {
@@ -206,39 +157,15 @@ impl<'a, 'b> Sub<&'a Quat> for &'b Quat {
 
     #[inline]
     fn sub(self, other: &'a Quat) -> Quat {
-        Quat::sub(self, other.r, other.i, other.j, other.k)
+        Quat::new(
+            self.r - other.r,
+            self.i - other.i,
+            self.j - other.j,
+            self.k - other.k,
+        )
     }
 }
-
-/// Implements the subtraction operator.
-impl<'a> Sub<Quat> for &'a Quat {
-    type Output = Quat;
-
-    #[inline]
-    fn sub(self, other: Quat) -> Quat {
-        self - &other
-    }
-}
-
-/// Implements the subtraction operator.
-impl<'a> Sub<&'a Quat> for Quat {
-    type Output = Quat;
-
-    #[inline]
-    fn sub(self, other: &'a Quat) -> Quat {
-        &self - other
-    }
-}
-
-/// Implements the subtraction operator.
-impl Sub<Quat> for Quat {
-    type Output = Quat;
-
-    #[inline]
-    fn sub(self, other: Quat) -> Quat {
-        &self - &other
-    }
-}
+implement_op_overload_variants!(Sub, sub, Quat, Quat, Quat);
 
 /// Implements the multiplication operator between a `Quat` and a scalar.
 impl<'a> Mul<Scalar> for &'a Quat {
@@ -268,39 +195,7 @@ impl<'a, 'b> Mul<&'a Quat> for &'b Quat {
         Quat::mult_quat(self, other.r, other.i, other.j, other.k)
     }
 }
-
-/// Implements the multiplication operator between two `Quat`s.
-impl<'a> Mul<&'a Quat> for Quat {
-    type Output = Quat;
-
-    /// Multiplies two quaternions and returns the result.
-    #[inline]
-    fn mul(self, other: &'a Quat) -> Quat {
-        &self * other
-    }
-}
-
-/// Implements the multiplication operator between two `Quat`s.
-impl<'a> Mul<Quat> for &'a Quat {
-    type Output = Quat;
-
-    /// Multiplies two quaternions and returns the result.
-    #[inline]
-    fn mul(self, other: Quat) -> Quat {
-        self * &other
-    }
-}
-
-/// Implements the multiplication operator between two `Quat`s.
-impl Mul<Quat> for Quat {
-    type Output = Quat;
-
-    /// Multiplies two quaternions and returns the result.
-    #[inline]
-    fn mul(self, other: Quat) -> Quat {
-        &self * &other
-    }
-}
+implement_op_overload_variants!(Mul, mul, Quat, Quat, Quat);
 
 /// Implements the division operator between a `Quat` and a scalar.
 impl<'a> Div<Scalar> for &'a Quat {

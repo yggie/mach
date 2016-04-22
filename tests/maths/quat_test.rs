@@ -51,20 +51,6 @@ fn it_can_compute_the_inverse() {
 }
 
 #[test]
-fn it_supports_addition_of_scalars() {
-    let q = Quat::new(1.0, 3.0, 4.0, -1.0).add(1.0, 3.0, -4.0, 1.0);
-
-    assert_approx_eq!(q, Quat::new(2.0, 6.0, 0.0, 0.0));
-}
-
-#[test]
-fn it_can_subtract_with_scalars() {
-    let q = Quat::new(1.0, 3.0, 4.0, -1.0).sub(1.0, 3.0, -4.0, 1.0);
-
-    assert_approx_eq!(q, Quat::new(0.0, 0.0, 8.0, -2.0));
-}
-
-#[test]
 fn it_supports_the_subtraction_operator_with_quaternions() {
     let p = Quat::new(1.0, 2.2, -2.6, -4.4);
     let q = Quat::new(1.0, -1.0, -2.6, -2.4);
