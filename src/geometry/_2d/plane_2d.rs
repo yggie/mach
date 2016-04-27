@@ -5,7 +5,7 @@ mod tests;
 use {Scalar, TOLERANCE};
 use maths::DotProduct;
 use maths::_2d::{UnitVec2D, Vec2D};
-use geometry::PlaneLocation;
+use geometry::PlaneNormalProjection;
 
 #[derive(Clone, Debug)]
 pub struct Plane2D {
@@ -31,11 +31,11 @@ impl Plane2D {
         self.normal.dot(&(vec2 - &self.reference_point))
     }
 
-    pub fn projection_of(&self, vec2: &Vec2D) -> PlaneLocation {
+    pub fn projection_along_normal(&self, vec2: &Vec2D) -> PlaneNormalProjection {
         match self.project_along_normal(vec2) {
-            x if x > TOLERANCE => PlaneLocation::Above(x),
-            x if x < -TOLERANCE => PlaneLocation::Below(x),
-            x => PlaneLocation::OnPlane(x),
+            x if x > TOLERANCE => PlaneNormalProjection::Above(x),
+            x if x < -TOLERANCE => PlaneNormalProjection::Below(x),
+            x => PlaneNormalProjection::OnPlane(x),
         }
     }
 }

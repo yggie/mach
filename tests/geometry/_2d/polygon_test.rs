@@ -4,7 +4,7 @@ use std::collections::HashSet;
 
 use TOLERANCE;
 use maths::_2d::Vec2D;
-use geometry::PlaneLocation;
+use geometry::PlaneNormalProjection;
 use geometry::_2d::{Plane2D, Polygon};
 
 #[test]
@@ -67,8 +67,8 @@ fn it_generates_convex_polygons_from_arbitrary_points() {
         } else {
             for point in polygon.points().iter() {
                 let num_intersections = polygon.separating_planes_iter().fold(0, |num, plane| {
-                    match plane.projection_of(point) {
-                        PlaneLocation::OnPlane(_height) => num + 1,
+                    match plane.projection_along_normal(point) {
+                        PlaneNormalProjection::OnPlane(_height) => num + 1,
                         _otherwise => num,
                     }
                 });

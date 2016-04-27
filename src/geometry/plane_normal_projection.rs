@@ -1,30 +1,30 @@
 use Scalar;
 
 #[derive(Clone, Debug, PartialEq)]
-pub enum PlaneLocation {
+pub enum PlaneNormalProjection {
     Above(Scalar),
     OnPlane(Scalar),
     Below(Scalar),
 }
 
-impl PlaneLocation {
+impl PlaneNormalProjection {
     pub fn is_above_plane(self) -> bool {
         match self {
-            PlaneLocation::Above(_height) => true,
+            PlaneNormalProjection::Above(_height) => true,
             _otherwise => false,
         }
     }
 
     pub fn is_on_plane(self) -> bool {
         match self {
-            PlaneLocation::OnPlane(_height) => true,
+            PlaneNormalProjection::OnPlane(_height) => true,
             _otherwise => false,
         }
     }
 
     pub fn is_below_plane(self) -> bool {
         match self {
-            PlaneLocation::Below(_height) => true,
+            PlaneNormalProjection::Below(_height) => true,
             _otherwise => false,
         }
     }

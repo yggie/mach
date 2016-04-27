@@ -62,7 +62,7 @@ impl Polygon {
         ).into_iter().map(|edge| {
             let plane = edge.counter_clockwise_plane();
 
-            if plane.projection_of(&centroid).is_above_plane() {
+            if plane.projection_along_normal(&centroid).is_above_plane() {
                 edge.reversed()
             } else {
                 edge
@@ -73,7 +73,7 @@ impl Polygon {
             let plane = edge.counter_clockwise_plane();
             let index = index_of_furthest_along(original_points, &plane.normal());
 
-            if plane.projection_of(&original_points[index]).is_above_plane() {
+            if plane.projection_along_normal(&original_points[index]).is_above_plane() {
                 index_set.insert(index);
                 let point = &original_points[index];
                 edges.push(Edge2D::new(edge.start, point));

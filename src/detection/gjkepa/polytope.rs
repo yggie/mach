@@ -39,7 +39,7 @@ impl<'a> Polytope<'a> {
         let faces = vec!((0, 0, 0));
         let (penetration_depth, closest_plane, faces) = self.surfaces.iter().skip(1)
             .fold((NEG_INFINITY, dummy_plane, faces), |(origin_to_closest_plane_offset, closest_plane, mut faces), &(ref plane, face)| {
-                let offset = plane.projection_of_origin_along_normal();
+                let offset = plane.project_origin_along_normal();
                 let diff = offset - origin_to_closest_plane_offset;
 
                 if diff > TOLERANCE {

@@ -9,7 +9,7 @@ impl Intersection<Polygon> for Ray2D {
 
         polygon.intersection(ray.source() as &Point2D).or_else(|| {
             for (edge, plane) in polygon.separating_edges_and_planes_iter() {
-                if plane.projection_of(ray.source()).is_above_plane() {
+                if plane.projection_along_normal(ray.source()).is_above_plane() {
                     if let Some(point) = edge.as_line().intersection(ray) {
                         return Some(point);
                     }

@@ -5,7 +5,7 @@ use std::collections::HashSet;
 use maths::UnitQuat;
 use shapes::Cuboid;
 use entities::RigidBody;
-use geometry::PlaneLocation;
+use geometry::PlaneNormalProjection;
 use algorithms::{IterativeAlgorithmExecutor, PanicOnIteration};
 
 use detection::gjkepa::GJK;
@@ -47,14 +47,14 @@ fn assert_valid_simplex(cache: &SimplexCache, diff: &MinkowskiDifference) {
             .unwrap();
 
         let (vertex, _index_pair) = simplex.support_points[index];
-        match surface.projection_of(vertex) {
-            PlaneLocation::Above(_height) =>
+        match surface.projection_along_normal(vertex) {
+            PlaneNormalProjection::Above(_height) =>
                 panic!(format!("{:?} is degenerate, a surface is pointing in the wrong direction", cache)),
 
-            PlaneLocation::OnPlane(_height) =>
+            PlaneNormalProjection::OnPlane(_height) =>
                 panic!(format!("{:?} is degenerate, all points are on the same plane", cache)),
 
-            PlaneLocation::Below(_height) => (),
+            PlaneNormalProjection::Below(_height) => (),
         }
     }
 }

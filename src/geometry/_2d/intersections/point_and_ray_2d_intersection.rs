@@ -10,7 +10,7 @@ impl Intersection<Point2D> for Ray2D {
 
         let perpendicular_plane = ray.counter_clockwise_plane();
 
-        if perpendicular_plane.projection_of(&point.0).is_on_plane() {
+        if perpendicular_plane.projection_along_normal(&point.0).is_on_plane() {
             let projection = ray.project_along_direction(&point.0);
 
             if projection > -TOLERANCE {

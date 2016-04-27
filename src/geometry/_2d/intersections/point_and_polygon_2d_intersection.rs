@@ -6,7 +6,7 @@ impl Intersection<Point2D> for Polygon {
 
     fn intersection(&self, point: &Point2D) -> Option<Self::Output> {
         for plane in self.separating_planes_iter() {
-            if plane.projection_of(&point.0).is_above_plane() {
+            if plane.projection_along_normal(&point.0).is_above_plane() {
                 return None;
             }
         }

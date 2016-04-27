@@ -58,7 +58,7 @@ impl<'a> IterativeAlgorithm for GJK<'a> {
         let next_guess = self.simplex.surfaces_iter()
             .zip(NOT_ON_SURFACE.iter())
             .find(|&((ref plane, _vertex_indices), _not_on_surface)| {
-                plane.projection_of_origin_along_normal() > self.surface_radius + TOLERANCE
+                plane.project_origin_along_normal() > self.surface_radius + TOLERANCE
             });
 
         let ((plane, _vertex_indices), &not_on_surface) = match next_guess {
@@ -74,7 +74,7 @@ impl<'a> IterativeAlgorithm for GJK<'a> {
         let new_support_point_option = new_support_points.into_iter()
             .find(|candidate_point| {
                 !self.history.iter().any(|pt| pt == candidate_point) &&
-                    plane.projection_of(self.simplex.diff.vertex(&candidate_point)).is_above_plane()
+                    plane.projection_along_normal(self.simplex.diff.vertex(&candidate_point)).is_above_plane()
             });
 
         let new_support_point = match new_support_point_option {
