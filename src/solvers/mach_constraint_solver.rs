@@ -11,6 +11,8 @@ use solvers::{ConstraintSolver, ImpulseSolver};
 use entities::{BodyType, BodyTypeMut, RigidBody};
 use detection::ContactEvent;
 
+static NUM_COMPONENTS: usize = 2;
+
 pub struct MachConstraintSolver;
 
 impl MachConstraintSolver {
@@ -18,15 +20,19 @@ impl MachConstraintSolver {
         MachConstraintSolver
     }
 
-    fn formuate_lcp(time_step: Scalar, contacts: &Vec<ContactEvent>) -> (LCP, Vec<UnitVec3D>) {
+    fn formulate_lcp(time_step: Scalar, contacts: &Vec<ContactEvent>) -> (LCP, Vec<UnitVec3D>) {
         let number_of_contacts = contacts.len();
-        let size = number_of_contacts * 2;
+        let size = number_of_contacts * NUM_COMPONENTS;
         let mut problem = LCP::new(size);
         let mut friction_directions: Vec<UnitVec3D> = Vec::new();
 
         for (i, contact_event) in contacts.iter().enumerate() {
             // TODO handle more than one contact point
-            let contact_center = contact_event.point(0);
+            // NOTE simple approximation of contact center
+            let contact_center = contact_event.points().iter()
+                .fold(Vec3D::zero(), |total, point| {
+                    total + point
+                }) / contact_event.points().len() as Scalar;
             let contact_normal = contact_event.normal();
             let body_0 = contact_event.bodies().0.borrow();
             let body_1 = contact_event.bodies().1.borrow();
@@ -73,7 +79,7 @@ impl MachConstraintSolver {
             } else {
                 impulse
             };
-            let impulse_offset = number_of_contacts * i;
+            let impulse_offset = i * NUM_COMPONENTS;
             let friction_offset = impulse_offset + 1;
 
             let generalized_mass_inverse = |vect: UnitVec3D| -> Vec3D {
@@ -156,9 +162,8 @@ impl MachConstraintSolver {
     }
 
     fn apply_lcp_solution(problem: LCP, friction_directions: Vec<UnitVec3D>, time_step: Scalar, contact_events: &Vec<ContactEvent>) {
-        let number_of_contacts = contact_events.len();
         for (i, contact_event) in contact_events.iter().enumerate() {
-            let impulse_offset = number_of_contacts * i;
+            let impulse_offset = NUM_COMPONENTS * i;
             let friction_offset = impulse_offset + 1;
 
             let friction_direction = &friction_directions[i];
@@ -229,7 +234,7 @@ impl MachConstraintSolver {
 
 impl ConstraintSolver for MachConstraintSolver {
     fn solve_with_contacts(&mut self, time_step: Scalar, contact_events: &Vec<ContactEvent>) {
-        let (mut problem, friction_directions) = MachConstraintSolver::formuate_lcp(time_step, contact_events);
+        let (mut problem, friction_directions) = MachConstraintSolver::formulate_lcp(time_step, contact_events);
 
         lcp_solvers::GaussSeidel.solve_in_place(&mut problem);
 
