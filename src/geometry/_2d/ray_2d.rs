@@ -1,3 +1,7 @@
+#[cfg(test)]
+#[path="../../../tests/support/geometry/_2d/arbitrary_ray_2d.rs"]
+mod arbitrary;
+
 use Scalar;
 use maths::DotProduct;
 use maths::_2d::{UnitVec2D, Vec2D};

@@ -1,3 +1,7 @@
+#[cfg(test)]
+#[path="../../../../tests/geometry/_2d/intersections/ray_and_ray_2d_intersection_test.rs"]
+mod tests;
+
 use TOLERANCE;
 use geometry::Intersection;
 use geometry::_2d::{Point2D, Ray2D};

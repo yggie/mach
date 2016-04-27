@@ -1,3 +1,7 @@
+#[cfg(test)]
+#[path="../../../tests/support/geometry/_2d/arbitrary_point_2d.rs"]
+mod arbitrary;
+
 use std::mem;
 use std::ops::Deref;
 

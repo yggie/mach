@@ -12,7 +12,7 @@ use {Scalar, TOLERANCE};
 use maths::{ApproxEq, DotProduct};
 use maths::_2d::UnitVec2D;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Copy, Clone, Debug, PartialEq)]
 pub struct Vec2D {
     pub x: Scalar,
     pub y: Scalar,
@@ -124,6 +124,6 @@ impl DotProduct<Vec2D> for Vec2D {
 
 impl<'a> ApproxEq for &'a Vec2D {
     fn approx_eq(self, other: Self) -> bool {
-        (self.squared_length() - other.squared_length()).abs() < TOLERANCE
+        (self - other).squared_length() < TOLERANCE
     }
 }

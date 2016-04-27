@@ -12,7 +12,7 @@ use Scalar;
 use maths::DotProduct;
 use maths::_2d::Vec2D;
 
-#[derive(Clone, Debug)]
+#[derive(Copy, Clone, Debug)]
 pub struct UnitVec2D(Vec2D);
 
 impl UnitVec2D {
@@ -27,6 +27,13 @@ impl UnitVec2D {
 
     pub fn rotate_90(&self) -> UnitVec2D {
         self.0.rotate_90().normalize()
+    }
+
+    pub fn rotate_by(&self, radians: Scalar) -> UnitVec2D {
+        let x = radians.cos();
+        let y = radians.sin();
+
+        UnitVec2D(Vec2D::new(x * self.0.x - y * self.0.y, x * self.0.y + y * self.0.x))
     }
 
     pub fn reversed(self) -> UnitVec2D {
