@@ -170,8 +170,7 @@ impl<'a> Polytope<'a> {
             project(&diff.0.vertex(edge_indices.0)),
             project(&diff.0.vertex(edge_indices.1)),
         );
-        // TODO remove clone once the panic! is gone
-        let face_points: Vec<Vec2D> = face_indices.clone().into_iter()
+        let face_points: Vec<Vec2D> = face_indices.into_iter()
             .map(|index| project(&diff.1.vertex(index)))
             .collect();
 

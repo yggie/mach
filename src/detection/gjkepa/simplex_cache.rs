@@ -1,9 +1,6 @@
-extern crate rand;
-
-use self::rand::Rng;
-
 use {Scalar, TOLERANCE};
 use maths::{CrossProduct, DotProduct, Vec3D};
+use utils::UnitVec3DGenerator;
 
 use super::minkowski_difference::{MinkowskiDifference, IndexPair};
 
@@ -15,14 +12,10 @@ pub struct SimplexCache {
 impl SimplexCache {
     pub fn new(diff: &MinkowskiDifference) -> SimplexCache {
         let mut index_pairs = Vec::new();
-        let mut rng = rand::thread_rng();
+        let mut generator = UnitVec3DGenerator::new();
 
         while index_pairs.len() != 3 {
-            let guess = Vec3D::new(
-                rng.gen_range(-1.0, 1.0),
-                rng.gen_range(-1.0, 1.0),
-                rng.gen_range(-1.0, 1.0),
-            );
+            let guess = Vec3D::from(generator.next());
 
             let candidate_support_points = diff.support_index_pairs(guess);
 

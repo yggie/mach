@@ -18,6 +18,11 @@ impl StaticBody {
         struct_name: StaticBody,
     }
 
+    #[inline(always)]
+    pub fn position(&self) -> Vec3D {
+        *self.translation()
+    }
+
     /// Returns the identifier for the `StaticBody` instance.
     #[inline]
     pub fn id(&self) -> ID {

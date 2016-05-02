@@ -52,8 +52,10 @@ macro_rules! assert_world_behaviour {
                     .with_velocity(-1.0, 0.0, 0.0);
                 let id_1 = world.add_rigid_body(rigid_body_1);
 
-                world.update(0.2);
+                let events = world.update(0.2);
 
+                // TODO check that the event is a contact event
+                assert!(events.len() == 1);
                 let rigid_body_0 = world.find_rigid_body(id_0).unwrap();
                 let rigid_body_1 = world.find_rigid_body(id_1).unwrap();
                 assert_approx_eq!(rigid_body_0.velocity(), Vec3D::new(-1.0, 0.0, 0.0));
@@ -79,10 +81,12 @@ macro_rules! assert_world_behaviour {
                     .with_translation(0.0, 5.0, -1.05 - (0.5 as Scalar).sqrt());
                 let _static_body_id = world.add_static_body(static_body);
 
-                world.update(0.05);
+                let events = world.update(0.05);
 
-                // TODO quite a rough test, can be improved
+                // TODO check that the event is a contact event
                 let rigid_body = world.find_rigid_body(rigid_body_id).unwrap();
+                assert!(events.len() == 1);
+                // TODO quite a rough test, can be improved
                 assert!(rigid_body.angular_velocity().dot(Vec3D::new(1.0, 0.0, 0.0)) > 0.0);
                 assert!(rigid_body.velocity().dot(Vec3D::new(0.0, 0.0, 1.0)) > 0.0);
             }

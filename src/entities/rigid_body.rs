@@ -22,6 +22,11 @@ impl RigidBody {
         struct_name: RigidBody,
     }
 
+    #[inline(always)]
+    pub fn position(&self) -> Vec3D {
+        *self.translation()
+    }
+
     /// Returns the handle associated with the `RigidBody`.
     #[inline]
     pub fn id(&self) -> ID {

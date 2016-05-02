@@ -133,11 +133,8 @@ macro_rules! assert_detection_behaviour {
                     .with_translation(0.49 + 0.5*(2.0 as Scalar).sqrt(), 0.0, 0.5)
                     .with_axis_angle(Vec3D::new(0.0, 0.0, 1.0).normalize(), PI/4.0);
 
-                let result = detection.compute_contacts(&handle(control), &handle(rigid_body));
-
-                assert!(result.is_some());
-
-                let contact_event = result.unwrap();
+                let contact_event = detection.compute_contacts(&handle(control), &handle(rigid_body))
+                    .expect("test was setup to have a collision, but none was found");
 
                 assert_eq!(contact_event.points().len(), 2);
                 assert_approx_eq!(contact_event.normal(), UnitVec3D::from(Vec3D::new(-1.0, 0.0, 0.0)));
@@ -145,7 +142,6 @@ macro_rules! assert_detection_behaviour {
                 let mut points = contact_event.points().clone();
                 points.sort_by(|a, b| a.z.partial_cmp(&b.z).unwrap());
                 let x = 0.49;
-                println!("POINTS: {:?}", points);
                 assert_approx_eq!(points[0], Vec3D::new(x, 0.0, 0.00));
                 assert_approx_eq!(points[1], Vec3D::new(x, 0.0, 0.50));
             }

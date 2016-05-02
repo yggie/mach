@@ -1,12 +1,9 @@
-extern crate rand;
-
 use std::mem;
-
-use self::rand::Rng;
 
 use Scalar;
 use maths::{lcp_solvers, CrossProduct, DotProduct, Integrator, LCP, LCPSolver, Matrix, UnitVec3D, Vec3D};
 use maths::integrators::SemiImplicitEuler;
+use utils::UnitVec3DGenerator;
 use solvers::{ConstraintSolver, ImpulseSolver};
 use entities::{BodyRef, BodyRefMut, RigidBody};
 use detection::ContactEvent;
@@ -90,6 +87,7 @@ impl MachConstraintSolver {
 
             let generalized_mass_inverse_norm = generalized_mass_inverse(contact_normal);
 
+            let mut generator = UnitVec3DGenerator::new();
             // FRICTION
             let mut perpendicular_direction = rel_vel.cross(contact_normal).normalize();
             // ASSUMPTION: Non-finite length means that the relative velocity
@@ -97,12 +95,7 @@ impl MachConstraintSolver {
             while !perpendicular_direction.squared_length().is_finite() {
                 // pick any arbitrary direction to avoid the singularity when
                 // relative velocity is aligned  with the contact normal
-                let mut rng = rand::thread_rng();
-                let guess = Vec3D::new(
-                    rng.gen_range(-1.0, 1.0),
-                    rng.gen_range(-1.0, 1.0),
-                    rng.gen_range(-1.0, 1.0),
-                );
+                let guess = Vec3D::from(generator.next());
                 perpendicular_direction = rel_vel.cross(guess).normalize();
             };
             let friction_direction = -contact_normal.cross(perpendicular_direction);

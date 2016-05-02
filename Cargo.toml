@@ -15,10 +15,8 @@ path = "src/lib.rs"
 [features]
 high_precision = [ ]
 
-[dependencies]
-rand = "*"
-
 [dev-dependencies]
+rand = "*"
 time = "*"
 glium = "*"
 nalgebra = "*"

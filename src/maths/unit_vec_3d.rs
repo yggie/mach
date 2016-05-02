@@ -15,6 +15,15 @@ use maths::{ApproxEq, CrossProduct, DotProduct, Vec3D};
 pub struct UnitVec3D(Vec3D);
 
 impl UnitVec3D {
+    pub fn from_angles(polar: Scalar, azimuth: Scalar) -> UnitVec3D {
+        let cp = polar.cos();
+        let sp = polar.sin();
+        let ca = azimuth.cos();
+        let sa = azimuth.sin();
+
+        UnitVec3D(Vec3D::new(sp * ca, sp * sa, cp))
+    }
+
     #[inline(always)]
     pub fn squared_length(&self) -> Scalar {
         self.0.squared_length()
