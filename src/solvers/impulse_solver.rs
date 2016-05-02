@@ -1,6 +1,6 @@
 use Scalar;
 use maths::{CrossProduct, DotProduct, UnitVec3D, Vec3D};
-use entities::{BodyType, RigidBody, StaticBody};
+use entities::{BodyRef, RigidBody, StaticBody};
 use detection::ContactEvent;
 
 pub struct ImpulseSolver;
@@ -13,11 +13,11 @@ impl ImpulseSolver {
         let body_1 = contact_event.bodies().1.borrow();
 
         match (body_0.downcast(), body_1.downcast()) {
-            (BodyType::Rigid(rigid_body_0), BodyType::Rigid(rigid_body_1)) => {
+            (BodyRef::Rigid(rigid_body_0), BodyRef::Rigid(rigid_body_1)) => {
                 ImpulseSolver::compute_rigid_rigid_impulse((&rigid_body_0, &rigid_body_1), contact_center, contact_normal)
             },
 
-            (BodyType::Rigid(rigid_body), BodyType::Static(static_body)) => {
+            (BodyRef::Rigid(rigid_body), BodyRef::Static(static_body)) => {
                 ImpulseSolver::compute_rigid_static_impulse((&rigid_body, &static_body), contact_center, contact_normal)
             },
 

@@ -5,7 +5,7 @@ mod tests;
 use std::marker::PhantomData;
 
 use ID;
-use entities::{BodyHandle, BodyType, EntityStore};
+use entities::{BodyHandle, BodyRef, EntityStore};
 use broadphase::Broadphase;
 use narrowphase::Narrowphase;
 
@@ -44,15 +44,15 @@ impl<ES: EntityStore> Broadphase for BruteForce<ES> {
         let body = handle.borrow();
 
         match body.downcast() {
-            BodyType::Rigid(_rigid_body) => {
+            BodyRef::Rigid(_rigid_body) => {
                 for other_body in store.bodies_iter() {
                     self.attempt_store_pair(body.id(), other_body.id());
                 }
             },
 
-            BodyType::Static(_static_body) => {
+            BodyRef::Static(_static_body) => {
                 for other_body in store.bodies_iter() {
-                    if let BodyType::Static(_static_body) = other_body.downcast() {
+                    if let BodyRef::Static(_static_body) = other_body.downcast() {
                         continue;
                     }
 

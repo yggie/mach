@@ -6,7 +6,7 @@ use std::fmt;
 
 use {Scalar, TOLERANCE};
 use maths::{ApproxEq, DotProduct, Matrix, Vec3D};
-use shapes::{Shape, ShapeSpec};
+use shapes::{Shape, ShapeRef};
 
 /// A representation of a cuboid in 3 dimensions.
 #[derive(Clone, Debug)]
@@ -67,12 +67,8 @@ impl PartialEq for Cuboid {
 }
 
 impl Shape for Cuboid {
-    fn spec(&self) -> ShapeSpec {
-        ShapeSpec::Cuboid(
-            self.dimensions.x,
-            self.dimensions.y,
-            self.dimensions.z,
-        )
+    fn downcast(&self) -> ShapeRef {
+        ShapeRef::Cuboid(self)
     }
 
     /// Calculates the volume of the `Cuboid`.

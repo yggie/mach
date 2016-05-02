@@ -1,7 +1,7 @@
 use {ID, Scalar};
 use maths::{Transform, UnitQuat, UnitVec3D, Vec3D};
 use shapes::Shape;
-use entities::{Body, BodyType, BodyTypeMut, Form};
+use entities::{Body, BodyRef, BodyRefMut, Form};
 
 /// Represents a physical entity which cannot move. Within the engine, the
 /// object is simply treated as if it has infinite mass.
@@ -65,12 +65,12 @@ impl Default for StaticBody {
 }
 
 impl Body for StaticBody {
-    fn downcast<'a>(&'a self) -> BodyType<'a> {
-        BodyType::Static(self as &StaticBody)
+    fn downcast<'a>(&'a self) -> BodyRef<'a> {
+        BodyRef::Static(self)
     }
 
-    fn downcast_mut<'a>(&'a mut self) -> BodyTypeMut<'a> {
-        BodyTypeMut::Static(self as &mut StaticBody)
+    fn downcast_mut<'a>(&'a mut self) -> BodyRefMut<'a> {
+        BodyRefMut::Static(self)
     }
 
     fn id(&self) -> ID {

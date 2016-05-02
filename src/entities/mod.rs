@@ -3,7 +3,7 @@
 
 #[macro_use] mod form;
 
-mod body_type;
+mod body_ref;
 mod mach_store;
 mod rigid_body;
 mod body_handle;
@@ -16,7 +16,7 @@ pub mod entity_store;
 
 pub use self::body::Body;
 pub use self::form::Form;
-pub use self::body_type::{BodyType, BodyTypeMut};
+pub use self::body_ref::{BodyRef, BodyRefMut};
 pub use self::mach_store::MachStore;
 pub use self::rigid_body::RigidBody;
 pub use self::body_handle::{BodyHandle, Rc, Ref, RefMut};

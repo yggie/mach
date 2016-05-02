@@ -5,7 +5,7 @@ mod mach_store_test;
 use std::mem;
 
 use ID;
-use entities::{Body, BodyHandle, BodyType, EntityStore, Ref, RefMut, RigidBody, StaticBody};
+use entities::{Body, BodyHandle, BodyRef, EntityStore, Ref, RefMut, RigidBody, StaticBody};
 
 pub struct MachStore {
     bodies: Vec<BodyHandle>,
@@ -47,7 +47,7 @@ impl EntityStore for MachStore {
     fn find_rigid_body(&self, id: ID) -> Option<Ref<Box<RigidBody>>> {
         self.find_body(id).and_then(|body| {
             match body.downcast() {
-                BodyType::Rigid(_rigid_body) => (),
+                BodyRef::Rigid(_rigid_body) => (),
                 _otherwise => return None,
             }
 
@@ -75,7 +75,7 @@ impl EntityStore for MachStore {
                 let body_ref = rc_cell.borrow_mut();
 
                 match body_ref.downcast() {
-                    BodyType::Rigid(_rigid_body) => (),
+                    BodyRef::Rigid(_rigid_body) => (),
 
                     _otherwise => return None,
                 }

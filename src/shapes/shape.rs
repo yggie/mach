@@ -2,11 +2,11 @@ use std::fmt;
 
 use {Scalar, TOLERANCE};
 use maths::{Matrix, Vec3D};
-use shapes::ShapeSpec;
+use shapes::ShapeRef;
 
 /// Defines the traits for all geometric property descriptions.
 pub trait Shape: fmt::Debug {
-    fn spec<'a>(&'a self) -> ShapeSpec<'a>;
+    fn downcast<'a>(&'a self) -> ShapeRef<'a>;
 
     /// Computes the volume for the shape.
     fn volume(&self) -> Scalar;

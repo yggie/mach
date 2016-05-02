@@ -180,9 +180,13 @@ impl ExamplesRenderer {
     }
 
     fn generate_new_instance(&mut self, id: mach::ID, shape: &mach::Shape) -> Instance {
-        match shape.spec() {
-            mach::ShapeSpec::Cuboid(x, y, z) => {
-                self.factory.generate(id, (x as f32, y as f32, z as f32), self.cube.clone())
+        match shape.downcast() {
+            mach::ShapeRef::Cuboid(cube) => {
+                self.factory.generate(id, (
+                    cube.dimensions().x as f32,
+                    cube.dimensions().y as f32,
+                    cube.dimensions().z as f32,
+                ), self.cube.clone())
             },
 
             _ => unimplemented!(),

@@ -12,27 +12,6 @@ use geometry::_2d::{Edge2D, Plane2D};
 #[derive(Clone, Debug)]
 pub struct Polygon(Vec<Vec2D>);
 
-fn index_and_projection_of_furthest_along(points: &Vec<Vec2D>, normal: &UnitVec2D) -> (usize, Scalar) {
-    let initial_projection = normal.dot(&points[0]);
-
-    return points.iter()
-        .enumerate()
-        .skip(1)
-        .fold((0, initial_projection), |(index_of_max, max_projection), (i, point)| {
-            match normal.dot(point) {
-                x if x > max_projection => (i, x),
-                _otherwise => (index_of_max, max_projection),
-            }
-        });
-
-}
-
-fn index_of_furthest_along(points: &Vec<Vec2D>, normal: &UnitVec2D) -> usize {
-    let (index, _projection) = index_and_projection_of_furthest_along(points, normal);
-
-    return index;
-}
-
 impl Polygon {
     pub fn convex_hull_from(original_points: &Vec<Vec2D>) -> Result<Polygon, ()> {
         if original_points.len() < 3 {
@@ -125,4 +104,25 @@ impl Polygon {
             (edge, plane)
         }))
     }
+}
+
+fn index_and_projection_of_furthest_along(points: &Vec<Vec2D>, normal: &UnitVec2D) -> (usize, Scalar) {
+    let initial_projection = normal.dot(&points[0]);
+
+    return points.iter()
+        .enumerate()
+        .skip(1)
+        .fold((0, initial_projection), |(index_of_max, max_projection), (i, point)| {
+            match normal.dot(point) {
+                x if x > max_projection => (i, x),
+                _otherwise => (index_of_max, max_projection),
+            }
+        });
+
+}
+
+fn index_of_furthest_along(points: &Vec<Vec2D>, normal: &UnitVec2D) -> usize {
+    let (index, _projection) = index_and_projection_of_furthest_along(points, normal);
+
+    return index;
 }

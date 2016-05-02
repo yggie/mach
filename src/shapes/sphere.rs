@@ -2,7 +2,7 @@ use std::fmt;
 
 use {Scalar, PI, TOLERANCE};
 use maths::{Matrix, Vec3D};
-use shapes::{Shape, ShapeSpec};
+use shapes::{Shape, ShapeRef};
 
 /// A representation of a sphere in 3 dimensions.
 #[derive(Clone, Copy, Debug)]
@@ -31,8 +31,8 @@ impl fmt::Display for Sphere {
 }
 
 impl Shape for Sphere {
-    fn spec(&self) -> ShapeSpec {
-        ShapeSpec::Sphere(self.radius)
+    fn downcast(&self) -> ShapeRef {
+        ShapeRef::Sphere(self)
     }
 
     fn volume(&self) -> Scalar {

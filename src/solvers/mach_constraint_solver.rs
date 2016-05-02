@@ -8,7 +8,7 @@ use Scalar;
 use maths::{lcp_solvers, CrossProduct, DotProduct, Integrator, LCP, LCPSolver, Matrix, UnitVec3D, Vec3D};
 use maths::integrators::SemiImplicitEuler;
 use solvers::{ConstraintSolver, ImpulseSolver};
-use entities::{BodyType, BodyTypeMut, RigidBody};
+use entities::{BodyRef, BodyRefMut, RigidBody};
 use detection::ContactEvent;
 
 static NUM_COMPONENTS: usize = 2;
@@ -38,7 +38,7 @@ impl MachConstraintSolver {
             let body_1 = contact_event.bodies().1.borrow();
 
             let (mu, mass_inverse, inertia_inverse, rel_vel, contact_offset) = match (body_0.downcast(), body_1.downcast()) {
-                (BodyType::Rigid(rigid_body_0), BodyType::Rigid(rigid_body_1)) => {
+                (BodyRef::Rigid(rigid_body_0), BodyRef::Rigid(rigid_body_1)) => {
                     let contact_offset_0 = contact_center - rigid_body_0.translation();
                     let contact_offset_1 = contact_center - rigid_body_1.translation();
 
@@ -53,7 +53,7 @@ impl MachConstraintSolver {
                     (mu, mass_inverse, inertia_inverse, rel_vel, (contact_offset_0, contact_offset_1))
                 },
 
-                (BodyType::Rigid(rigid_body), BodyType::Static(static_body)) => {
+                (BodyRef::Rigid(rigid_body), BodyRef::Static(static_body)) => {
                     let contact_offset_0 = contact_center - rigid_body.translation();
                     let contact_offset_1 = contact_center - static_body.translation();
 
@@ -175,7 +175,7 @@ impl MachConstraintSolver {
             let mut body_1 = contact_event.bodies().1.borrow_mut();
 
             match (body_0.downcast_mut(), body_1.downcast_mut()) {
-                (BodyTypeMut::Rigid(rigid_body_0), BodyTypeMut::Rigid(rigid_body_1)) => {
+                (BodyRefMut::Rigid(rigid_body_0), BodyRefMut::Rigid(rigid_body_1)) => {
                     let velocity_change = (contact_normal * problem.solution(impulse_offset)
                         + friction_direction * problem.solution(friction_offset))
                         / time_step;
@@ -199,7 +199,7 @@ impl MachConstraintSolver {
                     MachConstraintSolver::update_rigid_body(rigid_body_1, change_1, 0.0, -correction);
                 },
 
-                (BodyTypeMut::Rigid(rigid_body), BodyTypeMut::Static(_static_body)) => {
+                (BodyRefMut::Rigid(rigid_body), BodyRefMut::Static(_static_body)) => {
                     let velocity_change = (contact_normal * problem.solution(impulse_offset)
                         + friction_direction * problem.solution(friction_offset))
                         / time_step;

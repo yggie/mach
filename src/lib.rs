@@ -33,7 +33,7 @@ pub mod narrowphase;
 
 pub use self::maths::Vec3D;
 pub use self::world::World;
-pub use self::shapes::{Shape, ShapeSpec};
+pub use self::shapes::{Shape, ShapeRef};
 pub use self::entities::{Body, RigidBody, StaticBody};
 pub use self::mach_world::MachWorld;
 pub use self::custom_world::CustomWorld;

@@ -4,7 +4,7 @@ use std::collections::HashMap;
 
 use {Scalar, NEG_INFINITY, TOLERANCE};
 use maths::{DotProduct, Matrix, Vec3D};
-use shapes::{Shape, ShapeSpec};
+use shapes::{Shape, ShapeRef};
 
 /// A `TriangleMesh` object represents a mesh of triangles, built from a set of
 /// points and element connections.
@@ -67,8 +67,8 @@ impl fmt::Display for TriangleMesh {
 }
 
 impl Shape for TriangleMesh {
-    fn spec(&self) -> ShapeSpec {
-        ShapeSpec::TriangleMesh(&self.vertices, &self.elements)
+    fn downcast(&self) -> ShapeRef {
+        ShapeRef::TriangleMesh(self)
     }
 
     fn volume(&self) -> Scalar {

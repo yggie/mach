@@ -1,7 +1,7 @@
 use {ID, Scalar};
 use maths::{IntegratableMut, Matrix, Motion, Transform, UnitQuat, UnitVec3D, Vec3D};
 use shapes::Shape;
-use entities::{Body, BodyType, BodyTypeMut, Form};
+use entities::{Body, BodyRef, BodyRefMut, Form};
 
 /// Represents a physical entity in the world.
 #[derive(Clone)]
@@ -105,12 +105,12 @@ impl Default for RigidBody {
 }
 
 impl Body for RigidBody {
-    fn downcast<'a>(&'a self) -> BodyType<'a> {
-        BodyType::Rigid(self as &RigidBody)
+    fn downcast<'a>(&'a self) -> BodyRef<'a> {
+        BodyRef::Rigid(self)
     }
 
-    fn downcast_mut<'a>(&'a mut self) -> BodyTypeMut<'a> {
-        BodyTypeMut::Rigid(self as &mut RigidBody)
+    fn downcast_mut<'a>(&'a mut self) -> BodyRefMut<'a> {
+        BodyRefMut::Rigid(self)
     }
 
     fn id(&self) -> ID {
