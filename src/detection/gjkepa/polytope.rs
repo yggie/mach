@@ -1,8 +1,9 @@
 use std::collections::HashSet;
 
 use {NEG_INFINITY, TOLERANCE};
-use maths::{CrossProduct, DotProduct, Vec3D};
+use maths::{DotProduct, Vec3D};
 use maths::_2d::Vec2D;
+use utils::PlaneProjector;
 use geometry::{Intersection, Line, Plane};
 use geometry::_2d::{Line2D, Polygon};
 use detection::ContactSet;
@@ -149,29 +150,18 @@ impl<'a> Polytope<'a> {
     }
 
     fn compute_contact_set_for_edge_face(diff: &MinkowskiDifference, contact_plane: Plane, edge_indices: (usize, usize), face_indices: HashSet<usize>) -> ContactSet {
-        let projected_x_axis = contact_plane.normal().cross(/* TODO pick a random vector */Vec3D::new(1.0, 1.0, 1.0)).normalize();
-        let projected_y_axis = contact_plane.normal().cross(projected_x_axis);
-        let project = |point: &Vec3D| -> Vec2D {
-            Vec2D::new(
-                projected_x_axis.dot(*point),
-                projected_y_axis.dot(*point),
-            )
-        };
-
-        let unproject = |point: &Vec2D| -> Vec3D {
-            point.x * projected_x_axis + point.y * projected_y_axis
-        };
+        let projector = PlaneProjector::new(&contact_plane);
 
         // TODO check depth correction
         let depth_0 = diff.0.vertex(edge_indices.0).dot(contact_plane.normal().clone());
         let depth_1 = diff.0.vertex(edge_indices.1).dot(contact_plane.normal().clone());
 
         let edge_points = Line2D::new(
-            project(&diff.0.vertex(edge_indices.0)),
-            project(&diff.0.vertex(edge_indices.1)),
+            projector.project(diff.0.vertex(edge_indices.0)),
+            projector.project(diff.0.vertex(edge_indices.1)),
         );
         let face_points: Vec<Vec2D> = face_indices.into_iter()
-            .map(|index| project(&diff.1.vertex(index)))
+            .map(|index| projector.project(diff.1.vertex(index)))
             .collect();
 
         let polygon = Polygon::convex_hull_from(&face_points)
@@ -179,8 +169,8 @@ impl<'a> Polytope<'a> {
             .expect("A valid face always has enough points");
 
         let intersection = polygon.intersection(&edge_points).unwrap();
-        let contact_point_0 = unproject(&intersection.start) + depth_0 * contact_plane.normal();
-        let contact_point_1 = unproject(&intersection.end) + depth_1 * contact_plane.normal();
+        let contact_point_0 = projector.unproject(intersection.start) + depth_0 * contact_plane.normal();
+        let contact_point_1 = projector.unproject(intersection.end) + depth_1 * contact_plane.normal();
 
         return ContactSet::new(
             Plane::new(contact_point_0, -contact_plane.normal()),
