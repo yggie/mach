@@ -2,6 +2,8 @@
 mod behaviours;
 #[macro_use]
 mod assert_approx_eq;
+#[macro_use]
+mod assert_approx_matching;
 
 mod arbitrary_radians;
 mod arbitrary_positive_scalar;

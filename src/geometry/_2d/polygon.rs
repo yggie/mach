@@ -13,7 +13,7 @@ use geometry::_2d::{Edge2D, Plane2D};
 pub struct Polygon(Vec<Vec2D>);
 
 impl Polygon {
-    pub fn convex_hull_from(original_points: &Vec<Vec2D>) -> Result<Polygon, ()> {
+    pub fn convex_hull_from_points(original_points: &Vec<Vec2D>) -> Result<Polygon, ()> {
         if original_points.len() < 3 {
             return Err(());
         }
@@ -84,6 +84,11 @@ impl Polygon {
         &self.0
     }
 
+    pub fn contains_point(&self, point: Vec2D) -> bool {
+        self.separating_planes_iter()
+            .all(|plane| !plane.projection_along_normal(&point).is_above_plane())
+    }
+
     pub fn edges_iter<'a>(&'a self) -> Box<Iterator<Item=Edge2D<'a>> + 'a> {
         let next_points = self.0.iter().skip(1).chain(self.0.iter().take(1));
         let points = self.0.iter();
@@ -118,7 +123,6 @@ fn index_and_projection_of_furthest_along(points: &Vec<Vec2D>, normal: &UnitVec2
                 _otherwise => (index_of_max, max_projection),
             }
         });
-
 }
 
 fn index_of_furthest_along(points: &Vec<Vec2D>, normal: &UnitVec2D) -> usize {

@@ -139,32 +139,32 @@ macro_rules! assert_detection_behaviour {
                 assert_eq!(contact_event.points().len(), 2);
                 assert_approx_eq!(contact_event.normal(), UnitVec3D::from(Vec3D::new(-1.0, 0.0, 0.0)));
 
-                let mut points = contact_event.points().clone();
-                points.sort_by(|a, b| a.z.partial_cmp(&b.z).unwrap());
-                let x = 0.49;
-                assert_approx_eq!(points[0], Vec3D::new(x, 0.0, 0.00));
-                assert_approx_eq!(points[1], Vec3D::new(x, 0.0, 0.50));
+                assert_approx_matching!(contact_event.points(), vec!(
+                    Vec3D::new(0.495, 0.0, 0.00),
+                    Vec3D::new(0.495, 0.0, 0.50),
+                ));
             }
 
-            // #[test]
-            // fn it_handles_face_face_collisions() {
-            //     let mut detection = validate(test_subject());
-            //     let control = RigidBody::default()
-            //         .with_shape(Cuboid::cube(1.0));
-            //     let rigid_body = RigidBody::default()
-            //         .with_shape(Cuboid::cube(1.0))
-            //         .with_translation(0.99, 0.50, 0.50);
-            //
-            //     let result = detection.compute_contacts(&handle(control), &handle(rigid_body));
-            //
-            //     assert!(result.is_some());
-            //
-            //     let contact_event = result.unwrap();
-            //
-            //     // TODO officially support face - face contacts
-            //     // assert_eq!(contact_event.points().len(), 4);
-            //     assert_approx_eq!(*contact_event.normal(), Vec3D::new(-1.0, 0.0, 0.0));
-            // }
+            #[test]
+            fn it_handles_face_face_collisions() {
+                let mut detection = validate(test_subject());
+                let control = RigidBody::default()
+                    .with_shape(Cuboid::cube(1.0));
+                let rigid_body = RigidBody::default()
+                    .with_shape(Cuboid::cube(1.0))
+                    .with_translation(0.99, 0.50, 0.50);
+
+                let contact_event = detection.compute_contacts(&handle(control), &handle(rigid_body))
+                    .expect("expected a contact to be present, but none was found");
+
+                assert_approx_eq!(contact_event.normal(), Vec3D::new(-1.0, 0.0, 0.0).normalize());
+                assert_approx_matching!(contact_event.points(), vec!(
+                    Vec3D::new(0.495, 0.0, 0.0),
+                    Vec3D::new(0.495, 0.5, 0.0),
+                    Vec3D::new(0.495, 0.0, 0.5),
+                    Vec3D::new(0.495, 0.5, 0.5),
+                ));
+            }
 
             // TODO maybe it should be pointing towards the second body, to be
             // consistent with the start-end principle

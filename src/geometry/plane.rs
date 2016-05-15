@@ -2,7 +2,7 @@ use {Scalar, TOLERANCE};
 use maths::{DotProduct, UnitVec3D, Vec3D};
 use geometry::PlaneNormalProjection;
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Plane {
     normal: UnitVec3D,
     reference_point: Vec3D,

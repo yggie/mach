@@ -7,12 +7,10 @@ mod implement_op_overload_variants;
 
 mod energy;
 mod surface;
-mod plane_projector;
 mod unit_vec_3d_generator;
 mod compute_surfaces_for_convex_hull;
 
 pub use self::surface::Surface;
 pub use self::energy::*;
-pub use self::plane_projector::PlaneProjector;
 pub use self::unit_vec_3d_generator::UnitVec3DGenerator;
 pub use self::compute_surfaces_for_convex_hull::compute_surfaces_for_convex_hull;

@@ -97,7 +97,7 @@ impl<S> ExamplesWindow<S> where S: Simulation {
 
     fn handle_contact_events(&mut self, contacts: Vec<mach::detection::ContactEvent>) {
         self.frame_metadata.contacts = contacts.into_iter()
-            .map(|contact| contact.point(0).clone())
+            .flat_map(|contact| contact.points().clone())
             .collect();
     }
 

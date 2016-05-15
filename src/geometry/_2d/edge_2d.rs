@@ -32,3 +32,9 @@ impl<'a> Edge2D<'a> {
         Line2D::new(self.start.clone(), self.end.clone())
     }
 }
+
+impl<'a> From<Edge2D<'a>> for Line2D {
+    fn from(edge: Edge2D<'a>) -> Line2D {
+        Line2D::new(edge.start.clone(), edge.end.clone())
+    }
+}

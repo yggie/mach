@@ -1,9 +1,9 @@
 use std::collections::HashSet;
 
-use {NEG_INFINITY, TOLERANCE};
-use maths::{DotProduct, Vec3D};
+use {NEG_INFINITY, Scalar, TOLERANCE};
+use maths::{CoordinateTransform, Vec3D};
 use maths::_2d::Vec2D;
-use utils::PlaneProjector;
+use entities::Form;
 use geometry::{Intersection, Line, Plane};
 use geometry::_2d::{Line2D, Polygon};
 use detection::ContactSet;
@@ -124,7 +124,7 @@ impl<'a> Polytope<'a> {
             },
 
             (Feature::Face(face_0_indices), Feature::Face(face_1_indices)) => {
-                panic!("Got an unexpected FACE|FACE contact, face_0: {:?}, face_1: {:?}", face_0_indices, face_1_indices);
+                Polytope::compute_contact_set_for_face_face(&self.diff, closest_plane, face_0_indices, face_1_indices)
             },
         };
     }
@@ -150,31 +150,63 @@ impl<'a> Polytope<'a> {
     }
 
     fn compute_contact_set_for_edge_face(diff: &MinkowskiDifference, contact_plane: Plane, edge_indices: (usize, usize), face_indices: HashSet<usize>) -> ContactSet {
-        let projector = PlaneProjector::new(&contact_plane);
+        let coordinates = CoordinateTransform::from_plane(&contact_plane);
 
-        // TODO check depth correction
-        let depth_0 = diff.0.vertex(edge_indices.0).dot(contact_plane.normal().clone());
-        let depth_1 = diff.0.vertex(edge_indices.1).dot(contact_plane.normal().clone());
-
+        let start = coordinates.transform(diff.0.vertex(edge_indices.0));
+        let end = coordinates.transform(diff.0.vertex(edge_indices.1));
+        let average_z_0 = (start.z + end.z) / 2.0;
         let edge_points = Line2D::new(
-            projector.project(diff.0.vertex(edge_indices.0)),
-            projector.project(diff.0.vertex(edge_indices.1)),
+            Vec2D::new(start.x, start.y),
+            Vec2D::new(end.x, end.y),
         );
-        let face_points: Vec<Vec2D> = face_indices.into_iter()
-            .map(|index| projector.project(diff.1.vertex(index)))
-            .collect();
 
-        let polygon = Polygon::convex_hull_from(&face_points)
-            // TODO can we avoid needing to validate this?
-            .expect("A valid face always has enough points");
+        let (polygon, average_z_1) = project_to_polygon_2d(diff.1, face_indices, &coordinates);
+        let average_z = (average_z_0 + average_z_1) / 2.0;
 
         let intersection = polygon.intersection(&edge_points).unwrap();
-        let contact_point_0 = projector.unproject(intersection.start) + depth_0 * contact_plane.normal();
-        let contact_point_1 = projector.unproject(intersection.end) + depth_1 * contact_plane.normal();
+        let contact_point_0 = coordinates.transform_with_inverse(Vec3D::new(intersection.start.x, intersection.start.y, average_z));
+        let contact_point_1 = coordinates.transform_with_inverse(Vec3D::new(intersection.end.x, intersection.end.y, average_z));
 
         return ContactSet::new(
             Plane::new(contact_point_0, -contact_plane.normal()),
             vec!(contact_point_0, contact_point_1),
         );
     }
+
+    fn compute_contact_set_for_face_face(diff: &MinkowskiDifference, contact_plane: Plane, face_0_indices: HashSet<usize>, face_1_indices: HashSet<usize>) -> ContactSet {
+        let coordinates = CoordinateTransform::from_plane(&contact_plane);
+
+        let (polygon_0, average_z_0) = project_to_polygon_2d(diff.0, face_0_indices, &coordinates);
+        let (polygon_1, average_z_1) = project_to_polygon_2d(diff.1, face_1_indices, &coordinates);
+        let average_z = (average_z_0 + average_z_1) / 2.0;
+
+        let intersection = polygon_0.intersection(&polygon_1)
+            .expect("expected an intersection for face-face features, but none was found");
+
+        let points: Vec<Vec3D> = intersection.points().iter()
+            .map(|point| coordinates.transform_with_inverse(Vec3D::new(point.x, point.y, average_z)))
+            .collect();
+
+        return ContactSet::new(
+            Plane::new(points[0], -contact_plane.normal()),
+            points,
+        );
+    }
+}
+
+fn project_to_polygon_2d(form: &Form, indices: HashSet<usize>, coordinates: &CoordinateTransform) -> (Polygon, Scalar) {
+    let points: Vec<Vec3D> = indices.into_iter()
+        .map(|index| coordinates.transform(form.vertex(index)))
+        .collect();
+
+    let average_z = points.iter().fold(0.0, |total, point| total + point.z) / points.len() as Scalar;
+    let flat_projected_points: Vec<Vec2D> = points.into_iter()
+        .map(|point| Vec2D::new(point.x, point.y))
+        .collect();
+
+    let polygon = Polygon::convex_hull_from_points(&flat_projected_points)
+        // TODO can we avoid needing to validate this?
+        .expect("A valid face always has enough points");
+
+    return (polygon, average_z);
 }

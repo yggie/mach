@@ -10,6 +10,12 @@ use maths::_2d::Vec2D;
 #[derive(Clone, Debug)]
 pub struct Point2D(pub Vec2D);
 
+impl From<Point2D> for Vec2D {
+    fn from(point: Point2D) -> Vec2D {
+        point.0
+    }
+}
+
 impl Deref for Vec2D {
     type Target = Point2D;
 

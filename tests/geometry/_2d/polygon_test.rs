@@ -10,7 +10,7 @@ use geometry::_2d::{Plane2D, Polygon};
 #[test]
 fn it_cannot_be_created_with_less_than_3_points() {
     let points = vec!(Vec2D::new(1.0, 2.0));
-    let polygon = Polygon::convex_hull_from(&points);
+    let polygon = Polygon::convex_hull_from_points(&points);
 
     assert!(polygon.is_err(), format!("expected the polygon to be invalid with {} points", points.len()));
 }
@@ -88,7 +88,7 @@ fn it_generates_convex_polygons_from_arbitrary_points() {
 
     fn property(point_cloud: PointCloud2D) {
         let points = point_cloud.0;
-        let polygon = Polygon::convex_hull_from(&points)
+        let polygon = Polygon::convex_hull_from_points(&points)
             .expect(&format!("Test was setup to result in a valid convex hull, but it was invalid: {:?}", points));
 
         let mut violations = Violations::new();
