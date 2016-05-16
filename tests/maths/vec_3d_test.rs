@@ -23,25 +23,6 @@ fn it_can_be_cloned() {
 }
 
 #[test]
-fn it_can_be_set_with_scalars() {
-    let mut v = Vec3D::new(0.0, 0.0, 0.0);
-
-    v.set(&(1.0, 2.0, 3.0));
-
-    assert_approx_eq!(v, Vec3D::new(1.0, 2.0, 3.0));
-}
-
-#[test]
-fn it_can_be_set_to_a_vector() {
-    let mut v = Vec3D::new(0.0, 0.0, 0.0);
-    let u = Vec3D::new(1.0, -3.0, 4.0);
-
-    v.set(&u);
-
-    assert_approx_eq!(v, u);
-}
-
-#[test]
 fn it_supports_the_addition_operator_with_vectors() {
     let a = Vec3D::new(1.0, 3.0, -1.0);
     let b = Vec3D::new(2.0, 1.0, 1.0);
@@ -65,22 +46,6 @@ fn it_supports_the_subtraction_operator_with_vectors() {
     assert_approx_eq!(&a - b, expectation);
     assert_approx_eq!(a - &b, expectation);
     assert_approx_eq!(&a - &b, expectation);
-}
-
-#[test]
-fn it_can_dereference_to_an_array() {
-    let v = Vec3D::new(1.0, 2.0, 3.0);
-    let array: &[Scalar; 3] = v.as_ref();
-
-    assert_eq!((array[0], array[1], array[2]), (1.0, 2.0, 3.0));
-}
-
-#[test]
-fn it_can_dereference_to_a_tuple() {
-    let v = Vec3D::new(1.0, 2.0, 3.0);
-    let tuple: &(Scalar, Scalar, Scalar) = v.as_ref();
-
-    assert_eq!((tuple.0, tuple.1, tuple.2), (1.0, 2.0, 3.0));
 }
 
 #[test]

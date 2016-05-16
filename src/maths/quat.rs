@@ -3,8 +3,7 @@
 mod quat_test;
 
 use std::fmt;
-use std::mem;
-use std::ops::{Add, Deref, DerefMut, Div, Mul, Neg, Sub};
+use std::ops::{Add, Div, Mul, Neg, Sub};
 
 use {Scalar, TOLERANCE};
 use maths::{ApproxEq, UnitQuat, Vec3D};
@@ -71,15 +70,6 @@ impl Quat {
     pub fn inverse(&self) -> Quat {
         let denom = self.squared_length();
         Quat::new(self.r/denom, -self.i/denom, -self.j/denom, -self.k/denom)
-    }
-
-    /// Sets the components of the `Quat` to the specified values.
-    #[inline]
-    pub fn set(&mut self, other: &(Scalar, Scalar, Scalar, Scalar)) {
-        self.r = other.0;
-        self.i = other.1;
-        self.j = other.2;
-        self.k = other.3;
     }
 
     /// Multiples each component of the `Quat` by the scalar.
@@ -246,19 +236,5 @@ impl<'a> ApproxEq<&'a Quat> for Quat {
 impl ApproxEq<Quat> for Quat {
     fn approx_eq(self, other: Quat) -> bool {
         (&self).approx_eq(&other)
-    }
-}
-
-impl Deref for Quat {
-    type Target = (Scalar, Scalar, Scalar, Scalar);
-
-    fn deref(&self) -> &Self::Target {
-        unsafe { mem::transmute(self) }
-    }
-}
-
-impl DerefMut for Quat {
-    fn deref_mut(&mut self) -> &mut Self::Target {
-        unsafe { mem::transmute(self) }
     }
 }

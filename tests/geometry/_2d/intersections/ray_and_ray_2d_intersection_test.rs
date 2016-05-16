@@ -15,7 +15,7 @@ fn it_correctly_identifies_intersecting_rays() {
         let new_ray = Ray2D::new(new_ray_source, new_ray_direction);
 
         let result = ray.intersection(&new_ray)
-            .expect("expected {:?} to intersect with {:?}, but did not");
+            .expect(format!("expected {:?} to intersect with {:?}, but did not", ray, new_ray).as_str());
 
         assert_approx_eq!(result.0, &intersection);
     }

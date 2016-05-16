@@ -7,8 +7,7 @@ mod tests;
 mod arbitrary;
 
 use std::fmt;
-use std::mem;
-use std::ops::{Add, Deref, DerefMut, Div, Mul, Neg, Sub};
+use std::ops::{Add, Div, Mul, Neg, Sub};
 
 use {Scalar, TOLERANCE};
 use maths::{ApproxEq, CrossProduct, DotProduct, Matrix, UnitVec3D};
@@ -39,14 +38,6 @@ impl Vec3D {
     /// Constructs a zero vector.
     pub fn zero() -> Vec3D {
         Vec3D::new(0.0, 0.0, 0.0)
-    }
-
-    /// Set the components of the `Vec3D` to the specified values.
-    #[inline]
-    pub fn set(&mut self, other: &(Scalar, Scalar, Scalar)) {
-        self.x = other.0;
-        self.y = other.1;
-        self.z = other.2;
     }
 
     /// Computes the direction vector of a Vec3D.
@@ -265,37 +256,5 @@ impl Div<Scalar> for Vec3D {
     #[inline]
     fn div(self, s: Scalar) -> Vec3D {
         Vec3D::new(self.x/s, self.y/s, self.z/s)
-    }
-}
-
-/// Implements the `AsRef` trait to allow conversion between a `Vec3D` and a
-/// `[Scalar; 3]`.
-impl AsRef<[Scalar; 3]> for Vec3D {
-    #[inline]
-    fn as_ref(&self) -> &[Scalar; 3] {
-        unsafe { mem::transmute(self) }
-    }
-}
-
-/// Implements the `AsRef` trait to allow conversion between a `Vec3D` and a
-/// `(Scalar, Scalar, Scalar)`.
-impl AsRef<(Scalar, Scalar, Scalar)> for Vec3D {
-    #[inline]
-    fn as_ref(&self) -> &(Scalar, Scalar, Scalar) {
-        unsafe { mem::transmute(self) }
-    }
-}
-
-impl Deref for Vec3D {
-    type Target = (Scalar, Scalar, Scalar);
-
-    fn deref(&self) -> &Self::Target {
-        unsafe { mem::transmute(self) }
-    }
-}
-
-impl DerefMut for Vec3D {
-    fn deref_mut(&mut self) -> &mut Self::Target {
-        unsafe { mem::transmute(self) }
     }
 }
