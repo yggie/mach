@@ -5,17 +5,16 @@ use maths::{UnitQuat, Vec3D};
 use shapes::Cuboid;
 use entities::RigidBody;
 use detection::gjkepa::{EPA, GJK};
-use algorithms::{IterativeAlgorithmExecutor, PanicOnIteration};
+use algorithms::{Execute, PanicOnIteration};
 
 use super::super::simplex::Simplex;
 use super::super::simplex_cache::SimplexCache;
 use super::super::minkowski_difference::MinkowskiDifference;
 
 fn find_origin<'a>(cache: &'a mut SimplexCache, diff: &'a MinkowskiDifference) -> Option<Simplex<'a>> {
-    let algorithm = GJK::new(cache, diff.clone())
-        .panic_on_iteration(1000, "looking for origin (in tests)");
-
-    return IterativeAlgorithmExecutor::execute(algorithm);
+    GJK::new(cache, diff.clone())
+        .panic_on_iteration(1000, "looking for origin (in tests)")
+        .execute()
 }
 
 #[test]
@@ -34,9 +33,9 @@ fn it_should_not_generate_incomplete_shells() {
         let simplex = find_origin(&mut simplex_cache, &diff)
             .expect("Expected simplex to contain origin but it did not");
 
-        let algorithm = EPA::new(simplex)
-            .panic_on_iteration(1000, "EPA failed to converge after 1000 iterations (in test)");
-        let polytope = IterativeAlgorithmExecutor::execute(algorithm);
+        let polytope = EPA::new(simplex)
+            .panic_on_iteration(1000, "EPA failed to converge after 1000 iterations (in test)")
+            .execute();
 
         let mid_point = polytope.support_points.iter()
             .fold(Vec3D::zero(), |total, &(vertex, _index_pair)| {

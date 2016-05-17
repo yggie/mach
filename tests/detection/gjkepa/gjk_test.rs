@@ -6,7 +6,7 @@ use maths::UnitQuat;
 use shapes::Cuboid;
 use entities::RigidBody;
 use geometry::PlaneNormalProjection;
-use algorithms::{IterativeAlgorithmExecutor, PanicOnIteration};
+use algorithms::{Execute, PanicOnIteration};
 
 use detection::gjkepa::GJK;
 use super::super::simplex::Simplex;
@@ -14,10 +14,9 @@ use super::super::simplex_cache::SimplexCache;
 use super::super::minkowski_difference::MinkowskiDifference;
 
 fn find_origin<'a>(cache: &'a mut SimplexCache, diff: &'a MinkowskiDifference) -> Option<Simplex<'a>> {
-    let algorithm = GJK::new(cache, diff.clone())
-        .panic_on_iteration(1000, "looking for origin (in tests)");
-
-    return IterativeAlgorithmExecutor::execute(algorithm);
+    GJK::new(cache, diff.clone())
+        .panic_on_iteration(1000, "looking for origin (in tests)")
+        .execute()
 }
 
 fn assert_valid_simplex(cache: &SimplexCache, diff: &MinkowskiDifference) {

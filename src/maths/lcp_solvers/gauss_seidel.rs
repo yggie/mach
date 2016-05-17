@@ -1,15 +1,14 @@
 use {INFINITY, Scalar, TOLERANCE};
 use maths::{LCP, LCPSolver};
-use algorithms::{IterativeAlgorithm, IterativeAlgorithmExecutor, LimitIterationsTo};
+use algorithms::{Execute, IterativeAlgorithm, LimitIterationsTo};
 
 pub struct GaussSeidel;
 
 impl LCPSolver for GaussSeidel {
     fn solve_in_place(&self, problem: &mut LCP) {
-        let algorithm = GaussSeidelAlgorithm::new(problem)
-            .limit_iterations_to(50);
-
-        let _solved_problem = IterativeAlgorithmExecutor::execute(algorithm);
+        GaussSeidelAlgorithm::new(problem)
+            .limit_iterations_to(50)
+            .execute();
     }
 }
 

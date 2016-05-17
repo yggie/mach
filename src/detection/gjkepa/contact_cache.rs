@@ -1,6 +1,6 @@
 use entities::Form;
 use detection::ContactSet;
-use algorithms::{IterativeAlgorithmExecutor, PanicOnIteration};
+use algorithms::{Execute, PanicOnIteration};
 
 use detection::gjkepa::{EPA, GJK};
 use super::simplex_cache::SimplexCache;
@@ -17,16 +17,15 @@ impl ContactCache {
 
     pub fn compute_contacts(&mut self, form_0: &Form, form_1: &Form) -> Option<ContactSet> {
         let diff = MinkowskiDifference(form_0, form_1);
-        let algorithm = GJK::new(&mut self.0, diff)
-            .panic_on_iteration(1000, "GJK failed to complete within 1000 iterations");
 
-        return IterativeAlgorithmExecutor::execute(algorithm)
+        GJK::new(&mut self.0, diff)
+            .panic_on_iteration(1000, "GJK failed to complete within 1000 iterations")
+            .execute()
             .map(|simplex| {
-                let algorithm = EPA::new(simplex)
-                    .panic_on_iteration(1000, "EPA failed to complete within 1000 iterations");
-
-                IterativeAlgorithmExecutor::execute(algorithm)
+                EPA::new(simplex)
+                    .panic_on_iteration(1000, "EPA failed to complete within 1000 iterations")
+                    .execute()
                     .compute_contact_points()
-            });
+            })
     }
 }
