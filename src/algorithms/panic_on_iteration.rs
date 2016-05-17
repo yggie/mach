@@ -1,41 +1,45 @@
 use algorithms::IterativeAlgorithm;
 
-pub struct PanicOnIteration<I: IterativeAlgorithm> {
-    limit: u32,
-    message: &'static str,
-    algorithm: I,
-    iterations: u32,
+pub trait PanicOnIteration: IterativeAlgorithm {
+    fn panic_on_iteration(self, usize, &str) -> IterationLimiterWithPanic<Self>;
 }
 
-impl<I: IterativeAlgorithm> PanicOnIteration<I> {
-    pub fn new(algorithm: I, limit: u32, message: &'static str) -> PanicOnIteration<I> {
-        PanicOnIteration {
+impl<T: IterativeAlgorithm> PanicOnIteration for T {
+    fn panic_on_iteration(self, limit: usize, message: &str) -> IterationLimiterWithPanic<Self> {
+        IterationLimiterWithPanic {
             limit: limit,
-            message: message,
-            algorithm: algorithm,
-            iterations: 0,
+            message: String::from(message),
+            algorithm: self,
+            current_iteration: 0,
         }
     }
 }
 
-impl<I: IterativeAlgorithm> IterativeAlgorithm for PanicOnIteration<I> {
-    type Result = I::Result;
+pub struct IterationLimiterWithPanic<T: IterativeAlgorithm> {
+    limit: usize,
+    message: String,
+    algorithm: T,
+    current_iteration: usize,
+}
 
-    #[inline]
+impl<T: IterativeAlgorithm> IterativeAlgorithm for IterationLimiterWithPanic<T> {
+    type Result = T::Result;
+
+    #[inline(always)]
     fn result(self) -> Self::Result {
         self.algorithm.result()
     }
 
-    #[inline]
+    #[inline(always)]
     fn has_converged(&self) -> bool {
         self.algorithm.has_converged()
     }
 
     fn next_iteration(&mut self) {
         self.algorithm.next_iteration();
-        self.iterations = self.iterations + 1;
+        self.current_iteration += 1;
 
-        if self.iterations > self.limit {
+        if self.current_iteration >= self.limit {
             panic!("Took over {} iterations to complete the process: \"{}\"", self.limit, self.message);
         }
     }

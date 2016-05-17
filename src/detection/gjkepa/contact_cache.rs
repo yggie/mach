@@ -17,19 +17,13 @@ impl ContactCache {
 
     pub fn compute_contacts(&mut self, form_0: &Form, form_1: &Form) -> Option<ContactSet> {
         let diff = MinkowskiDifference(form_0, form_1);
-        let algorithm = PanicOnIteration::new(
-            GJK::new(&mut self.0, diff),
-            1000,
-            "GJK failed to complete within 1000 iterations",
-        );
+        let algorithm = GJK::new(&mut self.0, diff)
+            .panic_on_iteration(1000, "GJK failed to complete within 1000 iterations");
 
         return IterativeAlgorithmExecutor::execute(algorithm)
             .map(|simplex| {
-                let algorithm = PanicOnIteration::new(
-                    EPA::new(simplex),
-                    1000,
-                    "EPA failed to complete within 1000 iterations",
-                );
+                let algorithm = EPA::new(simplex)
+                    .panic_on_iteration(1000, "EPA failed to complete within 1000 iterations");
 
                 IterativeAlgorithmExecutor::execute(algorithm)
                     .compute_contact_points()

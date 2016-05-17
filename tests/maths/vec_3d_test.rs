@@ -1,4 +1,3 @@
-use Scalar;
 use maths::{CrossProduct, DotProduct, Vec3D};
 
 #[test]

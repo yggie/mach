@@ -14,11 +14,8 @@ use super::super::simplex_cache::SimplexCache;
 use super::super::minkowski_difference::MinkowskiDifference;
 
 fn find_origin<'a>(cache: &'a mut SimplexCache, diff: &'a MinkowskiDifference) -> Option<Simplex<'a>> {
-    let algorithm = PanicOnIteration::new(
-        GJK::new(cache, diff.clone()),
-        1000,
-        "looking for origin (in tests)",
-    );
+    let algorithm = GJK::new(cache, diff.clone())
+        .panic_on_iteration(1000, "looking for origin (in tests)");
 
     return IterativeAlgorithmExecutor::execute(algorithm);
 }
