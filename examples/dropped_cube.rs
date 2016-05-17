@@ -48,6 +48,22 @@ impl Simulation for DroppedCube {
             .with_shape(mach::shapes::Cuboid::new(range + 2.0 * margin, range + 2.0 * margin, 1.0))
             .with_translation(0.0, 0.0, -margin));
 
+        world.add_static_body(mach::StaticBody::default()
+            .with_shape(mach::shapes::Cuboid::new(range + 2.0 * margin, 1.0, range + 2.0 * margin))
+            .with_translation(0.0, range/2.0 + margin, 0.0));
+
+        world.add_static_body(mach::StaticBody::default()
+            .with_shape(mach::shapes::Cuboid::new(range + 2.0 * margin, 1.0, range + 2.0 * margin))
+            .with_translation(0.0, -range/2.0 - margin, 0.0));
+
+        world.add_static_body(mach::StaticBody::default()
+            .with_shape(mach::shapes::Cuboid::new(1.0, range + 2.0 * margin, range + 2.0 * margin))
+            .with_translation(range/2.0 + margin, 0.0, 0.0));
+
+        world.add_static_body(mach::StaticBody::default()
+            .with_shape(mach::shapes::Cuboid::new(1.0, range + 2.0 * margin, range + 2.0 * margin))
+            .with_translation(-range/2.0 - margin, 0.0, 0.0));
+
         return Ok(());
     }
 
