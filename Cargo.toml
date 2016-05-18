@@ -19,5 +19,6 @@ high_precision = [ ]
 rand = "*"
 time = "*"
 glium = "*"
+regex = "*"
 nalgebra = "*"
 quickcheck = "*"
