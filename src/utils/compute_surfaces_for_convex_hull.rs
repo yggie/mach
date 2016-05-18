@@ -1,3 +1,7 @@
+#[cfg(test)]
+#[path="../../tests/utils/compute_surfaces_for_convex_hull_test.rs"]
+mod tests;
+
 use {Scalar, TOLERANCE};
 use maths::{CrossProduct, DotProduct, UnitVec3D, Vec3D};
 use utils::Surface;

@@ -1,9 +1,10 @@
 extern crate quickcheck;
 
 use Scalar;
-use support::{PositiveScalar, Radians};
 use geometry::Intersection;
 use geometry::_2d::Ray2D;
+
+use tests::support::{PositiveScalar, Radians};
 
 #[test]
 fn it_correctly_identifies_intersecting_rays() {

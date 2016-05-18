@@ -9,8 +9,13 @@
 
 #[macro_use]
 #[cfg(test)]
-#[path="../tests/support/mod.rs"]
-pub mod support;
+#[path="./"]
+pub mod tests {
+    #[macro_use]
+    #[cfg(test)]
+    #[path="../tests/support/mod.rs"]
+    pub mod support;
+}
 
 mod mach_world;
 mod custom_world;
@@ -28,13 +33,14 @@ pub mod entities;
 pub mod geometry;
 pub mod detection;
 pub mod algorithms;
+pub mod collisions;
 pub mod broadphase;
 pub mod narrowphase;
 
-pub use self::maths::Vec3D;
+pub use self::maths::{Transform, UnitQuat, UnitVec3D, Vec3D};
 pub use self::world::World;
 pub use self::shapes::{Shape, ShapeRef};
-pub use self::entities::{Body, RigidBody, StaticBody};
+pub use self::entities::{Body, EntityStore, RigidBody, StaticBody};
 pub use self::mach_world::MachWorld;
 pub use self::custom_world::CustomWorld;
 

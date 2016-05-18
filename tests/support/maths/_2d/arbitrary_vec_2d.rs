@@ -1,7 +1,8 @@
 extern crate quickcheck;
 
 use maths::_2d::Vec2D;
-use support::TEST_SCALAR_BOUNDS;
+
+use tests::support::TEST_SCALAR_BOUNDS;
 
 impl quickcheck::Arbitrary for Vec2D {
     fn arbitrary<G: quickcheck::Gen>(random: &mut G) -> Self {

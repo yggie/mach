@@ -1,5 +1,5 @@
-use mach::maths::Vec3D;
-use mach::utils::compute_surfaces_for_convex_hull;
+use maths::Vec3D;
+use utils::compute_surfaces_for_convex_hull;
 
 // TODO very much a work in progress
 #[test]

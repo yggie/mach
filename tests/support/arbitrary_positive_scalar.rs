@@ -1,7 +1,8 @@
 extern crate quickcheck;
 
 use Scalar;
-use support::TEST_SCALAR_BOUNDS;
+
+use tests::support::TEST_SCALAR_BOUNDS;
 
 #[derive(Copy, Clone, Debug)]
 pub struct PositiveScalar(Scalar);

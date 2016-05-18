@@ -28,6 +28,23 @@ impl Transform {
         Transform::new(Vec3D::zero(), UnitQuat::identity())
     }
 
+    pub fn translate(mut self, x: Scalar, y: Scalar, z: Scalar) -> Transform {
+        self.translation.x += x;
+        self.translation.y += y;
+        self.translation.z += z;
+
+        self
+    }
+
+    pub fn rotate(self, axis: UnitVec3D, angle: Scalar) -> Transform {
+        let rotation = UnitQuat::from_axis_angle(axis, angle);
+
+        Transform {
+            translation: rotation.rotate(self.translation),
+            rotation: self.rotation * rotation,
+        }
+    }
+
     /// The positional translation component of the transform.
     #[inline(always)]
     pub fn translation(&self) -> Vec3D {
