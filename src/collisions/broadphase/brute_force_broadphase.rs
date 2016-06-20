@@ -3,17 +3,17 @@
 mod tests;
 
 use ID;
-use collisions::{Broadphase, CollisionData, CollisionObject, CollisionObjectSpace, MachCollisionObjectSpace};
+use collisions::{Broadphase, CollisionData, CollisionObject, CollisionObjectSpace, MachCollisionObjectSpace, NarrowphaseData};
 
-pub struct BruteForceBroadphase<T>(MachCollisionObjectSpace<T>);
+pub struct BruteForceBroadphase<T>(MachCollisionObjectSpace<T>) where T: NarrowphaseData;
 
-impl<T> BruteForceBroadphase<T> {
+impl<T> BruteForceBroadphase<T> where T: NarrowphaseData {
     pub fn new() -> BruteForceBroadphase<T> {
         BruteForceBroadphase(MachCollisionObjectSpace::new())
     }
 }
 
-impl<T> CollisionObjectSpace<T> for BruteForceBroadphase<T> where T: Clone {
+impl<T> CollisionObjectSpace<T> for BruteForceBroadphase<T> where T: NarrowphaseData {
     fn find(&self, id: ID) -> Option<CollisionObject<T>> {
         self.0.find(id)
     }
@@ -39,12 +39,12 @@ impl<T> CollisionObjectSpace<T> for BruteForceBroadphase<T> where T: Clone {
     }
 }
 
-impl<T> Broadphase<T> for BruteForceBroadphase<T> where T: Clone {
+impl<T> Broadphase<T> for BruteForceBroadphase<T> where T: NarrowphaseData {
     fn update(&mut self) {
         // do nothing
     }
 
-    fn possible_collision_pairs_iter<'a>(&'a self) -> Box<Iterator<Item=(CollisionObject<T>, CollisionObject<T>)> + 'a> {
+    fn possible_collision_pairs_iter(&self) -> Box<Iterator<Item=(CollisionObject<T>, CollisionObject<T>)>> {
         let mut pairs = Vec::new();
 
         for (index, object_0) in self.0.foreground_objects_iter().enumerate() {

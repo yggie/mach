@@ -3,8 +3,8 @@ extern crate quickcheck;
 use std::collections::HashSet;
 
 use TOLERANCE;
+use maths::Approximations;
 use maths::_2d::Vec2D;
-use geometry::PlaneNormalProjection;
 use geometry::_2d::{Plane2D, Polygon};
 
 #[test]
@@ -21,9 +21,7 @@ fn it_generates_convex_polygons_from_arbitrary_points() {
         let mut outliers = HashSet::new();
         for plane in polygon.separating_planes_iter() {
             for (index, point) in original_points.iter().enumerate() {
-                let projection = plane.project_along_normal(point);
-
-                if projection > TOLERANCE {
+                if plane.normal_projection_of(point).is_strictly_positive() {
                     outliers.insert(index);
                 }
             }
@@ -67,8 +65,8 @@ fn it_generates_convex_polygons_from_arbitrary_points() {
         } else {
             for point in polygon.points().iter() {
                 let num_intersections = polygon.separating_planes_iter().fold(0, |num, plane| {
-                    match plane.projection_along_normal(point) {
-                        PlaneNormalProjection::OnPlane(_height) => num + 1,
+                    match plane.normal_projection_of(point) {
+                        x if x.is_approximately_zero() => num + 1,
                         _otherwise => num,
                     }
                 });

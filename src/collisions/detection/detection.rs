@@ -1,7 +1,6 @@
-use detection::ContactEvent;
-use collisions::{CollisionObject, CollisionObjectLifecycleEventListener};
+use collisions::{CollisionObject, Contact, NarrowphaseData};
 
-pub trait Detection<D>: CollisionObjectLifecycleEventListener<D> {
+pub trait Detection<T> where T: NarrowphaseData {
     fn update(&mut self);
-    fn compute_contacts(&self, object_0: &CollisionObject<D>, object_1: &CollisionObject<D>) -> Option<ContactEvent>;
+    fn compute_contacts(&mut self, object_0: &CollisionObject<T>, object_1: &CollisionObject<T>) -> Option<Contact<T>>;
 }

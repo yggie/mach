@@ -2,10 +2,9 @@
 #[path="../../../tests/geometry/_2d/plane_2d_test.rs"]
 mod tests;
 
-use {Scalar, TOLERANCE};
+use Scalar;
 use maths::DotProduct;
 use maths::_2d::{UnitVec2D, Vec2D};
-use geometry::PlaneNormalProjection;
 
 #[derive(Clone, Debug)]
 pub struct Plane2D {
@@ -27,15 +26,7 @@ impl Plane2D {
     }
 
     #[inline]
-    pub fn project_along_normal(&self, vec2: &Vec2D) -> Scalar {
+    pub fn normal_projection_of(&self, vec2: &Vec2D) -> Scalar {
         self.normal.dot(&(vec2 - &self.reference_point))
-    }
-
-    pub fn projection_along_normal(&self, vec2: &Vec2D) -> PlaneNormalProjection {
-        match self.project_along_normal(vec2) {
-            x if x > TOLERANCE => PlaneNormalProjection::Above(x),
-            x if x < -TOLERANCE => PlaneNormalProjection::Below(x),
-            x => PlaneNormalProjection::OnPlane(x),
-        }
     }
 }

@@ -34,6 +34,6 @@ impl ContactSet {
     }
 
     pub fn penetration_depth(&self, index: usize) -> Scalar {
-        self.plane.project_along_normal(self.point(index))
+        self.plane.normal_projection_of(self.point(index))
     }
 }

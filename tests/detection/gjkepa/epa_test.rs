@@ -1,7 +1,7 @@
 extern crate quickcheck;
 
 use Scalar;
-use maths::{UnitQuat, Vec3D};
+use maths::{Approximations, UnitQuat, Vec3D};
 use shapes::Cuboid;
 use entities::RigidBody;
 use detection::gjkepa::{EPA, GJK};
@@ -43,7 +43,7 @@ fn it_should_not_generate_incomplete_shells() {
             }) / polytope.support_points.len() as Scalar;
 
         for &(ref surface, _vertex_indices) in polytope.surfaces.iter() {
-            if !surface.projection_along_normal(mid_point).is_below_plane() {
+            if !surface.normal_projection_of(mid_point).is_strictly_negative() {
                 panic!(format!("The Polytope has a surface ({:?}) facing the wrong way!", surface.normal()));
             }
         }

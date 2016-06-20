@@ -2,7 +2,7 @@
 #[path="../../../tests/detection/gjkepa/epa_test.rs"]
 mod tests;
 
-use maths::Vec3D;
+use maths::{Approximations, Vec3D};
 use utils::compute_surfaces_for_convex_hull;
 use geometry::Plane;
 use algorithms::IterativeAlgorithm;
@@ -55,7 +55,7 @@ impl<'a> IterativeAlgorithm for EPA<'a> {
                 if any_points_already_tested || {
                     let point = self.polytope.diff.vertex(&new_index_pairs[0]);
 
-                    !plane.projection_along_normal(point).is_above_plane()
+                    !plane.normal_projection_of(point).is_strictly_positive()
                 } {
                     return None;
                 }

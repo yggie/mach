@@ -1,5 +1,5 @@
-use collisions::CollisionObject;
+use collisions::{CollisionObject, NarrowphaseData};
 
-pub trait CollisionObjectLifecycleEventListener<D> {
-    fn on_object_created(&mut self, object: &CollisionObject<D>);
+pub trait CollisionObjectLifecycleEventListener<T> where T: NarrowphaseData {
+    fn on_object_created(&mut self, object: &CollisionObject<T>);
 }

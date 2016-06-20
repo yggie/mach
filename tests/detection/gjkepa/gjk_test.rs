@@ -2,10 +2,9 @@ extern crate quickcheck;
 
 use std::collections::HashSet;
 
-use maths::UnitQuat;
+use maths::{Approximations, UnitQuat};
 use shapes::Cuboid;
 use entities::RigidBody;
-use geometry::PlaneNormalProjection;
 use algorithms::{Execute, PanicOnIteration};
 
 use detection::gjkepa::GJK;
@@ -43,14 +42,14 @@ fn assert_valid_simplex(cache: &SimplexCache, diff: &MinkowskiDifference) {
             .unwrap();
 
         let (vertex, _index_pair) = simplex.support_points[index];
-        match surface.projection_along_normal(vertex) {
-            PlaneNormalProjection::Above(_height) =>
+        match surface.normal_projection_of(vertex) {
+            x if x.is_strictly_positive() =>
                 panic!(format!("{:?} is degenerate, a surface is pointing in the wrong direction", cache)),
 
-            PlaneNormalProjection::OnPlane(_height) =>
-                panic!(format!("{:?} is degenerate, all points are on the same plane", cache)),
+            x if x.is_strictly_negative() => (),
 
-            PlaneNormalProjection::Below(_height) => (),
+            _otherwise =>
+                panic!(format!("{:?} is degenerate, all points are on the same plane", cache)),
         }
     }
 }

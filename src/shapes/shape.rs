@@ -3,6 +3,7 @@ use std::fmt;
 use {Scalar, TOLERANCE};
 use maths::{Matrix, Vec3D};
 use shapes::ShapeRef;
+use collisions::SupportMap;
 
 /// Defines the traits for all geometric property descriptions.
 pub trait Shape: fmt::Debug {
@@ -43,5 +44,15 @@ pub trait Shape: fmt::Debug {
 impl Clone for Box<Shape> {
     fn clone(&self) -> Box<Shape> {
         self.box_clone()
+    }
+}
+
+impl<'a> SupportMap for &'a Shape {
+    fn support_points_iter<'b>(&'b self, direction: Vec3D) -> Box<Iterator<Item=Vec3D> + 'b> {
+        let vec = self.support_indices_for(direction).iter()
+            .map(|&index| self.vertex(index))
+            .collect::<Vec<Vec3D>>();
+
+        return Box::new(vec.into_iter());
     }
 }

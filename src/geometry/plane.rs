@@ -1,6 +1,5 @@
-use {Scalar, TOLERANCE};
+use Scalar;
 use maths::{DotProduct, UnitVec3D, Vec3D};
-use geometry::PlaneNormalProjection;
 
 #[derive(Clone, Debug)]
 pub struct Plane {
@@ -25,21 +24,13 @@ impl Plane {
     }
 
     #[inline]
-    pub fn project_origin_along_normal(&self) -> Scalar {
+    pub fn normal_projection_of_origin(&self) -> Scalar {
         -self.normal.dot(self.reference_point)
     }
 
     #[inline]
-    pub fn project_along_normal(&self, point: Vec3D) -> Scalar {
+    pub fn normal_projection_of(&self, point: Vec3D) -> Scalar {
         self.normal.dot(point - self.reference_point)
-    }
-
-    pub fn projection_along_normal(&self, point: Vec3D) -> PlaneNormalProjection {
-        match self.project_along_normal(point) {
-            x if x > TOLERANCE => PlaneNormalProjection::Above(x),
-            x if x < -TOLERANCE => PlaneNormalProjection::Below(x),
-            x => PlaneNormalProjection::OnPlane(x),
-        }
     }
 
     #[inline]

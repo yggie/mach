@@ -26,6 +26,8 @@ pub mod integrator;
 pub mod dot_product;
 /// TODO temporary workaround for the issue of rexporting traits, see https://github.com/rust-lang/rust/issues/16264
 pub mod cross_product;
+/// TODO temporary workaround for the issue of rexporting traits, see https://github.com/rust-lang/rust/issues/16264
+pub mod approximations;
 
 pub mod _2d;
 pub mod integrators;
@@ -46,4 +48,5 @@ pub use self::unit_vec_3d::UnitVec3D;
 pub use self::integratable::IntegratableMut;
 pub use self::cross_product::CrossProduct;
 pub use self::sparse_matrix::SparseMatrix;
+pub use self::approximations::Approximations;
 pub use self::coordinate_transform::CoordinateTransform;

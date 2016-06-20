@@ -1,3 +1,4 @@
+use maths::Approximations;
 use geometry::Intersection;
 use geometry::_2d::{Point2D, Polygon, Ray2D};
 
@@ -9,7 +10,7 @@ impl Intersection<Polygon> for Ray2D {
 
         polygon.intersection(ray.source() as &Point2D).or_else(|| {
             for (edge, plane) in polygon.separating_edges_and_planes_iter() {
-                if plane.projection_along_normal(ray.source()).is_above_plane() {
+                if plane.normal_projection_of(ray.source()).is_strictly_positive() {
                     if let Some(point) = edge.as_line().intersection(ray) {
                         return Some(point);
                     }

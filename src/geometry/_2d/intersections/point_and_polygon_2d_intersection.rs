@@ -1,3 +1,4 @@
+use maths::Approximations;
 use geometry::Intersection;
 use geometry::_2d::{Point2D, Polygon};
 
@@ -6,7 +7,7 @@ impl Intersection<Point2D> for Polygon {
 
     fn intersection(&self, point: &Point2D) -> Option<Self::Output> {
         for plane in self.separating_planes_iter() {
-            if plane.projection_along_normal(&point.0).is_above_plane() {
+            if plane.normal_projection_of(&point.0).is_strictly_positive() {
                 return None;
             }
         }

@@ -5,7 +5,7 @@ mod tests;
 use std::collections::HashSet;
 
 use {PI, Scalar};
-use maths::DotProduct;
+use maths::{Approximations, DotProduct};
 use maths::_2d::{UnitVec2D, Vec2D};
 use geometry::_2d::{Edge2D, Plane2D};
 
@@ -41,7 +41,7 @@ impl Polygon {
         ).into_iter().map(|edge| {
             let plane = edge.counter_clockwise_plane();
 
-            if plane.projection_along_normal(&centroid).is_above_plane() {
+            if plane.normal_projection_of(&centroid).is_strictly_positive() {
                 edge.reversed()
             } else {
                 edge
@@ -52,7 +52,7 @@ impl Polygon {
             let plane = edge.counter_clockwise_plane();
             let index = index_of_furthest_along(original_points, &plane.normal());
 
-            if plane.projection_along_normal(&original_points[index]).is_above_plane() {
+            if plane.normal_projection_of(&original_points[index]).is_strictly_positive() {
                 index_set.insert(index);
                 let point = &original_points[index];
                 edges.push(Edge2D::new(edge.start, point));
@@ -86,7 +86,7 @@ impl Polygon {
 
     pub fn contains_point(&self, point: Vec2D) -> bool {
         self.separating_planes_iter()
-            .all(|plane| !plane.projection_along_normal(&point).is_above_plane())
+            .all(|plane| !plane.normal_projection_of(&point).is_strictly_positive())
     }
 
     pub fn edges_iter<'a>(&'a self) -> Box<Iterator<Item=Edge2D<'a>> + 'a> {

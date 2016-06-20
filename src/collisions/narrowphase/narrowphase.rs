@@ -3,7 +3,7 @@ use shapes::Shape;
 use collisions::CollisionData;
 
 pub trait Narrowphase {
-    type Data: Sized;
+    type Data: NarrowphaseData;
 
     fn check(&self, &CollisionData<Self::Data>, other: &CollisionData<Self::Data>) -> bool;
     // TODO having all this unnecessary &mut self restriction forces this
@@ -12,3 +12,7 @@ pub trait Narrowphase {
     fn update(&mut self, &mut CollisionData<Self::Data>);
     fn create_data(&mut self, shape: &Shape, transform: &Transform) -> Self::Data;
 }
+
+pub trait NarrowphaseData: 'static + Clone { }
+
+impl NarrowphaseData for () { }
