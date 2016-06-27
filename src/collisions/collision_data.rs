@@ -1,39 +1,6 @@
 use maths::{Transform, Vec3D};
 use shapes::Shape;
-use collisions::{Narrowphase, NarrowphaseData};
-
-#[derive(Clone, Debug)]
-pub struct BasicCollisionData {
-    shape: Box<Shape>,
-    transform: Transform,
-}
-
-impl BasicCollisionData {
-    pub fn new(shape: Box<Shape>, transform: Transform) -> BasicCollisionData {
-        BasicCollisionData {
-            shape: shape,
-            transform: transform,
-        }
-    }
-
-    #[inline(always)]
-    pub fn shape(&self) -> &Shape {
-        &*self.shape
-    }
-
-    #[inline(always)]
-    pub fn transform(&self) -> &Transform {
-        &self.transform
-    }
-
-    pub fn vertices_iter<'a>(&'a self) -> Box<Iterator<Item=Vec3D> + 'a> {
-        let vec = self.shape.vertices_iter()
-            .map(|vertex| self.transform.apply_to_point(vertex))
-            .collect::<Vec<Vec3D>>();
-
-        Box::new(vec.into_iter())
-    }
-}
+use collisions::{BasicCollisionData, Narrowphase, NarrowphaseData};
 
 #[derive(Clone, Debug)]
 pub struct CollisionData<T> where T: NarrowphaseData {
@@ -59,6 +26,11 @@ impl<T> CollisionData<T> where T: NarrowphaseData {
     #[inline(always)]
     pub fn shape(&self) -> &Shape {
         self.basic_data.shape()
+    }
+
+    #[inline(always)]
+    pub fn translation(&self) -> Vec3D {
+        self.basic_data.translation()
     }
 
     #[inline(always)]

@@ -56,3 +56,13 @@ impl<'a> SupportMap for &'a Shape {
         return Box::new(vec.into_iter());
     }
 }
+
+impl SupportMap for Box<Shape> {
+    fn support_points_iter<'a>(&'a self, direction: Vec3D) -> Box<Iterator<Item=Vec3D> + 'a> {
+        let vec = self.support_indices_for(direction).iter()
+            .map(|&index| self.vertex(index))
+            .collect::<Vec<Vec3D>>();
+
+        return Box::new(vec.into_iter());
+    }
+}

@@ -1,3 +1,4 @@
+use maths::{UnitVec3D, Vec3D};
 use detection::ContactSet;
 use collisions::{CollisionObject, NarrowphaseData};
 
@@ -12,5 +13,20 @@ impl<T> Contact<T> where T: NarrowphaseData {
             set: set,
             objects: (object_0, object_1),
         }
+    }
+
+    #[inline]
+    pub fn point(&self, index: usize) -> Vec3D {
+        self.set.point(index)
+    }
+
+    #[inline]
+    pub fn points(&self) -> &Vec<Vec3D> {
+        self.set.points()
+    }
+
+    #[inline(always)]
+    pub fn normal(&self) -> UnitVec3D {
+        self.set.normal()
     }
 }

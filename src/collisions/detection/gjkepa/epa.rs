@@ -95,18 +95,14 @@ impl<'a> EPAPolyhedron<'a> {
 
         let contact_normal = -closest_face.normal();
         let feature_0 = {
-            let shape = self.diff.0.shape();
-
-            let vertices = shape.support_points_iter( Vec3D::from(contact_normal))
+            let vertices = self.diff.0.support_points_iter(-Vec3D::from(contact_normal))
                 .collect::<Vec<Vec3D>>();
 
             Feature::from_vertices(vertices)
         };
 
         let feature_1 = {
-            let shape = self.diff.1.shape();
-
-            let vertices = shape.support_points_iter(-Vec3D::from(contact_normal))
+            let vertices = self.diff.1.support_points_iter( Vec3D::from(contact_normal))
                 .collect::<Vec<Vec3D>>();
 
             Feature::from_vertices(vertices)
@@ -179,7 +175,7 @@ impl<'a> EPAPolyhedron<'a> {
         let contact_point_1 = coordinates.transform_with_inverse(Vec3D::new(intersection.end.x, intersection.end.y, average_z));
 
         return ContactSet::new(
-            Plane::new(contact_point_0, -contact_plane.normal()),
+            Plane::new(contact_point_0, contact_plane.normal()),
             vec!(contact_point_0, contact_point_1),
         );
     }
@@ -199,7 +195,7 @@ impl<'a> EPAPolyhedron<'a> {
             .collect();
 
         return ContactSet::new(
-            Plane::new(points[0], -contact_plane.normal()),
+            Plane::new(points[0], contact_plane.normal()),
             points,
         );
     }

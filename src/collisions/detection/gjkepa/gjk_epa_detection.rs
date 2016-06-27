@@ -1,3 +1,7 @@
+#[cfg(test)]
+#[path="../../../../tests/collisions/detection/gjkepa/gjk_epa_detection_test.rs"]
+mod tests;
+
 use {ID, INFINITY, Scalar, TOLERANCE};
 use maths::{Approximations, Vec3D};
 use shapes::Shape;
