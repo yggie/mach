@@ -2,6 +2,12 @@ use maths::{UnitVec3D, Vec3D};
 use detection::ContactSet;
 use collisions::{CollisionObject, NarrowphaseData};
 
+// // TODO decide how to handle stuff
+// pub struct PhysicalContact<T> where T: NarrowphaseData {
+//     set: ContactSet,
+//     bodies: (PhysicsBody<T>, PhysicsBody<T>),
+// }
+
 pub struct Contact<T> where T: NarrowphaseData {
     set: ContactSet,
     objects: (CollisionObject<T>, CollisionObject<T>),

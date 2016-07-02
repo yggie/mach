@@ -5,6 +5,7 @@ mod transform_test;
 use Scalar;
 use maths::{UnitQuat, UnitVec3D, Vec3D};
 
+// TODO move this into collisions module
 /// The `Transform` object represents a spatial transformation in 3D space.
 #[derive(Clone, Copy, Debug)]
 pub struct Transform {

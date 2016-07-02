@@ -2,8 +2,8 @@ mod collision_data;
 mod collision_space;
 mod collision_object;
 mod basic_collision_data;
-mod collision_data_handle;
 
+pub mod shapes;
 pub mod geometry;
 pub mod detection;
 pub mod broadphase;
@@ -21,5 +21,8 @@ pub use self::collision_space::CollisionSpace;
 pub use self::collision_object::CollisionObject;
 pub use self::basic_collision_data::BasicCollisionData;
 pub use self::collisionobjectspace::{CollisionObjectSpace, MachCollisionObjectSpace};
-pub use self::collision_data_handle::CollisionDataHandle;
 pub use self::collision_object_lifecycle_event_listener::CollisionObjectLifecycleEventListener;
+
+use utils::DataHandle;
+
+pub type CollisionDataHandle<T> = DataHandle<CollisionData<T>>;

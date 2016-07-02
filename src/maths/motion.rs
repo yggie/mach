@@ -1,6 +1,7 @@
 use Scalar;
 use maths::Vec3D;
 
+// TODO move this into physics module
 #[derive(Clone, Debug)]
 pub struct Motion {
     pub velocity: Vec3D,
