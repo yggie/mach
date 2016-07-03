@@ -1,6 +1,6 @@
-use collisions::{CollisionObject, CollisionObjectSpace, NarrowphaseData};
+use collisions::{CloseProximityPair, CollisionObjectSpace, Narrowphase};
 
-pub trait Broadphase<T>: CollisionObjectSpace<T> where T: NarrowphaseData {
+pub trait Broadphase<D, N>: CollisionObjectSpace<D, N> where N: Narrowphase {
     fn update(&mut self);
-    fn possible_collision_pairs_iter(&self) -> Box<Iterator<Item=(CollisionObject<T>, CollisionObject<T>)>>;
+    fn close_proximity_pairs_iter(&self) -> Box<Iterator<Item=CloseProximityPair<D, N>>>;
 }

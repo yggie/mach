@@ -2,7 +2,12 @@ use std::marker::PhantomData;
 
 use collisions::{Broadphase, Contact, Detection, Narrowphase, NarrowphaseData};
 
-pub struct CollisionSpace<B, D, N, ND> where B: Broadphase<ND>, D: Detection<ND>, N: Narrowphase<Data=ND>, ND: NarrowphaseData {
+pub struct CollisionSpace<B, D, N, ND> where
+        B: Broadphase<ND>,
+        D: Detection<ND>,
+        N: Narrowphase<Data=ND>,
+        ND: NarrowphaseData {
+
     detection: D,
     broadphase: B,
     narrowphase: N,

@@ -3,10 +3,10 @@
 mod tests;
 
 use maths::Vec3D;
-use collisions::{BasicCollisionData, SupportMap};
+use collisions::{CollisionData, SupportMap};
 
 #[derive(Clone)]
-pub struct MinkowskiDifference<'a>(pub &'a BasicCollisionData, pub &'a BasicCollisionData);
+pub struct MinkowskiDifference<'a>(pub &'a CollisionData, pub &'a CollisionData);
 
 impl<'a> MinkowskiDifference<'a> {
     pub fn reversed(self) -> MinkowskiDifference<'a> {

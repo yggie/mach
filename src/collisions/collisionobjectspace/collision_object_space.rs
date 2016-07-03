@@ -1,11 +1,13 @@
 use ID;
-use collisions::{CollisionData, CollisionObject, NarrowphaseData};
+use utils::Ref;
+use collisions::{Body, BodyDef, BodyHandle, Narrowphase};
 
-pub trait CollisionObjectSpace<T> where T: NarrowphaseData {
-    fn find(&self, id: ID) -> Option<CollisionObject<T>>;
-    fn objects_iter<'a>(&'a self) -> Box<Iterator<Item=CollisionObject<T>> + 'a>;
-    fn foreground_objects_iter<'a>(&'a self) -> Box<Iterator<Item=CollisionObject<T>> + 'a>;
-    fn background_objects_iter<'a>(&'a self) -> Box<Iterator<Item=CollisionObject<T>> + 'a>;
-    fn create_foreground_object(&mut self, data: CollisionData<T>) -> CollisionObject<T>;
-    fn create_background_object(&mut self, data: CollisionData<T>) -> CollisionObject<T>;
+pub trait CollisionObjectSpace<D, N> where N: Narrowphase {
+    fn find(&self, id: ID) -> Option<BodyHandle<D, N>>;
+    fn bodies_iter<'a>(&'a self) -> Box<Iterator<Item=Ref<Body<D, N>>> + 'a>;
+    fn create_body(&mut self, data: BodyDef<D>) -> BodyHandle<D, N>;
+    fn foreground_bodies_iter<'a>(&'a self) -> Box<Iterator<Item=Ref<Body<D, N>>> + 'a>;
+    fn foreground_handles_iter<'a>(&'a self) -> Box<Iterator<Item=&BodyHandle<D, N>> + 'a>;
+    fn background_bodies_iter<'a>(&'a self) -> Box<Iterator<Item=Ref<Body<D, N>>> + 'a>;
+    fn background_handles_iter<'a>(&'a self) -> Box<Iterator<Item=&BodyHandle<D, N>> + 'a>;
 }

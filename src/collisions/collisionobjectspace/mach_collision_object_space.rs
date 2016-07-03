@@ -3,67 +3,70 @@
 mod tests;
 
 use ID;
-use collisions::{CollisionData, CollisionDataHandle, CollisionObject, CollisionObjectSpace, NarrowphaseData};
+use utils::Ref;
+use collisions::{Body, BodyDef, BodyHandle, CollisionGroup, CollisionObjectSpace, Narrowphase};
 
-pub struct MachCollisionObjectSpace<T> where T: NarrowphaseData {
-    foreground_objects: Vec<CollisionObject<T>>,
-    background_objects: Vec<CollisionObject<T>>,
+pub struct MachCollisionObjectSpace<D, N> where N: Narrowphase {
+    foreground_bodies: Vec<BodyHandle<D, N>>,
+    background_bodies: Vec<BodyHandle<D, N>>,
 }
 
-impl<T> MachCollisionObjectSpace<T> where T: NarrowphaseData {
-    pub fn new() -> MachCollisionObjectSpace<T> {
+impl<D, N> MachCollisionObjectSpace<D, N> where N: Narrowphase {
+    pub fn new() -> MachCollisionObjectSpace<D, N> {
         MachCollisionObjectSpace {
-            foreground_objects: Vec::new(),
-            background_objects: Vec::new(),
+            foreground_bodies: Vec::new(),
+            background_bodies: Vec::new(),
         }
     }
 
     fn gen_id(&self) -> ID {
-        ID((self.foreground_objects.len() + self.background_objects.len()) as u32)
+        ID((self.foreground_bodies.len() + self.background_bodies.len()) as u32)
     }
 }
 
-impl<T> CollisionObjectSpace<T> for MachCollisionObjectSpace<T> where T: NarrowphaseData {
-    fn find(&self, id: ID) -> Option<CollisionObject<T>> {
-        self.foreground_objects.iter().find(|obj| obj.id == id)
-            .or_else(|| self.background_objects.iter().find(|obj| obj.id == id))
+impl<D, N> CollisionObjectSpace<D, N> for MachCollisionObjectSpace<D, N> where N: Narrowphase {
+    fn find(&self, id: ID) -> Option<BodyHandle<D, N>> {
+        self.foreground_bodies.iter().find(|handle| handle.borrow().id() == id)
+            .or_else(|| self.background_bodies.iter().find(|handle| handle.borrow().id() == id))
             .cloned()
     }
 
-    fn objects_iter<'a>(&'a self) -> Box<Iterator<Item=CollisionObject<T>> + 'a> {
-        let iterator = self.foreground_objects_iter()
-            .chain(self.background_objects_iter());
+    fn bodies_iter<'a>(&'a self) -> Box<Iterator<Item=Ref<Body<D, N>>> + 'a> {
+        let iterator = self.foreground_bodies_iter()
+            .chain(self.background_bodies_iter());
 
         return Box::new(iterator);
     }
 
-    fn foreground_objects_iter<'a>(&'a self) -> Box<Iterator<Item=CollisionObject<T>> + 'a> {
-        Box::new(self.foreground_objects.iter().cloned())
+    fn foreground_bodies_iter<'a>(&'a self) -> Box<Iterator<Item=Ref<Body<D, N>>> + 'a> {
+        Box::new(self.foreground_bodies.iter().map(|handle| handle.borrow()))
     }
 
-    fn background_objects_iter<'a>(&'a self) -> Box<Iterator<Item=CollisionObject<T>> + 'a> {
-        Box::new(self.background_objects.iter().cloned())
+    fn foreground_handles_iter<'a>(&'a self) -> Box<Iterator<Item=&BodyHandle<D, N>> + 'a> {
+        Box::new(self.foreground_bodies.iter())
     }
 
-    fn create_foreground_object(&mut self, data: CollisionData<T>) -> CollisionObject<T> {
-        let object = CollisionObject {
-            id: self.gen_id(),
-            is_background: false,
-            data: CollisionDataHandle::new(data),
-        };
-        self.foreground_objects.push(object.clone());
-
-        return object;
+    fn background_bodies_iter<'a>(&'a self) -> Box<Iterator<Item=Ref<Body<D, N>>> + 'a> {
+        Box::new(self.background_bodies.iter().map(|handle| handle.borrow()))
     }
 
-    fn create_background_object(&mut self, data: CollisionData<T>) -> CollisionObject<T> {
-        let object = CollisionObject {
-            id: self.gen_id(),
-            is_background: true,
-            data: CollisionDataHandle::new(data),
-        };
-        self.background_objects.push(object.clone());
+    fn background_handles_iter<'a>(&'a self) -> Box<Iterator<Item=&BodyHandle<D, N>> + 'a> {
+        Box::new(self.background_bodies.iter())
+    }
 
-        return object;
+    fn create_body(&mut self, def: BodyDef<D>) -> BodyHandle<D, N> {
+        let group = def.group;
+        let body = Body::new(self.gen_id(), def);
+        let handle = BodyHandle::new(body);
+
+        match group {
+            CollisionGroup::Foreground =>
+                self.foreground_bodies.push(handle.clone()),
+
+            CollisionGroup::Background =>
+                self.background_bodies.push(handle.clone()),
+        }
+
+        return handle;
     }
 }

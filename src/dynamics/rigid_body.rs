@@ -1,5 +1,6 @@
-use ID;
-use physics::{Body, BodyRef, BodyRefMut, RigidBodyData};
+use {ID, Scalar};
+use maths::{Motion, Transform, Vec3D};
+use dynamics::{Body, BodyRef, BodyRefMut, Integratable, RigidBodyData};
 use collisions::{CollisionData, NarrowphaseData};
 
 #[derive(Clone, Debug)]
@@ -39,6 +40,35 @@ impl<T> RigidBody<T> where T: NarrowphaseData {
     #[inline(always)]
     pub fn collision_data_mut(&mut self) -> &mut CollisionData<T> {
         &mut self.data.collision_data
+    }
+
+    #[inline(always)]
+    pub fn motion_mut(&mut self) -> &mut Motion {
+        &mut self.data.motion
+    }
+
+    #[inline(always)]
+    pub fn velocity_mut(&mut self) -> &mut Vec3D {
+        &mut self.data.motion.velocity
+    }
+
+    #[inline(always)]
+    pub fn angular_velocity_mut(&mut self) -> &mut Vec3D {
+        &mut self.data.motion.angular_velocity
+    }
+
+    #[inline(always)]
+    pub fn transform_mut(&mut self) -> &mut Transform {
+        self.data.collision_data.transform_mut()
+    }
+
+    #[inline(always)]
+    pub fn translation_mut(&mut self) -> &mut Vec3D {
+        &mut self.data.collision_data.transform_mut().translation
+    }
+
+    pub fn as_integratable(&mut self) -> Integratable {
+        Integratable::new(self.data.collision_data.transform_mut(), &mut self.data.motion)
     }
 }
 

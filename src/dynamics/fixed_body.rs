@@ -1,5 +1,5 @@
 use ID;
-use physics::{Body, BodyRef, BodyRefMut, FixedBodyData};
+use dynamics::{Body, BodyRef, BodyRefMut, FixedBodyData};
 use collisions::{CollisionData, NarrowphaseData};
 
 #[derive(Clone, Debug)]

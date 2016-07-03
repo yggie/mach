@@ -2,28 +2,21 @@
 #[path="../../../tests/collisions/narrowphase/null_narrowphase_test.rs"]
 mod tests;
 
-use maths::Transform;
-use shapes::Shape;
-use collisions::{CollisionData, Narrowphase};
+use collisions::{Body, CollisionData, Narrowphase};
 
+#[derive(Clone, Copy, Debug)]
 pub struct NullNarrowphase { }
 
-impl NullNarrowphase {
-    pub fn new() -> NullNarrowphase {
+impl Narrowphase for NullNarrowphase {
+    fn new(_data: &CollisionData) -> NullNarrowphase {
         NullNarrowphase { }
     }
-}
 
-impl Narrowphase for NullNarrowphase {
-    type Data = ();
-
-    fn check(&self, _data_0: &CollisionData<Self::Data>, _data_1: &CollisionData<Self::Data>) -> bool {
+    fn test<D>(_body_0: &Body<D, Self>, _body_1: &Body<D, Self>) -> bool {
         true
     }
 
-    fn update(&mut self, _data: &mut CollisionData<Self::Data>) { }
-
-    fn create_data(&mut self, _shape: &Shape, _transform: &Transform) -> Self::Data {
-        ()
+    fn update<D>(_body: &mut Body<D, Self>) {
+        // do nothing
     }
 }

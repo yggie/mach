@@ -1,18 +1,7 @@
-use maths::Transform;
-use shapes::Shape;
-use collisions::CollisionData;
+use collisions::{Body, CollisionData};
 
-pub trait Narrowphase {
-    type Data: NarrowphaseData;
-
-    fn check(&self, &CollisionData<Self::Data>, other: &CollisionData<Self::Data>) -> bool;
-    // TODO having all this unnecessary &mut self restriction forces this
-    // operation to only be validly executed in a single threaded context. Can
-    // this be avoided?
-    fn update(&mut self, &mut CollisionData<Self::Data>);
-    fn create_data(&mut self, shape: &Shape, transform: &Transform) -> Self::Data;
+pub trait Narrowphase: 'static + Clone {
+    fn new(data: &CollisionData) -> Self;
+    fn test<D>(body_0: &Body<D, Self>, body_1: &Body<D, Self>) -> bool;
+    fn update<D>(body: &mut Body<D, Self>);
 }
-
-pub trait NarrowphaseData: 'static + Clone { }
-
-impl NarrowphaseData for () { }

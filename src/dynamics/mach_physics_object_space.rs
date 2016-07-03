@@ -1,6 +1,6 @@
 use ID;
 use utils::Ref;
-use physics::{Body, FixedBody, FixedBodyData, FixedBodyHandle, PhysicsObjectSpace, RigidBody, RigidBodyData, RigidBodyHandle};
+use dynamics::{Body, FixedBody, FixedBodyData, FixedBodyHandle, PhysicsObjectSpace, RigidBody, RigidBodyData, RigidBodyHandle};
 use collisions::NarrowphaseData;
 
 pub struct MachPhysicsObjectSpace<T> where T: NarrowphaseData {
@@ -52,8 +52,16 @@ impl<T> PhysicsObjectSpace<T> for MachPhysicsObjectSpace<T> where T: Narrowphase
         Box::new(self.rigid_bodies.iter().map(|handle| handle.borrow()))
     }
 
+    fn rigid_body_handles_iter<'a>(&'a self) -> Box<Iterator<Item=RigidBodyHandle<T>> + 'a> {
+        Box::new(self.rigid_bodies.iter().cloned())
+    }
+
     fn fixed_bodies_iter<'a>(&'a self) -> Box<Iterator<Item=Ref<'a, FixedBody<T>>> + 'a> {
         Box::new(self.fixed_bodies.iter().map(|handle| handle.borrow()))
+    }
+
+    fn fixed_body_handles_iter<'a>(&'a self) -> Box<Iterator<Item=FixedBodyHandle<T>> + 'a> {
+        Box::new(self.fixed_bodies.iter().cloned())
     }
 
     fn create_rigid_body(&mut self, data: RigidBodyData<T>) -> RigidBodyHandle<T> {

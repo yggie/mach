@@ -3,59 +3,78 @@
 mod tests;
 
 use ID;
-use collisions::{Broadphase, CollisionData, CollisionObject, CollisionObjectSpace, MachCollisionObjectSpace, NarrowphaseData};
+use utils::Ref;
+use collisions::{Body, BodyDef, BodyHandle, Broadphase, CollisionGroup, CloseProximityPair, CollisionObjectSpace, MachCollisionObjectSpace, Narrowphase};
 
-pub struct BruteForceBroadphase<T>(MachCollisionObjectSpace<T>) where T: NarrowphaseData;
+pub struct BruteForceBroadphase<D, N>(MachCollisionObjectSpace<D, N>) where N: Narrowphase;
 
-impl<T> BruteForceBroadphase<T> where T: NarrowphaseData {
-    pub fn new() -> BruteForceBroadphase<T> {
+impl<D, N> BruteForceBroadphase<D, N> where N: Narrowphase {
+    pub fn new() -> BruteForceBroadphase<D, N> {
         BruteForceBroadphase(MachCollisionObjectSpace::new())
     }
 }
 
-impl<T> CollisionObjectSpace<T> for BruteForceBroadphase<T> where T: NarrowphaseData {
-    fn find(&self, id: ID) -> Option<CollisionObject<T>> {
+impl<D, N> CollisionObjectSpace<D, N> for BruteForceBroadphase<D, N> where N: Narrowphase {
+    fn find(&self, id: ID) -> Option<BodyHandle<D, N>> {
         self.0.find(id)
     }
 
-    fn objects_iter<'a>(&'a self) -> Box<Iterator<Item=CollisionObject<T>> + 'a> {
-        self.0.objects_iter()
+    fn bodies_iter<'a>(&'a self) -> Box<Iterator<Item=Ref<Body<D, N>>> + 'a> {
+        self.0.bodies_iter()
     }
 
-    fn foreground_objects_iter<'a>(&'a self) -> Box<Iterator<Item=CollisionObject<T>> + 'a> {
-        self.0.foreground_objects_iter()
+    fn create_body(&mut self, data: BodyDef<D>) -> BodyHandle<D, N> {
+        self.0.create_body(data)
     }
 
-    fn background_objects_iter<'a>(&'a self) -> Box<Iterator<Item=CollisionObject<T>> + 'a> {
-        self.0.background_objects_iter()
+    fn foreground_bodies_iter<'a>(&'a self) -> Box<Iterator<Item=Ref<Body<D, N>>> + 'a> {
+        self.0.foreground_bodies_iter()
     }
 
-    fn create_foreground_object(&mut self, data: CollisionData<T>) -> CollisionObject<T> {
-        self.0.create_foreground_object(data)
+    fn foreground_handles_iter<'a>(&'a self) -> Box<Iterator<Item=&BodyHandle<D, N>> + 'a> {
+        self.0.foreground_handles_iter()
     }
 
-    fn create_background_object(&mut self, data: CollisionData<T>) -> CollisionObject<T> {
-        self.0.create_background_object(data)
+    fn background_bodies_iter<'a>(&'a self) -> Box<Iterator<Item=Ref<Body<D, N>>> + 'a> {
+        self.0.background_bodies_iter()
+    }
+
+    fn background_handles_iter<'a>(&'a self) -> Box<Iterator<Item=&BodyHandle<D, N>> + 'a> {
+        self.0.background_handles_iter()
     }
 }
 
-impl<T> Broadphase<T> for BruteForceBroadphase<T> where T: NarrowphaseData {
+impl<D, N> Broadphase<D, N> for BruteForceBroadphase<D, N> where D: 'static, N: Narrowphase {
     fn update(&mut self) {
         // do nothing
     }
 
-    fn possible_collision_pairs_iter(&self) -> Box<Iterator<Item=(CollisionObject<T>, CollisionObject<T>)>> {
+    fn close_proximity_pairs_iter(&self) -> Box<Iterator<Item=CloseProximityPair<D, N>>> {
         let mut pairs = Vec::new();
 
-        for (index, object_0) in self.0.foreground_objects_iter().enumerate() {
-            for object_1 in self.0.foreground_objects_iter().skip(index + 1) {
-                pairs.push((object_0.clone(), object_1));
+        for (index, handle_0) in self.0.foreground_handles_iter().enumerate() {
+            let body_0 = handle_0.borrow();
+
+            for handle_1 in self.0.foreground_handles_iter().skip(index + 1) {
+                let body_1 = handle_0.borrow();
+
+                if CollisionGroup::test(body_0.group(), body_1.group()) && N::test(&body_0, &body_1) {
+                    let pair = CloseProximityPair(handle_0.clone(), handle_1.clone());
+                    pairs.push(pair);
+                }
             }
         }
 
-        for object_0 in self.0.foreground_objects_iter() {
-            for object_1 in self.0.background_objects_iter() {
-                pairs.push((object_0.clone(), object_1));
+        for handle_0 in self.0.foreground_handles_iter() {
+            let body_0 = handle_0.borrow();
+
+            for handle_1 in self.0.background_handles_iter() {
+                let body_1 = handle_0.borrow();
+
+                if CollisionGroup::test(body_0.group(), body_1.group()) && N::test(&body_0, &body_1) {
+                    let pair = CloseProximityPair(handle_0.clone(), handle_1.clone());
+                    pairs.push(pair);
+                }
             }
         }
 

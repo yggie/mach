@@ -2,7 +2,7 @@ use Scalar;
 use maths::{UnitVec3D, Vec3D};
 use geometry::Plane;
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct ContactSet {
     plane: Plane,
     // at most, there will be 4 points (FACE-FACE), is there anything we can do

@@ -7,7 +7,7 @@ mod tests;
 mod arbitrary;
 
 use std::fmt;
-use std::ops::{Add, Div, Mul, Neg, Sub};
+use std::ops::{Add, AddAssign, Div, Mul, Neg, Sub};
 
 use {Scalar, TOLERANCE};
 use maths::{ApproxEq, CrossProduct, DotProduct, Matrix, UnitVec3D};
@@ -153,6 +153,21 @@ impl DotProduct<Vec3D> for Vec3D {
     #[inline(always)]
     fn dot(&self, other: Vec3D) -> Scalar {
         self.dot(&other)
+    }
+}
+
+impl AddAssign for Vec3D {
+    #[inline(always)]
+    fn add_assign(&mut self, rhs: Vec3D) {
+        *self += &rhs;
+    }
+}
+
+impl<'a> AddAssign<&'a Vec3D> for Vec3D {
+    fn add_assign(&mut self, rhs: &'a Vec3D) {
+        self.x += rhs.x;
+        self.y += rhs.y;
+        self.z += rhs.z;
     }
 }
 

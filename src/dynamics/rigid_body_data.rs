@@ -1,9 +1,12 @@
-use physics::{DynamicData, MaterialData};
+use Scalar;
+use maths::Motion;
+use dynamics::MaterialData;
 use collisions::{CollisionData, NarrowphaseData};
 
 #[derive(Clone, Debug)]
 pub struct RigidBodyData<T> where T: NarrowphaseData {
-    pub dynamic_data: DynamicData,
+    pub mass: Scalar,
+    pub motion: Motion,
     pub material_data: MaterialData,
     pub collision_data: CollisionData<T>,
 }

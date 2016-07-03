@@ -20,7 +20,7 @@ impl<T> DataHandle<T> {
     }
 }
 
-impl<T> Clone for DataHandle<T> where T: Clone {
+impl<T> Clone for DataHandle<T> {
     fn clone(&self) -> Self {
         DataHandle(self.0.clone())
     }

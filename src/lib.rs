@@ -28,8 +28,8 @@ pub mod utils;
 #[macro_use]
 pub mod maths;
 pub mod shapes;
-pub mod physics;
 pub mod solvers;
+// pub mod dynamics;
 pub mod entities;
 pub mod geometry;
 pub mod detection;

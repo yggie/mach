@@ -9,7 +9,7 @@ use geometry::{Intersection, Line, Plane};
 use geometry::_2d::{Line2D, Polygon};
 use detection::ContactSet;
 use algorithms::IterativeAlgorithm;
-use collisions::{BasicCollisionData, SupportMap};
+use collisions::{CollisionData, SupportMap};
 use collisions::shapes::Polyhedron;
 use collisions::detection::gjkepa::{GJKSimplex, MinkowskiDifference};
 
@@ -20,7 +20,7 @@ pub struct EPA<'a> {
 }
 
 impl<'a> EPA<'a> {
-    pub fn new(simplex: &GJKSimplex, data_0: &'a BasicCollisionData, data_1: &'a BasicCollisionData) -> EPA<'a> {
+    pub fn new(simplex: &GJKSimplex, data_0: &'a CollisionData, data_1: &'a CollisionData) -> EPA<'a> {
         EPA {
             diff: MinkowskiDifference(data_0, data_1),
             polyhedron: Polyhedron::convex_hull(&simplex.vertices),

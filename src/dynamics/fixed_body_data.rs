@@ -1,4 +1,4 @@
-use physics::{MaterialData};
+use dynamics::{MaterialData};
 use collisions::{CollisionData, NarrowphaseData};
 
 #[derive(Clone, Debug)]

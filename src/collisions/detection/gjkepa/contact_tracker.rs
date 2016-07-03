@@ -4,7 +4,7 @@ mod tests;
 
 use maths::{ApproxEq, Vec3D};
 use utils::UnitVec3DGenerator;
-use collisions::BasicCollisionData;
+use collisions::CollisionData;
 use collisions::detection::gjkepa::{GJKSimplex, MinkowskiDifference};
 
 #[derive(Clone, Debug)]
@@ -13,7 +13,7 @@ pub struct ContactTracker {
 }
 
 impl ContactTracker {
-    pub fn new(data_0: &BasicCollisionData, data_1: &BasicCollisionData) -> ContactTracker {
+    pub fn new(data_0: &CollisionData, data_1: &CollisionData) -> ContactTracker {
         let diff = MinkowskiDifference(data_0, data_1);
         let mut vertices: Vec<Vec3D> = Vec::with_capacity(4);
         let mut generator = UnitVec3DGenerator::new();

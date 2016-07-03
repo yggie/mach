@@ -1,4 +1,4 @@
-use physics::{FixedBody, RigidBody};
+use dynamics::{FixedBody, RigidBody};
 use collisions::NarrowphaseData;
 
 pub enum BodyRefMut<'a, T> where T: NarrowphaseData {

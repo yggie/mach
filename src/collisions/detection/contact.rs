@@ -1,23 +1,18 @@
 use maths::{UnitVec3D, Vec3D};
 use detection::ContactSet;
-use collisions::{CollisionObject, NarrowphaseData};
+use collisions::{BodyHandle, Narrowphase};
 
-// // TODO decide how to handle stuff
-// pub struct PhysicalContact<T> where T: NarrowphaseData {
-//     set: ContactSet,
-//     bodies: (PhysicsBody<T>, PhysicsBody<T>),
-// }
-
-pub struct Contact<T> where T: NarrowphaseData {
+#[derive(Clone, Debug)]
+pub struct Contact<D, N> where N: Narrowphase {
     set: ContactSet,
-    objects: (CollisionObject<T>, CollisionObject<T>),
+    handles: (BodyHandle<D, N>, BodyHandle<D, N>),
 }
 
-impl<T> Contact<T> where T: NarrowphaseData {
-    pub fn new(set: ContactSet, object_0: CollisionObject<T>, object_1: CollisionObject<T>) -> Contact<T> {
+impl<D, N> Contact<D, N> where N: Narrowphase {
+    pub fn new(set: ContactSet, handle_0: BodyHandle<D, N>, handle_1: BodyHandle<D, N>) -> Contact<D, N> {
         Contact {
             set: set,
-            objects: (object_0, object_1),
+            handles: (handle_0, handle_1),
         }
     }
 
@@ -34,5 +29,10 @@ impl<T> Contact<T> where T: NarrowphaseData {
     #[inline(always)]
     pub fn normal(&self) -> UnitVec3D {
         self.set.normal()
+    }
+
+    #[inline(always)]
+    pub fn handles(&self) -> &(BodyHandle<D, N>, BodyHandle<D, N>) {
+        &self.handles
     }
 }
