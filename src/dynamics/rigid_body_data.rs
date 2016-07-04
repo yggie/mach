@@ -1,26 +1,38 @@
 use Scalar;
-use maths::Motion;
+use maths::{Motion, Vec3D};
 use dynamics::MaterialData;
-use collisions::{CollisionData, NarrowphaseData};
 
 #[derive(Clone, Debug)]
-pub struct RigidBodyData<T> where T: NarrowphaseData {
-    pub mass: Scalar,
-    pub motion: Motion,
-    pub material_data: MaterialData,
-    pub collision_data: CollisionData<T>,
+pub struct RigidBodyData<T> {
+    mass: Scalar,
+    motion: Motion,
+    extra_data: T,
+    material_data: MaterialData,
 }
-//
-// impl<T> BodyData<T> for RigidBodyData<T> where T: NarrowphaseData {
-//     fn downcast<'a>(&'a self) -> BodyDataRef<'a, T> {
-//         BodyDataRef::Rigid(self)
-//     }
-//
-//     fn downcast_mut<'a>(&'a mut self) -> BodyDataRefMut<'a, T> {
-//         BodyDataRefMut::Rigid(self)
-//     }
-//
-//     fn collision_data(&self) -> &CollisionData<T> {
-//         &self.collision_data
-//     }
-// }
+
+impl<T> RigidBodyData<T> {
+    include_motion_helpers! {
+        struct_signature: RigidBodyData<T>,
+        struct_name: RigidBodyData,
+    }
+
+    #[inline(always)]
+    pub fn friction_coefficient(&self) -> Scalar {
+        self.material_data.friction_coefficient
+    }
+
+    #[inline(always)]
+    pub fn restitution_coefficient(&self) -> Scalar {
+        self.material_data.restitution_coefficient
+    }
+
+    #[inline(always)]
+    pub fn mass(&self) -> Scalar {
+        self.mass
+    }
+
+    #[inline(always)]
+    pub fn mass_inverse(&self) -> Scalar {
+        1.0 / self.mass
+    }
+}

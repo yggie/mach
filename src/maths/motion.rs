@@ -89,6 +89,14 @@ macro_rules! include_motion_helpers {
         chain_method!($S, $s, $field_name, with_angular_velocity_vect(self, angular_velocity: Vec3D));
     };
 
+    (struct_signature: $struct_signature:ty, struct_name: $struct_name:ident,) => {
+        include_motion_helpers! {
+            struct_signature: $struct_signature,
+            struct_name: $struct_name,
+            field_name: motion,
+        }
+    };
+
     (struct_name: $struct_name:ident,) => {
         include_motion_helpers! {
             struct_signature: $struct_name,

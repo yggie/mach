@@ -1,3 +1,3 @@
 use collisions::{BodyHandle, Narrowphase};
 
-pub struct CloseProximityPair<D, N>(pub BodyHandle<D, N>, pub BodyHandle<D, N>) where N: Narrowphase;
+pub struct CloseProximityPair<N, T>(pub BodyHandle<N, T>, pub BodyHandle<N, T>) where N: Narrowphase;

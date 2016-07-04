@@ -17,17 +17,17 @@ impl GJKEPADetection {
         None
     }
 
-    fn create_tracker<D, N>(&mut self, body_0: &Body<D, N>, body_1: &Body<D, N>) -> ContactTracker where N: Narrowphase {
+    fn create_tracker<N, T>(&mut self, body_0: &Body<N, T>, body_1: &Body<N, T>) -> ContactTracker where N: Narrowphase {
         ContactTracker::new(body_0.collision_data(), body_1.collision_data())
     }
 }
 
-impl<D, N> Detection<D, N> for GJKEPADetection where N: Narrowphase {
+impl<N, T> Detection<N, T> for GJKEPADetection where N: Narrowphase {
     fn update(&mut self) {
         // do nothing
     }
 
-    fn compute_contacts(&mut self, handle_0: &BodyHandle<D, N>, handle_1: &BodyHandle<D, N>) -> Option<Contact<D, N>> {
+    fn compute_contacts(&mut self, handle_0: &BodyHandle<N, T>, handle_1: &BodyHandle<N, T>) -> Option<Contact<N, T>> {
         let body_0 = handle_0.borrow();
         let body_1 = handle_1.borrow();
 

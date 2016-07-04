@@ -3,7 +3,7 @@
 // mod tests;
 //
 use Scalar;
-use maths::{Motion, Transform, Quat, Vec3D};
+use maths::{Quat, Vec3D};
 use dynamics::{Integratable, Integrator};
 
 /// An implementation of the Semi-Implicit Euler integration strategy.

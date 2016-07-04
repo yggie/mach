@@ -21,6 +21,21 @@ impl CollisionData {
         &*self.shape
     }
 
+    #[inline(always)]
+    pub fn transform_mut(&mut self) -> &mut Transform {
+        &mut self.transform
+    }
+
+    #[inline(always)]
+    pub fn translation(&self) -> &Vec3D {
+        &self.transform.translation
+    }
+
+    #[inline(always)]
+    pub fn translation_mut(&mut self) -> &mut Vec3D {
+        &mut self.transform.translation
+    }
+
     pub fn vertices_iter<'a>(&'a self) -> Box<Iterator<Item=Vec3D> + 'a> {
         let vec = self.shape.vertices_iter()
             .map(|vertex| self.transform.apply_to_point(vertex))

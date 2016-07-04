@@ -1,15 +1,16 @@
+use Scalar;
 use maths::{UnitVec3D, Vec3D};
 use detection::ContactSet;
 use collisions::{BodyHandle, Narrowphase};
 
 #[derive(Clone, Debug)]
-pub struct Contact<D, N> where N: Narrowphase {
+pub struct Contact<N, T> where N: Narrowphase {
     set: ContactSet,
-    handles: (BodyHandle<D, N>, BodyHandle<D, N>),
+    handles: (BodyHandle<N, T>, BodyHandle<N, T>),
 }
 
-impl<D, N> Contact<D, N> where N: Narrowphase {
-    pub fn new(set: ContactSet, handle_0: BodyHandle<D, N>, handle_1: BodyHandle<D, N>) -> Contact<D, N> {
+impl<N, T> Contact<N, T> where N: Narrowphase {
+    pub fn new(set: ContactSet, handle_0: BodyHandle<N, T>, handle_1: BodyHandle<N, T>) -> Contact<N, T> {
         Contact {
             set: set,
             handles: (handle_0, handle_1),
@@ -32,7 +33,12 @@ impl<D, N> Contact<D, N> where N: Narrowphase {
     }
 
     #[inline(always)]
-    pub fn handles(&self) -> &(BodyHandle<D, N>, BodyHandle<D, N>) {
+    pub fn handles(&self) -> &(BodyHandle<N, T>, BodyHandle<N, T>) {
         &self.handles
+    }
+
+    #[inline]
+    pub fn penetration_depth(&self, index: usize) -> Scalar {
+        self.set.penetration_depth(index)
     }
 }

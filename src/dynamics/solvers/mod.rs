@@ -1,10 +1,7 @@
 mod mach_constraint_solver;
 
+/// TODO temporary workaround for the issue of rexporting traits, see https://github.com/rust-lang/rust/issues/16264
+pub mod constraint_solver;
+
+pub use self::constraint_solver::ConstraintSolver;
 pub use self::mach_constraint_solver::MachConstraintSolver;
-
-use Scalar;
-use collisions::{Contact, NarrowphaseData};
-
-pub trait ConstraintSolver<T> where T: NarrowphaseData {
-    fn solve_with_contacts(&mut self, contacts: &Vec<Contact<T>>, time_step: Scalar);
-}

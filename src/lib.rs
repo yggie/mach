@@ -17,6 +17,7 @@ pub mod tests {
     pub mod support;
 }
 
+mod new_world;
 mod mach_world;
 mod custom_world;
 
@@ -29,7 +30,7 @@ pub mod utils;
 pub mod maths;
 pub mod shapes;
 pub mod solvers;
-// pub mod dynamics;
+pub mod dynamics;
 pub mod entities;
 pub mod geometry;
 pub mod detection;
@@ -42,6 +43,7 @@ pub use self::maths::{Transform, UnitQuat, UnitVec3D, Vec3D};
 pub use self::world::World;
 pub use self::shapes::{Shape, ShapeRef};
 pub use self::entities::{Body, EntityStore, RigidBody, StaticBody};
+pub use self::new_world::NewWorld;
 pub use self::mach_world::MachWorld;
 pub use self::custom_world::CustomWorld;
 

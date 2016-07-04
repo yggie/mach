@@ -12,11 +12,11 @@ impl Narrowphase for NullNarrowphase {
         NullNarrowphase { }
     }
 
-    fn test<D>(_body_0: &Body<D, Self>, _body_1: &Body<D, Self>) -> bool {
+    fn test<T>(_body_0: &Body<Self, T>, _body_1: &Body<Self, T>) -> bool {
         true
     }
 
-    fn update<D>(_body: &mut Body<D, Self>) {
+    fn update<T>(_body: &mut Body<Self, T>) {
         // do nothing
     }
 }
