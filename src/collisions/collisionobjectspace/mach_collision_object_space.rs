@@ -60,9 +60,9 @@ impl<N, T> CollisionObjectSpace<N, T> for MachCollisionObjectSpace<N, T> where N
         Box::new(self.environment_bodies.iter())
     }
 
-    fn create_body(&mut self, def: BodyDef<T>) -> BodyHandle<N, T> {
+    fn create_body(&mut self, def: BodyDef, extra: T) -> BodyHandle<N, T> {
         let group = def.group;
-        let body = Body::new(self.gen_id(), def);
+        let body = Body::new(self.gen_id(), def, extra);
         let handle = BodyHandle::new(body);
 
         match group {

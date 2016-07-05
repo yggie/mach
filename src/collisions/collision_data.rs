@@ -22,6 +22,11 @@ impl CollisionData {
     }
 
     #[inline(always)]
+    pub fn transform(&self) -> &Transform {
+        &self.transform
+    }
+
+    #[inline(always)]
     pub fn transform_mut(&mut self) -> &mut Transform {
         &mut self.transform
     }

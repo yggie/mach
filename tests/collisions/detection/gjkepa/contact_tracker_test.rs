@@ -3,14 +3,14 @@ extern crate quickcheck;
 use maths::{Approximations, Transform, UnitQuat, Vec3D};
 use shapes::Cuboid;
 use algorithms::{Execute, PanicOnIteration};
-use collisions::{BasicCollisionData};
+use collisions::CollisionData;
 use collisions::detection::gjkepa::{ContactTracker, GJK, GJKSimplex};
 
 #[test]
 fn it_can_be_instantiated_with_intersecting_bodies() {
     fn property(rot: UnitQuat) {
-        let control = BasicCollisionData::new(Box::new(Cuboid::cube(1.0)), Transform::identity());
-        let data = BasicCollisionData::new(
+        let control = CollisionData::new(Box::new(Cuboid::cube(1.0)), Transform::identity());
+        let data = CollisionData::new(
             Box::new(Cuboid::cube(1.0)),
             Transform {
                 translation: Vec3D::zero(),
@@ -35,8 +35,8 @@ fn it_can_be_instantiated_with_intersecting_bodies() {
 #[test]
 fn it_can_be_instantiated_with_non_intersecting_bodies() {
     fn property(rot: UnitQuat) {
-        let control = BasicCollisionData::new(Box::new(Cuboid::cube(1.0)), Transform::identity());
-        let data = BasicCollisionData::new(
+        let control = CollisionData::new(Box::new(Cuboid::cube(1.0)), Transform::identity());
+        let data = CollisionData::new(
             Box::new(Cuboid::cube(1.0)),
             Transform {
                 translation: Vec3D::new(4.0, 4.0, 4.0),
@@ -58,7 +58,7 @@ fn it_can_be_instantiated_with_non_intersecting_bodies() {
     quickcheck::quickcheck(property as fn(UnitQuat));
 }
 
-fn find_origin<'a>(tracker: &'a mut ContactTracker, data_0: &'a BasicCollisionData, data_1: &'a BasicCollisionData) -> Option<&'a GJKSimplex> {
+fn find_origin<'a>(tracker: &'a mut ContactTracker, data_0: &'a CollisionData, data_1: &'a CollisionData) -> Option<&'a GJKSimplex> {
     GJK::using_simplex(tracker.simplex_mut(), data_0, data_1)
         .panic_on_iteration(1000, "looking for origin (in tests)")
         .execute()

@@ -3,15 +3,15 @@ extern crate quickcheck;
 use Scalar;
 use maths::{Approximations, Transform, UnitQuat, Vec3D};
 use shapes::Cuboid;
-use collisions::BasicCollisionData;
+use collisions::CollisionData;
 use collisions::detection::gjkepa::{ContactTracker, EPA, GJK, GJKSimplex};
 use algorithms::{Execute, PanicOnIteration};
 
 #[test]
 fn it_should_not_generate_incomplete_shells() {
     fn property(rot: UnitQuat) {
-        let control = BasicCollisionData::new(Box::new(Cuboid::cube(1.0)), Transform::identity());
-        let data = BasicCollisionData::new(
+        let control = CollisionData::new(Box::new(Cuboid::cube(1.0)), Transform::identity());
+        let data = CollisionData::new(
             Box::new(Cuboid::cube(1.0)),
             Transform {
                 translation: Vec3D::zero(),
@@ -43,7 +43,7 @@ fn it_should_not_generate_incomplete_shells() {
     quickcheck::quickcheck(property as fn(UnitQuat));
 }
 
-fn find_origin<'a>(tracker: &'a mut ContactTracker, data_0: &'a BasicCollisionData, data_1: &'a BasicCollisionData) -> Option<&'a GJKSimplex> {
+fn find_origin<'a>(tracker: &'a mut ContactTracker, data_0: &'a CollisionData, data_1: &'a CollisionData) -> Option<&'a GJKSimplex> {
     GJK::using_simplex(tracker.simplex_mut(), data_0, data_1)
         .panic_on_iteration(1000, "looking for origin (in tests)")
         .execute()

@@ -1,7 +1,7 @@
 use Scalar;
 use maths::{Matrix, Vec3D};
 use collisions::{BodyData, Narrowphase};
-use dynamics::{DynamicBody, DynamicBodyRefMut, Integratable, RigidBodyData};
+use dynamics::{DynamicBody, DynamicBodyRef, DynamicBodyRefMut, Integratable, RigidBodyData};
 
 pub struct RigidBodyRef<'a, N, T>(&'a BodyData<N>, &'a RigidBodyData<T>) where T: 'static, N: Narrowphase;
 pub struct RigidBodyRefMut<'a, N, T>(&'a mut BodyData<N>, &'a mut RigidBodyData<T>) where T: 'static, N: Narrowphase;
@@ -9,6 +9,16 @@ pub struct RigidBodyRefMut<'a, N, T>(&'a mut BodyData<N>, &'a mut RigidBodyData<
 impl<'a, N, T> RigidBodyRef<'a, N, T> where N: Narrowphase {
     pub fn new(body_data: &'a BodyData<N>, extra_data: &'a RigidBodyData<T>) -> RigidBodyRef<'a, N, T> {
         RigidBodyRef(body_data, extra_data)
+    }
+
+    pub fn try_from<'b>(body: &'b DynamicBody<N, T>) -> Option<RigidBodyRef<'b, N, T>> {
+        let dynamic_body = DynamicBodyRef::from(body);
+
+        match dynamic_body {
+            DynamicBodyRef::Rigid(rigid_body_ref) => Some(rigid_body_ref),
+
+            _otherwise => None,
+        }
     }
 
     #[inline(always)]

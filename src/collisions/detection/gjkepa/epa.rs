@@ -7,9 +7,8 @@ use maths::{Approximations, CoordinateTransform, Vec3D};
 use maths::_2d::Vec2D;
 use geometry::{Intersection, Line, Plane};
 use geometry::_2d::{Line2D, Polygon};
-use detection::ContactSet;
 use algorithms::IterativeAlgorithm;
-use collisions::{CollisionData, SupportMap};
+use collisions::{CollisionData, ContactSet, SupportMap};
 use collisions::shapes::Polyhedron;
 use collisions::detection::gjkepa::{GJKSimplex, MinkowskiDifference};
 

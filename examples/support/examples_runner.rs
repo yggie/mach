@@ -1,12 +1,12 @@
 extern crate mach;
 extern crate glium;
 
-use support::{Simulation, ExamplesWindow};
+use support::{ExamplesWindow, Simulation};
 
-pub struct ExamplesRunner<S: Simulation> {
+pub struct ExamplesRunner<S> where S: Simulation {
     pub simulation: S,
     pub desired_fps: u8,
-    pub world_constructor: Box<Fn() -> Box<mach::World>>,
+    pub world_constructor: Box<Fn() -> Box<mach::World<mach::collisions::narrowphase::NullNarrowphase, ()>>>,
 }
 
 impl<S> ExamplesRunner<S> where S: Simulation {

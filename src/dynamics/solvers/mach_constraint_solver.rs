@@ -216,7 +216,7 @@ impl MachConstraintSolver {
         *rigid_body.translation_mut() += correction;
 
         // TODO missing gravity!
-        integrator.integrate_in_place(rigid_body.integratable(), remaining_time, Vec3D::zero());
+        integrator.integrate_in_place(&mut rigid_body.integratable(), remaining_time, Vec3D::zero());
     }
 }
 

@@ -5,11 +5,11 @@ extern crate time;
 
 mod raytracing;
 
-use mach::{EntityStore, MachWorld, StaticBody, UnitVec3D, Vec3D};
+use mach::{MachWorld, UnitVec3D, Vec3D};
 use raytracing::{Color, DirectionalLight, Importable, PointLight, RayTracer, Renderer, SceneGeometry, SceneParams};
 
 struct RayTracingDemo {
-    world: MachWorld,
+    world: MachWorld<()>,
     point_lights: Vec<PointLight>,
     max_ray_bounces: usize,
     directional_lights: Vec<DirectionalLight>,
@@ -25,10 +25,11 @@ impl RayTracer for RayTracingDemo {
                     // TODO not ideal!
                     let average = (x + y + z) / 3.0;
 
-                    world.add_static_body(mach::StaticBody::default()
-                        .with_shape(mach::shapes::Sphere::new(average))
-                        .with_translation_vect(object.position)
-                        .with_rotation(object.rotation));
+                    // world.create_fixed_body();
+                    // world.add_static_body(mach::StaticBody::default()
+                    //     .with_shape(mach::shapes::Sphere::new(average))
+                    //     .with_translation_vect(object.position)
+                    //     .with_rotation(object.rotation));
                 }
             }
         }

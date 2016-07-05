@@ -1,3 +1,8 @@
+#[macro_use]
+#[cfg(test)]
+#[path="../../../tests/collisions/broadphase/broadphase_behaviour.rs"]
+mod behaviours;
+
 mod close_proximity_pair;
 mod brute_force_broadphase;
 

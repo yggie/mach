@@ -1,7 +1,7 @@
-use collisions::{Body, CollisionData};
+use collisions::{BodyData, CollisionData};
 
 pub trait Narrowphase: 'static + Clone {
     fn new(data: &CollisionData) -> Self;
-    fn test<T>(body_0: &Body<Self, T>, body_1: &Body<Self, T>) -> bool;
-    fn update<T>(body: &mut Body<Self, T>);
+    fn test(body_0: &BodyData<Self>, body_1: &BodyData<Self>) -> bool;
+    fn update(body: &mut BodyData<Self>);
 }

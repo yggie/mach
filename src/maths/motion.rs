@@ -23,6 +23,10 @@ impl Motion {
         }
     }
 
+    pub fn zero() -> Motion {
+        Motion::stationary()
+    }
+
     #[inline]
     pub fn with_velocity_vect(self, velocity: Vec3D) -> Motion {
         Motion {

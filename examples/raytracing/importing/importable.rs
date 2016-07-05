@@ -158,7 +158,7 @@ impl<T> Importable for Renderer<T> where T: RayTracer {
                     let _index_1 = capture.at(2).unwrap().parse::<usize>().unwrap();
                     let _index_2 = capture.at(3).unwrap().parse::<usize>().unwrap();
 
-                    println!("WARN:: TRIANGLE NOT COMPLETE");
+                    println!("WARN:: TRIANGLE NOT IMPLEMENTED");
                 },
 
                 ref line if Regex::is_match(&translate_regex, line) => {

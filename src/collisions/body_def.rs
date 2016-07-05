@@ -1,10 +1,22 @@
-use maths::Transform;
-use shapes::Shape;
+use maths::{UnitQuat, Vec3D};
+use shapes::{Cuboid, Shape};
 use collisions::CollisionGroup;
 
-pub struct BodyDef<D> {
+#[derive(Clone, Debug)]
+pub struct BodyDef {
     pub group: CollisionGroup,
     pub shape: Box<Shape>,
-    pub transform: Transform,
-    pub extra_data: D,
+    pub translation: Vec3D,
+    pub rotation: UnitQuat,
+}
+
+impl Default for BodyDef {
+    fn default() -> BodyDef {
+        BodyDef {
+            group: CollisionGroup::Default,
+            shape: Box::new(Cuboid::cube(1.0)),
+            rotation: UnitQuat::identity(),
+            translation: Vec3D::zero(),
+        }
+    }
 }

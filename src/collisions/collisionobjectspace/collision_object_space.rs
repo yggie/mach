@@ -5,7 +5,7 @@ use collisions::{Body, BodyDef, BodyHandle, Narrowphase};
 pub trait CollisionObjectSpace<N, T> where N: Narrowphase {
     fn find<'a>(&'a self, id: ID) -> Option<Ref<'a, Body<N, T>>>;
     fn find_handle(&self, id: ID) -> Option<&BodyHandle<N, T>>;
-    fn create_body(&mut self, data: BodyDef<T>) -> BodyHandle<N, T>;
+    fn create_body(&mut self, body_def: BodyDef, extra: T) -> BodyHandle<N, T>;
     fn foreground_bodies_iter<'a>(&'a self) -> Box<Iterator<Item=Ref<Body<N, T>>> + 'a>;
     fn foreground_bodies_mut_iter<'a>(&'a self) -> Box<Iterator<Item=RefMut<Body<N, T>>> + 'a>;
     fn foreground_handles_iter<'a>(&'a self) -> Box<Iterator<Item=&BodyHandle<N, T>> + 'a>;

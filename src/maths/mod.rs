@@ -12,7 +12,6 @@ mod vec_3d;
 mod matrix;
 mod unit_quat;
 mod unit_vec_3d;
-mod integratable;
 mod sparse_matrix;
 mod coordinate_transform;
 
@@ -20,8 +19,7 @@ mod coordinate_transform;
 pub mod approx_eq;
 /// TODO temporary workaround for the issue of rexporting traits, see https://github.com/rust-lang/rust/issues/16264
 pub mod lcp_solver;
-/// TODO temporary workaround for the issue of rexporting traits, see https://github.com/rust-lang/rust/issues/16264
-pub mod integrator;
+// /// TODO temporary workaround for the issue of rexporting traits, see https://github.com/rust-lang/rust/issues/16264
 /// TODO temporary workaround for the issue of rexporting traits, see https://github.com/rust-lang/rust/issues/16264
 pub mod dot_product;
 /// TODO temporary workaround for the issue of rexporting traits, see https://github.com/rust-lang/rust/issues/16264
@@ -30,7 +28,6 @@ pub mod cross_product;
 pub mod approximations;
 
 pub mod _2d;
-pub mod integrators;
 pub mod lcp_solvers;
 
 pub use self::lcp::LCP;
@@ -42,10 +39,8 @@ pub use self::approx_eq::ApproxEq;
 pub use self::transform::Transform;
 pub use self::unit_quat::UnitQuat;
 pub use self::lcp_solver::LCPSolver;
-pub use self::integrator::Integrator;
 pub use self::dot_product::DotProduct;
 pub use self::unit_vec_3d::UnitVec3D;
-pub use self::integratable::IntegratableMut;
 pub use self::cross_product::CrossProduct;
 pub use self::sparse_matrix::SparseMatrix;
 pub use self::approximations::Approximations;

@@ -5,9 +5,6 @@ mod assert_approx_matching;
 #[macro_use]
 mod assert_properties_for_actions;
 
-#[macro_use]
-pub mod behaviours;
-
 mod result_handle;
 mod arbitrary_radians;
 mod arbitrary_positive_scalar;

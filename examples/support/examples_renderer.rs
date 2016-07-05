@@ -5,8 +5,6 @@ use std::rc::Rc;
 use std::mem;
 use std::collections::HashMap;
 
-use mach::entities::EntityStore;
-
 use self::glium::backend::glutin_backend::GlutinFacade;
 
 use support::{SceneEnv, Instance, InstanceFactory, FrameMetadata, PolygonModel};
@@ -38,7 +36,7 @@ impl ExamplesRenderer {
         })
     }
 
-    pub fn render<S: glium::Surface>(&mut self, surface: &mut S, world: &mach::World, frame_metadata: &FrameMetadata, env: &SceneEnv) -> Result<(), String> {
+    pub fn render<N: mach::collisions::Narrowphase, S: glium::Surface>(&mut self, surface: &mut S, world: &mach::World<N, ()>, frame_metadata: &FrameMetadata, env: &SceneEnv) -> Result<(), String> {
         surface.clear_color_and_depth((0.0, 0.0, 0.0, 1.0), 1.0);
 
         let mut old_instances = HashMap::new();

@@ -1,7 +1,7 @@
 use ID;
 use maths::{Transform, Vec3D};
 use shapes::Shape;
-use collisions::{CollisionData, CollisionGroup, Narrowphase};
+use collisions::{BodyDef, CollisionData, CollisionGroup, Narrowphase};
 
 #[derive(Clone, Debug)]
 pub struct BodyData<N> where N: Narrowphase {
@@ -12,13 +12,16 @@ pub struct BodyData<N> where N: Narrowphase {
 }
 
 impl<N> BodyData<N> where N: Narrowphase {
-    pub fn new(id: ID, group: CollisionGroup, shape: Box<Shape>, transform: Transform) -> BodyData<N> {
-        let collision_data = CollisionData::new(shape, transform);
+    pub fn new(id: ID, def: BodyDef) -> BodyData<N> {
+        let collision_data = CollisionData::new(def.shape, Transform {
+            rotation: def.rotation,
+            translation: def.translation,
+        });
         let narrowphase_data = N::new(&collision_data);
 
         BodyData {
             id: id,
-            group: group,
+            group: def.group,
             collision_data: collision_data,
             narrowphase_data: narrowphase_data,
         }
@@ -52,6 +55,11 @@ impl<N> BodyData<N> where N: Narrowphase {
     #[inline(always)]
     pub fn narrowphase_data_mut(&mut self) -> &mut N {
         &mut self.narrowphase_data
+    }
+
+    #[inline(always)]
+    pub fn transform(&self) -> &Transform {
+        self.collision_data.transform()
     }
 
     #[inline(always)]

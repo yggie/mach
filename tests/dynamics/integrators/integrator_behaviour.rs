@@ -5,7 +5,8 @@ macro_rules! assert_integrator_behaviour(
         mod integrator_behaviour {
             use super::test_subject;
 
-            use maths::{IntegratableMut, Integrator, Motion, Transform, UnitQuat, UnitVec3D, Vec3D};
+            use maths::{Motion, Transform, UnitQuat, UnitVec3D, Vec3D};
+            use dynamics::{Integratable, Integrator};
 
             fn validate<I: Integrator>(input: I) -> I {
                 input
@@ -18,7 +19,7 @@ macro_rules! assert_integrator_behaviour(
                 let mut motion = Motion::stationary();
 
                 {
-                    let mut integratable = IntegratableMut::new(&mut transform, &mut motion);
+                    let mut integratable = Integratable::new(&mut transform, &mut motion);
 
                     integrator.integrate_in_place(&mut integratable, 0.5, Vec3D::zero());
                 }
@@ -38,7 +39,7 @@ macro_rules! assert_integrator_behaviour(
                     .with_angular_velocity(0.0, 1.0, 0.0);
 
                 {
-                    let mut integratable = IntegratableMut::new(&mut transform, &mut motion);
+                    let mut integratable = Integratable::new(&mut transform, &mut motion);
 
                     integrator.integrate_in_place(&mut integratable, 0.5, Vec3D::zero());
                     integrator.integrate_in_place(&mut integratable, 0.5, Vec3D::zero());
@@ -56,7 +57,7 @@ macro_rules! assert_integrator_behaviour(
                     .with_velocity(1.0, 0.0, 0.0);
 
                 {
-                    let mut integratable = IntegratableMut::new(&mut transform, &mut motion);
+                    let mut integratable = Integratable::new(&mut transform, &mut motion);
 
                     integrator.integrate_in_place(&mut integratable, 0.5, Vec3D::zero());
                 }
@@ -73,7 +74,7 @@ macro_rules! assert_integrator_behaviour(
                     .with_velocity(1.0, 0.0, 0.0);
 
                 {
-                    let mut integratable = IntegratableMut::new(&mut transform, &mut motion);
+                    let mut integratable = Integratable::new(&mut transform, &mut motion);
 
                     integrator.integrate_in_place(&mut integratable, 0.5, Vec3D::new(1.0, 0.0, 0.0));
                 }

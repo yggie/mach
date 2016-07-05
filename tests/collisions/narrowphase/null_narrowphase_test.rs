@@ -1,7 +1,9 @@
 assert_narrowphase_behaviour! {
     use collisions::narrowphase::NullNarrowphase;
 
-    pub fn test_subject() -> NullNarrowphase {
-        NullNarrowphase::new()
+    use std::marker::PhantomData;
+
+    pub fn type_marker() -> PhantomData<NullNarrowphase> {
+        PhantomData
     }
 }

@@ -2,71 +2,55 @@
 #[path="../tests/worlds/mach_world_test.rs"]
 mod tests;
 
-use std::cell::{Ref, RefMut};
-
-use {broadphase, narrowphase, CustomWorld, ID, Scalar, World};
+use {CustomWorld, Scalar, World};
 use maths::Vec3D;
-use maths::integrators::SemiImplicitEuler;
-use solvers::MachConstraintSolver;
-use entities::{Body, BodyHandle, EntityStore, MachStore, RigidBody, StaticBody};
-use detection::{ContactEvent, GjkEpaDetection};
+use utils::Ref;
+use dynamics::{DynamicBody, DynamicBodyHandle, DynamicBodyType, FixedBodyDef, RigidBodyDef};
+use dynamics::solvers::MachConstraintSolver;
+use dynamics::integrators::SemiImplicitEuler;
+use collisions::Contact;
+use collisions::detection::GJKEPADetection;
+use collisions::broadphase::BruteForceBroadphase;
+use collisions::narrowphase::NullNarrowphase;
 
-pub struct MachWorld(CustomWorld<broadphase::BruteForce<MachStore>, narrowphase::BruteForce, GjkEpaDetection, MachStore, SemiImplicitEuler, MachConstraintSolver>);
+pub struct MachWorld<T>(CustomWorld<BruteForceBroadphase<NullNarrowphase, DynamicBodyType<T>>, MachConstraintSolver, GJKEPADetection, SemiImplicitEuler, NullNarrowphase, T>) where T: 'static;
 
-impl MachWorld {
-    pub fn new() -> MachWorld {
-        MachWorld(CustomWorld {
-            broadphase: broadphase::BruteForce::new(),
-            narrowphase: narrowphase::BruteForce::new(),
-            detection: GjkEpaDetection::new(),
-            entity_store: MachStore::new(),
-            integrator: SemiImplicitEuler::new(),
-            constraint_solver: MachConstraintSolver::new(),
-            gravity: Vec3D::zero(),
-        })
+impl<T> MachWorld<T> {
+    pub fn new() -> MachWorld<T> {
+        let world = CustomWorld::new(
+            GJKEPADetection::new(),
+            SemiImplicitEuler::new(),
+            BruteForceBroadphase::new(),
+            MachConstraintSolver::new(),
+            Vec3D::zero(),
+        );
+
+        MachWorld(world)
+    }
+
+    pub fn update(&mut self, time_step: Scalar) -> Vec<Contact<NullNarrowphase, DynamicBodyType<T>>> {
+        self.0.update(time_step)
     }
 }
 
-impl World for MachWorld {
-    fn update(&mut self, time_step: Scalar) -> Vec<ContactEvent> {
+impl<T> World<NullNarrowphase, T> for MachWorld<T> {
+    fn update(&mut self, time_step: Scalar) -> Vec<Contact<NullNarrowphase, DynamicBodyType<T>>> {
         self.0.update(time_step)
+    }
+
+    fn bodies_iter<'a>(&'a self) -> Box<Iterator<Item=Ref<DynamicBody<NullNarrowphase, T>>> + 'a> {
+        self.0.bodies_iter()
     }
 
     fn set_gravity(&mut self, gravity: Vec3D) {
         self.0.set_gravity(gravity)
     }
-}
 
-impl EntityStore for MachWorld {
-    fn add_rigid_body(&mut self, rigid_body: RigidBody) -> ID {
-        self.0.add_rigid_body(rigid_body)
+    fn create_rigid_body(&mut self, def: RigidBodyDef, extra: T) -> DynamicBodyHandle<NullNarrowphase, T> {
+        self.0.create_rigid_body(def, extra)
     }
 
-    fn add_static_body(&mut self, static_body: StaticBody) -> ID {
-        self.0.add_static_body(static_body)
-    }
-
-    fn find_body(&self, id: ID) -> Option<Ref<Box<Body>>> {
-        self.0.find_body(id)
-    }
-
-    fn find_rigid_body(&self, id: ID) -> Option<Ref<Box<RigidBody>>> {
-        self.0.find_rigid_body(id)
-    }
-
-    fn find_body_handle(&self, id: ID) -> Option<&BodyHandle> {
-        self.0.find_body_handle(id)
-    }
-
-    fn bodies_iter<'a>(&'a self) -> Box<Iterator<Item=Ref<Box<Body>>> + 'a> {
-        self.0.bodies_iter()
-    }
-
-    fn bodies_iter_mut<'a>(&'a mut self) -> Box<Iterator<Item=RefMut<Box<Body>>> + 'a> {
-        self.0.bodies_iter_mut()
-    }
-
-    fn rigid_body_iter_mut<'a>(&'a mut self) -> Box<Iterator<Item=RefMut<Box<RigidBody>>> + 'a> {
-        self.0.rigid_body_iter_mut()
+    fn create_fixed_body(&mut self, def: FixedBodyDef, extra: T) -> DynamicBodyHandle<NullNarrowphase, T> {
+        self.0.create_fixed_body(def, extra)
     }
 }

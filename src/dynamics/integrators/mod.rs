@@ -1,3 +1,8 @@
+#[macro_use]
+#[cfg(test)]
+#[path="../../../tests/dynamics/integrators/integrator_behaviour.rs"]
+mod behaviours;
+
 mod integratable;
 mod semi_implicit_euler;
 

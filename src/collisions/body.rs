@@ -1,4 +1,6 @@
 use ID;
+use maths::{Transform, Vec3D};
+use shapes::Shape;
 use collisions::{BodyData, BodyDef, CollisionData, CollisionGroup, Narrowphase};
 
 #[derive(Clone, Debug)]
@@ -8,10 +10,10 @@ pub struct Body<N, T> where N: Narrowphase {
 }
 
 impl<N, T> Body<N, T> where N: Narrowphase {
-    pub fn new(id: ID, def: BodyDef<T>) -> Body<N, T> {
+    pub fn new(id: ID, def: BodyDef, extra: T) -> Body<N, T> {
         Body {
-            data: BodyData::new(id, def.group, def.shape, def.transform),
-            extra_data: def.extra_data,
+            data: BodyData::new(id, def),
+            extra_data: extra,
         }
     }
 
@@ -26,6 +28,11 @@ impl<N, T> Body<N, T> where N: Narrowphase {
     }
 
     #[inline(always)]
+    pub fn data_mut(&mut self) -> &mut BodyData<N> {
+        &mut self.data
+    }
+
+    #[inline(always)]
     pub fn group(&self) -> CollisionGroup {
         self.data.group()
     }
@@ -33,6 +40,21 @@ impl<N, T> Body<N, T> where N: Narrowphase {
     #[inline(always)]
     pub fn collision_data(&self) -> &CollisionData {
         &self.data.collision_data()
+    }
+
+    #[inline(always)]
+    pub fn shape(&self) -> &Shape {
+        self.data.shape()
+    }
+
+    #[inline(always)]
+    pub fn translation(&self) -> &Vec3D {
+        self.data.translation()
+    }
+
+    #[inline(always)]
+    pub fn transform(&self) -> &Transform {
+        self.data.transform()
     }
 
     #[inline(always)]

@@ -1,107 +1,132 @@
-use std::cell::{Ref, RefMut};
+use std::marker::PhantomData;
 
-use {ID, Scalar, World};
-use maths::{Integrator, Vec3D};
-use solvers::ConstraintSolver;
-use entities::{Body, BodyHandle, EntityStore, RigidBody, StaticBody};
-use detection::{ContactEvent, Detection};
-use broadphase::Broadphase;
-use narrowphase::Narrowphase;
+use {Scalar, World};
+use maths::Vec3D;
+use utils::{Ref, RefMut};
+use dynamics::{ConstraintSolver, DynamicBody, DynamicBodyHandle, DynamicBodyType, FixedBodyData, FixedBodyDef, Integrator, RigidBodyData, RigidBodyDef, RigidBodyRefMut};
+use collisions::{BodyDef, Broadphase, CollisionGroup, CollisionObjectSpace, Contact, Detection, Narrowphase};
 
-pub struct CustomWorld<B: Broadphase<EntityStore=ES>, N: Narrowphase, D: Detection, ES: EntityStore, I: Integrator, CS: ConstraintSolver> {
-    pub broadphase: B,
-    pub narrowphase: N,
-    pub detection: D,
-    pub entity_store: ES,
-    pub integrator: I,
-    pub constraint_solver: CS,
-    pub gravity: Vec3D,
+pub struct CustomWorld<B, C, D, I, N, T> where
+        C: ConstraintSolver<I, N, T>,
+        B: Broadphase<N, DynamicBodyType<T>>,
+        D: Detection<N, DynamicBodyType<T>>,
+        I: Integrator,
+        N: Narrowphase {
+
+    gravity: Vec3D,
+    detection: D,
+    integrator: I,
+    broadphase: B,
+    constraint_solver: C,
+    _extra: PhantomData<T>,
+    _narrowphase: PhantomData<N>,
 }
 
-impl<B, N, D, ES, I, CS> World for CustomWorld<B, N, D, ES, I, CS> where B: Broadphase<EntityStore=ES>, N: Narrowphase, D: Detection, ES: EntityStore, I: Integrator, CS: ConstraintSolver {
-    fn update(&mut self, time_step: Scalar) -> Vec<ContactEvent> {
-        // update entity positions
-        for mut rigid_body in self.entity_store.rigid_body_iter_mut() {
-            self.integrator.integrate_in_place(&mut rigid_body.as_integratable_mut(), time_step, self.gravity);
+impl<B, C, D, I, N, T> CustomWorld<B, C, D, I, N, T> where
+        C: ConstraintSolver<I, N, T>,
+        B: Broadphase<N, DynamicBodyType<T>>,
+        D: Detection<N, DynamicBodyType<T>>,
+        I: Integrator,
+        N: Narrowphase,
+        T: 'static {
+
+    pub fn new(detection: D, integrator: I, broadphase: B, constraint_solver: C, gravity: Vec3D) -> CustomWorld<B, C, D, I, N, T> {
+        CustomWorld {
+            gravity: gravity,
+            detection: detection,
+            integrator: integrator,
+            broadphase: broadphase,
+            constraint_solver: constraint_solver,
+            _extra: PhantomData,
+            _narrowphase: PhantomData,
+        }
+    }
+
+    pub fn update(&mut self, time_step: Scalar) -> Vec<Contact<N, DynamicBodyType<T>>> {
+        for mut body in self.broadphase.bodies_iter_mut() {
+            if let Some(mut rigid_body) = RigidBodyRefMut::try_from(&mut body) {
+                self.integrator.integrate_in_place(&mut rigid_body.integratable(), time_step, self.gravity);
+            }
+
+            // TODO does this need to be handled by the Broadphase?
+            // TODO only update if necessary?
+            N::update(body.data_mut());
         }
 
-        self.narrowphase.update();
-        self.broadphase.update(&self.narrowphase);
+        self.broadphase.update();
+        self.detection.update();
 
-        let potentially_colliding_pairs: Vec<(BodyHandle, BodyHandle)> = self.broadphase.contact_candidate_pairs_iter(&self.entity_store)
-            // TODO something like: .map(|pair| self.entity_store.preload_transform(pair))
-            .filter(|handles| self.narrowphase.test(&handles.0, &handles.1))
+        let contacts: Vec<Contact<N, DynamicBodyType<T>>> = self.broadphase.close_proximity_pairs_iter()
+            .filter_map(|pair| self.detection.compute_contacts(&pair.0, &pair.1))
             .collect();
 
-        let contact_events: Vec<ContactEvent> = potentially_colliding_pairs.iter()
-            .filter_map(|pair| {
-                self.detection.compute_contacts(&pair.0, &pair.1)
-            })
-        .collect();
+        if contacts.len() > 0 {
+            self.constraint_solver.solve_with_contacts(&contacts, &self.integrator, time_step);
 
-        if contact_events.len() > 0 {
-            self.constraint_solver.solve_with_contacts(time_step, &contact_events);
-
-            self.narrowphase.update();
-            self.broadphase.update(&self.narrowphase);
+            for mut body in self.broadphase.bodies_iter_mut() {
+                // TODO does this need to be handled by the Broadphase?
+                // TODO only update if necessary?
+                N::update(body.data_mut());
+            }
+            self.broadphase.update();
         }
 
-        return contact_events;
+        return contacts;
+    }
+
+    pub fn rigid_bodies_iter_mut<'a>(&'a self) -> Box<Iterator<Item=RefMut<DynamicBody<N, T>>> + 'a> {
+        let iterator = self.broadphase.bodies_iter_mut()
+            .filter(|body| {
+                match body.extra_data() {
+                    &DynamicBodyType::Rigid(_) => true,
+
+                    _otherwise => false,
+                }
+            });
+
+        return Box::new(iterator);
+    }
+}
+
+impl<B, C, D, I, N, T> World<N, T> for CustomWorld<B, C, D, I, N, T> where
+        C: ConstraintSolver<I, N, T>,
+        B: Broadphase<N, DynamicBodyType<T>>,
+        D: Detection<N, DynamicBodyType<T>>,
+        I: Integrator,
+        N: Narrowphase,
+        T: 'static {
+
+    fn update(&mut self, time_step: Scalar) -> Vec<Contact<N, DynamicBodyType<T>>> {
+        CustomWorld::update(self, time_step)
+    }
+
+    fn bodies_iter<'a>(&'a self) -> Box<Iterator<Item=Ref<DynamicBody<N, T>>> + 'a> {
+        self.broadphase.bodies_iter()
     }
 
     fn set_gravity(&mut self, gravity: Vec3D) {
         self.gravity = gravity;
     }
-}
 
-impl<B, N, D, ES, I, CS> CustomWorld<B, N, D, ES, I, CS> where B: Broadphase<EntityStore=ES>, N: Narrowphase, D: Detection, ES: EntityStore, I: Integrator, CS: ConstraintSolver {
-    fn notify_body_created(&mut self, id: ID) {
-        let body_handle = self.entity_store.find_body_handle(id)
-            .expect("expected to find body that was just created, but failed!");
+    fn create_rigid_body(&mut self, def: RigidBodyDef, extra: T) -> DynamicBodyHandle<N, T> {
+        let rigid_body_data = RigidBodyData::new(&def, extra);
 
-        self.narrowphase.notify_body_created(body_handle);
-        self.broadphase.notify_body_created(&self.entity_store, body_handle);
-    }
-}
-
-impl<B, N, D, ES, I, CS> EntityStore for CustomWorld<B, N, D, ES, I, CS> where B: Broadphase<EntityStore=ES>, N: Narrowphase, D: Detection, ES: EntityStore, I: Integrator, CS: ConstraintSolver {
-    fn add_rigid_body(&mut self, rigid_body: RigidBody) -> ID {
-        let id = self.entity_store.add_rigid_body(rigid_body);
-
-        self.notify_body_created(id);
-
-        return id;
+        self.broadphase.create_body(BodyDef {
+            group: def.group,
+            shape: def.shape,
+            rotation: def.rotation,
+            translation: def.translation,
+        }, DynamicBodyType::Rigid(Box::new(rigid_body_data)))
     }
 
-    fn add_static_body(&mut self, static_body: StaticBody) -> ID {
-        let id = self.entity_store.add_static_body(static_body);
+    fn create_fixed_body(&mut self, def: FixedBodyDef, extra: T) -> DynamicBodyHandle<N, T> {
+        let fixed_body_data = FixedBodyData::new(&def, extra);
 
-        self.notify_body_created(id);
-
-        return id;
-    }
-
-    fn find_body(&self, id: ID) -> Option<Ref<Box<Body>>> {
-        self.entity_store.find_body(id)
-    }
-
-    fn find_rigid_body(&self, id: ID) -> Option<Ref<Box<RigidBody>>> {
-        self.entity_store.find_rigid_body(id)
-    }
-
-    fn find_body_handle(&self, id: ID) -> Option<&BodyHandle> {
-        self.entity_store.find_body_handle(id)
-    }
-
-    fn bodies_iter<'a>(&'a self) -> Box<Iterator<Item=Ref<Box<Body>>> + 'a> {
-        self.entity_store.bodies_iter()
-    }
-
-    fn bodies_iter_mut<'a>(&'a mut self) -> Box<Iterator<Item=RefMut<Box<Body>>> + 'a> {
-        self.entity_store.bodies_iter_mut()
-    }
-
-    fn rigid_body_iter_mut<'a, 'b>(&'a mut self) -> Box<Iterator<Item=RefMut<Box<RigidBody>>> + 'a> {
-        self.entity_store.rigid_body_iter_mut()
+        self.broadphase.create_body(BodyDef {
+            group: CollisionGroup::Environment,
+            shape: def.shape,
+            rotation: def.rotation,
+            translation: def.translation,
+        }, DynamicBodyType::Fixed(Box::new(fixed_body_data)))
     }
 }

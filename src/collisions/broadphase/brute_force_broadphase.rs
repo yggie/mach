@@ -27,8 +27,8 @@ impl<N, T> CollisionObjectSpace<N, T> for BruteForceBroadphase<N, T> where N: Na
         self.0.bodies_iter()
     }
 
-    fn create_body(&mut self, data: BodyDef<T>) -> BodyHandle<N, T> {
-        self.0.create_body(data)
+    fn create_body(&mut self, def: BodyDef, extra: T) -> BodyHandle<N, T> {
+        self.0.create_body(def, extra)
     }
 
     fn foreground_bodies_iter<'a>(&'a self) -> Box<Iterator<Item=Ref<Body<N, T>>> + 'a> {
@@ -70,7 +70,7 @@ impl<N, T> Broadphase<N, T> for BruteForceBroadphase<N, T> where T: 'static, N: 
             for handle_1 in self.0.foreground_handles_iter().skip(index + 1) {
                 let body_1 = handle_0.borrow();
 
-                if CollisionGroup::test(body_0.group(), body_1.group()) && N::test(&body_0, &body_1) {
+                if CollisionGroup::test(body_0.group(), body_1.group()) && N::test(body_0.data(), body_1.data()) {
                     let pair = CloseProximityPair(handle_0.clone(), handle_1.clone());
                     pairs.push(pair);
                 }
@@ -83,7 +83,7 @@ impl<N, T> Broadphase<N, T> for BruteForceBroadphase<N, T> where T: 'static, N: 
             for handle_1 in self.0.environment_handles_iter() {
                 let body_1 = handle_0.borrow();
 
-                if CollisionGroup::test(body_0.group(), body_1.group()) && N::test(&body_0, &body_1) {
+                if CollisionGroup::test(body_0.group(), body_1.group()) && N::test(body_0.data(), body_1.data()) {
                     let pair = CloseProximityPair(handle_0.clone(), handle_1.clone());
                     pairs.push(pair);
                 }

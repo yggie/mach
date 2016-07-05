@@ -10,7 +10,8 @@ macro_rules! assert_new_detection_behaviour {
             use {ID, PI, Scalar};
             use maths::{CrossProduct, DotProduct, Transform, UnitVec3D, UnitQuat, Vec3D};
             use shapes::{Cuboid, Shape};
-            use collisions::{CollisionData, CollisionDataHandle, CollisionObject, Detection};
+            use collisions::{Body, BodyDef, BodyHandle, Detection};
+            use collisions::narrowphase::NullNarrowphase;
 
             #[test]
             fn it_does_not_return_false_positives() {
@@ -18,11 +19,11 @@ macro_rules! assert_new_detection_behaviour {
                     let mut detection = validate(test_subject());
                     let cube_size = 1.0;
                     let margin_ratio = 0.05;
-                    let control = object(
+                    let control = handle(
                         Cuboid::cube(cube_size),
                         Transform::identity(),
                     );
-                    let test_body = object(
+                    let test_body = handle(
                         Cuboid::cube(cube_size),
                         Transform {
                             translation: (2.0 * ((1.0 + margin_ratio) * cube_size) * Scalar::sqrt(2.0)) * random_direction,
@@ -42,11 +43,11 @@ macro_rules! assert_new_detection_behaviour {
             fn it_does_not_return_false_negatives() {
                 fn property(random_direction: UnitVec3D, rot: UnitQuat) {
                     let mut detection = validate(test_subject());
-                    let control = object(
+                    let control = handle(
                         Cuboid::cube(1.0),
                         Transform::identity(),
                     );
-                    let test_body = object(
+                    let test_body = handle(
                         Cuboid::cube(1.0),
                         Transform {
                             translation: 0.49 * random_direction,
@@ -86,11 +87,11 @@ macro_rules! assert_new_detection_behaviour {
             #[test]
             fn it_handles_vertex_face_collisions() {
                 let mut detection = validate(test_subject());
-                let control = object(Cuboid::cube(1.0), Transform::identity());
+                let control = handle(Cuboid::cube(1.0), Transform::identity());
                 let initial_axis = Vec3D::new(1.0, 1.0, 1.0).normalize();
                 let final_axis = Vec3D::new(1.0, 0.0, 0.0);
                 let rotation = initial_axis.cross(final_axis);
-                let test_body = object(
+                let test_body = handle(
                     Cuboid::cube(1.0),
                     Transform {
                         translation: Vec3D::new((0.98 + (3.0 as Scalar).sqrt())/2.0, 0.1, 0.0),
@@ -112,8 +113,8 @@ macro_rules! assert_new_detection_behaviour {
             #[test]
             fn it_handles_edge_edge_collisions() {
                 let mut detection = validate(test_subject());
-                let control = object(Cuboid::cube(1.0), Transform::identity());
-                let test_body = object(
+                let control = handle(Cuboid::cube(1.0), Transform::identity());
+                let test_body = handle(
                     Cuboid::cube(1.0),
                     Transform {
                         translation: Vec3D::new(0.99, 0.99, 0.00),
@@ -138,8 +139,8 @@ macro_rules! assert_new_detection_behaviour {
             #[test]
             fn it_handles_edge_face_collisions() {
                 let mut detection = validate(test_subject());
-                let control = object(Cuboid::cube(1.0), Transform::identity());
-                let test_body = object(
+                let control = handle(Cuboid::cube(1.0), Transform::identity());
+                let test_body = handle(
                     Cuboid::cube(1.0),
                     Transform {
                         translation: Vec3D::new(0.49 + 0.5*(2.0 as Scalar).sqrt(), 0.0, 0.5),
@@ -165,8 +166,8 @@ macro_rules! assert_new_detection_behaviour {
             #[test]
             fn it_handles_face_face_collisions() {
                 let mut detection = validate(test_subject());
-                let control = object(Cuboid::cube(1.0), Transform::identity());
-                let test_body = object(
+                let control = handle(Cuboid::cube(1.0), Transform::identity());
+                let test_body = handle(
                     Cuboid::cube(1.0),
                     Transform {
                         translation: Vec3D::new(0.99, 0.50, 0.50),
@@ -193,8 +194,8 @@ macro_rules! assert_new_detection_behaviour {
             fn it_always_has_the_normal_pointing_towards_the_first_body() {
                 fn property(random_direction: UnitVec3D, rot: UnitQuat) {
                     let mut detection = validate(test_subject());
-                    let control = object(Cuboid::cube(1.0), Transform::identity());
-                    let test_body = object(
+                    let control = handle(Cuboid::cube(1.0), Transform::identity());
+                    let test_body = handle(
                         Cuboid::cube(1.0),
                         Transform {
                             translation: 0.45 * random_direction,
@@ -206,7 +207,7 @@ macro_rules! assert_new_detection_behaviour {
                         .expect("Test was setup to always have an intersection, but that didn't happen");
 
                     let projection = contact_event.normal()
-                            .dot(control.data.borrow().translation() - test_body.data.borrow().translation());
+                            .dot(control.borrow().translation() - test_body.borrow().translation());
 
                     assert!(projection > 0.0, format!("Expected the projected relative distance in the direction of the normal to always be positive, but got {}", projection));
                 }
@@ -214,18 +215,17 @@ macro_rules! assert_new_detection_behaviour {
                 quickcheck::quickcheck(property as fn(UnitVec3D, UnitQuat));
             }
 
-            fn validate<D: Detection<()>>(input: D) -> D {
+            fn validate<D>(input: D) -> D where D: Detection<NullNarrowphase, ()> {
                 input
             }
 
-            fn object<S>(shape: S, transform: Transform) -> CollisionObject<()> where S: Shape + 'static {
-                let test_body = CollisionData::test_dummy(Box::new(shape), transform);
-
-                CollisionObject {
-                    id: ID(0),
-                    is_background: false,
-                    data: CollisionDataHandle::new(test_body),
-                }
+            fn handle<S>(shape: S, transform: Transform) -> BodyHandle<NullNarrowphase, ()> where S: Shape + 'static {
+                BodyHandle::new(Body::new(ID(0), BodyDef {
+                    shape: Box::new(shape),
+                    rotation: transform.rotation,
+                    translation: transform.translation,
+                    .. BodyDef::default()
+                }, ()))
             }
         }
     };

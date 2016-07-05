@@ -16,15 +16,15 @@ macro_rules! key_released {
     };
 }
 
-pub struct ExamplesWindow<S: Simulation> {
-    world: Box<mach::World>,
+pub struct ExamplesWindow<S> where S: Simulation {
+    world: Box<mach::World<mach::collisions::narrowphase::NullNarrowphase, ()>>,
     camera: Camera,
     display: GlutinFacade,
     renderer: ExamplesRenderer,
     simulation: S,
     desired_fps: u8,
     frame_metadata: FrameMetadata,
-    world_constructor: Box<Fn() -> Box<mach::World>>,
+    world_constructor: Box<Fn() -> Box<mach::World<mach::collisions::narrowphase::NullNarrowphase, ()>>>,
 }
 
 impl<S> ExamplesWindow<S> where S: Simulation {
@@ -95,7 +95,7 @@ impl<S> ExamplesWindow<S> where S: Simulation {
         return target.finish().map_err(|err| format!("{:?}", err));
     }
 
-    fn handle_contact_events(&mut self, contacts: Vec<mach::detection::ContactEvent>) {
+    fn handle_contact_events(&mut self, contacts: Vec<mach::collisions::Contact<mach::collisions::narrowphase::NullNarrowphase, mach::dynamics::DynamicBodyType<()>>>) {
         self.frame_metadata.contacts = contacts.into_iter()
             .flat_map(|contact| contact.points().clone())
             .collect();

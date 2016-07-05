@@ -1,7 +1,7 @@
-// #[cfg(test)]
-// #[path="../../../tests/maths/integrators/semi_implicit_euler_test.rs"]
-// mod tests;
-//
+#[cfg(test)]
+#[path="../../../tests/dynamics/integrators/semi_implicit_euler_test.rs"]
+mod tests;
+
 use Scalar;
 use maths::{Quat, Vec3D};
 use dynamics::{Integratable, Integrator};
@@ -16,7 +16,7 @@ impl SemiImplicitEuler {
 }
 
 impl Integrator for SemiImplicitEuler {
-    fn integrate_in_place(&self, mut target: Integratable, t: Scalar, linear_acceleration: Vec3D) {
+    fn integrate_in_place(&self, target: &mut Integratable, t: Scalar, linear_acceleration: Vec3D) {
         *target.velocity_mut() += linear_acceleration * t;
         *target.translation_mut() += target.velocity() * t;
 

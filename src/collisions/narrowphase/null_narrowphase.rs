@@ -2,7 +2,7 @@
 #[path="../../../tests/collisions/narrowphase/null_narrowphase_test.rs"]
 mod tests;
 
-use collisions::{Body, CollisionData, Narrowphase};
+use collisions::{BodyData, CollisionData, Narrowphase};
 
 #[derive(Clone, Copy, Debug)]
 pub struct NullNarrowphase { }
@@ -12,11 +12,11 @@ impl Narrowphase for NullNarrowphase {
         NullNarrowphase { }
     }
 
-    fn test<T>(_body_0: &Body<Self, T>, _body_1: &Body<Self, T>) -> bool {
+    fn test(_body_0: &BodyData<Self>, _body_1: &BodyData<Self>) -> bool {
         true
     }
 
-    fn update<T>(_body: &mut Body<Self, T>) {
+    fn update(_body: &mut BodyData<Self>) {
         // do nothing
     }
 }

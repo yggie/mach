@@ -16,10 +16,8 @@ impl Simulation for DroppedCube {
         "Dropped Cube"
     }
 
-    fn setup(&mut self, world: &mut mach::World) -> Result<(), String> {
+    fn setup<N>(&mut self, world: &mut mach::World<N, ()>) -> Result<(), String> where N: mach::collisions::Narrowphase {
         world.set_gravity(mach::Vec3D::new(0.0, 0.0, -0.5));
-        let prototype = mach::RigidBody::default()
-            .with_mass(1.0);
 
         let mut rng = rand::StdRng::from_seed(&[1, 2, 3, 4]);
         let upper_bound = 10.0;
@@ -35,39 +33,51 @@ impl Simulation for DroppedCube {
             ).normalize();
 
             let offset = lower_bound + range * index as mach::Scalar / limit as mach::Scalar;
-            world.add_rigid_body(prototype.clone()
-                .with_shape(mach::shapes::Cuboid::cube(1.0))
-                .with_translation(offset, 0.0, 0.0)
-                .with_axis_angle(direction, mach::PI / 8.0)
-                .with_velocity_vect(direction * 3.0));
+            world.create_rigid_body(mach::dynamics::RigidBodyDef {
+                shape: Box::new(mach::shapes::Cuboid::cube(1.0)),
+                rotation: mach::UnitQuat::from_axis_angle(direction, mach::PI / 8.0),
+                velocity: direction * 3.0,
+                translation: mach::Vec3D::new(offset, 0.0, 0.0),
+                .. mach::dynamics::RigidBodyDef::default()
+            }, ());
         }
 
         let margin = 3.0;
 
-        world.add_static_body(mach::StaticBody::default()
-            .with_shape(mach::shapes::Cuboid::new(range + 2.0 * margin, range + 2.0 * margin, 1.0))
-            .with_translation(0.0, 0.0, -margin));
+        world.create_fixed_body(mach::dynamics::FixedBodyDef {
+            shape: Box::new(mach::shapes::Cuboid::new(range + 2.0 * margin, range + 2.0 * margin, 1.0)),
+            translation: mach::Vec3D::new(0.0, 0.0, -margin),
+            .. mach::dynamics::FixedBodyDef::default()
+        }, ());
 
-        world.add_static_body(mach::StaticBody::default()
-            .with_shape(mach::shapes::Cuboid::new(range + 2.0 * margin, 1.0, range + 2.0 * margin))
-            .with_translation(0.0, range/2.0 + margin, 0.0));
+        world.create_fixed_body(mach::dynamics::FixedBodyDef {
+            shape: Box::new(mach::shapes::Cuboid::new(range + 2.0 * margin, 1.0, range + 2.0 * margin)),
+            translation: mach::Vec3D::new(0.0, range/2.0 + margin, 0.0),
+            .. mach::dynamics::FixedBodyDef::default()
+        }, ());
 
-        world.add_static_body(mach::StaticBody::default()
-            .with_shape(mach::shapes::Cuboid::new(range + 2.0 * margin, 1.0, range + 2.0 * margin))
-            .with_translation(0.0, -range/2.0 - margin, 0.0));
+        world.create_fixed_body(mach::dynamics::FixedBodyDef {
+            shape: Box::new(mach::shapes::Cuboid::new(range + 2.0 * margin, 1.0, range + 2.0 * margin)),
+            translation: mach::Vec3D::new(0.0, -range/2.0 - margin, 0.0),
+            .. mach::dynamics::FixedBodyDef::default()
+        }, ());
 
-        world.add_static_body(mach::StaticBody::default()
-            .with_shape(mach::shapes::Cuboid::new(1.0, range + 2.0 * margin, range + 2.0 * margin))
-            .with_translation(range/2.0 + margin, 0.0, 0.0));
+        world.create_fixed_body(mach::dynamics::FixedBodyDef {
+            shape: Box::new(mach::shapes::Cuboid::new(1.0, range + 2.0 * margin, range + 2.0 * margin)),
+            translation: mach::Vec3D::new(range/2.0 + margin, 0.0, 0.0),
+            .. mach::dynamics::FixedBodyDef::default()
+        }, ());
 
-        world.add_static_body(mach::StaticBody::default()
-            .with_shape(mach::shapes::Cuboid::new(1.0, range + 2.0 * margin, range + 2.0 * margin))
-            .with_translation(-range/2.0 - margin, 0.0, 0.0));
+        world.create_fixed_body(mach::dynamics::FixedBodyDef {
+            shape: Box::new(mach::shapes::Cuboid::new(1.0, range + 2.0 * margin, range + 2.0 * margin)),
+            translation: mach::Vec3D::new(-range/2.0 - margin, 0.0, 0.0),
+            .. mach::dynamics::FixedBodyDef::default()
+        }, ());
 
         return Ok(());
     }
 
-    fn update(&mut self, world: &mut mach::World) -> Result<Vec<mach::detection::ContactEvent>, String> {
+    fn update<N>(&mut self, world: &mut mach::World<N, ()>) -> Result<Vec<mach::collisions::Contact<N, mach::dynamics::DynamicBodyType<()>>>, String> where N: mach::collisions::Narrowphase {
         return Ok(world.update(0.05));
     }
 }

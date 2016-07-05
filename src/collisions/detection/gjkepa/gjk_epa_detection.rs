@@ -12,6 +12,10 @@ use collisions::detection::gjkepa::{ContactTracker, EPA, GJKSimplex, MinkowskiDi
 pub struct GJKEPADetection { }
 
 impl GJKEPADetection {
+    pub fn new() -> GJKEPADetection {
+        GJKEPADetection { }
+    }
+
     // TODO return Option<&mut ContactTracker> instead
     fn find_tracker_mut(&mut self, _id_0: ID, _id_1: ID) -> Option<ContactTracker> {
         None

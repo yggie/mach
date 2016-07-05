@@ -17,7 +17,11 @@ pub mod tests {
     pub mod support;
 }
 
-mod new_world;
+#[macro_use]
+#[cfg(test)]
+#[path="../tests/worlds/world_behaviour.rs"]
+mod world_behaviour;
+
 mod mach_world;
 mod custom_world;
 
@@ -29,23 +33,16 @@ pub mod utils;
 #[macro_use]
 pub mod maths;
 pub mod shapes;
-pub mod solvers;
 pub mod dynamics;
-pub mod entities;
 pub mod geometry;
-pub mod detection;
 pub mod algorithms;
 pub mod collisions;
-pub mod broadphase;
-pub mod narrowphase;
 
 pub use self::maths::{Transform, UnitQuat, UnitVec3D, Vec3D};
 pub use self::world::World;
 pub use self::shapes::{Shape, ShapeRef};
-pub use self::entities::{Body, EntityStore, RigidBody, StaticBody};
-pub use self::new_world::NewWorld;
-pub use self::mach_world::MachWorld;
 pub use self::custom_world::CustomWorld;
+pub use self::mach_world::MachWorld;
 
 use std::fmt;
 use std::rc::Rc;

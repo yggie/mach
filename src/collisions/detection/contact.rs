@@ -1,7 +1,6 @@
 use Scalar;
 use maths::{UnitVec3D, Vec3D};
-use detection::ContactSet;
-use collisions::{BodyHandle, Narrowphase};
+use collisions::{BodyHandle, ContactSet, Narrowphase};
 
 #[derive(Clone, Debug)]
 pub struct Contact<N, T> where N: Narrowphase {
