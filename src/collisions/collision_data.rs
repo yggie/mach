@@ -1,6 +1,6 @@
 use maths::{Transform, Vec3D};
 use shapes::Shape;
-use collisions::geometry::SupportMap;
+use collisions::SupportMap;
 
 #[derive(Clone, Debug)]
 pub struct CollisionData {
