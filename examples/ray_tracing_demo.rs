@@ -6,7 +6,7 @@ extern crate time;
 mod raytracing;
 
 use mach::{MachWorld, UnitVec3D, Vec3D};
-use raytracing::{Color, DirectionalLight, Importable, PointLight, RayTracer, Renderer, SceneGeometry, SceneParams};
+use raytracing::{Color, DirectionalLight, Importable, PointLight, RayTracer, RayTracingRenderer, SceneGeometry, SceneParams};
 
 struct RayTracingDemo {
     world: MachWorld<()>,
@@ -50,7 +50,7 @@ impl RayTracer for RayTracingDemo {
 }
 
 fn main() {
-    let renderer = Renderer::<RayTracingDemo>::import_from("examples/assets/scene6.txt").unwrap();
+    let renderer = RayTracingRenderer::<RayTracingDemo>::import_from("examples/assets/scene6.txt").unwrap();
 
     raytracing::render(renderer);
 }

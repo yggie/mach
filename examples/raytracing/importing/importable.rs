@@ -6,14 +6,14 @@ use std::io::BufRead;
 use mach::{Scalar, Vec3D};
 use self::regex::Regex;
 
-use raytracing::{Canvas, Color, DirectionalLight, PointLight, RayTracer, Renderer, SceneGeometry, SceneParams, SceneObject};
+use raytracing::{Canvas, Color, DirectionalLight, PointLight, RayTracer, RayTracingRenderer, SceneGeometry, SceneParams, SceneObject};
 use raytracing::importing::MatrixStack;
 
 pub trait Importable: Sized {
     fn import_from(&str) -> Result<Self, io::Error>;
 }
 
-impl<T> Importable for Renderer<T> where T: RayTracer {
+impl<T> Importable for RayTracingRenderer<T> where T: RayTracer {
     fn import_from(filename: &str) -> Result<Self, io::Error> {
         let f = try!(fs::File::open(filename));
         let file = io::BufReader::new(&f);
@@ -303,7 +303,7 @@ impl<T> Importable for Renderer<T> where T: RayTracer {
             }
         }
 
-        return Ok(Renderer::new_with_file_output(
+        return Ok(RayTracingRenderer::new_with_file_output(
             canvas,
             T::from_scene_params(scene_params),
             &output_filename.unwrap(),

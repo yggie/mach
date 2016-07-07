@@ -5,9 +5,9 @@ mod tests;
 use {ID, INFINITY, Scalar, TOLERANCE};
 use maths::{Approximations, Vec3D};
 use utils::Handle;
-use shapes::Shape;
 use algorithms::{Execute, IterativeAlgorithm, PanicOnIteration};
 use collisions::{CollisionBody, CollisionData, Contact, Detection};
+use collisions::geometry::shapes::Shape;
 use collisions::detection::gjkepa::{ContactTracker, EPA, GJKSimplex, MinkowskiDifference};
 
 pub struct GJKEPADetection { }

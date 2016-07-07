@@ -1,6 +1,6 @@
 use Scalar;
 use maths::{UnitVec3D, Vec3D};
-use geometry::Plane;
+use collisions::geometry::Plane;
 
 #[derive(Clone, Debug)]
 pub struct ContactSet {

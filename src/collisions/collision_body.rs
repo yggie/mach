@@ -1,7 +1,7 @@
 use ID;
 use maths::{Transform, Vec3D};
-use shapes::Shape;
 use collisions::{BodyData, BodyDef, CollisionData, CollisionGroup, Narrowphase};
+use collisions::geometry::shapes::Shape;
 use collisions::narrowphase::{NarrowphaseRef, NarrowphaseRefMut};
 
 pub trait CollisionBody: 'static {

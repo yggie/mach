@@ -5,9 +5,9 @@ use glium;
 use glium::{glutin, DisplayBuild, Surface};
 use glium::index::PrimitiveType;
 
-use raytracing::{RayTracer, Renderer};
+use raytracing::{RayTracer, RayTracingRenderer};
 
-pub fn render<T>(mut renderer: Renderer<T>) where T: RayTracer {
+pub fn render<T>(mut renderer: RayTracingRenderer<T>) where T: RayTracer {
     let display = glutin::WindowBuilder::new()
         .with_dimensions(renderer.canvas().width() as u32, renderer.canvas().height() as u32)
         .with_vsync()

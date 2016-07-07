@@ -5,11 +5,10 @@ mod tests;
 use {NEG_INFINITY, Scalar};
 use maths::{Approximations, CoordinateTransform, Vec3D};
 use maths::_2d::Vec2D;
-use geometry::{Intersection, Line, Plane};
-use geometry::_2d::{Line2D, Polygon};
 use algorithms::IterativeAlgorithm;
 use collisions::{CollisionData, ContactSet, SupportMap};
-use collisions::shapes::Polyhedron;
+use collisions::geometry::{Intersection, Line, Plane, Polyhedron};
+use collisions::geometry::_2d::{Line2D, Polygon};
 use collisions::detection::gjkepa::{GJKSimplex, MinkowskiDifference};
 
 pub struct EPA<'a> {

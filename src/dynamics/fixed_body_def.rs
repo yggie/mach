@@ -1,8 +1,8 @@
 use Scalar;
 use maths::{UnitQuat, Vec3D};
-use shapes::{Cuboid, Shape};
 use dynamics::MaterialData;
 use collisions::CollisionGroup;
+use collisions::geometry::shapes::{Cuboid, Shape};
 
 pub struct FixedBodyDef {
     pub group: CollisionGroup,

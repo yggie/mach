@@ -1,6 +1,6 @@
 use maths::{UnitQuat, Vec3D};
-use shapes::{Cuboid, Shape};
 use collisions::CollisionGroup;
+use collisions::geometry::shapes::{Cuboid, Shape};
 
 #[derive(Clone, Debug)]
 pub struct BodyDef {

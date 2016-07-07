@@ -8,8 +8,8 @@ macro_rules! assert_narrowphase_behaviour {
 
             use super::type_marker;
 
-            use shapes::Cuboid;
             use collisions::{BodyData, BodyDef, Narrowphase};
+            use collisions::geometry::shapes::Cuboid;
 
             #[test]
             fn it_passes_the_collision_test_for_definitely_intersecting_bodies() {

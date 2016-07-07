@@ -2,8 +2,8 @@ extern crate quickcheck;
 
 use TOLERANCE;
 use maths::{ApproxEq, DotProduct, Transform, UnitQuat, UnitVec3D, Vec3D};
-use shapes::Cuboid;
 use collisions::CollisionData;
+use collisions::geometry::shapes::Cuboid;
 use collisions::detection::gjkepa::MinkowskiDifference;
 
 // TODO should this go under a behaviour for SupportMap?

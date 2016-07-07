@@ -7,9 +7,9 @@ macro_rules! assert_world_behaviour {
 
             use {PI, Scalar, World};
             use maths::{CrossProduct, DotProduct, UnitQuat, Vec3D};
-            use shapes::Cuboid;
-            use collisions::CollisionBody;
             use dynamics::{DynamicBodyExtension, FixedBodyDef, RigidBodyDef, RigidBodyRef};
+            use collisions::CollisionBody;
+            use collisions::geometry::shapes::Cuboid;
 
             #[test]
             fn it_can_simulate_constant_velocity() {

@@ -1,5 +1,5 @@
 use maths::{CrossProduct, DotProduct, Vec3D};
-use geometry::Plane;
+use collisions::geometry::Plane;
 
 #[derive(Clone, Debug)]
 pub struct GJKSimplex {

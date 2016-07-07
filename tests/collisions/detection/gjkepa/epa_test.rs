@@ -2,10 +2,10 @@ extern crate quickcheck;
 
 use Scalar;
 use maths::{Approximations, Transform, UnitQuat, Vec3D};
-use shapes::Cuboid;
-use collisions::CollisionData;
-use collisions::detection::gjkepa::{ContactTracker, EPA, GJK, GJKSimplex};
 use algorithms::{Execute, PanicOnIteration};
+use collisions::CollisionData;
+use collisions::geometry::shapes::Cuboid;
+use collisions::detection::gjkepa::{ContactTracker, EPA, GJK, GJKSimplex};
 
 #[test]
 fn it_should_not_generate_incomplete_shells() {

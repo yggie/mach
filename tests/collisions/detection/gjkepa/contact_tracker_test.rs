@@ -1,9 +1,9 @@
 extern crate quickcheck;
 
 use maths::{Approximations, Transform, UnitQuat, Vec3D};
-use shapes::Cuboid;
 use algorithms::{Execute, PanicOnIteration};
 use collisions::CollisionData;
+use collisions::geometry::shapes::Cuboid;
 use collisions::detection::gjkepa::{ContactTracker, GJK, GJKSimplex};
 
 #[test]
