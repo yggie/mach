@@ -41,8 +41,8 @@ pub mod collisions;
 pub use self::maths::{Transform, UnitQuat, UnitVec3D, Vec3D};
 pub use self::world::World;
 pub use self::shapes::{Shape, ShapeRef};
+pub use self::mach_world::{MachBody, MachWorld};
 pub use self::custom_world::CustomWorld;
-pub use self::mach_world::MachWorld;
 
 use std::fmt;
 use std::rc::Rc;

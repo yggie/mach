@@ -1,3 +1,4 @@
-use collisions::{BodyHandle, Narrowphase};
+use utils::Handle;
+use collisions::CollisionBody;
 
-pub struct CloseProximityPair<N, T>(pub BodyHandle<N, T>, pub BodyHandle<N, T>) where N: Narrowphase;
+pub struct CloseProximityPair<B>(pub Handle<B>, pub Handle<B>) where B: CollisionBody;

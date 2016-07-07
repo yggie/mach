@@ -1,7 +1,7 @@
 use Scalar;
-use dynamics::{DynamicBodyType, Integrator};
-use collisions::{Contact, Narrowphase};
+use dynamics::{DynamicBody, Integrator};
+use collisions::Contact;
 
-pub trait ConstraintSolver<I, N, T> where I: Integrator, N: Narrowphase {
-    fn solve_with_contacts(&mut self, contacts: &Vec<Contact<N, DynamicBodyType<T>>>, integrator: &I, time_step: Scalar);
+pub trait ConstraintSolver<I, T> where I: Integrator, T: DynamicBody {
+    fn solve_with_contacts(&mut self, contacts: &Vec<Contact<T>>, integrator: &I, time_step: Scalar);
 }

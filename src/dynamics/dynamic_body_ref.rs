@@ -1,40 +1,40 @@
-use collisions::Narrowphase;
-use dynamics::{DynamicBody, DynamicBodyType, FixedBodyRef, FixedBodyRefMut, RigidBodyRef, RigidBodyRefMut};
+use collisions::{CollisionBody, Narrowphase};
+use dynamics::{DynamicBody, DynamicBodyExtension, FixedBodyRef, FixedBodyRefMut, RigidBodyRef, RigidBodyRefMut};
 
-pub enum DynamicBodyRef<'a, N, T> where T: 'static, N: Narrowphase {
-    Rigid(RigidBodyRef<'a, N, T>),
-    Fixed(FixedBodyRef<'a, N, T>),
+pub enum DynamicBodyRef<'a, T> where T: DynamicBody {
+    Rigid(RigidBodyRef<'a, T>),
+    Fixed(FixedBodyRef<'a, T>),
 }
 
-pub enum DynamicBodyRefMut<'a, N, T> where T: 'static, N: Narrowphase {
-    Rigid(RigidBodyRefMut<'a, N, T>),
-    Fixed(FixedBodyRefMut<'a, N, T>),
+pub enum DynamicBodyRefMut<'a, T> where T: DynamicBody {
+    Rigid(RigidBodyRefMut<'a, T>),
+    Fixed(FixedBodyRefMut<'a, T>),
 }
 
-impl<'a, N, T> From<&'a DynamicBody<N, T>> for DynamicBodyRef<'a, N, T> where N: Narrowphase {
-    fn from(body: &'a DynamicBody<N, T>) -> DynamicBodyRef<'a, N, T> {
-        match body.extra_data() {
-            &DynamicBodyType::Rigid(ref data) => {
+impl<'a, T> From<&'a T> for DynamicBodyRef<'a, T> where T: DynamicBody {
+    fn from(body: &'a T) -> DynamicBodyRef<'a, T> {
+        match body.dynamic_extension_data() {
+            &DynamicBodyExtension::Rigid(ref data) => {
                 DynamicBodyRef::Rigid(RigidBodyRef::new(body.data(), data))
             },
 
-            &DynamicBodyType::Fixed(ref data) => {
+            &DynamicBodyExtension::Fixed(ref data) => {
                 DynamicBodyRef::Fixed(FixedBodyRef::new(body.data(), data))
             },
         }
     }
 }
 
-impl<'a, N, T> From<&'a mut DynamicBody<N, T>> for DynamicBodyRefMut<'a, N, T> where N: Narrowphase {
-    fn from(body: &'a mut DynamicBody<N, T>) -> DynamicBodyRefMut<'a, N, T> {
-        let (body_data, extra) = body.split_data_mut();
+impl<'a, T> From<&'a mut T> for DynamicBodyRefMut<'a, T> where T: DynamicBody {
+    fn from(body: &'a mut T) -> DynamicBodyRefMut<'a, T> {
+        let (body_data, dynamic_extension) = body.split_dynamic_extension_mut();
 
-        match extra {
-            &mut DynamicBodyType::Rigid(ref mut data) => {
+        match dynamic_extension {
+            &mut DynamicBodyExtension::Rigid(ref mut data) => {
                 DynamicBodyRefMut::Rigid(RigidBodyRefMut::new(body_data, data))
             },
 
-            &mut DynamicBodyType::Fixed(ref mut data) => {
+            &mut DynamicBodyExtension::Fixed(ref mut data) => {
                 DynamicBodyRefMut::Fixed(FixedBodyRefMut::new(body_data, data))
             },
         }

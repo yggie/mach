@@ -8,8 +8,8 @@ macro_rules! assert_world_behaviour {
             use {PI, Scalar, World};
             use maths::{CrossProduct, DotProduct, UnitQuat, Vec3D};
             use shapes::Cuboid;
-            use collisions::narrowphase::NullNarrowphase;
-            use dynamics::{FixedBodyDef, RigidBodyDef, RigidBodyRef};
+            use collisions::CollisionBody;
+            use dynamics::{DynamicBodyExtension, FixedBodyDef, RigidBodyDef, RigidBodyRef};
 
             #[test]
             fn it_can_simulate_constant_velocity() {
@@ -100,7 +100,7 @@ macro_rules! assert_world_behaviour {
                 assert!(rigid_body.velocity().dot(Vec3D::new(0.0, 0.0, 1.0)) > 0.0);
             }
 
-            fn validate<W>(input: W) -> W where W: World<NullNarrowphase, ()>{
+            fn validate<T, W>(input: W) -> W where T: CollisionBody<Extension=DynamicBodyExtension<()>>, W: World<T> {
                 input
             }
         }

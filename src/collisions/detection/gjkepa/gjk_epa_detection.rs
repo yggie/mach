@@ -4,9 +4,10 @@ mod tests;
 
 use {ID, INFINITY, Scalar, TOLERANCE};
 use maths::{Approximations, Vec3D};
+use utils::Handle;
 use shapes::Shape;
 use algorithms::{Execute, IterativeAlgorithm, PanicOnIteration};
-use collisions::{Body, BodyHandle, CollisionData, Contact, Detection, Narrowphase};
+use collisions::{CollisionBody, CollisionData, Contact, Detection};
 use collisions::detection::gjkepa::{ContactTracker, EPA, GJKSimplex, MinkowskiDifference};
 
 pub struct GJKEPADetection { }
@@ -21,22 +22,22 @@ impl GJKEPADetection {
         None
     }
 
-    fn create_tracker<N, T>(&mut self, body_0: &Body<N, T>, body_1: &Body<N, T>) -> ContactTracker where N: Narrowphase {
+    fn create_tracker<B>(&mut self, body_0: &B, body_1: &B) -> ContactTracker where B: CollisionBody {
         ContactTracker::new(body_0.collision_data(), body_1.collision_data())
     }
 }
 
-impl<N, T> Detection<N, T> for GJKEPADetection where N: Narrowphase {
+impl<B> Detection<B> for GJKEPADetection where B: CollisionBody {
     fn update(&mut self) {
         // do nothing
     }
 
-    fn compute_contacts(&mut self, handle_0: &BodyHandle<N, T>, handle_1: &BodyHandle<N, T>) -> Option<Contact<N, T>> {
+    fn compute_contacts(&mut self, handle_0: &Handle<B>, handle_1: &Handle<B>) -> Option<Contact<B>> {
         let body_0 = handle_0.borrow();
         let body_1 = handle_1.borrow();
 
         let mut tracker = self.find_tracker_mut(body_0.id(), body_1.id())
-            .unwrap_or_else(|| self.create_tracker(&body_0, &body_1));
+            .unwrap_or_else(|| self.create_tracker(&*body_0, &*body_1));
 
         GJK::using_simplex(tracker.simplex_mut(), body_0.collision_data(), body_1.collision_data())
             .panic_on_iteration(1000, "GJK failed to complete")
@@ -49,7 +50,7 @@ impl<N, T> Detection<N, T> for GJKEPADetection where N: Narrowphase {
                     .compute_contact_set()
             })
             .map(|contact_set| {
-                Contact::new(contact_set, BodyHandle::clone(handle_0), BodyHandle::clone(handle_1))
+                Contact::new(contact_set, Handle::clone(handle_0), Handle::clone(handle_1))
             })
     }
 }

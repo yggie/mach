@@ -1,17 +1,17 @@
 use Scalar;
 use maths::{Matrix, Vec3D};
-use collisions::{BodyData, Narrowphase};
+use collisions::{BodyData, CollisionBody, Narrowphase};
 use dynamics::{DynamicBody, DynamicBodyRef, DynamicBodyRefMut, Integratable, RigidBodyData};
 
-pub struct RigidBodyRef<'a, N, T>(&'a BodyData<N>, &'a RigidBodyData<T>) where T: 'static, N: Narrowphase;
-pub struct RigidBodyRefMut<'a, N, T>(&'a mut BodyData<N>, &'a mut RigidBodyData<T>) where T: 'static, N: Narrowphase;
+pub struct RigidBodyRef<'a, T>(&'a BodyData<T::Narrowphase>, &'a RigidBodyData<<T as DynamicBody>::Extension>) where T: DynamicBody;
+pub struct RigidBodyRefMut<'a, T>(&'a mut BodyData<T::Narrowphase>, &'a mut RigidBodyData<<T as DynamicBody>::Extension>) where T: DynamicBody;
 
-impl<'a, N, T> RigidBodyRef<'a, N, T> where N: Narrowphase {
-    pub fn new(body_data: &'a BodyData<N>, extra_data: &'a RigidBodyData<T>) -> RigidBodyRef<'a, N, T> {
-        RigidBodyRef(body_data, extra_data)
+impl<'a, T> RigidBodyRef<'a, T> where T: DynamicBody {
+    pub fn new(body_data: &'a BodyData<T::Narrowphase>, rigid_body_data: &'a RigidBodyData<<T as DynamicBody>::Extension>) -> RigidBodyRef<'a, T> {
+        RigidBodyRef(body_data, rigid_body_data)
     }
 
-    pub fn try_from<'b>(body: &'b DynamicBody<N, T>) -> Option<RigidBodyRef<'b, N, T>> {
+    pub fn try_from(body: &'a T) -> Option<RigidBodyRef<'a, T>> {
         let dynamic_body = DynamicBodyRef::from(body);
 
         match dynamic_body {
@@ -65,12 +65,12 @@ impl<'a, N, T> RigidBodyRef<'a, N, T> where N: Narrowphase {
     }
 }
 
-impl<'a, N, T> RigidBodyRefMut<'a, N, T> where N: Narrowphase {
-    pub fn new(body_data: &'a mut BodyData<N>, extra_data: &'a mut RigidBodyData<T>) -> RigidBodyRefMut<'a, N, T> {
-        RigidBodyRefMut(body_data, extra_data)
+impl<'a, T> RigidBodyRefMut<'a, T> where T: DynamicBody {
+    pub fn new(body_data: &'a mut BodyData<T::Narrowphase>, rigid_body_data: &'a mut RigidBodyData<<T as DynamicBody>::Extension>) -> RigidBodyRefMut<'a, T> {
+        RigidBodyRefMut(body_data, rigid_body_data)
     }
 
-    pub fn try_from<'b>(body: &'b mut DynamicBody<N, T>) -> Option<RigidBodyRefMut<'b, N, T>> {
+    pub fn try_from(body: &'a mut T) -> Option<RigidBodyRefMut<'a, T>> {
         let dynamic_body = DynamicBodyRefMut::from(body);
 
         match dynamic_body {

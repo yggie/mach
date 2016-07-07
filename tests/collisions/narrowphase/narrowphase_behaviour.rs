@@ -24,11 +24,11 @@ macro_rules! assert_narrowphase_behaviour {
                     .. BodyDef::default()
                 });
 
-                Narrowphase::update(&mut body_0);
-                Narrowphase::update(&mut body_1);
+                Narrowphase::update(body_0.narrowphase_ref_mut());
+                Narrowphase::update(body_1.narrowphase_ref_mut());
 
                 assert!(
-                    Narrowphase::test(&body_0, &body_1),
+                    Narrowphase::test(body_0.narrowphase_ref(), body_1.narrowphase_ref()),
                     "expected the intersecting bodies to return a positive collision test, but did not"
                 );
             }

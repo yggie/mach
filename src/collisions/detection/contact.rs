@@ -1,15 +1,16 @@
 use Scalar;
 use maths::{UnitVec3D, Vec3D};
-use collisions::{BodyHandle, ContactSet, Narrowphase};
+use utils::Handle;
+use collisions::{CollisionBody, ContactSet};
 
 #[derive(Clone, Debug)]
-pub struct Contact<N, T> where N: Narrowphase {
+pub struct Contact<B> where B: CollisionBody {
     set: ContactSet,
-    handles: (BodyHandle<N, T>, BodyHandle<N, T>),
+    handles: (Handle<B>, Handle<B>),
 }
 
-impl<N, T> Contact<N, T> where N: Narrowphase {
-    pub fn new(set: ContactSet, handle_0: BodyHandle<N, T>, handle_1: BodyHandle<N, T>) -> Contact<N, T> {
+impl<B> Contact<B> where B: CollisionBody {
+    pub fn new(set: ContactSet, handle_0: Handle<B>, handle_1: Handle<B>) -> Contact<B> {
         Contact {
             set: set,
             handles: (handle_0, handle_1),
@@ -32,7 +33,7 @@ impl<N, T> Contact<N, T> where N: Narrowphase {
     }
 
     #[inline(always)]
-    pub fn handles(&self) -> &(BodyHandle<N, T>, BodyHandle<N, T>) {
+    pub fn handles(&self) -> &(Handle<B>, Handle<B>) {
         &self.handles
     }
 

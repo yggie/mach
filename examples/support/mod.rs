@@ -1,3 +1,5 @@
+extern crate mach;
+
 mod camera;
 mod instance;
 mod primitives;
@@ -28,3 +30,5 @@ pub use self::window_event_handler::{EventResponse, WindowEventHandler};
 pub struct SceneEnv<'a> {
     camera: &'a Camera,
 }
+
+pub type ExampleWorld = mach::World<mach::MachBody<()>>;

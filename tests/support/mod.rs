@@ -25,5 +25,8 @@ pub use self::arbitrary_positive_scalar::PositiveScalar;
 pub use self::assert_properties_for_actions::assert_properties_for_actions;
 
 use Scalar;
+use collisions::Body;
+use collisions::narrowphase::NullNarrowphase;
 
 pub static TEST_SCALAR_BOUNDS: Scalar = 1e2;
+pub type TestBody = Body<(), NullNarrowphase>;

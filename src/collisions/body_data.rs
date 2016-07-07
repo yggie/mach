@@ -2,13 +2,14 @@ use ID;
 use maths::{Transform, Vec3D};
 use shapes::Shape;
 use collisions::{BodyDef, CollisionData, CollisionGroup, Narrowphase};
+use collisions::narrowphase::{NarrowphaseRef, NarrowphaseRefMut};
 
 #[derive(Clone, Debug)]
 pub struct BodyData<N> where N: Narrowphase {
     id: ID,
     group: CollisionGroup,
-    collision_data: CollisionData,
     narrowphase_data: N,
+    collision_data: CollisionData,
 }
 
 impl<N> BodyData<N> where N: Narrowphase {
@@ -48,16 +49,6 @@ impl<N> BodyData<N> where N: Narrowphase {
     }
 
     #[inline(always)]
-    pub fn narrowphase_data(&self) -> &N {
-        &self.narrowphase_data
-    }
-
-    #[inline(always)]
-    pub fn narrowphase_data_mut(&mut self) -> &mut N {
-        &mut self.narrowphase_data
-    }
-
-    #[inline(always)]
     pub fn transform(&self) -> &Transform {
         self.collision_data.transform()
     }
@@ -75,5 +66,19 @@ impl<N> BodyData<N> where N: Narrowphase {
     #[inline(always)]
     pub fn translation_mut(&mut self) -> &mut Vec3D {
         self.collision_data.translation_mut()
+    }
+
+    pub fn narrowphase_ref(&self) -> NarrowphaseRef<N> {
+        NarrowphaseRef {
+            collision_data: &self.collision_data,
+            narrowphase_data: &self.narrowphase_data,
+        }
+    }
+
+    pub fn narrowphase_ref_mut(&mut self) -> NarrowphaseRefMut<N> {
+        NarrowphaseRefMut {
+            collision_data: &self.collision_data,
+            narrowphase_data: &mut self.narrowphase_data,
+        }
     }
 }

@@ -3,16 +3,18 @@
 mod tests;
 
 use ID;
-use utils::{Ref, RefMut};
-use collisions::{Body, BodyDef, BodyHandle, CollisionGroup, CollisionObjectSpace, Narrowphase};
+use utils::{Handle, Ref, RefMut};
+use collisions::{BodyDef, CollisionBody, CollisionGroup, CollisionObjectSpace};
 
-pub struct MachCollisionObjectSpace<N, T> where N: Narrowphase {
-    foreground_bodies: Vec<BodyHandle<N, T>>,
-    environment_bodies: Vec<BodyHandle<N, T>>,
+pub struct MachCollisionObjectSpace<B> where B: CollisionBody {
+    foreground_bodies: Vec<Handle<B>>,
+    environment_bodies: Vec<Handle<B>>,
 }
 
-impl<N, T> MachCollisionObjectSpace<N, T> where N: Narrowphase {
-    pub fn new() -> MachCollisionObjectSpace<N, T> {
+impl<B> MachCollisionObjectSpace<B> where B: CollisionBody {
+    pub fn new() -> MachCollisionObjectSpace<B> {
+        // TODO let narrowphase_data = N::new(&collision_data); ??
+
         MachCollisionObjectSpace {
             foreground_bodies: Vec::new(),
             environment_bodies: Vec::new(),
@@ -24,46 +26,46 @@ impl<N, T> MachCollisionObjectSpace<N, T> where N: Narrowphase {
     }
 }
 
-impl<N, T> CollisionObjectSpace<N, T> for MachCollisionObjectSpace<N, T> where N: Narrowphase {
-    fn find<'a>(&'a self, id: ID) -> Option<Ref<'a, Body<N, T>>> {
+impl<B> CollisionObjectSpace<B> for MachCollisionObjectSpace<B> where B: CollisionBody {
+    fn find<'a>(&'a self, id: ID) -> Option<Ref<'a, B>> {
         self.foreground_bodies.iter().find(|handle| handle.borrow().id() == id)
             .or_else(|| self.environment_bodies.iter().find(|handle| handle.borrow().id() == id))
             .map(|handle| handle.borrow())
     }
 
-    fn find_handle(&self, id: ID) -> Option<&BodyHandle<N, T>> {
+    fn find_handle(&self, id: ID) -> Option<&Handle<B>> {
         self.foreground_bodies.iter().find(|handle| handle.borrow().id() == id)
             .or_else(|| self.environment_bodies.iter().find(|handle| handle.borrow().id() == id))
     }
 
-    fn foreground_bodies_iter<'a>(&'a self) -> Box<Iterator<Item=Ref<Body<N, T>>> + 'a> {
+    fn foreground_bodies_iter<'a>(&'a self) -> Box<Iterator<Item=Ref<B>> + 'a> {
         Box::new(self.foreground_bodies.iter().map(|handle| handle.borrow()))
     }
 
-    fn foreground_bodies_mut_iter<'a>(&'a self) -> Box<Iterator<Item=RefMut<Body<N, T>>> + 'a> {
+    fn foreground_bodies_mut_iter<'a>(&'a self) -> Box<Iterator<Item=RefMut<B>> + 'a> {
         Box::new(self.foreground_bodies.iter().map(|handle| handle.borrow_mut()))
     }
 
-    fn foreground_handles_iter<'a>(&'a self) -> Box<Iterator<Item=&BodyHandle<N, T>> + 'a> {
+    fn foreground_handles_iter<'a>(&'a self) -> Box<Iterator<Item=&Handle<B>> + 'a> {
         Box::new(self.foreground_bodies.iter())
     }
 
-    fn environment_bodies_iter<'a>(&'a self) -> Box<Iterator<Item=Ref<Body<N, T>>> + 'a> {
+    fn environment_bodies_iter<'a>(&'a self) -> Box<Iterator<Item=Ref<B>> + 'a> {
         Box::new(self.environment_bodies.iter().map(|handle| handle.borrow()))
     }
 
-    fn environment_bodies_mut_iter<'a>(&'a self) -> Box<Iterator<Item=RefMut<Body<N, T>>> + 'a> {
+    fn environment_bodies_mut_iter<'a>(&'a self) -> Box<Iterator<Item=RefMut<B>> + 'a> {
         Box::new(self.environment_bodies.iter().map(|handle| handle.borrow_mut()))
     }
 
-    fn environment_handles_iter<'a>(&'a self) -> Box<Iterator<Item=&BodyHandle<N, T>> + 'a> {
+    fn environment_handles_iter<'a>(&'a self) -> Box<Iterator<Item=&Handle<B>> + 'a> {
         Box::new(self.environment_bodies.iter())
     }
 
-    fn create_body(&mut self, def: BodyDef, extra: T) -> BodyHandle<N, T> {
+    fn create_body(&mut self, def: BodyDef, extension: B::Extension) -> Handle<B> {
         let group = def.group;
-        let body = Body::new(self.gen_id(), def, extra);
-        let handle = BodyHandle::new(body);
+        let body = B::new(self.gen_id(), def, extension);
+        let handle = Handle::new(body);
 
         match group {
             CollisionGroup::Environment =>

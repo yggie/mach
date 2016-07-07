@@ -6,9 +6,10 @@ macro_rules! assert_collision_object_space_behaviour {
             extern crate quickcheck;
 
             use ID;
-            use collisions::{BodyDef, BodyHandle, CollisionGroup, CollisionObjectSpace, Narrowphase};
-            use collisions::narrowphase::NullNarrowphase;
+            use utils::Handle;
+            use collisions::{BodyDef, CollisionBody, CollisionGroup, CollisionObjectSpace, Narrowphase};
 
+            use tests::support::TestBody;
             use super::test_subject;
 
             #[test]
@@ -64,11 +65,11 @@ macro_rules! assert_collision_object_space_behaviour {
                 assert_eq!(count, 2);
             }
 
-            fn validate<T>(input: T) -> T where T: CollisionObjectSpace<NullNarrowphase, ()> {
+            fn validate<T>(input: T) -> T where T: CollisionObjectSpace<TestBody> {
                 input
             }
 
-            fn id<N, T>(handle: BodyHandle<N, T>) -> ID where N: Narrowphase {
+            fn id(handle: Handle<TestBody>) -> ID {
                 let borrowed = handle.borrow();
 
                 return borrowed.id();

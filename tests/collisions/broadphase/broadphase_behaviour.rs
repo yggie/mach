@@ -8,7 +8,8 @@ macro_rules! assert_broadphase_behaviour {
             use super::test_subject;
 
             use collisions::{BodyDef, Broadphase, CollisionGroup, CollisionObjectSpace};
-            use collisions::narrowphase::NullNarrowphase;
+
+            use tests::support::TestBody;
 
             #[test]
             fn it_does_not_allow_environment_bodies_to_collide() {
@@ -67,11 +68,11 @@ macro_rules! assert_broadphase_behaviour {
                 assert_eq!(count, 2);
             }
 
-            fn validate<B>(input: B) -> B where B: Broadphase<NullNarrowphase, ()> {
+            fn validate<B>(input: B) -> B where B: Broadphase<TestBody> {
                 input
             }
 
-            fn count_pairs_after_adding<B>(broadphase: &mut B, def: BodyDef) -> usize where B: Broadphase<NullNarrowphase, ()> {
+            fn count_pairs_after_adding<B>(broadphase: &mut B, def: BodyDef) -> usize where B: Broadphase<TestBody> {
                 broadphase.create_body(def, ());
 
                 return broadphase.close_proximity_pairs_iter().count();

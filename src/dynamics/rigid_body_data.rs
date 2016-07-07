@@ -3,31 +3,31 @@ use maths::{Motion, Vec3D};
 use dynamics::{MaterialData, RigidBodyDef};
 
 #[derive(Clone, Debug)]
-pub struct RigidBodyData<T> {
+pub struct RigidBodyData<E> {
     mass: Scalar,
     motion: Motion,
-    extra_data: T,
     material_data: MaterialData,
+    extension_data: E,
 }
 
-impl<T> RigidBodyData<T> {
+impl<E> RigidBodyData<E> {
     include_motion_helpers! {
-        struct_signature: RigidBodyData<T>,
+        struct_signature: RigidBodyData<E>,
         struct_name: RigidBodyData,
     }
 
-    pub fn new(def: &RigidBodyDef, extra: T) -> RigidBodyData<T> {
+    pub fn new(def: &RigidBodyDef, extension: E) -> RigidBodyData<E> {
         RigidBodyData {
             mass: def.mass,
             motion: Motion {
                 velocity: def.velocity,
                 angular_velocity: def.angular_velocity,
             },
-            extra_data: extra,
             material_data: MaterialData {
                 friction_coefficient: def.friction_coefficient,
                 restitution_coefficient: def.restitution_coefficient,
             },
+            extension_data: extension,
         }
     }
 
@@ -49,5 +49,15 @@ impl<T> RigidBodyData<T> {
     #[inline(always)]
     pub fn mass_inverse(&self) -> Scalar {
         1.0 / self.mass
+    }
+
+    #[inline(always)]
+    pub fn extension_data(&self) -> &E {
+        &self.extension_data
+    }
+
+    #[inline(always)]
+    pub fn extension_data_mut(&mut self) -> &mut E {
+        &mut self.extension_data
     }
 }

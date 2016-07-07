@@ -1,74 +1,88 @@
 use ID;
 use maths::{Transform, Vec3D};
 use shapes::Shape;
-use collisions::{BodyData, BodyDef, CollisionData, CollisionGroup, Narrowphase};
+use collisions::{BodyData, BodyDef, CollisionBody, CollisionData, CollisionGroup, Narrowphase};
+use collisions::narrowphase::{NarrowphaseRef, NarrowphaseRefMut};
 
 #[derive(Clone, Debug)]
-pub struct Body<N, T> where N: Narrowphase {
+pub struct Body<E, N> where E: 'static, N: Narrowphase {
     data: BodyData<N>,
-    extra_data: T,
+    extension_data: E,
 }
 
-impl<N, T> Body<N, T> where N: Narrowphase {
-    pub fn new(id: ID, def: BodyDef, extra: T) -> Body<N, T> {
+impl<E, N> CollisionBody for Body<E, N> where E: 'static, N: Narrowphase {
+    type Extension = E;
+    type Narrowphase = N;
+
+    fn new(id: ID, def: BodyDef, extra: E) -> Body<E, N> {
         Body {
             data: BodyData::new(id, def),
-            extra_data: extra,
+            extension_data: extra,
         }
     }
 
     #[inline(always)]
-    pub fn id(&self) -> ID {
+    fn id(&self) -> ID {
         self.data.id()
     }
 
     #[inline(always)]
-    pub fn data(&self) -> &BodyData<N> {
+    fn data(&self) -> &BodyData<N> {
         &self.data
     }
 
     #[inline(always)]
-    pub fn data_mut(&mut self) -> &mut BodyData<N> {
+    fn data_mut(&mut self) -> &mut BodyData<N> {
         &mut self.data
     }
 
     #[inline(always)]
-    pub fn group(&self) -> CollisionGroup {
+    fn group(&self) -> CollisionGroup {
         self.data.group()
     }
 
     #[inline(always)]
-    pub fn collision_data(&self) -> &CollisionData {
+    fn collision_data(&self) -> &CollisionData {
         &self.data.collision_data()
     }
 
     #[inline(always)]
-    pub fn shape(&self) -> &Shape {
+    fn shape(&self) -> &Shape {
         self.data.shape()
     }
 
     #[inline(always)]
-    pub fn translation(&self) -> &Vec3D {
+    fn translation(&self) -> &Vec3D {
         self.data.translation()
     }
 
     #[inline(always)]
-    pub fn transform(&self) -> &Transform {
+    fn transform(&self) -> &Transform {
         self.data.transform()
     }
 
     #[inline(always)]
-    pub fn extra_data(&self) -> &T {
-        &self.extra_data
+    fn extension_data(&self) -> &E {
+        &self.extension_data
     }
 
     #[inline(always)]
-    pub fn extra_data_mut(&mut self) -> &mut T {
-        &mut self.extra_data
+    fn extension_data_mut(&mut self) -> &mut E {
+        &mut self.extension_data
+    }
+
+    #[inline(always)]
+    fn narrowphase_ref(&self) -> NarrowphaseRef<N> {
+        self.data.narrowphase_ref()
+    }
+
+    #[inline(always)]
+    fn narrowphase_ref_mut(&mut self) -> NarrowphaseRefMut<N> {
+        self.data.narrowphase_ref_mut()
     }
 
     #[inline]
-    pub fn split_data_mut(&mut self) -> (&mut BodyData<N>, &mut T) {
-        (&mut self.data, &mut self.extra_data)
+    fn split_data_mut(&mut self) -> (&mut BodyData<N>, &mut E) {
+        (&mut self.data, &mut self.extension_data)
     }
 }

@@ -8,7 +8,7 @@ use self::glium::glutin;
 use self::glium::{DisplayBuild, Surface};
 use self::glium::backend::glutin_backend::GlutinFacade;
 
-use support::{Camera, ExamplesRenderer, ExamplesRunner, FrameMetadata, SceneEnv, Simulation, WindowEventHandler};
+use support::{Camera, ExamplesRenderer, ExamplesRunner, ExampleWorld, FrameMetadata, SceneEnv, Simulation, WindowEventHandler};
 
 macro_rules! key_released {
     ($key:path) => {
@@ -17,14 +17,14 @@ macro_rules! key_released {
 }
 
 pub struct ExamplesWindow<S> where S: Simulation {
-    world: Box<mach::World<mach::collisions::narrowphase::NullNarrowphase, ()>>,
+    world: Box<ExampleWorld>,
     camera: Camera,
     display: GlutinFacade,
     renderer: ExamplesRenderer,
     simulation: S,
     desired_fps: u8,
     frame_metadata: FrameMetadata,
-    world_constructor: Box<Fn() -> Box<mach::World<mach::collisions::narrowphase::NullNarrowphase, ()>>>,
+    world_constructor: Box<Fn() -> Box<ExampleWorld>>,
 }
 
 impl<S> ExamplesWindow<S> where S: Simulation {
@@ -95,7 +95,7 @@ impl<S> ExamplesWindow<S> where S: Simulation {
         return target.finish().map_err(|err| format!("{:?}", err));
     }
 
-    fn handle_contact_events(&mut self, contacts: Vec<mach::collisions::Contact<mach::collisions::narrowphase::NullNarrowphase, mach::dynamics::DynamicBodyType<()>>>) {
+    fn handle_contact_events(&mut self, contacts: Vec<mach::collisions::Contact<mach::MachBody<()>>>) {
         self.frame_metadata.contacts = contacts.into_iter()
             .flat_map(|contact| contact.points().clone())
             .collect();

@@ -4,19 +4,21 @@ mod tests;
 
 use {CustomWorld, Scalar, World};
 use maths::Vec3D;
-use utils::Ref;
-use dynamics::{DynamicBody, DynamicBodyHandle, DynamicBodyType, FixedBodyDef, RigidBodyDef};
+use utils::{Ref, Handle};
+use dynamics::{DynamicBodyExtension, FixedBodyDef, RigidBodyDef};
 use dynamics::solvers::MachConstraintSolver;
 use dynamics::integrators::SemiImplicitEuler;
-use collisions::Contact;
+use collisions::{Body, CollisionBody, Contact};
 use collisions::detection::GJKEPADetection;
 use collisions::broadphase::BruteForceBroadphase;
 use collisions::narrowphase::NullNarrowphase;
 
-pub struct MachWorld<T>(CustomWorld<BruteForceBroadphase<NullNarrowphase, DynamicBodyType<T>>, MachConstraintSolver, GJKEPADetection, SemiImplicitEuler, NullNarrowphase, T>) where T: 'static;
+pub type MachBody<E> = Body<DynamicBodyExtension<E>, NullNarrowphase>;
 
-impl<T> MachWorld<T> {
-    pub fn new() -> MachWorld<T> {
+pub struct MachWorld<E>(CustomWorld<BruteForceBroadphase<MachBody<E>>, MachConstraintSolver, GJKEPADetection, E, SemiImplicitEuler, MachBody<E>>) where E: 'static;
+
+impl<E> MachWorld<E> {
+    pub fn new() -> MachWorld<E> {
         let world = CustomWorld::new(
             GJKEPADetection::new(),
             SemiImplicitEuler::new(),
@@ -28,17 +30,17 @@ impl<T> MachWorld<T> {
         MachWorld(world)
     }
 
-    pub fn update(&mut self, time_step: Scalar) -> Vec<Contact<NullNarrowphase, DynamicBodyType<T>>> {
+    pub fn update(&mut self, time_step: Scalar) -> Vec<Contact<MachBody<E>>> {
         self.0.update(time_step)
     }
 }
 
-impl<T> World<NullNarrowphase, T> for MachWorld<T> {
-    fn update(&mut self, time_step: Scalar) -> Vec<Contact<NullNarrowphase, DynamicBodyType<T>>> {
+impl<E> World<MachBody<E>> for MachWorld<E> {
+    fn update(&mut self, time_step: Scalar) -> Vec<Contact<MachBody<E>>> {
         self.0.update(time_step)
     }
 
-    fn bodies_iter<'a>(&'a self) -> Box<Iterator<Item=Ref<DynamicBody<NullNarrowphase, T>>> + 'a> {
+    fn bodies_iter<'a>(&'a self) -> Box<Iterator<Item=Ref<MachBody<E>>> + 'a> {
         self.0.bodies_iter()
     }
 
@@ -46,11 +48,11 @@ impl<T> World<NullNarrowphase, T> for MachWorld<T> {
         self.0.set_gravity(gravity)
     }
 
-    fn create_rigid_body(&mut self, def: RigidBodyDef, extra: T) -> DynamicBodyHandle<NullNarrowphase, T> {
+    fn create_rigid_body(&mut self, def: RigidBodyDef, extra: E) -> Handle<MachBody<E>> {
         self.0.create_rigid_body(def, extra)
     }
 
-    fn create_fixed_body(&mut self, def: FixedBodyDef, extra: T) -> DynamicBodyHandle<NullNarrowphase, T> {
+    fn create_fixed_body(&mut self, def: FixedBodyDef, extra: E) -> Handle<MachBody<E>> {
         self.0.create_fixed_body(def, extra)
     }
 }

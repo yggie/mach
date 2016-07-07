@@ -1,7 +1,7 @@
 use Scalar;
 use maths::{lcp_solvers, CrossProduct, DotProduct, LCP, LCPSolver, Matrix, UnitVec3D, Vec3D};
 use utils::UnitVec3DGenerator;
-use dynamics::{ConstraintSolver, DynamicBodyRef, DynamicBodyRefMut, DynamicBodyType, FixedBodyRef, Integrator, RigidBodyRef, RigidBodyRefMut};
+use dynamics::{ConstraintSolver, DynamicBody, DynamicBodyRef, DynamicBodyRefMut, FixedBodyRef, Integrator, RigidBodyRef, RigidBodyRefMut};
 use collisions::{Contact, Narrowphase};
 
 static NUM_COMPONENTS: usize = 2;
@@ -13,7 +13,7 @@ impl MachConstraintSolver {
         MachConstraintSolver
     }
 
-    fn formulate_lcp<N, T>(contacts: &Vec<Contact<N, DynamicBodyType<T>>>, time_step: Scalar) -> (LCP, Vec<UnitVec3D>) where N: Narrowphase, T: 'static {
+    fn formulate_lcp<T>(contacts: &Vec<Contact<T>>, time_step: Scalar) -> (LCP, Vec<UnitVec3D>) where T: DynamicBody {
         let number_of_contacts = contacts.len();
         let size = number_of_contacts * NUM_COMPONENTS;
         let mut problem = LCP::new(size);
@@ -150,7 +150,7 @@ impl MachConstraintSolver {
         return (problem, friction_directions);
     }
 
-    fn apply_lcp_solution<I, N, T>(problem: LCP, friction_directions: Vec<UnitVec3D>, time_step: Scalar, contacts: &Vec<Contact<N, DynamicBodyType<T>>>, integrator: &I) where I: Integrator, N: Narrowphase, T: 'static {
+    fn apply_lcp_solution<I, T>(problem: LCP, friction_directions: Vec<UnitVec3D>, time_step: Scalar, contacts: &Vec<Contact<T>>, integrator: &I) where I: Integrator, T: DynamicBody {
         for (i, contact) in contacts.iter().enumerate() {
             let impulse_offset = NUM_COMPONENTS * i;
             let friction_offset = impulse_offset + 1;
@@ -185,10 +185,10 @@ impl MachConstraintSolver {
 
                     let correction = -0.5 * penetration_depth * contact_normal;
                     let change_0 = (velocity_change / mass[0], angular_velocity_change_0);
-                    MachConstraintSolver::update_rigid_body(&mut rigid_body_0, integrator, change_0, time_step, correction);
+                    MachConstraintSolver::update_rigid_body::<I, T>(&mut rigid_body_0, integrator, change_0, time_step, correction);
 
                     let change_1 = (-velocity_change / mass[1], angular_velocity_change_1);
-                    MachConstraintSolver::update_rigid_body(&mut rigid_body_1, integrator, change_1, 0.0, -correction);
+                    MachConstraintSolver::update_rigid_body::<I, T>(&mut rigid_body_1, integrator, change_1, 0.0, -correction);
                 },
 
                 (DynamicBodyRefMut::Rigid(mut rigid_body), DynamicBodyRefMut::Fixed(_fixed_body)) => {
@@ -202,7 +202,7 @@ impl MachConstraintSolver {
 
                     let correction = -0.5 * penetration_depth * contact_normal;
                     let change = (velocity_change / rigid_body.mass(), angular_velocity_change);
-                    MachConstraintSolver::update_rigid_body(&mut rigid_body, integrator, change, 0.0, correction);
+                    MachConstraintSolver::update_rigid_body::<I, T>(&mut rigid_body, integrator, change, 0.0, correction);
                 },
 
                 _otherwise => panic!("unhandled body combination"),
@@ -210,7 +210,7 @@ impl MachConstraintSolver {
         }
     }
 
-    fn update_rigid_body<I, N, T>(rigid_body: &mut RigidBodyRefMut<N, T>, integrator: &I, change: (Vec3D, Vec3D), remaining_time: Scalar, correction: Vec3D) where I: Integrator, N: Narrowphase {
+    fn update_rigid_body<I, T>(rigid_body: &mut RigidBodyRefMut<T>, integrator: &I, change: (Vec3D, Vec3D), remaining_time: Scalar, correction: Vec3D) where I: Integrator, T: DynamicBody {
         *rigid_body.velocity_mut() += change.0;
         *rigid_body.angular_velocity_mut() += change.1;
         *rigid_body.translation_mut() += correction;
@@ -220,9 +220,9 @@ impl MachConstraintSolver {
     }
 }
 
-impl<I, N, T> ConstraintSolver<I, N, T> for MachConstraintSolver where I: Integrator, N: Narrowphase, T: 'static {
-    fn solve_with_contacts(&mut self, contacts: &Vec<Contact<N, DynamicBodyType<T>>>, integrator: &I, time_step: Scalar) {
-        let (mut problem, friction_directions) = MachConstraintSolver::formulate_lcp(contacts, time_step);
+impl<I, T> ConstraintSolver<I, T> for MachConstraintSolver where I: Integrator, T: DynamicBody {
+    fn solve_with_contacts(&mut self, contacts: &Vec<Contact<T>>, integrator: &I, time_step: Scalar) {
+        let (mut problem, friction_directions) = MachConstraintSolver::formulate_lcp::<T>(contacts, time_step);
 
         lcp_solvers::GaussSeidel.solve_in_place(&mut problem);
 
@@ -233,7 +233,7 @@ impl<I, N, T> ConstraintSolver<I, N, T> for MachConstraintSolver where I: Integr
 pub struct ImpulseSolver;
 
 impl ImpulseSolver {
-    pub fn compute_impulse_for_event<N, T>(contact: &Contact<N, DynamicBodyType<T>>) -> Scalar where N: Narrowphase, T: 'static {
+    pub fn compute_impulse_for_event<T>(contact: &Contact<T>) -> Scalar where T: DynamicBody {
         let contact_center = contact.point(0);
         let contact_normal = contact.normal();
         let body_0 = contact.handles().0.borrow();
@@ -244,18 +244,18 @@ impl ImpulseSolver {
 
         match (dynamic_body_0, dynamic_body_1) {
             (DynamicBodyRef::Rigid(rigid_body_0), DynamicBodyRef::Rigid(rigid_body_1)) => {
-                ImpulseSolver::compute_rigid_rigid_impulse((&rigid_body_0, &rigid_body_1), contact_center, contact_normal)
+                ImpulseSolver::compute_rigid_rigid_impulse::<T>((&rigid_body_0, &rigid_body_1), contact_center, contact_normal)
             },
 
             (DynamicBodyRef::Rigid(rigid_body), DynamicBodyRef::Fixed(fixed_body)) => {
-                ImpulseSolver::compute_rigid_fixed_impulse((&rigid_body, &fixed_body), contact_center, contact_normal)
+                ImpulseSolver::compute_rigid_fixed_impulse::<T>((&rigid_body, &fixed_body), contact_center, contact_normal)
             },
 
             _otherwise => panic!("unhandled body combination"),
         }
     }
 
-    fn compute_rigid_rigid_impulse<N, T>(bodies: (&RigidBodyRef<N, T>, &RigidBodyRef<N, T>), center: Vec3D, normal: UnitVec3D) -> Scalar where N: Narrowphase {
+    fn compute_rigid_rigid_impulse<T>(bodies: (&RigidBodyRef<T>, &RigidBodyRef<T>), center: Vec3D, normal: UnitVec3D) -> Scalar where T: DynamicBody {
         let epsilon = bodies.0.restitution_coefficient() *
             bodies.1.restitution_coefficient();
         let mass_inverse = (bodies.0.mass_inverse(), bodies.1.mass_inverse());
@@ -283,7 +283,7 @@ impl ImpulseSolver {
         - (1.0 + epsilon) * numerator / denominator
     }
 
-    fn compute_rigid_fixed_impulse<N, T>((rigid_body, fixed_body): (&RigidBodyRef<N, T>, &FixedBodyRef<N, T>), center: Vec3D, normal: UnitVec3D) -> Scalar where N: Narrowphase {
+    fn compute_rigid_fixed_impulse<T>((rigid_body, fixed_body): (&RigidBodyRef<T>, &FixedBodyRef<T>), center: Vec3D, normal: UnitVec3D) -> Scalar where T: DynamicBody {
         let epsilon = rigid_body.restitution_coefficient() *
             fixed_body.restitution_coefficient();
         let to_contact_center = center - rigid_body.translation();

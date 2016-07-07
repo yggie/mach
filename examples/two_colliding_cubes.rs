@@ -13,7 +13,7 @@ impl Simulation for TwoCollidingCubes {
         "Two Colliding Cubes"
     }
 
-    fn setup<N>(&mut self, world: &mut mach::World<N, ()>) -> Result<(), String> where N: mach::collisions::Narrowphase {
+    fn setup(&mut self, world: &mut mach::World<mach::MachBody<()>>) -> Result<(), String> {
         world.create_rigid_body(mach::dynamics::RigidBodyDef {
             mass: 1.0,
             shape: Box::new(mach::shapes::Cuboid::cube(1.0)),
@@ -31,21 +31,10 @@ impl Simulation for TwoCollidingCubes {
             .. mach::dynamics::RigidBodyDef::default()
         }, ());
 
-        // world.add_rigid_body(prototype.clone()
-        //     .with_mass(1.0)
-        //     .with_translation(0.0, 0.0, 3.0)
-        //     .with_velocity(0.0, 0.0, -1.0));
-        //
-        // world.add_rigid_body(prototype.clone()
-        //     .with_mass(2.0)
-        //     .with_translation(0.0, 0.0, -3.0)
-        //     .with_axis_angle(mach::Vec3D::new(1.0, 0.0, 1.0).normalize(), 1.0)
-        //     .with_velocity(0.0, 0.0, 1.0));
-
         return Ok(());
     }
 
-    fn update<N>(&mut self, world: &mut mach::World<N, ()>) -> Result<Vec<mach::collisions::Contact<N, mach::dynamics::DynamicBodyType<()>>>, String> where N: mach::collisions::Narrowphase {
+    fn update(&mut self, world: &mut mach::World<mach::MachBody<()>>) -> Result<Vec<mach::collisions::Contact<mach::MachBody<()>>>, String> {
         // let total_kinetic_energy = world.rigid_bodies_iter().fold(0.0, |total, rigid_body| {
         //     total + rigid_body.mass() * rigid_body.velocity().length_sq()
         // });

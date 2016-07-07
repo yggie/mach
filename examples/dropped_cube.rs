@@ -16,7 +16,7 @@ impl Simulation for DroppedCube {
         "Dropped Cube"
     }
 
-    fn setup<N>(&mut self, world: &mut mach::World<N, ()>) -> Result<(), String> where N: mach::collisions::Narrowphase {
+    fn setup(&mut self, world: &mut mach::World<mach::MachBody<()>>) -> Result<(), String> {
         world.set_gravity(mach::Vec3D::new(0.0, 0.0, -0.5));
 
         let mut rng = rand::StdRng::from_seed(&[1, 2, 3, 4]);
@@ -77,7 +77,7 @@ impl Simulation for DroppedCube {
         return Ok(());
     }
 
-    fn update<N>(&mut self, world: &mut mach::World<N, ()>) -> Result<Vec<mach::collisions::Contact<N, mach::dynamics::DynamicBodyType<()>>>, String> where N: mach::collisions::Narrowphase {
+    fn update(&mut self, world: &mut mach::World<mach::MachBody<()>>) -> Result<Vec<mach::collisions::Contact<mach::MachBody<()>>>, String> {
         return Ok(world.update(0.05));
     }
 }

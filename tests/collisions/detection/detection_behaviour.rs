@@ -9,9 +9,11 @@ macro_rules! assert_new_detection_behaviour {
 
             use {ID, PI, Scalar};
             use maths::{CrossProduct, DotProduct, Transform, UnitVec3D, UnitQuat, Vec3D};
+            use utils::Handle;
             use shapes::{Cuboid, Shape};
-            use collisions::{Body, BodyDef, BodyHandle, Detection};
-            use collisions::narrowphase::NullNarrowphase;
+            use collisions::{Body, BodyDef, CollisionBody, Detection};
+
+            use tests::support::TestBody;
 
             #[test]
             fn it_does_not_return_false_positives() {
@@ -215,12 +217,12 @@ macro_rules! assert_new_detection_behaviour {
                 quickcheck::quickcheck(property as fn(UnitVec3D, UnitQuat));
             }
 
-            fn validate<D>(input: D) -> D where D: Detection<NullNarrowphase, ()> {
+            fn validate<D>(input: D) -> D where D: Detection<TestBody> {
                 input
             }
 
-            fn handle<S>(shape: S, transform: Transform) -> BodyHandle<NullNarrowphase, ()> where S: Shape + 'static {
-                BodyHandle::new(Body::new(ID(0), BodyDef {
+            fn handle<S>(shape: S, transform: Transform) -> Handle<TestBody> where S: Shape + 'static {
+                Handle::new(Body::new(ID(0), BodyDef {
                     shape: Box::new(shape),
                     rotation: transform.rotation,
                     translation: transform.translation,

@@ -1,7 +1,8 @@
-use collisions::{BodyData, CollisionData};
+use collisions::CollisionData;
+use collisions::narrowphase::{NarrowphaseRef, NarrowphaseRefMut};
 
 pub trait Narrowphase: 'static + Clone {
-    fn new(data: &CollisionData) -> Self;
-    fn test(body_0: &BodyData<Self>, body_1: &BodyData<Self>) -> bool;
-    fn update(body: &mut BodyData<Self>);
+    fn new(body: &CollisionData) -> Self;
+    fn test(ref_0: NarrowphaseRef<Self>, ref_1: NarrowphaseRef<Self>) -> bool;
+    fn update(data: NarrowphaseRefMut<Self>);
 }

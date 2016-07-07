@@ -1,8 +1,8 @@
 assert_broadphase_behaviour! {
-    use collisions::Narrowphase;
+    use collisions::CollisionBody;
     use collisions::broadphase::BruteForceBroadphase;
 
-    pub fn test_subject<N, T>() -> BruteForceBroadphase<N, T> where N: Narrowphase {
+    pub fn test_subject<B>() -> BruteForceBroadphase<B> where B: CollisionBody {
         BruteForceBroadphase::new()
     }
 }
