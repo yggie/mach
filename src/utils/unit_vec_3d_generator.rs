@@ -17,10 +17,18 @@ impl UnitVec3DGenerator {
         }
     }
 
-    pub fn next(&mut self) -> UnitVec3D {
+    pub fn gen_next(&mut self) -> UnitVec3D {
         self.polar += POLAR_STEP;
         self.azimuth += AZIMUTH_STEP;
 
         UnitVec3D::from_angles(self.polar, self.azimuth)
+    }
+}
+
+impl Iterator for UnitVec3DGenerator {
+    type Item = UnitVec3D;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        Some(self.gen_next())
     }
 }

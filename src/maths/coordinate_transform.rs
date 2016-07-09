@@ -17,10 +17,10 @@ impl<'a> CoordinateTransform<'a> {
     pub fn from_plane(plane: &'a Plane) -> CoordinateTransform<'a> {
         let mut generator = UnitVec3DGenerator::new();
         let plane_normal = plane.normal();
-        let mut guess = generator.next();
+        let mut guess = generator.gen_next();
 
         while (1.0 - guess.dot(plane_normal).abs()) < TOLERANCE {
-            guess = generator.next();
+            guess = generator.gen_next();
         }
 
         let x_axis = plane_normal.cross(guess);

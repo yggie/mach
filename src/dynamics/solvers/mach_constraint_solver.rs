@@ -91,7 +91,7 @@ impl MachConstraintSolver {
             while !perpendicular_direction.squared_length().is_finite() {
                 // pick any arbitrary direction to avoid the singularity when
                 // relative velocity is aligned  with the contact normal
-                let guess = Vec3D::from(generator.next());
+                let guess = Vec3D::from(generator.gen_next());
                 perpendicular_direction = rel_vel.cross(guess).normalize();
             };
             let friction_direction = -contact_normal.cross(perpendicular_direction);

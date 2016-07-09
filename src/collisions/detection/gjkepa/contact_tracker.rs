@@ -2,8 +2,8 @@
 #[path="../../../../tests/collisions/detection/gjkepa/contact_tracker_test.rs"]
 mod tests;
 
-use maths::{ApproxEq, Vec3D};
-use utils::UnitVec3DGenerator;
+use maths::Vec3D;
+use utils::{UniqueVec3DGenerator, UnitVec3DGenerator};
 use collisions::CollisionData;
 use collisions::detection::gjkepa::{GJKSimplex, MinkowskiDifference};
 
@@ -15,27 +15,28 @@ pub struct ContactTracker {
 impl ContactTracker {
     pub fn new(data_0: &CollisionData, data_1: &CollisionData) -> ContactTracker {
         let diff = MinkowskiDifference(data_0, data_1);
-        let mut vertices: Vec<Vec3D> = Vec::with_capacity(4);
         let mut generator = UnitVec3DGenerator::new();
 
-        while vertices.len() != 4 {
-            let guess = Vec3D::from(generator.next());
+        let mut counter = 0;
+        while counter < 1000 {
+            let unique_vertices_iter = UniqueVec3DGenerator::new(|| {
+                let guess = Vec3D::from(generator.gen_next());
 
-            let candidate_point = diff.support_point(guess);
+                diff.support_point(guess)
+            });
 
-            if !vertices.iter().any(|point| point.approx_eq(candidate_point)) {
-                vertices.push(candidate_point);
+            let unique_vertices: Vec<Vec3D> = unique_vertices_iter.take(4).collect();
+
+            if let Ok(simplex) = GJKSimplex::from_vertices(unique_vertices[0], unique_vertices[1], unique_vertices[2], unique_vertices[3]) {
+                return ContactTracker {
+                    simplex: simplex,
+                };
             }
+
+            counter += 1;
         }
 
-        return ContactTracker {
-            simplex: GJKSimplex::new(
-                vertices[0],
-                vertices[1],
-                vertices[2],
-                vertices[3],
-            ),
-        };
+        panic!("took more than 1000 iterations to construct a GJKSimplex");
     }
 
     #[inline(always)]

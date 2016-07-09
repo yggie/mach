@@ -128,6 +128,6 @@ impl<'a> IterativeAlgorithm for GJK<'a> {
             return;
         }
 
-        self.simplex.vertices[not_on_plane_index] = new_support_point;
+        *self.simplex.vertex_mut(not_on_plane_index) = new_support_point;
     }
 }

@@ -2,9 +2,9 @@
 #[path="../../../tests/collisions/geometry/polyhedron_test.rs"]
 mod tests;
 
-use maths::{ApproxEq, Approximations, CrossProduct, DotProduct, UnitVec3D, Vec3D};
-use utils::{compute_surfaces_for_convex_hull, UnitVec3DGenerator};
-use collisions::geometry::{ConvexHull3D, Face, Plane};
+use maths::{ApproxEq, CrossProduct, DotProduct, UnitVec3D, Vec3D};
+use utils::{is_coplanar, compute_surfaces_for_convex_hull, UnitVec3DGenerator};
+use collisions::geometry::{ConvexHull3D, Face};
 
 #[derive(Debug)]
 pub struct Polyhedron {
@@ -30,7 +30,7 @@ impl Polyhedron {
                 // Err(other_errors) => return Err(other_errors),
             }
 
-            let next_direction = generator.next();
+            let next_direction = generator.gen_next();
             let next_point = point_generator(next_direction);
 
             if !vertices.iter().any(|point| point.approx_eq(next_point)) {
@@ -129,19 +129,9 @@ fn validate_enough_points(vertices: &[Vec3D]) -> Result<(), PolyhedronError> {
 }
 
 fn validate_points_are_not_coplanar(vertices: &[Vec3D]) -> Result<(), PolyhedronError> {
-    let mut remaining_points = vertices.iter();
-    let first = remaining_points.next().unwrap();
-    let second = remaining_points.next().unwrap();
-    let third = remaining_points.next().unwrap();
-
-    let normal = (second - first).cross(third - first).normalize();
-    let plane = Plane::new(first.clone(), normal);
-
-    for &point in remaining_points {
-        if !plane.normal_projection_of(point).is_approximately_zero() {
-            return Ok(())
-        }
+    if is_coplanar(vertices) {
+        Err(PolyhedronError::CoplanarPoints)
+    } else {
+        Ok(())
     }
-
-    Err(PolyhedronError::CoplanarPoints)
 }

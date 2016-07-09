@@ -2,7 +2,6 @@ extern crate quickcheck;
 
 use std::collections::HashSet;
 
-use TOLERANCE;
 use maths::Approximations;
 use maths::_2d::Vec2D;
 use collisions::geometry::_2d::{Plane2D, Polygon};

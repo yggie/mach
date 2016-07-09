@@ -1,6 +1,7 @@
 extern crate quickcheck;
 
 use maths::{Approximations, Transform, UnitQuat, Vec3D};
+use utils::is_coplanar;
 use algorithms::{Execute, PanicOnIteration};
 use collisions::CollisionData;
 use collisions::geometry::shapes::Cuboid;
@@ -68,7 +69,7 @@ fn assert_valid_simplex(tracker: &ContactTracker) {
     let simplex = tracker.simplex();
 
     for (out_of_plane_index, plane) in simplex.separating_planes_with_index_of_out_of_plane_point_iter() {
-        let vertex = simplex.vertices[out_of_plane_index];
+        let vertex = *simplex.vertex(out_of_plane_index);
         match plane.normal_projection_of(vertex) {
             x if x.is_strictly_positive() =>
                 panic!(format!("{:?} is degenerate, a separating plane is pointing in the wrong direction", tracker)),
@@ -78,5 +79,9 @@ fn assert_valid_simplex(tracker: &ContactTracker) {
             _otherwise =>
                 panic!(format!("{:?} is degenerate, all points are on the same plane", tracker)),
         }
+    }
+
+    if is_coplanar(simplex.vertices()) {
+        panic!(format!("{:?} is degenerate, all vertices are coplanar", simplex));
     }
 }
