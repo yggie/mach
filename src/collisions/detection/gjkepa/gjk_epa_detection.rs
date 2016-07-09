@@ -2,7 +2,7 @@
 #[path="../../../../tests/collisions/detection/gjkepa/gjk_epa_detection_test.rs"]
 mod tests;
 
-use {ID, INFINITY, Scalar, TOLERANCE};
+use {ID, Scalar, TOLERANCE};
 use maths::{Approximations, Vec3D};
 use utils::Handle;
 use algorithms::{Execute, IterativeAlgorithm, PanicOnIteration};
@@ -58,7 +58,6 @@ impl<B> Detection<B> for GJKEPADetection where B: CollisionBody {
 pub struct GJK<'a> {
     diff: MinkowskiDifference<'a>,
     simplex: &'a mut GJKSimplex,
-    last_max_distance: Scalar,
     intersection_tolerance: Scalar,
     converged_success_result: Option<bool>,
 }
@@ -72,7 +71,6 @@ impl<'a> GJK<'a> {
         GJK {
             diff: diff,
             simplex: simplex,
-            last_max_distance: INFINITY,
             intersection_tolerance: intersection_tolerance,
             converged_success_result: None,
         }
@@ -107,13 +105,16 @@ impl<'a> IterativeAlgorithm for GJK<'a> {
 
                 (not_on_plane_index, plane, projection)
             })
-            .filter(|&(_not_on_plane_index, ref _plane, projection)| projection > self.intersection_tolerance + TOLERANCE && projection < self.last_max_distance)
+            .filter(|&(_not_on_plane_index, ref _plane, projection)| {
+                projection > self.intersection_tolerance + TOLERANCE
+            })
             // TODO find out if this would have issues with precision
-            .min_by_key(|&(_not_on_plane_index, ref _plane, projection)| (projection / TOLERANCE) as i32)
-            .map(|(not_on_plane_index, plane, _projection)| (not_on_plane_index, plane));
+            .max_by_key(|&(_not_on_plane_index, ref _plane, projection)| (projection / TOLERANCE) as i32);
 
         let (not_on_plane_index, plane) = match next_guess {
-            Some(data) => data,
+            Some((not_on_plane_index, plane, _projection)) => {
+                (not_on_plane_index, plane)
+            },
 
             None => {
                 self.converged_success_result = Some(true);
