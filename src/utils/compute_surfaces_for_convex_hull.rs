@@ -76,6 +76,7 @@ pub fn compute_surfaces_for_convex_hull(vertices: &Vec<Vec3D>) -> Vec<Surface> {
     return surfaces;
 }
 
+#[derive(Debug)]
 enum Result {
     Free(usize, usize),
     OnEdge(usize, usize),

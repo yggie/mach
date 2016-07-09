@@ -1,6 +1,6 @@
 use maths::Vec3D;
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct ConvexHull3D(Vec<Vec3D>);
 
 impl ConvexHull3D {

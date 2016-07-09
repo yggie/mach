@@ -19,9 +19,14 @@ pub struct EPA<'a> {
 
 impl<'a> EPA<'a> {
     pub fn new(simplex: &GJKSimplex, data_0: &'a CollisionData, data_1: &'a CollisionData) -> EPA<'a> {
+        let diff = MinkowskiDifference(data_0, data_1);
+        let polyhedron = Polyhedron::convex_hull_using_generator(&simplex.vertices, |direction| {
+            diff.support_point(Vec3D::from(direction))
+        }).expect("expected a valid polyhedron to be generated but was not");
+
         EPA {
-            diff: MinkowskiDifference(data_0, data_1),
-            polyhedron: Polyhedron::convex_hull(&simplex.vertices),
+            diff: diff,
+            polyhedron: polyhedron,
             has_converged: false,
         }
     }

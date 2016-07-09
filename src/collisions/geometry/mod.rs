@@ -18,7 +18,7 @@ pub mod shapes;
 pub use self::line::Line;
 pub use self::face::Face;
 pub use self::plane::Plane;
-pub use self::polyhedron::Polyhedron;
+pub use self::polyhedron::{Polyhedron, PolyhedronError};
 pub use self::convex_hull::ConvexHull3D;
 pub use self::support_map::SupportMap;
 pub use self::intersection::Intersection;
