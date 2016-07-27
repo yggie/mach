@@ -1,4 +1,3 @@
-use collisions::{CollisionBody, Narrowphase};
 use dynamics::{DynamicBody, DynamicBodyExtension, FixedBodyRef, FixedBodyRefMut, RigidBodyRef, RigidBodyRefMut};
 
 pub enum DynamicBodyRef<'a, T> where T: DynamicBody {

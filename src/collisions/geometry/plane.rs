@@ -1,5 +1,5 @@
 use Scalar;
-use maths::{DotProduct, UnitVec3D, Vec3D};
+use maths::{CrossProduct, DotProduct, UnitVec3D, Vec3D};
 
 #[derive(Clone, Debug)]
 pub struct Plane {
@@ -12,6 +12,18 @@ impl Plane {
         Plane {
             normal: normal,
             reference_point: point,
+        }
+    }
+
+    pub fn from_counter_clockwise_points(a: Vec3D, b: Vec3D, c: Vec3D) -> Plane {
+        let edge_ab = b - a;
+        let edge_ac = c - a;
+
+        let normal = edge_ab.cross(edge_ac).normalize();
+
+        Plane {
+            normal: normal,
+            reference_point: a,
         }
     }
 

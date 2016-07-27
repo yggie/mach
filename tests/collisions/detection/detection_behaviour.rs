@@ -1,4 +1,4 @@
-macro_rules! assert_new_detection_behaviour {
+macro_rules! assert_detection_behaviour {
     ( $( $lines:item )+ ) => {
         $( $lines )+
 
@@ -17,7 +17,7 @@ macro_rules! assert_new_detection_behaviour {
 
             #[test]
             fn it_does_not_return_false_positives() {
-                fn property(random_direction: UnitVec3D, rot: UnitQuat) {
+                fn property(random_direction: UnitVec3D, rot: UnitQuat) -> quickcheck::TestResult {
                     let mut detection = validate(test_subject());
                     let cube_size = 1.0;
                     let margin_ratio = 0.05;
@@ -33,12 +33,14 @@ macro_rules! assert_new_detection_behaviour {
                         }
                     );
 
-                    let result = detection.compute_contacts(&control, &test_body);
+                    if let Some(contacts) = detection.compute_contacts(&control, &test_body) {
+                        return quickcheck::TestResult::error(format!("expected no contacts to be returned, but found some = {:?}", contacts));
+                    }
 
-                    assert!(result.is_none());
+                    quickcheck::TestResult::passed()
                 }
 
-                quickcheck::quickcheck(property as fn(UnitVec3D, UnitQuat));
+                quickcheck::quickcheck(property as fn(UnitVec3D, UnitQuat) -> quickcheck::TestResult);
             }
 
             #[test]

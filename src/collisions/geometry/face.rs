@@ -18,9 +18,9 @@ impl<'a> Face<'a> {
 
     #[inline(always)]
     pub fn normal(&self) -> UnitVec3D {
-        let vertex_0 = self.vertices[self.indices[0]];
-        let vertex_1 = self.vertices[self.indices[1]];
-        let vertex_2 = self.vertices[self.indices[2]];
+        let vertex_0 = self.vertex(0);
+        let vertex_1 = self.vertex(1);
+        let vertex_2 = self.vertex(2);
 
         (vertex_2 - vertex_1).cross(vertex_0 - vertex_1).normalize()
     }

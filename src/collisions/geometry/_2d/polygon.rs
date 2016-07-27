@@ -130,3 +130,9 @@ fn index_of_furthest_along(points: &Vec<Vec2D>, normal: &UnitVec2D) -> usize {
 
     return index;
 }
+
+impl From<Polygon> for Vec<Vec2D> {
+    fn from(polygon: Polygon) -> Vec<Vec2D> {
+        polygon.0
+    }
+}

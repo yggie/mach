@@ -2,7 +2,7 @@ use Scalar;
 use maths::{lcp_solvers, CrossProduct, DotProduct, LCP, LCPSolver, Matrix, UnitVec3D, Vec3D};
 use utils::UnitVec3DGenerator;
 use dynamics::{ConstraintSolver, DynamicBody, DynamicBodyRef, DynamicBodyRefMut, FixedBodyRef, Integrator, RigidBodyRef, RigidBodyRefMut};
-use collisions::{Contact, Narrowphase};
+use collisions::Contact;
 
 static NUM_COMPONENTS: usize = 2;
 

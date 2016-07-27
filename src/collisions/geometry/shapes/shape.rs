@@ -1,5 +1,4 @@
 use std::fmt;
-use std::ops::Deref;
 
 use {Scalar, TOLERANCE};
 use maths::{Matrix, Vec3D};
@@ -48,7 +47,7 @@ impl Clone for Box<Shape> {
     }
 }
 
-impl<T> SupportMap for T where T: Deref<Target=Shape> {
+impl SupportMap for Box<Shape> {
     fn support_points_iter<'b>(&'b self, direction: Vec3D) -> Box<Iterator<Item=Vec3D> + 'b> {
         let vec = self.support_indices_for(direction).iter()
             .map(|&index| self.vertex(index))

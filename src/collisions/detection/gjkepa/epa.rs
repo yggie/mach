@@ -5,29 +5,54 @@ mod tests;
 use {NEG_INFINITY, Scalar};
 use maths::{Approximations, CoordinateTransform, Vec3D};
 use maths::_2d::Vec2D;
+use utils::compute_surfaces_for_convex_hull;
 use algorithms::IterativeAlgorithm;
 use collisions::{CollisionData, ContactSet, SupportMap};
-use collisions::geometry::{Intersection, Line, Plane, Polyhedron};
+use collisions::geometry::{ConvexPolyhedron, Intersection, Line, Plane};
 use collisions::geometry::_2d::{Line2D, Polygon};
 use collisions::detection::gjkepa::{GJKSimplex, MinkowskiDifference};
 
 pub struct EPA<'a> {
     diff: MinkowskiDifference<'a>,
-    polyhedron: Polyhedron,
+    vertices: Vec<Vec3D>,
     has_converged: bool,
+    triangulated_faces: Vec<[usize; 3]>,
 }
 
 impl<'a> EPA<'a> {
     pub fn new(simplex: &GJKSimplex, data_0: &'a CollisionData, data_1: &'a CollisionData) -> EPA<'a> {
         let diff = MinkowskiDifference(data_0, data_1);
-        let polyhedron = Polyhedron::convex_hull_using_generator(simplex.vertices(), |direction| {
-            diff.support_point(Vec3D::from(direction))
-        }).expect("expected a valid polyhedron to be generated but was not");
+        let vertices: Vec<Vec3D> = simplex.vertices().iter().cloned().collect();
+        let triangulated_faces_original = [
+            [0, 1, 2],
+            [0, 1, 3],
+            [0, 2, 3],
+            [1, 2, 3],
+        ];
+
+        let centroid = 0.25 * vertices.iter()
+            .fold(Vec3D::zero(), |total, vertex| total + vertex);
+        let triangulated_faces: Vec<[usize; 3]> = triangulated_faces_original.iter()
+            .map(|triangulation| {
+                let plane = Plane::from_counter_clockwise_points(
+                    vertices[triangulation[0]],
+                    vertices[triangulation[1]],
+                    vertices[triangulation[2]],
+                );
+
+                if plane.normal_projection_of(centroid) < 0.0 {
+                    *triangulation
+                } else {
+                    [triangulation[0], triangulation[2], triangulation[1]]
+                }
+            })
+            .collect();
 
         EPA {
             diff: diff,
-            polyhedron: polyhedron,
+            vertices: vertices,
             has_converged: false,
+            triangulated_faces: triangulated_faces,
         }
     }
 }
@@ -38,7 +63,9 @@ impl<'a> IterativeAlgorithm for EPA<'a> {
     fn result(self) -> Self::Result {
         EPAPolyhedron {
             diff: self.diff,
-            polyhedron: self.polyhedron,
+            polyhedron: unsafe {
+                ConvexPolyhedron::from_triangulation(self.vertices, self.triangulated_faces)
+            },
         }
     }
 
@@ -51,11 +78,19 @@ impl<'a> IterativeAlgorithm for EPA<'a> {
             return;
         }
 
-        let candidate_point = self.polyhedron.faces_iter()
-            .filter_map(|face| {
-                let new_support_point = self.diff.support_point(Vec3D::from(face.normal()));
+        // TODO the triangulated faces never change order, so we can skip work
+        // by filtered values in the next iteration
+        let candidate = self.triangulated_faces.iter()
+            .filter_map(|triangulation| {
+                let plane = Plane::from_counter_clockwise_points(
+                    self.vertices[triangulation[0]],
+                    self.vertices[triangulation[1]],
+                    self.vertices[triangulation[2]],
+                );
 
-                if face.normal_projection_of(new_support_point).is_strictly_positive() {
+                let new_support_point = self.diff.support_point(Vec3D::from(plane.normal()));
+
+                if plane.normal_projection_of(new_support_point).is_strictly_positive() {
                     Some(new_support_point)
                 } else {
                     None
@@ -63,9 +98,33 @@ impl<'a> IterativeAlgorithm for EPA<'a> {
             })
             .next();
 
-        match candidate_point {
-            Some(vertex) => {
-                self.polyhedron.add_vertex(vertex);
+        match candidate {
+            Some(new_support_point) => {
+                self.vertices.push(new_support_point);
+
+                let mid_point = self.vertices.iter()
+                    .fold(Vec3D::zero(), |total, vertex| {
+                        total + vertex
+                    }) / self.vertices.len() as Scalar;
+
+                let surfaces = compute_surfaces_for_convex_hull(&self.vertices);
+                self.triangulated_faces = surfaces.into_iter()
+                    .map(|surface| {
+                        let mut node_guess = surface.nodes;
+
+                        let plane = Plane::from_counter_clockwise_points(
+                            self.vertices[node_guess[0]],
+                            self.vertices[node_guess[1]],
+                            self.vertices[node_guess[2]],
+                        );
+
+                        if plane.normal_projection_of(mid_point).is_strictly_positive() {
+                            node_guess = [node_guess[0], node_guess[2], node_guess[1]];
+                        }
+
+                        node_guess
+                    })
+                    .collect();
             },
 
             None => self.has_converged = true,
@@ -75,7 +134,7 @@ impl<'a> IterativeAlgorithm for EPA<'a> {
 
 pub struct EPAPolyhedron<'a> {
     diff: MinkowskiDifference<'a>,
-    polyhedron: Polyhedron,
+    polyhedron: ConvexPolyhedron,
 }
 
 impl<'a> EPAPolyhedron<'a> {
@@ -203,7 +262,7 @@ impl<'a> EPAPolyhedron<'a> {
         );
     }
 
-    pub fn polyhedron(&self) -> &Polyhedron {
+    pub fn polyhedron(&self) -> &ConvexPolyhedron {
         &self.polyhedron
     }
 }

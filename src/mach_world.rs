@@ -8,7 +8,7 @@ use utils::{Ref, Handle};
 use dynamics::{DynamicBodyExtension, FixedBodyDef, RigidBodyDef};
 use dynamics::solvers::MachConstraintSolver;
 use dynamics::integrators::SemiImplicitEuler;
-use collisions::{Body, CollisionBody, Contact};
+use collisions::{Body, Contact};
 use collisions::detection::GJKEPADetection;
 use collisions::broadphase::BruteForceBroadphase;
 use collisions::narrowphase::NullNarrowphase;

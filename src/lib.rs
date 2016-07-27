@@ -4,6 +4,10 @@
 #![crate_name = "mach"]
 #![crate_type = "lib"]
 
+#[cfg(test)]
+#[macro_use]
+extern crate quickcheck;
+
 // TODO: renable this, undergoing lots of changes, docs will just slow me down
 // #![warn(missing_docs)]
 

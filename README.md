@@ -1,6 +1,7 @@
 # Mach Physics engine
 
 [![Build Status](https://travis-ci.org/yggie/mach.svg?branch=master)](https://travis-ci.org/yggie/mach)
+[![Clippy Linting Result](https://clippy.bashy.io/github/yggie/mach/master/badge.svg)](https://clippy.bashy.io/github/yggie/mach/master/log)
 [![License](https://img.shields.io/badge/license-MIT-yellow.svg)](#license)
 
 An open source 3D physics engine. A reincarnation of my old physics engine:

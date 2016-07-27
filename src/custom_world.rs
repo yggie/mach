@@ -4,7 +4,7 @@ use {Scalar, World};
 use maths::Vec3D;
 use utils::{Ref, RefMut, Handle};
 use dynamics::{ConstraintSolver, DynamicBody, DynamicBodyExtension, FixedBodyData, FixedBodyDef, Integrator, RigidBodyData, RigidBodyDef, RigidBodyRefMut};
-use collisions::{BodyDef, Broadphase, CollisionBody, CollisionGroup, CollisionObjectSpace, Contact, Detection, Narrowphase};
+use collisions::{BodyDef, Broadphase, CollisionBody, CollisionGroup, Contact, Detection};
 
 pub struct CustomWorld<B, C, D, E, I, T> where
         B: Broadphase<T>,

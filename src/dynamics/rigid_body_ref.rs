@@ -1,6 +1,6 @@
 use Scalar;
 use maths::{Matrix, Vec3D};
-use collisions::{BodyData, CollisionBody, Narrowphase};
+use collisions::BodyData;
 use dynamics::{DynamicBody, DynamicBodyRef, DynamicBodyRefMut, Integratable, RigidBodyData};
 
 pub struct RigidBodyRef<'a, T>(&'a BodyData<T::Narrowphase>, &'a RigidBodyData<<T as DynamicBody>::Extension>) where T: DynamicBody;

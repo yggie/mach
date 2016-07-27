@@ -7,7 +7,7 @@ macro_rules! assert_collision_object_space_behaviour {
 
             use ID;
             use utils::Handle;
-            use collisions::{BodyDef, CollisionBody, CollisionGroup, CollisionObjectSpace, Narrowphase};
+            use collisions::{BodyDef, CollisionBody, CollisionGroup, CollisionObjectSpace};
 
             use tests::support::TestBody;
             use super::test_subject;

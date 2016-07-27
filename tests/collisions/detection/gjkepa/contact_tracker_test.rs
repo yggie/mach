@@ -70,14 +70,16 @@ fn assert_valid_simplex(tracker: &ContactTracker) {
 
     for (out_of_plane_index, plane) in simplex.separating_planes_with_index_of_out_of_plane_point_iter() {
         let vertex = *simplex.vertex(out_of_plane_index);
-        match plane.normal_projection_of(vertex) {
+        let projection = plane.normal_projection_of(vertex);
+
+        match projection {
             x if x.is_strictly_positive() =>
-                panic!(format!("{:?} is degenerate, a separating plane is pointing in the wrong direction", tracker)),
+                panic!(format!("{:?} is degenerate, a separating plane is pointing in the wrong direction (projection = {})", tracker, projection)),
 
             x if x.is_strictly_negative() => (),
 
             _otherwise =>
-                panic!(format!("{:?} is degenerate, all points are on the same plane", tracker)),
+                panic!(format!("{:?} is degenerate, all points are on the same plane (projection = {})", tracker, projection)),
         }
     }
 

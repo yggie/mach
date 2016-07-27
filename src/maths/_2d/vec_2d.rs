@@ -122,6 +122,24 @@ impl DotProduct<Vec2D> for Vec2D {
     }
 }
 
+impl ApproxEq for Vec2D {
+    fn approx_eq(self, other: Self) -> bool {
+        (&self).approx_eq(&other)
+    }
+}
+
+impl<'a> ApproxEq<&'a Vec2D> for Vec2D {
+    fn approx_eq(self, other: &'a Vec2D) -> bool {
+        (&self).approx_eq(other)
+    }
+}
+
+impl<'a> ApproxEq<Vec2D> for &'a Vec2D {
+    fn approx_eq(self, other: Vec2D) -> bool {
+        self.approx_eq(&other)
+    }
+}
+
 impl<'a> ApproxEq for &'a Vec2D {
     fn approx_eq(self, other: Self) -> bool {
         (self - other).squared_length() < TOLERANCE
