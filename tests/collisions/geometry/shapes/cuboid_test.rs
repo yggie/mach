@@ -1,5 +1,8 @@
-use maths::Vec3D;
+extern crate quickcheck;
+
+use maths::{UnitVec3D, Vec3D};
 use collisions::geometry::shapes::{Shape, Cuboid};
+use collisions::geometry::behaviour::support_map_behaviour;
 
 #[test]
 fn instantiating_with_dimensions() {
@@ -56,4 +59,12 @@ fn computing_the_volume() {
     let c = Cuboid::new(2.0, 3.0, 4.0);
 
     assert_eq!(c.volume(), 24.0);
+}
+
+quickcheck! {
+    fn it_behaves_like_a_support_map(cuboid: Cuboid, direction: UnitVec3D) -> quickcheck::TestResult {
+        quickcheck_expect!(support_map_behaviour(Box::new(cuboid) as Box<Shape>, direction));
+
+        quickcheck::TestResult::passed()
+    }
 }

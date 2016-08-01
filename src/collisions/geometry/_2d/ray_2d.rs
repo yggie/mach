@@ -1,5 +1,5 @@
 #[cfg(test)]
-#[path="../../../../tests/support/geometry/_2d/arbitrary_ray_2d.rs"]
+#[path="../../../../tests/support/collisions/geometry/_2d/arbitrary_ray_2d.rs"]
 mod arbitrary;
 
 use Scalar;

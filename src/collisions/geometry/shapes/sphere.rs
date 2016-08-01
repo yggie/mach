@@ -1,3 +1,11 @@
+#[cfg(test)]
+#[path="../../../../tests/collisions/geometry/shapes/sphere_test.rs"]
+mod tests;
+
+#[cfg(test)]
+#[path="../../../../tests/support/collisions/geometry/shapes/arbitrary_sphere.rs"]
+mod arbitrary;
+
 use std::fmt;
 
 use {Scalar, PI, TOLERANCE};

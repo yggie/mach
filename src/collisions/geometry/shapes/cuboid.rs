@@ -1,6 +1,10 @@
 #[cfg(test)]
 #[path="../../../../tests/collisions/geometry/shapes/cuboid_test.rs"]
-mod cuboid_test;
+mod tests;
+
+#[cfg(test)]
+#[path="../../../../tests/support/collisions/geometry/shapes/arbitrary_cuboid.rs"]
+mod arbitrary;
 
 use std::fmt;
 

@@ -1,6 +1,10 @@
 ///! The `geometry` module defines useful structs and functions for operating on
 ///! geometry primitives.
 
+#[cfg(test)]
+#[path="../../../tests/collisions/geometry/support_map_behaviour.rs"]
+pub mod behaviour;
+
 mod line;
 mod face;
 mod plane;
