@@ -3,7 +3,7 @@
 mod tests;
 
 use {NEG_INFINITY, Scalar};
-use maths::{Approximations, CoordinateTransform, Vec3D};
+use maths::{ApproxEq, Approximations, CoordinateTransform, Vec3D};
 use maths::_2d::Vec2D;
 use utils::compute_surfaces_for_convex_hull;
 use algorithms::IterativeAlgorithm;
@@ -88,13 +88,16 @@ impl<'a> IterativeAlgorithm for EPA<'a> {
                     self.vertices[triangulation[2]],
                 );
 
-                let new_support_point = self.diff.support_point(Vec3D::from(plane.normal()));
-
-                if plane.normal_projection_of(new_support_point).is_strictly_positive() {
-                    Some(new_support_point)
-                } else {
-                    None
-                }
+                // TODO this should only return points on the boundary support
+                // points
+                self.diff.support_points_iter(Vec3D::from(plane.normal()))
+                    .filter(|&point| {
+                        // I don’t know why, but the uniqueness test is still
+                        // required
+                        !self.vertices.iter().any(|vertex| vertex.approx_eq(point)) &&
+                            plane.normal_projection_of(point).is_strictly_positive()
+                    })
+                    .next()
             })
             .next();
 

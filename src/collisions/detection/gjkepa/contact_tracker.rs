@@ -5,6 +5,7 @@ mod tests;
 use maths::Vec3D;
 use utils::{UniqueVec3DGenerator, UnitVec3DGenerator};
 use collisions::CollisionData;
+use collisions::geometry::SupportMap;
 use collisions::detection::gjkepa::{GJKSimplex, MinkowskiDifference};
 
 #[derive(Clone, Debug)]
@@ -22,7 +23,7 @@ impl ContactTracker {
             let unique_vertices_iter = UniqueVec3DGenerator::new(|| {
                 let guess = Vec3D::from(generator.gen_next());
 
-                diff.support_point(guess)
+                diff.support_points_iter(guess).next().unwrap()
             });
 
             let unique_vertices: Vec<Vec3D> = unique_vertices_iter.take(4).collect();

@@ -2,6 +2,7 @@ use {Scalar, TOLERANCE};
 use maths::{Approximations, Vec3D};
 use algorithms::IterativeAlgorithm;
 use collisions::CollisionData;
+use collisions::geometry::SupportMap;
 use collisions::detection::gjkepa::{GJKSimplex, MinkowskiDifference};
 
 pub struct GJK<'a> {
@@ -71,7 +72,9 @@ impl<'a> IterativeAlgorithm for GJK<'a> {
             },
         };
 
-        let new_support_point = self.diff.support_point(Vec3D::from(plane.normal()));
+        let new_support_point = self.diff.support_points_iter(Vec3D::from(plane.normal()))
+            .next()
+            .unwrap();
 
         if !plane.normal_projection_of(new_support_point).is_strictly_positive() {
             self.converged_success_result = Some(false);

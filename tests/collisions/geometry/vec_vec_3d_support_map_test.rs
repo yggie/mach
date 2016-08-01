@@ -16,7 +16,7 @@ quickcheck! {
 }
 
 quickcheck! {
-    fn it_produces_support_points_which_are_deterministic(input_points: VariableSizeVec<Vec3D, One, Ten>, input_directions: VariableSizeVec<UnitVec3D, One, Ten>) -> quickcheck::TestResult {
+    fn it_computes_support_points_which_are_deterministic(input_points: VariableSizeVec<Vec3D, One, Ten>, input_directions: VariableSizeVec<UnitVec3D, One, Ten>) -> quickcheck::TestResult {
         let points = input_points.to_vec();
         let directions = input_directions.to_vec();
 
@@ -100,6 +100,31 @@ quickcheck! {
             .collect();
 
         assert_points_form_a_boundary(boundary_support_points, input_direction)
+    }
+}
+
+quickcheck! {
+    fn it_computes_boundary_support_points_which_are_deterministic(input_points: VariableSizeVec<Vec3D, One, Ten>, input_directions: VariableSizeVec<UnitVec3D, One, Ten>) -> quickcheck::TestResult {
+        let points = input_points.to_vec();
+        let directions = input_directions.to_vec();
+
+        let initial_solutions: Vec<Vec<Vec3D>> = directions.iter()
+            .map(|&direction| {
+                points.boundary_support_points_iter(Vec3D::from(direction))
+                    .collect::<Vec<Vec3D>>()
+            })
+            .collect();
+
+        for _ in 0..2 {
+            for (index, &direction) in directions.iter().enumerate() {
+                let solution: Vec<Vec3D> = points.boundary_support_points_iter(Vec3D::from(direction))
+                    .collect();
+
+                assert_approx_matching!(&initial_solutions[index], &solution);
+            }
+        }
+
+        quickcheck::TestResult::passed()
     }
 }
 
