@@ -9,7 +9,7 @@ quickcheck! {
     fn it_always_produces_at_least_one_support_point(input_points: VariableSizeVec<Vec3D, One, Ten>, direction: UnitVec3D) -> quickcheck::TestResult {
         let points = input_points.to_vec();
 
-        assert_in_quickcheck!(points.support_points_iter(Vec3D::from(direction)).count() > 0, format!("expected at least one support point in direction {:?} but found none", direction));
+        quickcheck_assert!(points.support_points_iter(Vec3D::from(direction)).count() > 0, format!("expected at least one support point in direction {:?} but found none", direction));
 
         return quickcheck::TestResult::passed();
     }
@@ -51,20 +51,20 @@ quickcheck! {
             let expected_support_point = support_points[0];
 
             let unique_support_point_option = points.unique_support_point(direction);
-            assert_in_quickcheck!(
+            quickcheck_assert!(
                 unique_support_point_option.is_some(),
                 format!("expected to find {:?} as a unique support point, but instead got nothing", expected_support_point),
             );
 
             let unique_support_point = unique_support_point_option.unwrap();
-            assert_in_quickcheck!(
+            quickcheck_assert!(
                 unique_support_point.approx_eq(expected_support_point),
                 format!("expected unique support point {:?} to equal {:?}", unique_support_point, expected_support_point),
             );
         } else {
             let option = points.unique_support_point(direction);
 
-            assert_in_quickcheck!(
+            quickcheck_assert!(
                 option.is_none(),
                 format!("expected a unique support point not to exist, but instead got {:?}", option.unwrap()),
             );
@@ -83,7 +83,7 @@ quickcheck! {
         let boundary_support_points: Vec<Vec3D> = points.support_points_iter(direction)
             .collect();
 
-        assert_in_quickcheck!(
+        quickcheck_assert!(
             boundary_support_points.is_subset_of(&support_points),
             format!("expected {:?} to be a strict subset of {:?}, but was not", boundary_support_points, support_points),
         );
@@ -166,7 +166,7 @@ fn assert_points_form_a_boundary(original_boundary_support_points: Vec<Vec3D>, d
             }
         }
 
-        assert_in_quickcheck!(
+        quickcheck_assert!(
             marked_for_removal.is_some(),
             format!("expected all boundary support points to exist strictly on the boundary but found {:?} which is not on the boundary of the set {:?}", tracking_head, boundary_support_points),
         );

@@ -63,6 +63,10 @@ impl ConvexPolyhedron {
         Box::new(self.vertices().iter())
     }
 
+    pub fn triangulation_iter<'a>(&'a self) -> Box<Iterator<Item=&[usize; 3]> + 'a> {
+        Box::new(self.triangulated_faces.iter())
+    }
+
     pub fn faces_iter<'a>(&'a self) -> Box<Iterator<Item=Face<'a>> + 'a> {
         let iterator = self.triangulated_faces.iter()
             .map(move |indices| {

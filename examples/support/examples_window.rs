@@ -5,7 +5,7 @@ extern crate glium;
 use std;
 
 use self::glium::glutin;
-use self::glium::{DisplayBuild, Surface};
+use self::glium::DisplayBuild;
 use self::glium::backend::glutin_backend::GlutinFacade;
 
 use support::{Camera, ExamplesRenderer, ExamplesRunner, ExampleWorld, FrameMetadata, SceneEnv, Simulation, WindowEventHandler};

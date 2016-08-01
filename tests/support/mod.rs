@@ -1,7 +1,9 @@
 #[macro_use]
 mod assert_approx_eq;
 #[macro_use]
-mod assert_in_quickcheck;
+mod quickcheck_assert;
+#[macro_use]
+mod quickcheck_expect;
 #[macro_use]
 mod assert_approx_matching;
 #[macro_use]
