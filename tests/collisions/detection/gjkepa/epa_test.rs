@@ -10,6 +10,40 @@ use collisions::geometry::ConvexPolyhedron;
 use collisions::geometry::shapes::Cuboid;
 use collisions::detection::gjkepa::{ContactTracker, EPA, GJK, GJKSimplex};
 
+// TODO fix this failing scenario
+// #[test]
+// fn failing_test_test() {
+//     // TODO FIXME FIXME FIXME
+//     temp(Quat::new(0.99956876, -0.015006613, -0.00038310335, 0.025238236).normalize());
+//     fn temp(rot: UnitQuat) -> quickcheck::TestResult {
+//         let control = CollisionData::new(Box::new(Cuboid::cube(1.0)), Transform::identity());
+//         let data = CollisionData::new(
+//             Box::new(Cuboid::cube(1.0)),
+//             Transform {
+//                 translation: Vec3D::zero(),
+//                 rotation: rot.into(),
+//             }
+//         );
+//
+//         let mut contact_tracker = ContactTracker::new(&control, &data);
+//         let simplex = find_origin(&mut contact_tracker, &control, &data)
+//             .expect("Expected simplex to contain origin but it did not");
+//
+//         let epa_polyhedron = EPA::new(simplex, &control, &data)
+//             .panic_on_iteration(1000, "EPA failed to converge after 1000 iterations (in test)")
+//             .execute();
+//         let polyhedron = epa_polyhedron.polyhedron();
+//
+//         // assert_vertices_are_subset_of_input(&polyhedron, &vertices)
+//         quickcheck_expect!(has_enough_faces(&polyhedron));
+//         quickcheck_expect!(edges_are_only_connected_to_two_faces(&polyhedron));
+//         quickcheck_expect!(all_points_are_on_the_convex_hull(&polyhedron));
+//         quickcheck_expect!(all_faces_are_pointing_outwards(&polyhedron));
+//
+//         quickcheck::TestResult::passed()
+//     }
+// }
+
 quickcheck! {
     fn it_generates_valid_convex_polyhedron(rot: UnitQuat) -> quickcheck::TestResult {
         let control = CollisionData::new(Box::new(Cuboid::cube(1.0)), Transform::identity());
