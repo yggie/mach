@@ -5,6 +5,7 @@ mod tests;
 use ID;
 use utils::{Handle, Ref, RefMut};
 use collisions::{BodyDef, Broadphase, CollisionBody, CollisionGroup, CloseProximityPair, CollisionObjectSpace, MachCollisionObjectSpace, Narrowphase};
+use collisions::geometry::Ray;
 
 pub struct BruteForceBroadphase<B>(MachCollisionObjectSpace<B>) where B: CollisionBody;
 
@@ -91,5 +92,9 @@ impl<B> Broadphase<B> for BruteForceBroadphase<B> where B: CollisionBody {
         }
 
         return Box::new(pairs.into_iter());
+    }
+
+    fn cast_ray<'a>(&'a self, ray: Ray) -> Option<Ref<'a, B>> {
+        None
     }
 }

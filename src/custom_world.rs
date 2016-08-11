@@ -5,6 +5,7 @@ use maths::Vec3D;
 use utils::{Ref, RefMut, Handle};
 use dynamics::{ConstraintSolver, DynamicBody, DynamicBodyExtension, FixedBodyData, FixedBodyDef, Integrator, RigidBodyData, RigidBodyDef, RigidBodyRefMut};
 use collisions::{BodyDef, Broadphase, CollisionBody, CollisionGroup, Contact, Detection};
+use collisions::geometry::Ray;
 
 pub struct CustomWorld<B, C, D, E, I, T> where
         B: Broadphase<T>,
@@ -118,5 +119,9 @@ impl<B, C, D, E, I, T> World<T> for CustomWorld<B, C, D, E, I, T> where
             rotation: def.rotation,
             translation: def.translation,
         }, DynamicBodyExtension::Fixed(Box::new(fixed_body_data)))
+    }
+
+    fn cast_ray<'a>(&'a self, ray: Ray) -> Option<Ref<'a, T>> {
+        self.broadphase.cast_ray(ray)
     }
 }

@@ -9,6 +9,7 @@ use dynamics::{DynamicBodyExtension, FixedBodyDef, RigidBodyDef};
 use dynamics::solvers::MachConstraintSolver;
 use dynamics::integrators::SemiImplicitEuler;
 use collisions::{Body, Contact};
+use collisions::geometry::Ray;
 use collisions::detection::GJKEPADetection;
 use collisions::broadphase::BruteForceBroadphase;
 use collisions::narrowphase::NullNarrowphase;
@@ -54,5 +55,9 @@ impl<E> World<MachBody<E>> for MachWorld<E> {
 
     fn create_fixed_body(&mut self, def: FixedBodyDef, extra: E) -> Handle<MachBody<E>> {
         self.0.create_fixed_body(def, extra)
+    }
+
+    fn cast_ray<'a>(&'a self, ray: Ray) -> Option<Ref<'a, MachBody<E>>> {
+        self.0.cast_ray(ray)
     }
 }

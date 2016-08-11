@@ -3,7 +3,7 @@ extern crate quickcheck;
 use std::collections::HashMap;
 
 use Scalar;
-use maths::{Approximations, Quat, Transform, UnitQuat, Vec3D};
+use maths::{Approximations, Transform, UnitQuat, Vec3D};
 use algorithms::{Execute, PanicOnIteration};
 use collisions::CollisionData;
 use collisions::geometry::ConvexPolyhedron;

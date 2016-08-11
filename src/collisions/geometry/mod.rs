@@ -5,7 +5,7 @@
 #[path="../../../tests/collisions/geometry/support_map_behaviour.rs"]
 pub mod behaviour;
 
-mod line;
+mod ray;
 mod face;
 mod plane;
 mod support_map;
@@ -18,7 +18,7 @@ pub mod intersection;
 pub mod _2d;
 pub mod shapes;
 
-pub use self::line::Line;
+pub use self::ray::Ray;
 pub use self::face::Face;
 pub use self::plane::Plane;
 pub use self::support_map::SupportMap;

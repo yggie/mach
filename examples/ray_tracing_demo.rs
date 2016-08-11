@@ -5,8 +5,14 @@ extern crate time;
 
 mod raytracing;
 
-use mach::{MachWorld, UnitVec3D, Vec3D};
+use mach::{CollisionObjectSpace, MachWorld, UnitVec3D, Vec3D, World};
 use raytracing::{Color, DirectionalLight, Importable, PointLight, RayTracer, RayTracingRenderer, SceneGeometry, SceneParams};
+
+fn main() {
+    let renderer = RayTracingRenderer::<RayTracingDemo>::import_from("examples/assets/scene6.txt").unwrap();
+
+    raytracing::render(renderer);
+}
 
 struct RayTracingDemo {
     world: MachWorld<()>,
@@ -25,11 +31,12 @@ impl RayTracer for RayTracingDemo {
                     // TODO not ideal!
                     let average = (x + y + z) / 3.0;
 
-                    // world.create_fixed_body();
-                    // world.add_static_body(mach::StaticBody::default()
-                    //     .with_shape(mach::shapes::Sphere::new(average))
-                    //     .with_translation_vect(object.position)
-                    //     .with_rotation(object.rotation));
+                    world.create_fixed_body(mach::dynamics::FixedBodyDef {
+                        shape: Box::new(mach::collisions::geometry::shapes::Sphere::new(average)),
+                        rotation: object.rotation,
+                        translation: object.position,
+                        .. mach::dynamics::FixedBodyDef::default()
+                    }, ());
                 }
             }
         }
@@ -42,15 +49,16 @@ impl RayTracer for RayTracingDemo {
         }
     }
 
-    fn shoot_ray(&self, _start: Vec3D, direction: UnitVec3D) -> Color {
-        let d = Vec3D::from(direction);
+    fn shoot_ray(&self, source: Vec3D, direction: UnitVec3D) -> Color {
+        let ray = mach::collisions::geometry::Ray::new(source, direction);
+        match self.world.cast_ray(ray) {
+            Some(body) => {
+                let d = Vec3D::from(direction);
+                Color::new(d.x.abs() as f32, d.y.abs() as f32, d.z.abs() as f32)
+            },
 
-        Color::new(d.x.abs() as f32, d.y.abs() as f32, d.z.abs() as f32)
+            // TODO take from background?
+            _otherwise => Color::new(0.0, 0.0, 0.0),
+        }
     }
-}
-
-fn main() {
-    let renderer = RayTracingRenderer::<RayTracingDemo>::import_from("examples/assets/scene6.txt").unwrap();
-
-    raytracing::render(renderer);
 }

@@ -8,7 +8,7 @@ use maths::_2d::Vec2D;
 use utils::compute_surfaces_for_convex_hull;
 use algorithms::IterativeAlgorithm;
 use collisions::{CollisionData, ContactSet, SupportMap};
-use collisions::geometry::{ConvexPolyhedron, Intersection, Line, Plane};
+use collisions::geometry::{ConvexPolyhedron, Intersection, Plane, Ray};
 use collisions::geometry::_2d::{Line2D, Polygon};
 use collisions::detection::gjkepa::{GJKSimplex, MinkowskiDifference};
 
@@ -195,11 +195,11 @@ impl<'a> EPAPolyhedron<'a> {
             },
 
             (Feature::Edge(vertex_00, vertex_01), Feature::Edge(vertex_10, vertex_11)) => {
-                let line_0 = Line::from_points(vertex_00, vertex_01);
-                let line_1 = Line::from_points(vertex_10, vertex_11);
+                let ray_0 = Ray::from_points(vertex_00, vertex_01);
+                let ray_1 = Ray::from_points(vertex_10, vertex_11);
 
                 // TODO does this need a depth correction?
-                let contact_point = line_0.closest_point_to_line(&line_1);
+                let contact_point = Ray::closest_point_to_rays(&ray_0, &ray_1);
 
                 ContactSet::new(
                     Plane::new(contact_point - contact_normal * penetration_depth, contact_normal),
