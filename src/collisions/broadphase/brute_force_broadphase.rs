@@ -94,7 +94,7 @@ impl<B> Broadphase<B> for BruteForceBroadphase<B> where B: CollisionBody {
         return Box::new(pairs.into_iter());
     }
 
-    fn cast_ray<'a>(&'a self, ray: Ray) -> Option<Ref<'a, B>> {
-        None
+    fn cast_ray<'a>(&'a self, ray: Ray) -> Box<Iterator<Item=Ref<B>> + 'a> {
+        self.bodies_iter()
     }
 }

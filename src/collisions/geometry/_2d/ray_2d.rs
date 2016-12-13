@@ -5,6 +5,7 @@ mod arbitrary;
 use Scalar;
 use maths::DotProduct;
 use maths::_2d::{UnitVec2D, Vec2D};
+use collisions::geometry::Geometry;
 use collisions::geometry::_2d::Plane2D;
 
 #[derive(Clone, Debug)]
@@ -12,6 +13,8 @@ pub struct Ray2D {
     source: Vec2D,
     direction: UnitVec2D,
 }
+
+impl Geometry for Ray2D {}
 
 impl Ray2D {
     pub fn new(source: Vec2D, direction: UnitVec2D) -> Ray2D {

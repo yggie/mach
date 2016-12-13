@@ -74,7 +74,7 @@ impl LCP {
 
     #[inline]
     pub fn apply_constraints(&self, index: usize, value: Scalar) -> Scalar {
-        self.value_constraints[index](self, value)
+        (*self.value_constraints[index])(self, value)
     }
 }
 

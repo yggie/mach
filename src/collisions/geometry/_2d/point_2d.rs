@@ -7,8 +7,12 @@ use std::ops::Deref;
 
 use maths::_2d::Vec2D;
 
+use collisions::geometry::Geometry;
+
 #[derive(Clone, Debug)]
 pub struct Point2D(pub Vec2D);
+
+impl Geometry for Point2D {}
 
 impl From<Point2D> for Vec2D {
     fn from(point: Point2D) -> Vec2D {

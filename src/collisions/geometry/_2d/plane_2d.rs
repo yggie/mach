@@ -5,12 +5,15 @@ mod tests;
 use Scalar;
 use maths::DotProduct;
 use maths::_2d::{UnitVec2D, Vec2D};
+use collisions::geometry::Geometry;
 
 #[derive(Clone, Debug)]
 pub struct Plane2D {
     normal: UnitVec2D,
     reference_point: Vec2D,
 }
+
+impl Geometry for Plane2D {}
 
 impl Plane2D {
     pub fn new(reference_point: Vec2D, normal: UnitVec2D) -> Plane2D {

@@ -4,6 +4,7 @@ use std::collections::HashMap;
 
 use {Scalar, NEG_INFINITY, TOLERANCE};
 use maths::{DotProduct, Matrix, Vec3D};
+use collisions::geometry::Geometry;
 use collisions::geometry::shapes::{Shape, ShapeRef};
 
 /// A `TriangleMesh` object represents a mesh of triangles, built from a set of
@@ -14,6 +15,8 @@ pub struct TriangleMesh {
     elements: Rc<Vec<(usize, usize, usize)>>,
     unique_nodes: Vec<usize>,
 }
+
+impl Geometry for TriangleMesh {}
 
 impl TriangleMesh {
     /// Constructs a new `TriangleMesh` using the provided vertices and element

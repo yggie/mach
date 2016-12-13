@@ -5,8 +5,8 @@ extern crate time;
 
 mod raytracing;
 
-use mach::{CollisionObjectSpace, MachWorld, UnitVec3D, Vec3D, World};
-use raytracing::{Color, DirectionalLight, Importable, PointLight, RayTracer, RayTracingRenderer, SceneGeometry, SceneParams};
+use mach::{CollisionObjectSpace, DynamicBody, MachWorld, UnitVec3D, Vec3D, World};
+use raytracing::{Color, DirectionalLight, Importable, PointLight, RayTracer, RayTracingRenderer, SceneGeometry, SceneObject, SceneParams};
 
 fn main() {
     let renderer = RayTracingRenderer::<RayTracingDemo>::import_from("examples/assets/scene6.txt").unwrap();
@@ -15,7 +15,7 @@ fn main() {
 }
 
 struct RayTracingDemo {
-    world: MachWorld<()>,
+    world: MachWorld<Box<SceneObject>>,
     point_lights: Vec<PointLight>,
     max_ray_bounces: usize,
     directional_lights: Vec<DirectionalLight>,
@@ -36,7 +36,7 @@ impl RayTracer for RayTracingDemo {
                         rotation: object.rotation,
                         translation: object.position,
                         .. mach::dynamics::FixedBodyDef::default()
-                    }, ());
+                    }, Box::new(object.clone()));
                 }
             }
         }
@@ -53,8 +53,9 @@ impl RayTracer for RayTracingDemo {
         let ray = mach::collisions::geometry::Ray::new(source, direction);
         match self.world.cast_ray(ray) {
             Some(body) => {
-                let d = Vec3D::from(direction);
-                Color::new(d.x.abs() as f32, d.y.abs() as f32, d.z.abs() as f32)
+                // TODO calculate this based on the combination of appropriate
+                // colors etc.
+                body.extension_data().ambient
             },
 
             // TODO take from background?

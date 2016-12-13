@@ -122,6 +122,6 @@ impl<B, C, D, E, I, T> World<T> for CustomWorld<B, C, D, E, I, T> where
     }
 
     fn cast_ray<'a>(&'a self, ray: Ray) -> Option<Ref<'a, T>> {
-        self.broadphase.cast_ray(ray)
+        self.broadphase.cast_ray(ray).next()
     }
 }

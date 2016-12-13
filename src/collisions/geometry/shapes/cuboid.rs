@@ -10,6 +10,7 @@ use std::fmt;
 
 use {Scalar, TOLERANCE};
 use maths::{ApproxEq, DotProduct, Matrix, Vec3D};
+use collisions::geometry::Geometry;
 use collisions::geometry::shapes::{Shape, ShapeRef};
 
 /// A representation of a cuboid in 3 dimensions.
@@ -18,6 +19,8 @@ pub struct Cuboid {
     dimensions: Vec3D,
     vertices: [Vec3D; 8],
 }
+
+impl Geometry for Cuboid {}
 
 impl Cuboid {
     /// Constructs a new `Cuboid` with the given dimensions.

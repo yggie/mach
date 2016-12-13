@@ -3,10 +3,11 @@ use std::fmt;
 use {Scalar, TOLERANCE};
 use maths::{Matrix, Vec3D};
 use collisions::SupportMap;
+use collisions::geometry::Geometry;
 use collisions::geometry::shapes::ShapeRef;
 
 /// Defines the traits for all geometric property descriptions.
-pub trait Shape: fmt::Debug {
+pub trait Shape: Geometry + fmt::Debug {
     fn downcast<'a>(&'a self) -> ShapeRef<'a>;
 
     /// Computes the volume for the shape.

@@ -10,6 +10,7 @@ use std::fmt;
 
 use {Scalar, PI, TOLERANCE};
 use maths::{Matrix, Vec3D};
+use collisions::geometry::Geometry;
 use collisions::geometry::shapes::{Shape, ShapeRef};
 
 /// A representation of a sphere in 3 dimensions.
@@ -17,6 +18,8 @@ use collisions::geometry::shapes::{Shape, ShapeRef};
 pub struct Sphere {
     radius: Scalar,
 }
+
+impl Geometry for Sphere {}
 
 impl Sphere {
     /// Constructs a new `Sphere` with the radius provided.

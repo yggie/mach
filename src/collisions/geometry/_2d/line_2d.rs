@@ -1,7 +1,7 @@
 use {Scalar, TOLERANCE};
 use maths::DotProduct;
 use maths::_2d::{UnitVec2D, Vec2D};
-use collisions::geometry::LineProjection;
+use collisions::geometry::{Geometry, LineProjection};
 use collisions::geometry::_2d::{Plane2D, Ray2D};
 
 #[derive(Clone, Debug)]
@@ -9,6 +9,8 @@ pub struct Line2D {
     pub start: Vec2D,
     pub end: Vec2D,
 }
+
+impl Geometry for Line2D {}
 
 // TODO eventually replace with specialization once supported: see https://github.com/rust-lang/rust/issues/31844
 #[macro_export]

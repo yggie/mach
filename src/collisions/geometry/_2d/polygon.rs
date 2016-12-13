@@ -7,10 +7,13 @@ use std::collections::HashSet;
 use {PI, Scalar};
 use maths::{Approximations, DotProduct};
 use maths::_2d::{UnitVec2D, Vec2D};
+use collisions::geometry::Geometry;
 use collisions::geometry::_2d::{Edge2D, Plane2D};
 
 #[derive(Clone, Debug)]
 pub struct Polygon(Vec<Vec2D>);
+
+impl Geometry for Polygon {}
 
 impl Polygon {
     pub fn convex_hull_from_points(original_points: &Vec<Vec2D>) -> Result<Polygon, ()> {

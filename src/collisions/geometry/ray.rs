@@ -4,11 +4,14 @@ mod tests;
 
 use Scalar;
 use maths::{DotProduct, UnitVec3D, Vec3D};
+use collisions::geometry::Geometry;
 
 pub struct Ray {
     source: Vec3D,
     direction: UnitVec3D,
 }
+
+impl Geometry for Ray {}
 
 impl Ray {
     #[inline]
