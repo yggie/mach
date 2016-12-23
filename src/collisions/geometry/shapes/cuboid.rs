@@ -10,7 +10,7 @@ use std::fmt;
 
 use {Scalar, TOLERANCE};
 use maths::{ApproxEq, DotProduct, Matrix, Vec3D};
-use collisions::geometry::Geometry;
+use collisions::geometry::{Direction, Geometry};
 use collisions::geometry::shapes::{Shape, ShapeRef};
 
 /// A representation of a cuboid in 3 dimensions.
@@ -107,7 +107,9 @@ impl Shape for Cuboid {
         Box::new(self.vertices.iter().map(|&a| a))
     }
 
-    fn support_indices_for(&self, direction: Vec3D) -> Vec<usize> {
+    fn support_indices_for(&self, input_direction: Direction) -> Vec<usize> {
+        let direction = Vec3D::from(input_direction);
+
         let new_direction = Vec3D::new(
             direction.x/self.dimensions.x,
             direction.y/self.dimensions.y,

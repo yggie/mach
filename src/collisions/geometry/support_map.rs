@@ -3,11 +3,12 @@ use std::iter;
 use TOLERANCE;
 use maths::{ApproxEq, Approximations, CrossProduct, DotProduct, Vec3D};
 use utils::UnitVec3DGenerator;
+use collisions::geometry::Direction;
 
 pub trait SupportMap {
-    fn support_points_iter<'a>(&'a self, direction: Vec3D) -> Box<Iterator<Item=Vec3D> + 'a>;
+    fn support_points_iter<'a>(&'a self, direction: Direction) -> Box<Iterator<Item=Vec3D> + 'a>;
 
-    fn unique_support_point(&self, direction: Vec3D) -> Option<Vec3D> {
+    fn unique_support_point(&self, direction: Direction) -> Option<Vec3D> {
         let mut iterator = self.support_points_iter(direction);
         let possible_unique_point = iterator.next().unwrap();
         let remaining_count = iterator.count();
@@ -22,14 +23,14 @@ pub trait SupportMap {
     /// Returns support points which exist strictly on the boundary of the
     /// surface constructed from all support points projected on the plane
     /// described by the input direction
-    fn boundary_support_points_iter<'a>(&'a self, direction: Vec3D) -> Box<Iterator<Item=Vec3D> + 'a> {
+    fn boundary_support_points_iter<'a>(&'a self, direction: Direction) -> Box<Iterator<Item=Vec3D> + 'a> {
         let points: Vec<Vec3D> = self.support_points_iter(direction).collect();
 
         if points.len() <= 2 {
             return Box::new(points.into_iter());
         }
 
-        let unit_direction = direction.normalize();
+        let unit_direction = Vec3D::from(direction).normalize();
         let mut generator = UnitVec3DGenerator::new();
         let mut next_boundary_direction = || {
             generator.gen_next().cross(unit_direction)
@@ -39,7 +40,7 @@ pub trait SupportMap {
         while boundary_points.len() < 2 {
             let guess = next_boundary_direction();
 
-            if let Some(unique_support_point) = self.unique_support_point(Vec3D::from(guess)) {
+            if let Some(unique_support_point) = self.unique_support_point(Direction::from(guess)) {
                 if !boundary_points.iter().any(|point| point.approx_eq(unique_support_point)) {
                     boundary_points.push(unique_support_point);
                 }
@@ -54,7 +55,7 @@ pub trait SupportMap {
             let edge_direction = (point_b - point_a).normalize();
             let edge_normal = edge_direction.cross(unit_direction);
 
-            let mut support_points: Vec<Vec3D> = points.support_points_iter(Vec3D::from(edge_normal)).collect();
+            let mut support_points: Vec<Vec3D> = points.support_points_iter(Direction::from(edge_normal)).collect();
             let perp_distance_from_edge = (support_points[0] - point_a).dot(edge_normal);
 
             if !perp_distance_from_edge.is_strictly_positive() {
@@ -88,7 +89,9 @@ pub trait SupportMap {
 mod vec_tests;
 
 impl SupportMap for Vec<Vec3D> {
-    fn support_points_iter<'a>(&'a self, direction: Vec3D) -> Box<Iterator<Item=Vec3D> + 'a> {
+    fn support_points_iter<'a>(&'a self, input_direction: Direction) -> Box<Iterator<Item=Vec3D> + 'a> {
+        let direction = Vec3D::from(input_direction);
+
         if self.len() > 0 {
             let mut iterator = self.iter();
             let mut points: Vec<Vec3D> = vec!(*iterator.next().unwrap());

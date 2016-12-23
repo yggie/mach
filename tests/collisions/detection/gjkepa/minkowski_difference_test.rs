@@ -3,7 +3,7 @@ extern crate quickcheck;
 use TOLERANCE;
 use maths::{DotProduct, Transform, UnitQuat, UnitVec3D, Vec3D};
 use collisions::CollisionData;
-use collisions::geometry::SupportMap;
+use collisions::geometry::{Direction, SupportMap};
 use collisions::geometry::shapes::Cuboid;
 use collisions::geometry::behaviour::support_map_behaviour;
 use collisions::detection::gjkepa::MinkowskiDifference;
@@ -35,7 +35,7 @@ fn it_always_generates_a_valid_support_point() {
             .max_by_key(|vertex| (-vertex.dot(direction) / TOLERANCE) as i32)
             .unwrap();
 
-        let support_point = diff.support_points_iter(direction).next().unwrap();
+        let support_point = diff.support_points_iter(Direction::from(direction)).next().unwrap();
         let support_point_distance = support_point.dot(direction);
         let expected_support_point_distance =(max_control - max_neg_data).dot(direction);
 

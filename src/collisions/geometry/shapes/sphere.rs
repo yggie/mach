@@ -10,7 +10,7 @@ use std::fmt;
 
 use {Scalar, PI, TOLERANCE};
 use maths::{Matrix, Vec3D};
-use collisions::geometry::Geometry;
+use collisions::geometry::{Direction, Geometry};
 use collisions::geometry::shapes::{Shape, ShapeRef};
 
 /// A representation of a sphere in 3 dimensions.
@@ -68,7 +68,7 @@ impl Shape for Sphere {
         Box::new(Defer::new(Vec3D::zero()))
     }
 
-    fn support_indices_for(&self, _: Vec3D) -> Vec<usize> {
+    fn support_indices_for(&self, _: Direction) -> Vec<usize> {
         vec!(0)
     }
 

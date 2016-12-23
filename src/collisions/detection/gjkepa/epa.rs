@@ -8,7 +8,7 @@ use maths::_2d::Vec2D;
 use utils::compute_surfaces_for_convex_hull;
 use algorithms::IterativeAlgorithm;
 use collisions::{CollisionData, ContactSet, SupportMap};
-use collisions::geometry::{ConvexPolyhedron, Intersection, Plane, Ray};
+use collisions::geometry::{ConvexPolyhedron, Direction, Intersection, Plane, Ray};
 use collisions::geometry::_2d::{Line2D, Polygon};
 use collisions::detection::gjkepa::{GJKSimplex, MinkowskiDifference};
 
@@ -90,7 +90,7 @@ impl<'a> IterativeAlgorithm for EPA<'a> {
 
                 // TODO this should only return points on the boundary support
                 // points
-                self.diff.support_points_iter(Vec3D::from(plane.normal()))
+                self.diff.support_points_iter(Direction::from(plane.normal()))
                     .filter(|&point| {
                         // I don’t know why, but the uniqueness test is still
                         // required
@@ -160,14 +160,14 @@ impl<'a> EPAPolyhedron<'a> {
 
         let contact_normal = -closest_face.normal();
         let feature_0 = {
-            let vertices = self.diff.0.support_points_iter(-Vec3D::from(contact_normal))
+            let vertices = self.diff.0.support_points_iter(-Direction::from(contact_normal))
                 .collect::<Vec<Vec3D>>();
 
             Feature::from_vertices(vertices)
         };
 
         let feature_1 = {
-            let vertices = self.diff.1.support_points_iter( Vec3D::from(contact_normal))
+            let vertices = self.diff.1.support_points_iter( Direction::from(contact_normal))
                 .collect::<Vec<Vec3D>>();
 
             Feature::from_vertices(vertices)

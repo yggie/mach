@@ -4,7 +4,7 @@ use std::collections::HashMap;
 
 use {Scalar, NEG_INFINITY, TOLERANCE};
 use maths::{DotProduct, Matrix, Vec3D};
-use collisions::geometry::Geometry;
+use collisions::geometry::{Direction, Geometry};
 use collisions::geometry::shapes::{Shape, ShapeRef};
 
 /// A `TriangleMesh` object represents a mesh of triangles, built from a set of
@@ -95,7 +95,9 @@ impl Shape for TriangleMesh {
         Box::new(self.unique_nodes.iter().map(move |&i| self.vertices[i]))
     }
 
-    fn support_indices_for(&self, direction: Vec3D) -> Vec<usize> {
+    fn support_indices_for(&self, input_direction: Direction) -> Vec<usize> {
+        let direction = Vec3D::from(input_direction);
+
         // TODO iterate by face really
         self.vertices_iter()
             .enumerate()

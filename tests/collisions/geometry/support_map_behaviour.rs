@@ -1,10 +1,10 @@
 extern crate quickcheck;
 
 use maths::{ApproxEq, Approximations, CrossProduct, DotProduct, UnitVec3D, Vec3D};
-use collisions::geometry::SupportMap;
+use collisions::geometry::{Direction, SupportMap};
 
 pub fn support_map_behaviour<S>(subject: S, input: UnitVec3D) -> quickcheck::TestResult where S: SupportMap {
-    let direction = Vec3D::from(input);
+    let direction = Direction::from(input);
 
     quickcheck_expect!(always_produces_at_least_one_support_point(&subject, direction));
     quickcheck_expect!(computes_support_points_which_are_deterministic(&subject, direction));
@@ -16,18 +16,18 @@ pub fn support_map_behaviour<S>(subject: S, input: UnitVec3D) -> quickcheck::Tes
     quickcheck::TestResult::passed()
 }
 
-fn always_produces_at_least_one_support_point<S>(subject: &S, direction: Vec3D) -> quickcheck::TestResult where S: SupportMap {
-    quickcheck_assert!(subject.support_points_iter(Vec3D::from(direction)).count() > 0, format!("expected at least one support point in direction {:?} but found none", direction));
+fn always_produces_at_least_one_support_point<S>(subject: &S, direction: Direction) -> quickcheck::TestResult where S: SupportMap {
+    quickcheck_assert!(subject.support_points_iter(direction).count() > 0, format!("expected at least one support point in direction {:?} but found none", direction));
 
     quickcheck::TestResult::passed()
 }
 
-fn computes_support_points_which_are_deterministic<S>(subject: &S, direction: Vec3D) -> quickcheck::TestResult where S: SupportMap {
-    let initial_solution: Vec<Vec3D> = subject.support_points_iter(Vec3D::from(direction))
+fn computes_support_points_which_are_deterministic<S>(subject: &S, direction: Direction) -> quickcheck::TestResult where S: SupportMap {
+    let initial_solution: Vec<Vec3D> = subject.support_points_iter(direction)
         .collect();
 
     for _ in 0..2 {
-        let solution: Vec<Vec3D> = subject.support_points_iter(Vec3D::from(direction))
+        let solution: Vec<Vec3D> = subject.support_points_iter(direction)
             .collect();
 
         assert_approx_matching!(&initial_solution, &solution);
@@ -36,7 +36,7 @@ fn computes_support_points_which_are_deterministic<S>(subject: &S, direction: Ve
     quickcheck::TestResult::passed()
 }
 
-fn unique_support_points_are_a_strict_subset_of_the_support_points<S>(subject: &S, direction: Vec3D) -> quickcheck::TestResult where S: SupportMap {
+fn unique_support_points_are_a_strict_subset_of_the_support_points<S>(subject: &S, direction: Direction) -> quickcheck::TestResult where S: SupportMap {
     let support_points: Vec<Vec3D> = subject.support_points_iter(direction)
         .collect();
 
@@ -66,7 +66,7 @@ fn unique_support_points_are_a_strict_subset_of_the_support_points<S>(subject: &
     quickcheck::TestResult::passed()
 }
 
-fn boundary_support_points_are_a_strict_subset_of_the_support_points<S>(subject: &S, direction: Vec3D) -> quickcheck::TestResult where S: SupportMap {
+fn boundary_support_points_are_a_strict_subset_of_the_support_points<S>(subject: &S, direction: Direction) -> quickcheck::TestResult where S: SupportMap {
     let support_points: Vec<Vec3D> = subject.support_points_iter(direction)
         .collect();
     let boundary_support_points: Vec<Vec3D> = subject.support_points_iter(direction)
@@ -80,7 +80,7 @@ fn boundary_support_points_are_a_strict_subset_of_the_support_points<S>(subject:
     quickcheck::TestResult::passed()
 }
 
-fn boundary_support_points_are_strictly_on_the_expected_boundary<S>(subject: &S, direction: Vec3D) -> quickcheck::TestResult where S: SupportMap {
+fn boundary_support_points_are_strictly_on_the_expected_boundary<S>(subject: &S, direction: Direction) -> quickcheck::TestResult where S: SupportMap {
     let mut boundary_support_points: Vec<Vec3D> = subject.support_points_iter(direction)
         .collect();
 
@@ -89,7 +89,7 @@ fn boundary_support_points_are_strictly_on_the_expected_boundary<S>(subject: &S,
         let mut marked_for_removal: Option<usize> = None;
         for (index, &point) in boundary_support_points.iter().enumerate() {
             let edge = point - tracking_head;
-            let edge_normal = edge.cross(direction).normalize();
+            let edge_normal = edge.cross(Vec3D::from(direction)).normalize();
             let mut strictly_positive = true;
             let mut strictly_negative = true;
 
@@ -132,12 +132,12 @@ fn boundary_support_points_are_strictly_on_the_expected_boundary<S>(subject: &S,
     return quickcheck::TestResult::passed();
 }
 
-fn boundary_support_points_are_deterministic<S>(subject: &S, direction: Vec3D) -> quickcheck::TestResult where S: SupportMap {
-    let initial_solution: Vec<Vec3D> = subject.boundary_support_points_iter(Vec3D::from(direction))
+fn boundary_support_points_are_deterministic<S>(subject: &S, direction: Direction) -> quickcheck::TestResult where S: SupportMap {
+    let initial_solution: Vec<Vec3D> = subject.boundary_support_points_iter(direction)
         .collect();
 
     for _ in 0..2 {
-        let solution: Vec<Vec3D> = subject.boundary_support_points_iter(Vec3D::from(direction))
+        let solution: Vec<Vec3D> = subject.boundary_support_points_iter(direction)
             .collect();
 
         assert_approx_matching!(&initial_solution, &solution);

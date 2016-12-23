@@ -110,16 +110,6 @@ impl Transform {
     pub fn apply_to_point(&self, point: Vec3D) -> Vec3D {
         self.rotation().rotate(point) + self.translation()
     }
-
-    /// Applies the `Transform` on the `Vec3D` treating it as a direction.
-    pub fn apply_to_direction(&self, direction: Vec3D) -> Vec3D {
-        self.rotation().rotate(direction)
-    }
-
-    /// Applies the inverse of the transform to a direction.
-    pub fn apply_inverse_to_direction(&self, direction: Vec3D) -> Vec3D {
-        self.rotation().inverse().rotate(direction)
-    }
 }
 
 #[macro_export]

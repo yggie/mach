@@ -51,7 +51,7 @@ impl RayTracer for RayTracingDemo {
 
     fn shoot_ray(&self, source: Vec3D, direction: UnitVec3D) -> Color {
         let ray = mach::collisions::geometry::Ray::new(source, direction);
-        match self.world.cast_ray(ray) {
+        match self.world.cast_ray(&ray) {
             Some(body) => {
                 // TODO calculate this based on the combination of appropriate
                 // colors etc.

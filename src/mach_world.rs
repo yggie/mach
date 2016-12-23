@@ -57,7 +57,7 @@ impl<E> World<MachBody<E>> for MachWorld<E> {
         self.0.create_fixed_body(def, extra)
     }
 
-    fn cast_ray<'a>(&'a self, ray: Ray) -> Option<Ref<'a, MachBody<E>>> {
+    fn cast_ray<'a>(&'a self, ray: &Ray) -> Option<Ref<'a, MachBody<E>>> {
         self.0.cast_ray(ray)
     }
 }

@@ -1,5 +1,6 @@
 use maths::{Transform, Vec3D};
 use collisions::SupportMap;
+use collisions::geometry::Direction;
 use collisions::geometry::shapes::Shape;
 
 #[derive(Clone, Debug)]
@@ -51,9 +52,9 @@ impl CollisionData {
 }
 
 impl SupportMap for CollisionData {
-    fn support_points_iter<'a>(&'a self, direction: Vec3D) -> Box<Iterator<Item=Vec3D> + 'a> {
+    fn support_points_iter<'a>(&'a self, direction: Direction) -> Box<Iterator<Item=Vec3D> + 'a> {
         let transform = self.transform;
-        let new_direction = self.transform.apply_inverse_to_direction(direction);
+        let new_direction = direction.transform_with_inverse_of(&transform);
         let iterator = self.shape.support_points_iter(new_direction)
             .map(move |vertex| transform.apply_to_point(vertex));
 
