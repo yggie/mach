@@ -3,6 +3,8 @@ extern crate mach;
 mod camera;
 mod instance;
 mod primitives;
+#[path="../../support/simulation.rs"]
+mod simulation;
 mod polygon_model;
 mod frame_metadata;
 mod examples_window;
@@ -12,9 +14,6 @@ mod window_event_handler;
 
 pub mod polygons;
 
-/// TODO temporary workaround for the issue of rexporting traits, see https://github.com/rust-lang/rust/issues/16264
-#[path="../../support/simulation.rs"]
-pub mod simulation;
 
 pub use self::camera::Camera;
 pub use self::instance::{Instance, InstanceFactory};

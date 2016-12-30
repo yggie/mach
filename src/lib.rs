@@ -26,11 +26,9 @@ pub mod tests {
 #[path="../tests/worlds/world_behaviour.rs"]
 mod world_behaviour;
 
+mod world;
 mod mach_world;
 mod custom_world;
-
-/// TODO temporary workaround for the issue of rexporting traits, see https://github.com/rust-lang/rust/issues/16264
-pub mod world;
 
 #[macro_use]
 pub mod utils;

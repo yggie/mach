@@ -11,21 +11,14 @@ mod quat;
 mod vec_3d;
 mod matrix;
 mod unit_quat;
+mod approx_eq;
+mod lcp_solver;
+mod dot_product;
 mod unit_vec_3d;
+mod cross_product;
 mod sparse_matrix;
+mod approximations;
 mod coordinate_transform;
-
-/// TODO temporary workaround for the issue of rexporting traits, see https://github.com/rust-lang/rust/issues/16264
-pub mod approx_eq;
-/// TODO temporary workaround for the issue of rexporting traits, see https://github.com/rust-lang/rust/issues/16264
-pub mod lcp_solver;
-// /// TODO temporary workaround for the issue of rexporting traits, see https://github.com/rust-lang/rust/issues/16264
-/// TODO temporary workaround for the issue of rexporting traits, see https://github.com/rust-lang/rust/issues/16264
-pub mod dot_product;
-/// TODO temporary workaround for the issue of rexporting traits, see https://github.com/rust-lang/rust/issues/16264
-pub mod cross_product;
-/// TODO temporary workaround for the issue of rexporting traits, see https://github.com/rust-lang/rust/issues/16264
-pub mod approximations;
 
 pub mod _2d;
 pub mod lcp_solvers;

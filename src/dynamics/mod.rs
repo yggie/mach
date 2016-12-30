@@ -1,3 +1,4 @@
+mod dynamic_body;
 mod material_data;
 mod fixed_body_def;
 mod rigid_body_def;
@@ -10,9 +11,6 @@ mod dynamic_body_extension;
 
 pub mod solvers;
 pub mod integrators;
-
-/// TODO temporary workaround for the issue of rexporting traits, see https://github.com/rust-lang/rust/issues/16264
-pub mod dynamic_body;
 
 pub use self::solvers::ConstraintSolver;
 pub use self::integrators::{Integratable, Integrator};

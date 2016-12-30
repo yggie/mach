@@ -3,12 +3,10 @@
 mod cuboid;
 mod sphere;
 mod shape_ref;
+mod convex_shape;
 mod intersections;
 mod triangle_mesh;
 mod convex_polyhedron;
-
-/// TODO temporary workaround for the issue of rexporting traits, see https://github.com/rust-lang/rust/issues/16264
-pub mod convex_shape;
 
 pub use self::convex_shape::ConvexShape;
 pub use self::sphere::Sphere;

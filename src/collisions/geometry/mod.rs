@@ -12,10 +12,8 @@ mod point;
 mod geometry;
 mod direction;
 mod support_map;
+mod intersection;
 mod line_projection;
-
-/// TODO temporary workaround for the issue of rexporting traits, see https://github.com/rust-lang/rust/issues/16264
-pub mod intersection;
 
 pub mod _2d;
 pub mod convex_shapes;

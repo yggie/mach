@@ -9,17 +9,13 @@ mod assert_approx_matching;
 #[macro_use]
 mod assert_properties_for_actions;
 
+mod action;
+mod property;
 mod result_handle;
+mod property_checker;
 mod arbitrary_radians;
 mod variable_size_vec;
 mod arbitrary_positive_scalar;
-
-/// TODO temporary workaround for the issue of rexporting traits, see https://github.com/rust-lang/rust/issues/16264
-pub mod action;
-/// TODO temporary workaround for the issue of rexporting traits, see https://github.com/rust-lang/rust/issues/16264
-pub mod property;
-/// TODO temporary workaround for the issue of rexporting traits, see https://github.com/rust-lang/rust/issues/16264
-pub mod property_checker;
 
 pub use self::action::Action;
 pub use self::property::Property;
