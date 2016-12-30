@@ -36,7 +36,7 @@ impl<E> MachWorld<E> {
     }
 }
 
-impl<E> World<MachBody<E>> for MachWorld<E> {
+impl<E> World<MachBody<E>> for MachWorld<E> where E: 'static {
     fn update(&mut self, time_step: Scalar) -> Vec<Contact<MachBody<E>>> {
         self.0.update(time_step)
     }
