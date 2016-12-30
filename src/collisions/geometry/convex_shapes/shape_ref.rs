@@ -1,4 +1,4 @@
-use collisions::geometry::shapes::{Cuboid, Sphere, TriangleMesh};
+use collisions::geometry::convex_shapes::{Cuboid, Sphere, TriangleMesh};
 
 pub enum ShapeRef<'a> {
     Sphere(&'a Sphere),

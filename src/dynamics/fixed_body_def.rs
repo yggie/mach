@@ -2,11 +2,11 @@ use Scalar;
 use maths::{UnitQuat, Vec3D};
 use dynamics::MaterialData;
 use collisions::CollisionGroup;
-use collisions::geometry::shapes::{Cuboid, Shape};
+use collisions::geometry::convex_shapes::{Cuboid, ConvexShape};
 
 pub struct FixedBodyDef {
     pub group: CollisionGroup,
-    pub shape: Box<Shape>,
+    pub shape: Box<ConvexShape>,
     pub rotation: UnitQuat,
     pub translation: Vec3D,
     pub friction_coefficient: Scalar,

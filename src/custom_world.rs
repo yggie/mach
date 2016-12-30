@@ -6,7 +6,7 @@ use utils::{Ref, RefMut, Handle};
 use dynamics::{ConstraintSolver, DynamicBody, DynamicBodyExtension, FixedBodyData, FixedBodyDef, Integrator, RigidBodyData, RigidBodyDef, RigidBodyRefMut};
 use collisions::{BodyDef, Broadphase, CollisionBody, CollisionGroup, Contact, Detection};
 use collisions::geometry::{Intersection, Ray};
-use collisions::geometry::shapes::ShapeRef;
+use collisions::geometry::convex_shapes::ShapeRef;
 
 pub struct CustomWorld<B, C, D, E, I, T> where
         B: Broadphase<T>,

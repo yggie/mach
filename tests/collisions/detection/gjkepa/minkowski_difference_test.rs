@@ -4,7 +4,7 @@ use TOLERANCE;
 use maths::{DotProduct, Transform, UnitQuat, UnitVec3D, Vec3D};
 use collisions::CollisionData;
 use collisions::geometry::{Direction, SupportMap};
-use collisions::geometry::shapes::Cuboid;
+use collisions::geometry::convex_shapes::Cuboid;
 use collisions::geometry::behaviour::support_map_behaviour;
 use collisions::detection::gjkepa::MinkowskiDifference;
 

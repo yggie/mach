@@ -1,11 +1,11 @@
 use maths::{UnitQuat, Vec3D};
 use collisions::CollisionGroup;
-use collisions::geometry::shapes::{Cuboid, Shape};
+use collisions::geometry::convex_shapes::{Cuboid, ConvexShape};
 
 #[derive(Clone, Debug)]
 pub struct BodyDef {
     pub group: CollisionGroup,
-    pub shape: Box<Shape>,
+    pub shape: Box<ConvexShape>,
     pub translation: Vec3D,
     pub rotation: UnitQuat,
 }

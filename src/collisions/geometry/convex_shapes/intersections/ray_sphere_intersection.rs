@@ -1,6 +1,6 @@
 use maths::Vec3D;
 use collisions::geometry::{Intersection, Point, Ray};
-use collisions::geometry::shapes::Sphere;
+use collisions::geometry::convex_shapes::Sphere;
 
 impl Intersection<Sphere> for Ray {
     type Output = [Point; 2];

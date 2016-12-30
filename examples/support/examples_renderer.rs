@@ -179,7 +179,7 @@ impl ExamplesRenderer {
         self.instances.insert(instance.id, instance);
     }
 
-    fn generate_new_instance(&mut self, id: mach::ID, shape: &mach::Shape) -> Instance {
+    fn generate_new_instance(&mut self, id: mach::ID, shape: &mach::ConvexShape) -> Instance {
         match shape.downcast() {
             mach::ShapeRef::Cuboid(cube) => {
                 self.factory.generate(id, (

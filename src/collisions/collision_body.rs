@@ -1,7 +1,7 @@
 use ID;
 use maths::{Transform, Vec3D};
 use collisions::{BodyData, BodyDef, CollisionData, CollisionGroup, Narrowphase};
-use collisions::geometry::shapes::Shape;
+use collisions::geometry::convex_shapes::ConvexShape;
 use collisions::narrowphase::{NarrowphaseRef, NarrowphaseRefMut};
 
 pub trait CollisionBody: 'static {
@@ -15,7 +15,7 @@ pub trait CollisionBody: 'static {
     fn data_mut(&mut self) -> &mut BodyData<Self::Narrowphase>;
     fn group(&self) -> CollisionGroup;
     fn collision_data(&self) -> &CollisionData;
-    fn shape(&self) -> &Shape;
+    fn shape(&self) -> &ConvexShape;
     fn translation(&self) -> &Vec3D;
     fn transform(&self) -> &Transform;
     fn extension_data(&self) -> &Self::Extension;

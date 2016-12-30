@@ -11,7 +11,7 @@ macro_rules! assert_detection_behaviour {
             use maths::{CrossProduct, DotProduct, Transform, UnitVec3D, UnitQuat, Vec3D};
             use utils::Handle;
             use collisions::{Body, BodyDef, CollisionBody, Detection};
-            use collisions::geometry::shapes::{Cuboid, Shape};
+            use collisions::geometry::convex_shapes::{Cuboid, ConvexShape};
 
             use tests::support::TestBody;
 
@@ -223,7 +223,7 @@ macro_rules! assert_detection_behaviour {
                 input
             }
 
-            fn handle<S>(shape: S, transform: Transform) -> Handle<TestBody> where S: Shape + 'static {
+            fn handle<S>(shape: S, transform: Transform) -> Handle<TestBody> where S: ConvexShape + 'static {
                 Handle::new(Body::new(ID(0), BodyDef {
                     shape: Box::new(shape),
                     rotation: transform.rotation,

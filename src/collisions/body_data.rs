@@ -1,7 +1,7 @@
 use ID;
 use maths::{Transform, Vec3D};
 use collisions::{BodyDef, CollisionData, CollisionGroup, Narrowphase};
-use collisions::geometry::shapes::Shape;
+use collisions::geometry::convex_shapes::ConvexShape;
 use collisions::narrowphase::{NarrowphaseRef, NarrowphaseRefMut};
 
 #[derive(Clone, Debug)]
@@ -44,7 +44,7 @@ impl<N> BodyData<N> where N: Narrowphase {
     }
 
     #[inline(always)]
-    pub fn shape(&self) -> &Shape {
+    pub fn shape(&self) -> &ConvexShape {
         self.collision_data.shape()
     }
 

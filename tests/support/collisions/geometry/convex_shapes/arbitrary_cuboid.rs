@@ -1,7 +1,7 @@
 extern crate quickcheck;
 
 use TOLERANCE;
-use collisions::geometry::shapes::Cuboid;
+use collisions::geometry::convex_shapes::Cuboid;
 
 use tests::support::TEST_SCALAR_BOUNDS;
 

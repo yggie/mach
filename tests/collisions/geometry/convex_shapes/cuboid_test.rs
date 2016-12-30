@@ -2,7 +2,7 @@ extern crate quickcheck;
 
 use maths::{UnitVec3D, Vec3D};
 use collisions::geometry::Direction;
-use collisions::geometry::shapes::{Shape, Cuboid};
+use collisions::geometry::convex_shapes::{ConvexShape, Cuboid};
 use collisions::geometry::behaviour::support_map_behaviour;
 
 #[test]
@@ -64,7 +64,7 @@ fn computing_the_volume() {
 
 quickcheck! {
     fn it_behaves_like_a_support_map(cuboid: Cuboid, direction: UnitVec3D) -> quickcheck::TestResult {
-        quickcheck_expect!(support_map_behaviour(Box::new(cuboid) as Box<Shape>, direction));
+        quickcheck_expect!(support_map_behaviour(Box::new(cuboid) as Box<ConvexShape>, direction));
 
         quickcheck::TestResult::passed()
     }

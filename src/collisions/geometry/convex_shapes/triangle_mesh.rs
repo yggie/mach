@@ -5,7 +5,7 @@ use std::collections::HashMap;
 use {Scalar, NEG_INFINITY, TOLERANCE};
 use maths::{DotProduct, Matrix, Vec3D};
 use collisions::geometry::{Direction, Geometry};
-use collisions::geometry::shapes::{Shape, ShapeRef};
+use collisions::geometry::convex_shapes::{ConvexShape, ShapeRef};
 
 /// A `TriangleMesh` object represents a mesh of triangles, built from a set of
 /// points and element connections.
@@ -69,7 +69,7 @@ impl fmt::Display for TriangleMesh {
     }
 }
 
-impl Shape for TriangleMesh {
+impl ConvexShape for TriangleMesh {
     fn downcast(&self) -> ShapeRef {
         ShapeRef::TriangleMesh(self)
     }
@@ -123,7 +123,7 @@ impl Shape for TriangleMesh {
             .collect()
     }
 
-    fn box_clone(&self) -> Box<Shape> {
+    fn box_clone(&self) -> Box<ConvexShape> {
         Box::new(self.clone())
     }
 }

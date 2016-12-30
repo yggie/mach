@@ -4,7 +4,7 @@ use maths::{Approximations, Transform, UnitQuat, Vec3D};
 use utils::is_coplanar;
 use algorithms::{Execute, PanicOnIteration};
 use collisions::CollisionData;
-use collisions::geometry::shapes::Cuboid;
+use collisions::geometry::convex_shapes::Cuboid;
 use collisions::detection::gjkepa::{ContactTracker, GJK, GJKSimplex};
 
 #[test]

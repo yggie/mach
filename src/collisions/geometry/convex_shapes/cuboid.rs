@@ -1,9 +1,9 @@
 #[cfg(test)]
-#[path="../../../../tests/collisions/geometry/shapes/cuboid_test.rs"]
+#[path="../../../../tests/collisions/geometry/convex_shapes/cuboid_test.rs"]
 mod tests;
 
 #[cfg(test)]
-#[path="../../../../tests/support/collisions/geometry/shapes/arbitrary_cuboid.rs"]
+#[path="../../../../tests/support/collisions/geometry/convex_shapes/arbitrary_cuboid.rs"]
 mod arbitrary;
 
 use std::fmt;
@@ -11,7 +11,7 @@ use std::fmt;
 use {Scalar, TOLERANCE};
 use maths::{ApproxEq, DotProduct, Matrix, Vec3D};
 use collisions::geometry::{Direction, Geometry};
-use collisions::geometry::shapes::{Shape, ShapeRef};
+use collisions::geometry::convex_shapes::{ConvexShape, ShapeRef};
 
 /// A representation of a cuboid in 3 dimensions.
 #[derive(Clone, Debug)]
@@ -73,7 +73,7 @@ impl PartialEq for Cuboid {
     }
 }
 
-impl Shape for Cuboid {
+impl ConvexShape for Cuboid {
     fn downcast(&self) -> ShapeRef {
         ShapeRef::Cuboid(self)
     }
@@ -134,7 +134,7 @@ impl Shape for Cuboid {
         return max_indices;
     }
 
-    fn box_clone(&self) -> Box<Shape> {
+    fn box_clone(&self) -> Box<ConvexShape> {
         Box::new(self.clone())
     }
 }

@@ -1,16 +1,16 @@
 use maths::{Transform, Vec3D};
 use collisions::SupportMap;
 use collisions::geometry::Direction;
-use collisions::geometry::shapes::Shape;
+use collisions::geometry::convex_shapes::ConvexShape;
 
 #[derive(Clone, Debug)]
 pub struct CollisionData {
-    shape: Box<Shape>,
+    shape: Box<ConvexShape>,
     transform: Transform,
 }
 
 impl CollisionData {
-    pub fn new(shape: Box<Shape>, transform: Transform) -> CollisionData {
+    pub fn new(shape: Box<ConvexShape>, transform: Transform) -> CollisionData {
         CollisionData {
             shape: shape,
             transform: transform,
@@ -18,7 +18,7 @@ impl CollisionData {
     }
 
     #[inline(always)]
-    pub fn shape(&self) -> &Shape {
+    pub fn shape(&self) -> &ConvexShape {
         &*self.shape
     }
 

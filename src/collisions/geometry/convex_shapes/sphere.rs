@@ -1,9 +1,9 @@
 #[cfg(test)]
-#[path="../../../../tests/collisions/geometry/shapes/sphere_test.rs"]
+#[path="../../../../tests/collisions/geometry/convex_shapes/sphere_test.rs"]
 mod tests;
 
 #[cfg(test)]
-#[path="../../../../tests/support/collisions/geometry/shapes/arbitrary_sphere.rs"]
+#[path="../../../../tests/support/collisions/geometry/convex_shapes/arbitrary_sphere.rs"]
 mod arbitrary;
 
 use std::fmt;
@@ -11,7 +11,7 @@ use std::fmt;
 use {Scalar, PI, TOLERANCE};
 use maths::{Matrix, Vec3D};
 use collisions::geometry::{Direction, Geometry};
-use collisions::geometry::shapes::{Shape, ShapeRef};
+use collisions::geometry::convex_shapes::{ConvexShape, ShapeRef};
 
 /// A representation of a sphere in 3 dimensions.
 #[derive(Clone, Copy, Debug)]
@@ -41,7 +41,7 @@ impl fmt::Display for Sphere {
     }
 }
 
-impl Shape for Sphere {
+impl ConvexShape for Sphere {
     fn downcast(&self) -> ShapeRef {
         ShapeRef::Sphere(self)
     }
@@ -77,7 +77,7 @@ impl Shape for Sphere {
         self.radius() + TOLERANCE
     }
 
-    fn box_clone(&self) -> Box<Shape> {
+    fn box_clone(&self) -> Box<ConvexShape> {
         Box::new(self.clone())
     }
 }

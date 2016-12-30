@@ -32,7 +32,7 @@ impl RayTracer for RayTracingDemo {
                     let average = (x + y + z) / 3.0;
 
                     world.create_fixed_body(mach::dynamics::FixedBodyDef {
-                        shape: Box::new(mach::collisions::geometry::shapes::Sphere::new(average)),
+                        shape: Box::new(mach::collisions::geometry::convex_shapes::Sphere::new(average)),
                         rotation: object.rotation,
                         translation: object.position,
                         .. mach::dynamics::FixedBodyDef::default()

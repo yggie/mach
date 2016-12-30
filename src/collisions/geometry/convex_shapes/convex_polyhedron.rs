@@ -1,5 +1,5 @@
 #[cfg(test)]
-#[path="../../../tests/collisions/geometry/convex_polyhedron_test.rs"]
+#[path="../../../../tests/collisions/geometry/convex_shapes/convex_polyhedron_test.rs"]
 mod tests;
 
 use maths::{CrossProduct, DotProduct, Vec3D};

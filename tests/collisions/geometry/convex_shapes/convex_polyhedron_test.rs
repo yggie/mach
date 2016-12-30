@@ -1,7 +1,7 @@
 extern crate quickcheck;
 
 use maths::Vec3D;
-use collisions::geometry::{ConvexPolyhedron, ConvexPolyhedronError};
+use collisions::geometry::convex_shapes::{ConvexPolyhedron, ConvexPolyhedronError};
 
 #[test]
 fn it_returns_an_error_with_too_few_points() {
