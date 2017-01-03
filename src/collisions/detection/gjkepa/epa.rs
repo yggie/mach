@@ -8,9 +8,9 @@ use maths::_2d::Vec2D;
 use utils::compute_surfaces_for_convex_hull;
 use algorithms::IterativeAlgorithm;
 use collisions::{CollisionData, ContactSet, SupportMap};
-use collisions::geometry::{Direction, Intersection, Plane, Ray};
-use collisions::geometry::_2d::{Line2D, Polygon};
-use collisions::geometry::convex_shapes::ConvexPolyhedron;
+use collisions::shapes::{Direction, Intersection, Plane, Ray};
+use collisions::shapes::_2d::{Line2D, Polygon};
+use collisions::shapes::convex_shapes::ConvexPolyhedron;
 use collisions::detection::gjkepa::{GJKSimplex, MinkowskiDifference};
 
 pub struct EPA<'a> {

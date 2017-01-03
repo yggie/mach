@@ -1,6 +1,6 @@
 use utils::Ref;
 use collisions::{CloseProximityPair, CollisionBody, CollisionObjectSpace};
-use collisions::geometry::Ray;
+use collisions::shapes::Ray;
 
 pub trait Broadphase<B>: CollisionObjectSpace<B> where B: CollisionBody {
     fn update(&mut self);

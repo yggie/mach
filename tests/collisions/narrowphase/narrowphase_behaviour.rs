@@ -9,7 +9,7 @@ macro_rules! assert_narrowphase_behaviour {
             use super::type_marker;
 
             use collisions::{BodyData, BodyDef, Narrowphase};
-            use collisions::geometry::convex_shapes::Cuboid;
+            use collisions::shapes::convex_shapes::Cuboid;
 
             #[test]
             fn it_passes_the_collision_test_for_definitely_intersecting_bodies() {

@@ -5,7 +5,7 @@ mod tests;
 use ID;
 use utils::{Handle, Ref, RefMut};
 use collisions::{BodyDef, Broadphase, CollisionBody, CollisionGroup, CloseProximityPair, CollisionObjectSpace, MachCollisionObjectSpace, Narrowphase};
-use collisions::geometry::Ray;
+use collisions::shapes::Ray;
 
 pub struct BruteForceBroadphase<B>(MachCollisionObjectSpace<B>) where B: CollisionBody;
 

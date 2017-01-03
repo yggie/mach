@@ -2,7 +2,7 @@ use Scalar;
 use maths::{UnitQuat, Vec3D};
 use dynamics::MaterialData;
 use collisions::CollisionGroup;
-use collisions::geometry::convex_shapes::{Cuboid, ConvexShape};
+use collisions::shapes::convex_shapes::{Cuboid, ConvexShape};
 
 pub struct FixedBodyDef {
     pub group: CollisionGroup,

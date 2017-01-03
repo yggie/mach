@@ -42,7 +42,7 @@ pub use self::maths::{Transform, UnitQuat, UnitVec3D, Vec3D};
 pub use self::world::World;
 pub use self::dynamics::DynamicBody;
 pub use self::collisions::CollisionObjectSpace;
-pub use self::collisions::geometry::convex_shapes::{ConvexShape, ShapeRef};
+pub use self::collisions::shapes::convex_shapes::{ConvexShape, ShapeRef};
 pub use self::mach_world::{MachBody, MachWorld};
 pub use self::custom_world::CustomWorld;
 

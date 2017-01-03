@@ -1,5 +1,5 @@
 use maths::{Approximations, CrossProduct, Vec3D};
-use collisions::geometry::Plane;
+use collisions::shapes::Plane;
 
 pub fn is_coplanar(points: &[Vec3D]) -> bool {
     let mut remaining_points = points.iter();

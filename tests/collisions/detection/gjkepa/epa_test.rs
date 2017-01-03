@@ -6,7 +6,7 @@ use Scalar;
 use maths::{Approximations, Transform, UnitQuat, Vec3D};
 use algorithms::{Execute, PanicOnIteration};
 use collisions::CollisionData;
-use collisions::geometry::convex_shapes::{Cuboid, ConvexPolyhedron};
+use collisions::shapes::convex_shapes::{Cuboid, ConvexPolyhedron};
 use collisions::detection::gjkepa::{ContactTracker, EPA, GJK, GJKSimplex};
 
 // TODO fix this failing scenario

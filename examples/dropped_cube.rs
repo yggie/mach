@@ -34,7 +34,7 @@ impl Simulation for DroppedCube {
 
             let offset = lower_bound + range * index as mach::Scalar / limit as mach::Scalar;
             world.create_rigid_body(mach::dynamics::RigidBodyDef {
-                shape: Box::new(mach::collisions::geometry::convex_shapes::Cuboid::cube(1.0)),
+                shape: Box::new(mach::collisions::shapes::convex_shapes::Cuboid::cube(1.0)),
                 rotation: mach::UnitQuat::from_axis_angle(direction, mach::PI / 8.0),
                 velocity: direction * 3.0,
                 translation: mach::Vec3D::new(offset, 0.0, 0.0),
@@ -45,31 +45,31 @@ impl Simulation for DroppedCube {
         let margin = 3.0;
 
         world.create_fixed_body(mach::dynamics::FixedBodyDef {
-            shape: Box::new(mach::collisions::geometry::convex_shapes::Cuboid::new(range + 2.0 * margin, range + 2.0 * margin, 1.0)),
+            shape: Box::new(mach::collisions::shapes::convex_shapes::Cuboid::new(range + 2.0 * margin, range + 2.0 * margin, 1.0)),
             translation: mach::Vec3D::new(0.0, 0.0, -margin),
             .. mach::dynamics::FixedBodyDef::default()
         }, ());
 
         world.create_fixed_body(mach::dynamics::FixedBodyDef {
-            shape: Box::new(mach::collisions::geometry::convex_shapes::Cuboid::new(range + 2.0 * margin, 1.0, range + 2.0 * margin)),
+            shape: Box::new(mach::collisions::shapes::convex_shapes::Cuboid::new(range + 2.0 * margin, 1.0, range + 2.0 * margin)),
             translation: mach::Vec3D::new(0.0, range/2.0 + margin, 0.0),
             .. mach::dynamics::FixedBodyDef::default()
         }, ());
 
         world.create_fixed_body(mach::dynamics::FixedBodyDef {
-            shape: Box::new(mach::collisions::geometry::convex_shapes::Cuboid::new(range + 2.0 * margin, 1.0, range + 2.0 * margin)),
+            shape: Box::new(mach::collisions::shapes::convex_shapes::Cuboid::new(range + 2.0 * margin, 1.0, range + 2.0 * margin)),
             translation: mach::Vec3D::new(0.0, -range/2.0 - margin, 0.0),
             .. mach::dynamics::FixedBodyDef::default()
         }, ());
 
         world.create_fixed_body(mach::dynamics::FixedBodyDef {
-            shape: Box::new(mach::collisions::geometry::convex_shapes::Cuboid::new(1.0, range + 2.0 * margin, range + 2.0 * margin)),
+            shape: Box::new(mach::collisions::shapes::convex_shapes::Cuboid::new(1.0, range + 2.0 * margin, range + 2.0 * margin)),
             translation: mach::Vec3D::new(range/2.0 + margin, 0.0, 0.0),
             .. mach::dynamics::FixedBodyDef::default()
         }, ());
 
         world.create_fixed_body(mach::dynamics::FixedBodyDef {
-            shape: Box::new(mach::collisions::geometry::convex_shapes::Cuboid::new(1.0, range + 2.0 * margin, range + 2.0 * margin)),
+            shape: Box::new(mach::collisions::shapes::convex_shapes::Cuboid::new(1.0, range + 2.0 * margin, range + 2.0 * margin)),
             translation: mach::Vec3D::new(-range/2.0 - margin, 0.0, 0.0),
             .. mach::dynamics::FixedBodyDef::default()
         }, ());

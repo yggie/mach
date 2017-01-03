@@ -3,7 +3,7 @@
 mod tests;
 
 use maths::{Approximations, CrossProduct, DotProduct, Vec3D};
-use collisions::geometry::Plane;
+use collisions::shapes::Plane;
 
 #[derive(Clone, Debug)]
 pub struct GJKSimplex {

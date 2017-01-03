@@ -1,7 +1,7 @@
 use maths::{Transform, Vec3D};
 use collisions::SupportMap;
-use collisions::geometry::Direction;
-use collisions::geometry::convex_shapes::ConvexShape;
+use collisions::shapes::Direction;
+use collisions::shapes::convex_shapes::ConvexShape;
 
 #[derive(Clone, Debug)]
 pub struct CollisionData {

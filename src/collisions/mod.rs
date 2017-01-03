@@ -5,15 +5,15 @@ mod collision_body;
 mod collision_data;
 mod collision_group;
 
-pub mod geometry;
+pub mod shapes;
 pub mod detection;
 pub mod broadphase;
 pub mod narrowphase;
 pub mod collisionobjectspace;
 
 pub use self::body::Body;
+pub use self::shapes::SupportMap;
 pub use self::body_def::BodyDef;
-pub use self::geometry::SupportMap;
 pub use self::body_data::BodyData;
 pub use self::detection::{Contact, ContactSet, Detection};
 pub use self::broadphase::{Broadphase, CloseProximityPair};

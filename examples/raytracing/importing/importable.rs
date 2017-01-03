@@ -122,7 +122,7 @@ impl<T> Importable for RayTracingRenderer<T> where T: RayTracer {
                     scene_params.objects.push(SceneObject {
                         position: matrix_stack.apply_to(Vec3D::new(x, y, z)),
                         rotation: matrix_stack.rotation(),
-                        geometry: SceneGeometry::Ellipse(radius_x, radius_y, radius_z),
+                        shape: SceneGeometry::Ellipse(radius_x, radius_y, radius_z),
                         .. scene_object_prototype
                     });
                 },

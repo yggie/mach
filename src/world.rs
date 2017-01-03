@@ -3,7 +3,7 @@ use maths::Vec3D;
 use utils::{Ref, Handle};
 use dynamics::{DynamicBody, FixedBodyDef, RigidBodyDef};
 use collisions::Contact;
-use collisions::geometry::Ray;
+use collisions::shapes::Ray;
 
 pub trait World<T> where T: DynamicBody {
     fn update(&mut self, time_step: Scalar) -> Vec<Contact<T>>;

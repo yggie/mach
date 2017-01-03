@@ -1,7 +1,7 @@
 use ID;
 use maths::{Transform, Vec3D};
 use collisions::{BodyDef, CollisionData, CollisionGroup, Narrowphase};
-use collisions::geometry::convex_shapes::ConvexShape;
+use collisions::shapes::convex_shapes::ConvexShape;
 use collisions::narrowphase::{NarrowphaseRef, NarrowphaseRefMut};
 
 #[derive(Clone, Debug)]

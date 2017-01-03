@@ -2,7 +2,7 @@ use {Scalar, TOLERANCE};
 use maths::{Approximations, Vec3D};
 use algorithms::IterativeAlgorithm;
 use collisions::CollisionData;
-use collisions::geometry::{Direction, SupportMap};
+use collisions::shapes::{Direction, SupportMap};
 use collisions::detection::gjkepa::{GJKSimplex, MinkowskiDifference};
 
 pub struct GJK<'a> {

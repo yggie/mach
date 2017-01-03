@@ -9,7 +9,7 @@ use dynamics::{DynamicBodyExtension, FixedBodyDef, RigidBodyDef};
 use dynamics::solvers::MachConstraintSolver;
 use dynamics::integrators::SemiImplicitEuler;
 use collisions::{Body, Contact};
-use collisions::geometry::Ray;
+use collisions::shapes::Ray;
 use collisions::detection::GJKEPADetection;
 use collisions::broadphase::BruteForceBroadphase;
 use collisions::narrowphase::NullNarrowphase;

@@ -4,7 +4,7 @@ use raytracing::{Color, SceneGeometry};
 
 #[derive(Clone, Debug)]
 pub struct SceneObject {
-    pub geometry: SceneGeometry,
+    pub shape: SceneGeometry,
     pub ambient: Color,
     pub diffuse: Color,
     pub specular: Color,
@@ -17,7 +17,7 @@ pub struct SceneObject {
 impl Default for SceneObject {
     fn default() -> SceneObject {
         SceneObject {
-            geometry: SceneGeometry::Ellipse(1.0, 1.0, 1.0),
+            shape: SceneGeometry::Ellipse(1.0, 1.0, 1.0),
             ambient: Color::new(0.2, 0.2, 0.2),
             diffuse: Color::new(0.0, 0.0, 0.0),
             specular: Color::new(0.0, 0.0, 0.0),

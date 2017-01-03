@@ -16,7 +16,7 @@ impl Simulation for TwoCollidingCubes {
     fn setup(&mut self, world: &mut mach::World<mach::MachBody<()>>) -> Result<(), String> {
         world.create_rigid_body(mach::dynamics::RigidBodyDef {
             mass: 1.0,
-            shape: Box::new(mach::collisions::geometry::convex_shapes::Cuboid::cube(1.0)),
+            shape: Box::new(mach::collisions::shapes::convex_shapes::Cuboid::cube(1.0)),
             velocity: mach::Vec3D::new(0.0, 0.0, -1.0),
             translation: mach::Vec3D::new(0.0, 0.0, 3.0),
             .. mach::dynamics::RigidBodyDef::default()
@@ -24,7 +24,7 @@ impl Simulation for TwoCollidingCubes {
 
         world.create_rigid_body(mach::dynamics::RigidBodyDef {
             mass: 2.0,
-            shape: Box::new(mach::collisions::geometry::convex_shapes::Cuboid::cube(1.0)),
+            shape: Box::new(mach::collisions::shapes::convex_shapes::Cuboid::cube(1.0)),
             rotation: mach::UnitQuat::from_axis_angle(mach::Vec3D::new(1.0, 0.0, 1.0).normalize(), 1.0),
             velocity: mach::Vec3D::new(0.0, 0.0, 1.0),
             translation: mach::Vec3D::new(0.0, 0.0, -3.0),

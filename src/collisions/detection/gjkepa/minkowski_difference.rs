@@ -4,7 +4,7 @@ mod tests;
 
 use maths::Vec3D;
 use collisions::{CollisionData, SupportMap};
-use collisions::geometry::Direction;
+use collisions::shapes::Direction;
 
 #[derive(Clone)]
 pub struct MinkowskiDifference<'a>(pub &'a CollisionData, pub &'a CollisionData);

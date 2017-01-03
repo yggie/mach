@@ -26,13 +26,13 @@ impl RayTracer for RayTracingDemo {
         let mut world = MachWorld::new();
 
         for object in params.objects.iter() {
-            match object.geometry {
+            match object.shape {
                 SceneGeometry::Ellipse(x, y, z) => {
                     // TODO not ideal!
                     let average = (x + y + z) / 3.0;
 
                     world.create_fixed_body(mach::dynamics::FixedBodyDef {
-                        shape: Box::new(mach::collisions::geometry::convex_shapes::Sphere::new(average)),
+                        shape: Box::new(mach::collisions::shapes::convex_shapes::Sphere::new(average)),
                         rotation: object.rotation,
                         translation: object.position,
                         .. mach::dynamics::FixedBodyDef::default()
@@ -50,7 +50,7 @@ impl RayTracer for RayTracingDemo {
     }
 
     fn shoot_ray(&self, source: Vec3D, direction: UnitVec3D) -> Color {
-        let ray = mach::collisions::geometry::Ray::new(source, direction);
+        let ray = mach::collisions::shapes::Ray::new(source, direction);
         match self.world.cast_ray(&ray) {
             Some(body) => {
                 // TODO calculate this based on the combination of appropriate

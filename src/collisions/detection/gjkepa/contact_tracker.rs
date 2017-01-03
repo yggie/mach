@@ -5,7 +5,7 @@ mod tests;
 use maths::Vec3D;
 use utils::{UniqueVec3DGenerator, UnitVec3DGenerator};
 use collisions::CollisionData;
-use collisions::geometry::{Direction, SupportMap};
+use collisions::shapes::{Direction, SupportMap};
 use collisions::detection::gjkepa::{GJKSimplex, MinkowskiDifference};
 
 #[derive(Clone, Debug)]

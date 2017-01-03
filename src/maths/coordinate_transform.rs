@@ -3,7 +3,7 @@ use std::marker::PhantomData;
 use TOLERANCE;
 use maths::{CrossProduct, DotProduct, UnitVec3D, Vec3D};
 use utils::UnitVec3DGenerator;
-use collisions::geometry::Plane;
+use collisions::shapes::Plane;
 
 #[derive(Clone, Debug)]
 pub struct CoordinateTransform<'a> {
