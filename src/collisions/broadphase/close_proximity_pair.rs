@@ -1,4 +1,4 @@
 use utils::Handle;
-use collisions::CollisionBody;
+use collisions::CollisionObject;
 
-pub struct CloseProximityPair<B>(pub Handle<B>, pub Handle<B>) where B: CollisionBody;
+pub struct CloseProximityPair<O>(pub Handle<O>, pub Handle<O>) where O: CollisionObject;

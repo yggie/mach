@@ -1,16 +1,16 @@
 use Scalar;
 use maths::{UnitVec3D, Vec3D};
 use utils::Handle;
-use collisions::{CollisionBody, ContactSet};
+use collisions::{ContactSet, CollisionObject};
 
 #[derive(Clone, Debug)]
-pub struct Contact<B> where B: CollisionBody {
+pub struct Contact<O> where O: CollisionObject {
     set: ContactSet,
-    handles: (Handle<B>, Handle<B>),
+    handles: (Handle<O>, Handle<O>),
 }
 
-impl<B> Contact<B> where B: CollisionBody {
-    pub fn new(set: ContactSet, handle_0: Handle<B>, handle_1: Handle<B>) -> Contact<B> {
+impl<O> Contact<O> where O: CollisionObject {
+    pub fn new(set: ContactSet, handle_0: Handle<O>, handle_1: Handle<O>) -> Contact<O> {
         Contact {
             set: set,
             handles: (handle_0, handle_1),
@@ -33,7 +33,7 @@ impl<B> Contact<B> where B: CollisionBody {
     }
 
     #[inline(always)]
-    pub fn handles(&self) -> &(Handle<B>, Handle<B>) {
+    pub fn handles(&self) -> &(Handle<O>, Handle<O>) {
         &self.handles
     }
 

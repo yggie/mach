@@ -8,7 +8,7 @@ macro_rules! assert_world_behaviour {
             use {PI, Scalar, World};
             use maths::{CrossProduct, DotProduct, UnitQuat, Vec3D};
             use dynamics::{DynamicBodyExtension, FixedBodyDef, RigidBodyDef, RigidBodyRef};
-            use collisions::CollisionBody;
+            use collisions::CollisionObject;
             use collisions::shapes::convex_shapes::Cuboid;
 
             #[test]
@@ -100,7 +100,7 @@ macro_rules! assert_world_behaviour {
                 assert!(rigid_body.velocity().dot(Vec3D::new(0.0, 0.0, 1.0)) > 0.0);
             }
 
-            fn validate<T, W>(input: W) -> W where T: CollisionBody<Extension=DynamicBodyExtension<()>>, W: World<T> {
+            fn validate<O, W>(input: W) -> W where O: CollisionObject<Extension=DynamicBodyExtension<()>>, W: World<O> {
                 input
             }
         }

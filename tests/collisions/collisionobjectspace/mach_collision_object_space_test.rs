@@ -1,7 +1,7 @@
 assert_collision_object_space_behaviour! {
-    use collisions::{CollisionBody, MachCollisionObjectSpace};
+    use collisions::{CollisionObject, MachCollisionObjectSpace};
 
-    pub fn test_subject<B>() -> MachCollisionObjectSpace<B> where B: CollisionBody {
+    pub fn test_subject<O>() -> MachCollisionObjectSpace<O> where O: CollisionObject {
         MachCollisionObjectSpace::new()
     }
 }

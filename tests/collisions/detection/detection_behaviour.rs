@@ -10,7 +10,7 @@ macro_rules! assert_detection_behaviour {
             use {ID, PI, Scalar};
             use maths::{CrossProduct, DotProduct, Transform, UnitVec3D, UnitQuat, Vec3D};
             use utils::Handle;
-            use collisions::{Body, BodyDef, CollisionBody, Detection};
+            use collisions::{Body, BodyDef, CollisionObject, Detection};
             use collisions::shapes::convex_shapes::{Cuboid, ConvexShape};
 
             use tests::support::TestBody;

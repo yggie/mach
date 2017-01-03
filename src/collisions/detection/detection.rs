@@ -1,7 +1,7 @@
 use utils::Handle;
-use collisions::{CollisionBody, Contact};
+use collisions::{Contact, CollisionObject};
 
-pub trait Detection<B> where B: CollisionBody {
+pub trait Detection<O> where O: CollisionObject {
     fn update(&mut self);
-    fn compute_contacts(&mut self, handle_0: &Handle<B>, handle_1: &Handle<B>) -> Option<Contact<B>>;
+    fn compute_contacts(&mut self, handle_0: &Handle<O>, handle_1: &Handle<O>) -> Option<Contact<O>>;
 }

@@ -5,7 +5,7 @@ mod tests;
 use ID;
 use utils::Handle;
 use algorithms::{Execute, PanicOnIteration};
-use collisions::{CollisionBody, Contact, Detection};
+use collisions::{CollisionObject, Contact, Detection};
 use collisions::detection::gjkepa::{ContactTracker, GJK, EPA};
 
 pub struct GJKEPADetection { }
@@ -20,17 +20,17 @@ impl GJKEPADetection {
         None
     }
 
-    fn create_tracker<B>(&mut self, body_0: &B, body_1: &B) -> ContactTracker where B: CollisionBody {
+    fn create_tracker<O>(&mut self, body_0: &O, body_1: &O) -> ContactTracker where O: CollisionObject {
         ContactTracker::new(body_0.collision_data(), body_1.collision_data())
     }
 }
 
-impl<B> Detection<B> for GJKEPADetection where B: CollisionBody {
+impl<O> Detection<O> for GJKEPADetection where O: CollisionObject {
     fn update(&mut self) {
         // do nothing
     }
 
-    fn compute_contacts(&mut self, handle_0: &Handle<B>, handle_1: &Handle<B>) -> Option<Contact<B>> {
+    fn compute_contacts(&mut self, handle_0: &Handle<O>, handle_1: &Handle<O>) -> Option<Contact<O>> {
         let body_0 = handle_0.borrow();
         let body_1 = handle_1.borrow();
 

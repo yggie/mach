@@ -4,7 +4,7 @@ use collisions::{BodyData, BodyDef, CollisionData, CollisionGroup, Narrowphase};
 use collisions::shapes::convex_shapes::ConvexShape;
 use collisions::narrowphase::{NarrowphaseRef, NarrowphaseRefMut};
 
-pub trait CollisionBody: 'static {
+pub trait CollisionObject: 'static {
     type Extension: 'static;
     type Narrowphase: Narrowphase;
 

@@ -1,7 +1,7 @@
 use dynamics::DynamicBodyExtension;
-use collisions::{BodyData, CollisionBody};
+use collisions::{BodyData, CollisionObject};
 
-pub trait DynamicBody: CollisionBody {
+pub trait DynamicBody: CollisionObject {
     type Extension: 'static;
 
     #[inline(always)]
@@ -19,21 +19,21 @@ pub trait DynamicBody: CollisionBody {
     fn split_dynamic_extension_mut(&mut self) -> (&mut BodyData<Self::Narrowphase>, &mut DynamicBodyExtension<<Self as DynamicBody>::Extension>);
 }
 
-impl<E, T> DynamicBody for T where E: 'static, T: CollisionBody<Extension=DynamicBodyExtension<E>> {
+impl<E, O> DynamicBody for O where E: 'static, O: CollisionObject<Extension=DynamicBodyExtension<E>> {
     type Extension = E;
 
     #[inline(always)]
     fn dynamic_extension_data(&self) -> &DynamicBodyExtension<<Self as DynamicBody>::Extension> {
-        CollisionBody::extension_data(self)
+        CollisionObject::extension_data(self)
     }
 
     #[inline(always)]
     fn dynamic_extension_data_mut(&mut self) -> &mut DynamicBodyExtension<<Self as DynamicBody>::Extension> {
-        CollisionBody::extension_data_mut(self)
+        CollisionObject::extension_data_mut(self)
     }
 
     #[inline(always)]
     fn split_dynamic_extension_mut(&mut self) -> (&mut BodyData<Self::Narrowphase>, &mut DynamicBodyExtension<<Self as DynamicBody>::Extension>) {
-        CollisionBody::split_data_mut(self)
+        CollisionObject::split_data_mut(self)
     }
 }

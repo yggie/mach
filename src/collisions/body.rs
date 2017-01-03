@@ -1,6 +1,6 @@
 use ID;
 use maths::{Transform, Vec3D};
-use collisions::{BodyData, BodyDef, CollisionBody, CollisionData, CollisionGroup, Narrowphase};
+use collisions::{BodyData, BodyDef, CollisionObject, CollisionData, CollisionGroup, Narrowphase};
 use collisions::shapes::convex_shapes::ConvexShape;
 use collisions::narrowphase::{NarrowphaseRef, NarrowphaseRefMut};
 
@@ -10,7 +10,7 @@ pub struct Body<E, N> where E: 'static, N: Narrowphase {
     extension_data: E,
 }
 
-impl<E, N> CollisionBody for Body<E, N> where E: 'static, N: Narrowphase {
+impl<E, N> CollisionObject for Body<E, N> where E: 'static, N: Narrowphase {
     type Extension = E;
     type Narrowphase = N;
 

@@ -4,35 +4,35 @@ use {Scalar, World};
 use maths::Vec3D;
 use utils::{Ref, RefMut, Handle};
 use dynamics::{ConstraintSolver, DynamicBody, DynamicBodyExtension, FixedBodyData, FixedBodyDef, Integrator, RigidBodyData, RigidBodyDef, RigidBodyRefMut};
-use collisions::{BodyDef, Broadphase, CollisionBody, CollisionGroup, Contact, Detection};
+use collisions::{BodyDef, Broadphase, CollisionObject, CollisionGroup, Contact, Detection};
 use collisions::shapes::{Intersection, Ray};
 use collisions::shapes::convex_shapes::ShapeRef;
 
-pub struct CustomWorld<B, C, D, E, I, T> where
-        B: Broadphase<T>,
-        C: ConstraintSolver<I, T>,
-        D: Detection<T>,
+pub struct CustomWorld<B, C, D, E, I, O> where
+        B: Broadphase<O>,
+        C: ConstraintSolver<I, O>,
+        D: Detection<O>,
         E: 'static,
         I: Integrator,
-        T: CollisionBody<Extension=DynamicBodyExtension<E>> {
+        O: CollisionObject<Extension=DynamicBodyExtension<E>> {
 
     gravity: Vec3D,
     detection: D,
     integrator: I,
     broadphase: B,
     constraint_solver: C,
-    _extra: PhantomData<T>,
+    _extra: PhantomData<O>,
 }
 
-impl<B, C, D, E, I, T> CustomWorld<B, C, D, E, I, T> where
-        B: Broadphase<T>,
-        C: ConstraintSolver<I, T>,
-        D: Detection<T>,
+impl<B, C, D, E, I, O> CustomWorld<B, C, D, E, I, O> where
+        B: Broadphase<O>,
+        C: ConstraintSolver<I, O>,
+        D: Detection<O>,
         E: 'static,
         I: Integrator,
-        T: CollisionBody<Extension=DynamicBodyExtension<E>> {
+        O: CollisionObject<Extension=DynamicBodyExtension<E>> {
 
-    pub fn new(detection: D, integrator: I, broadphase: B, constraint_solver: C, gravity: Vec3D) -> CustomWorld<B, C, D, E, I, T> {
+    pub fn new(detection: D, integrator: I, broadphase: B, constraint_solver: C, gravity: Vec3D) -> CustomWorld<B, C, D, E, I, O> {
         CustomWorld {
             gravity: gravity,
             detection: detection,
@@ -43,7 +43,7 @@ impl<B, C, D, E, I, T> CustomWorld<B, C, D, E, I, T> where
         }
     }
 
-    pub fn update(&mut self, time_step: Scalar) -> Vec<Contact<T>> {
+    pub fn update(&mut self, time_step: Scalar) -> Vec<Contact<O>> {
         for mut body in self.broadphase.bodies_iter_mut() {
             if let Some(mut rigid_body) = RigidBodyRefMut::try_from(&mut *body) {
                 self.integrator.integrate_in_place(&mut rigid_body.integratable(), time_step, self.gravity);
@@ -53,7 +53,7 @@ impl<B, C, D, E, I, T> CustomWorld<B, C, D, E, I, T> where
         self.broadphase.update();
         self.detection.update();
 
-        let contacts: Vec<Contact<T>> = self.broadphase.close_proximity_pairs_iter()
+        let contacts: Vec<Contact<O>> = self.broadphase.close_proximity_pairs_iter()
             .filter_map(|pair| self.detection.compute_contacts(&pair.0, &pair.1))
             .collect();
 
@@ -66,10 +66,10 @@ impl<B, C, D, E, I, T> CustomWorld<B, C, D, E, I, T> where
         return contacts;
     }
 
-    pub fn rigid_bodies_iter_mut<'a>(&'a self) -> Box<Iterator<Item=RefMut<T>> + 'a> {
+    pub fn rigid_bodies_iter_mut<'a>(&'a self) -> Box<Iterator<Item=RefMut<O>> + 'a> {
         let iterator = self.broadphase.bodies_iter_mut()
             .filter(|body| {
-                match T::extension_data(body) {
+                match O::extension_data(body) {
                     &DynamicBodyExtension::Rigid(_) => true,
 
                     _otherwise => false,
@@ -80,19 +80,19 @@ impl<B, C, D, E, I, T> CustomWorld<B, C, D, E, I, T> where
     }
 }
 
-impl<B, C, D, E, I, T> World<T> for CustomWorld<B, C, D, E, I, T> where
-        B: Broadphase<T>,
-        C: ConstraintSolver<I, T>,
-        D: Detection<T>,
+impl<B, C, D, E, I, O> World<O> for CustomWorld<B, C, D, E, I, O> where
+        B: Broadphase<O>,
+        C: ConstraintSolver<I, O>,
+        D: Detection<O>,
         E: 'static,
         I: Integrator,
-        T: CollisionBody<Extension=DynamicBodyExtension<E>> {
+        O: CollisionObject<Extension=DynamicBodyExtension<E>> {
 
-    fn update(&mut self, time_step: Scalar) -> Vec<Contact<T>> {
+    fn update(&mut self, time_step: Scalar) -> Vec<Contact<O>> {
         CustomWorld::update(self, time_step)
     }
 
-    fn bodies_iter<'a>(&'a self) -> Box<Iterator<Item=Ref<T>> + 'a> {
+    fn bodies_iter<'a>(&'a self) -> Box<Iterator<Item=Ref<O>> + 'a> {
         self.broadphase.bodies_iter()
     }
 
@@ -100,7 +100,7 @@ impl<B, C, D, E, I, T> World<T> for CustomWorld<B, C, D, E, I, T> where
         self.gravity = gravity;
     }
 
-    fn create_rigid_body(&mut self, def: RigidBodyDef, extension: <T as DynamicBody>::Extension) -> Handle<T> {
+    fn create_rigid_body(&mut self, def: RigidBodyDef, extension: <O as DynamicBody>::Extension) -> Handle<O> {
         let rigid_body_data = RigidBodyData::new(&def, extension);
 
         self.broadphase.create_body(BodyDef {
@@ -111,7 +111,7 @@ impl<B, C, D, E, I, T> World<T> for CustomWorld<B, C, D, E, I, T> where
         }, DynamicBodyExtension::Rigid(Box::new(rigid_body_data)))
     }
 
-    fn create_fixed_body(&mut self, def: FixedBodyDef, extension: <T as DynamicBody>::Extension) -> Handle<T> {
+    fn create_fixed_body(&mut self, def: FixedBodyDef, extension: <O as DynamicBody>::Extension) -> Handle<O> {
         let fixed_body_data = FixedBodyData::new(&def, extension);
 
         self.broadphase.create_body(BodyDef {
@@ -122,7 +122,7 @@ impl<B, C, D, E, I, T> World<T> for CustomWorld<B, C, D, E, I, T> where
         }, DynamicBodyExtension::Fixed(Box::new(fixed_body_data)))
     }
 
-    fn cast_ray<'a>(&'a self, ray: &Ray) -> Option<Ref<'a, T>> {
+    fn cast_ray<'a>(&'a self, ray: &Ray) -> Option<Ref<'a, O>> {
         self.broadphase.cast_ray(ray).filter(move |body| {
             match body.shape().downcast() {
                 ShapeRef::Sphere(sphere) => {
